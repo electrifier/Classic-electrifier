@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = ".\"
+                    OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -56,7 +56,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "true"
-                    OutputPath = ".\"
+                    OutputPath = "bin\Release\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -124,22 +124,7 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Controls\BasicGUIAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtButtonItem.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Controls\ExtListView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtMenuButtonItem.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
@@ -159,17 +144,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\IAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\IExtTreeViewNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "Controls\IExtTreeViewNodeCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\IGUIAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
