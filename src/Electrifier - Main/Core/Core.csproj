@@ -159,6 +159,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Forms\IGUIAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Forms\ShellBrowserDockControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
