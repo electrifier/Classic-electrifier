@@ -9,7 +9,9 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.IO;
 using System.Windows.Forms;
+using System.Xml;
 using TD.SandDock;
 
 using Electrifier.Core;
@@ -19,7 +21,9 @@ namespace Electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
-	public class MainWindowForm : System.Windows.Forms.Form {
+	public class MainWindowForm : System.Windows.Forms.Form, IPersistent {
+		protected Guid guid = Guid.NewGuid();
+
 		private TD.SandBar.ToolBarContainer leftSandBarDock;
 		private TD.SandBar.ToolBarContainer rightSandBarDock;
 		private TD.SandBar.ToolBarContainer bottomSandBarDock;
@@ -85,6 +89,30 @@ namespace Electrifier.Core.Forms {
 			folderBar.Open(DockLocation.Left);
 			folderBar.LayoutSystem.Collapsed = true;
 		}
+
+		#region IPersistent Member
+		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument xmlDocument, string prefix, string nmspURI) {
+			// Create persistence information for the application context
+			XmlNode      xmlNode  = xmlDocument.CreateElement(prefix, "Core.Forms.MainWindowForm", nmspURI);
+			XmlAttribute guidAttr = xmlDocument.CreateAttribute(prefix, "Guid", nmspURI);
+			guidAttr.Value        = guid.ToString();
+			xmlNode.Attributes.Append(guidAttr);
+
+			// Append persistance information for SandDockManager's layout
+			XmlNode     dockMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandDockManagerLayout", nmspURI);
+			XmlDocument dockMgrLayoutDoc  = new XmlDocument();
+
+			dockMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandDockManager.GetLayout())));
+			dockMgrLayoutNode.AppendChild(xmlDocument.ImportNode(dockMgrLayoutDoc.DocumentElement, true));
+			xmlNode.AppendChild(dockMgrLayoutNode);
+
+			return xmlNode;
+		}
+
+		public void ApplyPersistenceInfo(System.Xml.XmlNode persistenceInfo) {
+			// TODO:  Implementierung von MainWindowForm.ApplyPersistenceInfo hinzufügen
+		}
+		#endregion
 
 		#region Vom Windows Form-Designer generierter Code
 		/// <summary>
