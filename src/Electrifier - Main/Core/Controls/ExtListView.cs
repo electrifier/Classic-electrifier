@@ -52,6 +52,49 @@ namespace Electrifier.Core.Controls {
 			}
 		}
 
+		public void SetItemSelectedState(int itemIndex, bool isSelected) {
+			// Initialize appropriate LVItem-structure
+			LVITEM lvItem    = new LVITEM();
+			lvItem.mask      = Win32API.LVIF.STATE;
+			lvItem.iItem     = itemIndex;
+			lvItem.iSubItem  = 0;
+			lvItem.state     = (isSelected ? WinAPI.LVIS.SELECTED : 0);
+			lvItem.stateMask = WinAPI.LVIS.SELECTED;
+
+			// Send SetItemState-Message to ListView
+			SetItemState(lvItem);
+		}
+
+		public void SetItemFocusedState(int itemIndex, bool isFocused) {
+			// Initialize appropriate LVItem-structure
+			LVITEM lvItem    = new LVITEM();
+			lvItem.mask      = Win32API.LVIF.STATE;
+			lvItem.iItem     = itemIndex;
+			lvItem.iSubItem  = 0;
+			lvItem.state     = (isFocused ? WinAPI.LVIS.FOCUSED : 0);
+			lvItem.stateMask = WinAPI.LVIS.FOCUSED;
+
+			// Send SetItemState-Message to ListView
+			SetItemState(lvItem);
+		}
+
+		protected int SetItemState(LVITEM lvItem) {
+			IntPtr pItem      = IntPtr.Zero;
+			int    returnCode;
+
+			try {
+				// TODO: ueberpruefen, ob kopieren ueberhaupt notwendig und code auf jeden ueberabreiten!
+				pItem = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(Win32API.LVITEM)));
+				Marshal.StructureToPtr(lvItem, pItem, true);
+
+				returnCode = WinAPI.SendMessage(this.Handle, Win32API.WMSG.LVM_SETITEMSTATE, 0, pItem.ToInt32());
+			} finally {
+				Marshal.FreeHGlobal(IntPtr.Zero);
+			}
+
+			return returnCode;
+		}
+
 		protected override CreateParams CreateParams {
 			get {
 				CreateParams createParams = base.CreateParams;
@@ -88,6 +131,9 @@ namespace Electrifier.Core.Controls {
 					break;
 				} // case (int)(WinAPI.WM.NOTIFY | WinAPI.WM.REFLECT)
 				case (int)(WinAPI.WM.SETFOCUS): {
+					SetItemFocusedState(0, true);
+					SetItemSelectedState(0, true);
+					Invalidate();
 					return;
 				} // case (int)(WinAPI.WM.SETFOCUS)
 			} // switch(u.Msg)
@@ -98,22 +144,22 @@ namespace Electrifier.Core.Controls {
 		protected virtual void GetDisplayInfo(ref Message m) {
 			Win32API.LVDISPINFO dispInfo = (Win32API.LVDISPINFO)m.GetLParam(typeof(Win32API.LVDISPINFO));
 
-			if((dispInfo.item.mask & (uint)(Win32API.LVIF.TEXT | Win32API.LVIF.IMAGE | Win32API.LVIF.INDENT)) != 0) {
+			if((dispInfo.item.mask & (Win32API.LVIF.TEXT | Win32API.LVIF.IMAGE | Win32API.LVIF.INDENT)) != 0) {
 				// TODO: []-operator ueberladen, typ IExtListViewItem zurueckliefern!
 				IExtListViewItem listViewItem = items[dispInfo.item.iItem] as IExtListViewItem;
 
-				if((dispInfo.item.mask & (uint)Win32API.LVIF.TEXT) != 0) {
+				if((dispInfo.item.mask & Win32API.LVIF.TEXT) != 0) {
 					// TODO: stringlength eceeds dispinfo.item.cchTextMax?
                Marshal.Copy(listViewItem.Text, 0, dispInfo.item.pszText, listViewItem.Text.Length);
 					// TODO: SubItems: info.item.iSubItem ist der index drauf!
 				}
 
-				if((dispInfo.item.mask & (uint)Win32API.LVIF.IMAGE) != 0) {
+				if((dispInfo.item.mask & Win32API.LVIF.IMAGE) != 0) {
 					dispInfo.item.iImage = listViewItem.ImageIndex;
 					Marshal.StructureToPtr(dispInfo, m.LParam, false);		// TODO: letzter parameter ?!? => speicherleck!
 				}
 
-				if((dispInfo.item.mask & (uint)Win32API.LVIF.INDENT) != 0) {
+				if((dispInfo.item.mask & Win32API.LVIF.INDENT) != 0) {
 					dispInfo.item.iIndent = listViewItem.ItemIndent;
 					Marshal.StructureToPtr(dispInfo, m.LParam, false);		// TODO: letzter parameter ?!? => speicherleck!
 				}

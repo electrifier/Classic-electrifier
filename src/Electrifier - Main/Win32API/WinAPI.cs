@@ -14,6 +14,7 @@ namespace Electrifier.Win32API {
 		LVM_FIRST        = 0x00001000,			// ListView-Messages
 		LVM_GETIMAGELIST = LVM_FIRST +  2,
 		LVM_SETIMAGELIST = LVM_FIRST +  3,
+		LVM_SETITEMSTATE = LVM_FIRST + 43,
 		LVM_SETITEMCOUNT = LVM_FIRST + 47,
 		TV_FIRST         = 0x00001100,			// TreeView-Messages
 		TVM_INSERTITEMA  = TV_FIRST  +  0,
@@ -60,19 +61,19 @@ namespace Electrifier.Win32API {
 
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 	public struct LVITEM {
-		public uint   mask;
-		public int    iItem;
-		public int    iSubItem;
-		public uint   state;
-		public uint   stateMask;
-		public IntPtr pszText;
-		public int    cchTextMax;
-		public int    iImage;
-		public IntPtr lParam;
-		public int    iIndent;
-		public int    iGroupId;			// WIN32_WINNT >= 0x0501
-		public uint   cColumns;			// WIN32_WINNT >= 0x0501
-		public IntPtr puColumns;		// WIN32_WINNT >= 0x0501
+		public LVIF        mask;
+		public int         iItem;
+		public int         iSubItem;
+		public WinAPI.LVIS state;
+		public WinAPI.LVIS stateMask;
+		public IntPtr      pszText;
+		public int         cchTextMax;
+		public int         iImage;
+		public IntPtr      lParam;
+		public int         iIndent;
+		public int         iGroupId;			// WIN32_WINNT >= 0x0501
+		public uint        cColumns;			// WIN32_WINNT >= 0x0501
+		public IntPtr      puColumns;			// WIN32_WINNT >= 0x0501
 	}
 
 	public enum TVSIL : uint {			// TreeView SetImageList-message constants
@@ -211,6 +212,17 @@ namespace Electrifier.Win32API {
 			SETDISPINFOW   = FIRST - 78,
 			ODCACHEHINT    = FIRST - 13,
 			ODFINDITEMW    = FIRST - 79,
+		}
+
+		public enum LVIS : uint {
+			FOCUSED        = 0x0001,
+			SELECTED       = 0x0002,
+			CUT            = 0x0004,
+			DROPHILITED    = 0x0008,
+			GLOW           = 0x0010,
+			ACTIVATING     = 0x0020,
+			OVERLAYMASK    = 0x0F00,
+			STATEIMAGEMASK = 0xF000,
 		}
 
 		public enum GWL : int {			// Window field offsets for GetWindowLong()
@@ -368,12 +380,14 @@ namespace Electrifier.Win32API {
 
 		[DllImport("User32.dll")]
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, int lParam);
-		[DllImport("User32.dll")]	 // WMSG.TVM_GETNEXTITEM-overloading
+		[DllImport("User32.dll")]	 // TVM_GETNEXTITEM-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVGN lParam, IntPtr wParam);
-		[DllImport("User32.dll")]	 // WMSG.TVM_SETIMAGELIST/WMSG.TVM_GETIMAGELIST-overloading
+		[DllImport("User32.dll")]	 // TVM_SETIMAGELIST/TVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVSIL wParam, IntPtr lParam);
-		[DllImport("User32.dll")]	 // WMSG.LVM_SETIMAGELIST/WMSG.LVM_GETIMAGELIST-overloading
+		[DllImport("User32.dll")]	 // LVM_SETIMAGELIST/LVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, LVSIL wParam, IntPtr lParam);
+//		[DllImport("User32.dll")]   // LVM_SETITEMSTATE/LVM_GETITEMSTATE-overloading
+//		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref LVITEM lParam);
 		[DllImport("User32.dll")]
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref TVItemEx lParam);
 
