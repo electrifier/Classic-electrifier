@@ -1,0 +1,39 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6832AFCE-173D-4F30-862F-E066990C95B8} = {6832AFCE-173D-4F30-862F-E066990C95B8}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Electrifier", "Electrifier\Electrifier.csproj", "{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6832AFCE-173D-4F30-862F-E066990C95B8} = {6832AFCE-173D-4F30-862F-E066990C95B8}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Win32API", "Win32API\Win32API.csproj", "{6832AFCE-173D-4F30-862F-E066990C95B8}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}.Debug.ActiveCfg = Debug|.NET
+		{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}.Debug.Build.0 = Debug|.NET
+		{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}.Release.ActiveCfg = Release|.NET
+		{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}.Release.Build.0 = Release|.NET
+		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Debug.ActiveCfg = Debug|.NET
+		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Debug.Build.0 = Debug|.NET
+		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Release.ActiveCfg = Release|.NET
+		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Release.Build.0 = Release|.NET
+		{6832AFCE-173D-4F30-862F-E066990C95B8}.Debug.ActiveCfg = Debug|.NET
+		{6832AFCE-173D-4F30-862F-E066990C95B8}.Debug.Build.0 = Debug|.NET
+		{6832AFCE-173D-4F30-862F-E066990C95B8}.Release.ActiveCfg = Release|.NET
+		{6832AFCE-173D-4F30-862F-E066990C95B8}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
