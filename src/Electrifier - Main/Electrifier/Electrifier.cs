@@ -54,7 +54,8 @@ namespace Electrifier {
 
 			// Create an electrifier application context form and run as application
 			// TODO: Do dynamic binding...
-			Application.Run(new ElectrifierAppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen));
+			AppContext appContext = new AppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen);
+			Application.Run(appContext);
 
 			// Free used resources
 			applicationIcon.Dispose();
