@@ -83,6 +83,7 @@ namespace Electrifier.Core.Forms {
 			FolderBarDockControl folderBar = new FolderBarDockControl();
 			folderBar.Manager = sandDockManager;
 			folderBar.Open(DockLocation.Left);
+			folderBar.LayoutSystem.Collapsed = true;
 		}
 
 		#region Vom Windows Form-Designer generierter Code

@@ -23,20 +23,18 @@ namespace Electrifier.Core.Forms.DockControls {
 		protected Splitter      splitter      = null;
 
 		public ShellBrowserDockControl() : base() {
-			shellTreeView = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-			shellListView = new ShellListView();
-			splitter      = new Splitter();
-
 			// Initialize the underlying DockControl
 			Guid = System.Guid.NewGuid();
 			Name = "ShellBrowserDockControl." + Guid.ToString();
 			Text = Name;
 
 			// Initialize ShellTreeView
+			shellTreeView      = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
 			shellTreeView.Dock = DockStyle.Left;
 			shellTreeView.Size = new Size(256, Height);
 
 			// Initialize ShellListView
+			shellListView      = new ShellListView();
 			shellListView.Dock = DockStyle.Fill;
 			shellListView.View = View.Details;
 			shellListView.Columns.Add("Name", 256, HorizontalAlignment.Left);
@@ -46,11 +44,16 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellListView.SetBrowsingFolder(this, ShellAPI.CSIDL.DESKTOP);
 
 			// Initialize Splitter
+			splitter      = new Splitter();
 			splitter.Dock = DockStyle.Left;
 			splitter.Size = new Size(4, Height);
 
-			// Add all the controls
+			// Add the controls
 			Controls.AddRange(new Control[] { shellListView, splitter, shellTreeView });
 		}
+
+		// TODO: Dispose when closed!!!
+		// http://www.divil.co.uk/net/forums/thread.aspx?id=386
+		// You can use the DocumentClosing event or the Closing or Closed events of the DockControl in question. When you dispose it, the form within will also be disposed.
 	}
 }
