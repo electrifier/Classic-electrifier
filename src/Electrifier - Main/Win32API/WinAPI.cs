@@ -12,21 +12,22 @@ using System.Runtime.InteropServices;
 namespace Electrifier.Win32API {
 	public enum WMSG : uint {
 		LVM_FIRST        = 0x00001000,			// ListView-Messages
-		LVM_GETIMAGELIST = LVM_FIRST + 2,
-		LVM_SETIMAGELIST = LVM_FIRST + 3,
+		LVM_GETIMAGELIST = LVM_FIRST +  2,
+		LVM_SETIMAGELIST = LVM_FIRST +  3,
+		LVM_SETITEMCOUNT = LVM_FIRST + 47,
 		TV_FIRST         = 0x00001100,			// TreeView-Messages
-		TVM_INSERTITEMA  = TV_FIRST +  0,
-		TVM_DELETEITEM   = TV_FIRST +  1,
-		TVM_EXPAND       = TV_FIRST +  2,
-		TVM_GETITEMRECT  = TV_FIRST +  4,
-		TVM_GETCOUNT     = TV_FIRST +  5,
-		TVM_GETINDENT    = TV_FIRST +  6,
-		TVM_SETINDENT    = TV_FIRST +  7,
-		TVM_GETIMAGELIST = TV_FIRST +  8,
-		TVM_SETIMAGELIST = TV_FIRST +  9,
-		TVM_GETNEXTITEM  = TV_FIRST + 10,
-		TVM_INSERTITEMW  = TV_FIRST + 50,
-		TVM_SETITEM      = TV_FIRST + 63,
+		TVM_INSERTITEMA  = TV_FIRST  +  0,
+		TVM_DELETEITEM   = TV_FIRST  +  1,
+		TVM_EXPAND       = TV_FIRST  +  2,
+		TVM_GETITEMRECT  = TV_FIRST  +  4,
+		TVM_GETCOUNT     = TV_FIRST  +  5,
+		TVM_GETINDENT    = TV_FIRST  +  6,
+		TVM_SETINDENT    = TV_FIRST  +  7,
+		TVM_GETIMAGELIST = TV_FIRST  +  8,
+		TVM_SETIMAGELIST = TV_FIRST  +  9,
+		TVM_GETNEXTITEM  = TV_FIRST  + 10,
+		TVM_INSERTITEMW  = TV_FIRST  + 50,
+		TVM_SETITEM      = TV_FIRST  + 63,
 	}
 
 	public enum TVIF : uint {			// TVItemEx flags
@@ -40,9 +41,68 @@ namespace Electrifier.Win32API {
 		INTEGRAL      = 0x0080,			// WIN32_IE >= 0x0400
 	}
 
+	public enum LVIF : uint {			// ListView ItemMask
+		TEXT        = 0x0001,
+		IMAGE       = 0x0002,
+		PARAM       = 0x0004,
+		STATE       = 0x0008,
+		INDENT      = 0x0010,
+		NORECOMPUTE = 0x0800,
+		GROUPID     = 0x0100,		// WIN32_WINNT >= 0x0501
+		COLUMNS     = 0x0200,		// WIN32_WINNT >= 0x0501
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	public struct LVDISPINFO {
+		public NMHDR  hdr;
+		public LVITEM item;
+	}
+
+	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
+	public struct LVITEM {
+		public uint   mask;
+		public int    iItem;
+		public int    iSubItem;
+		public uint   state;
+		public uint   stateMask;
+		public IntPtr pszText;
+		public int    cchTextMax;
+		public int    iImage;
+		public IntPtr lParam;
+		public int    iIndent;
+		public int    iGroupId;			// WIN32_WINNT >= 0x0501
+		public uint   cColumns;			// WIN32_WINNT >= 0x0501
+		public IntPtr puColumns;		// WIN32_WINNT >= 0x0501
+	}
+
 	public enum TVSIL : uint {			// TreeView SetImageList-message constants
 		NORMAL = 0,
 		STATE  = 2,
+	}
+
+	public enum LVS : uint {			// ListView style constants
+		ICON                = 0x0000,
+		REPORT              = 0x0001,
+		SMALLICON           = 0x0002,
+		LIST                = 0x0003,
+		TYPEMASK            = 0x0003,
+		SINGLESEL           = 0x0004,
+		SHOWSELALWAYS       = 0x0008,
+		SORTASCENDING       = 0x0010,
+		SORTDESCENDING      = 0x0020,
+		SHAREIMAGELISTS     = 0x0040,
+		NOLABELWRAP         = 0x0080,
+		AUTOARRANGE         = 0x0100,
+		EDITLABELS          = 0x0200,
+		OWNERDATA           = 0x1000,
+		NOSCROLL            = 0x2000,
+		TYPESTYLEMASK       = 0xfc00,
+		ALIGNTOP            = 0x0000,
+		ALIGNLEFT           = 0x0800,
+		ALIGNMASK           = 0x0c00,
+		OWNERDRAWFIXED      = 0x0400,
+		NOCOLUMNHEADER      = 0x4000,
+		NOSORTHEADER        = 0x8000,
 	}
 
 	public enum LVSIL : uint {			// ListView SetImageList-message constants
@@ -106,6 +166,13 @@ namespace Electrifier.Win32API {
 		}
 	}
 
+	[StructLayout(LayoutKind.Sequential)]	// Notify-Message Header
+	public struct NMHDR {
+		public IntPtr hwndFrom;
+		public int    idFrom;
+		public int    code;
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
 	public struct TVItemEx {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
@@ -123,6 +190,27 @@ namespace Electrifier.Win32API {
 	}
 
 	public class WinAPI {
+		public enum WM : int {							// Windows Messages
+			NOTIFY        = 0x0000004E,
+			NCHITTEST     = 0x00000084,
+			NCLBUTTONDOWN = 0x000000A1,
+			USER          = 0x00000400,
+			REFLECT       = USER + 0x1c00,
+		}
+
+		public enum LVN : int {							// ListView Notify Messages
+			FIRST          = (0-100),
+			LAST           = (0-199),
+			BEGINDRAG		= FIRST -  9,
+			BEGINRDRAG		= FIRST - 11,
+			GETDISPINFOA   = FIRST - 50,
+			GETDISPINFOW   = FIRST - 77,
+			SETDISPINFOA   = FIRST - 51,
+			SETDISPINFOW   = FIRST - 78,
+			ODCACHEHINT    = FIRST - 13,
+			ODFINDITEMW    = FIRST - 79,
+		}
+
 		public enum GWL : int {			// Window field offsets for GetWindowLong()
 			WNDPROC    = -4,
 			HINSTANCE  = -6,
@@ -131,11 +219,6 @@ namespace Electrifier.Win32API {
 			EXSTYLE    = -20,
 			USERDATA   = -21,
 			ID         = -12,
-		}
-
-		public enum WM : int {			// Windows Messages
-			NCHITTEST     = 0x0084,
-			NCLBUTTONDOWN = 0x00A1,
 		}
 
 		public enum WS : uint {			// Window Styles

@@ -8,6 +8,7 @@
 using System;
 using System.Windows.Forms;
 
+using Electrifier.Core.Controls;
 using Electrifier.Core.Services;
 using Electrifier.Core.Shell32.Services;
 using Electrifier.Win32API;
@@ -16,7 +17,7 @@ namespace Electrifier.Core.Shell32.Controls {
 	/// <summary>
 	/// Zusammenfassung für ShellListViewItem.
 	/// </summary>
-	public class ShellListViewItem : ListViewItem, IShellObject {
+	public class ShellListViewItem : ExtListViewItem, IShellObject {
 		protected static IconManager      iconManager      = (IconManager)ServiceManager.Services.GetService(typeof(IconManager));
 		protected        BasicShellObject basicShellObject = null;
 
@@ -34,9 +35,9 @@ namespace Electrifier.Core.Shell32.Controls {
 
 		public ShellListViewItem(BasicShellObject shellObject) : base() {
 			basicShellObject   = shellObject;
-			Text               = DisplayName;
 			ImageIndex         = iconManager.ClosedFolderIndex;
 			FileInfoUpdated   += new FileInfoUpdatedHandler(IShellObject_FileInfoUpdated);
+			SetText(DisplayName);
 		}
 
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
