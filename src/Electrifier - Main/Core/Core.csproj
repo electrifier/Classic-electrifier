@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "..\..\CurrentBuild\Debug\"
+                    OutputPath = ".\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -56,7 +56,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "true"
-                    OutputPath = "..\..\CurrentBuild\Release\"
+                    OutputPath = ".\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -124,6 +124,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Controls\BasicGUIAction.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ExtButtonItem.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -164,32 +169,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Forms\BasicGUIAction.cs"
+                    RelPath = "Controls\IGUIAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Forms\ElectrifierBrowserForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\ElectrifierBrowserForm.resx"
-                    DependentUpon = "ElectrifierBrowserForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Forms\FolderBarDockControl.cs"
+                    RelPath = "Forms\DockControlFolderBar.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Forms\IGUIAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\ShellBrowserDockControl.cs"
+                    RelPath = "Forms\DockControlShellBrowser.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />

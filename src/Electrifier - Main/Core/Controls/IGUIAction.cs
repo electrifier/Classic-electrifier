@@ -9,7 +9,7 @@ using System;
 using System.Windows.Forms;
 using TD.SandBar;
 
-namespace Electrifier.Core.Forms {
+namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// ExecutionEventArgs-class and ExecutionEventHandler delegate
 	/// </summary>

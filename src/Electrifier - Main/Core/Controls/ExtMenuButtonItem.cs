@@ -10,7 +10,6 @@ using System;
 using TD.SandBar;
 
 // Electrifier uses
-using Electrifier.Core.Forms;
 
 namespace Electrifier.Core.Controls {
 	/// <summary>

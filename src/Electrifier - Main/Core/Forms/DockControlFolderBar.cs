@@ -18,10 +18,10 @@ namespace Electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für ShellTreeViewDockControl.
 	/// </summary>
-	public class FolderBarDockControl : DockControl {
+	public class DockControlFolderBar : DockControl {
 		protected ShellTreeView shellTreeView = null;
 
-		public FolderBarDockControl() : base(){
+		public DockControlFolderBar() : base(){
 			shellTreeView      = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
 
 			shellTreeView.Dock = DockStyle.Fill;

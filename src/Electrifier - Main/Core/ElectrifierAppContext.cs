@@ -93,7 +93,8 @@ namespace Electrifier.Core {
 		}
 
 		private void action_NewElectrifierBrowserForm(object sender, ExecutionEventArgs e) {
-			new ElectrifierBrowserForm().Show();
+			MessageBox.Show("New browser");
+//			new ElectrifierBrowserForm().Show();
 		}
 
 		private void action_CloseAllForms(object sender, ExecutionEventArgs e) {

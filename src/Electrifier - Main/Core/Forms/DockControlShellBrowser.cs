@@ -17,12 +17,12 @@ namespace Electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>
-	public class ShellBrowserDockControl : DockControl {
+	public class DockControlShellBrowser : DockControl {
 		protected ShellTreeView shellTreeView = null;
 		protected ShellListView shellListView = null;
 		protected Splitter      splitter      = null;
 
-		public ShellBrowserDockControl() : base() {
+		public DockControlShellBrowser() : base() {
 			shellTreeView      = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
 			shellListView      = new ShellListView();
 			splitter           = new Splitter();

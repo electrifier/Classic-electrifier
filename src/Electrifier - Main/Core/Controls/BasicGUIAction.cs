@@ -8,7 +8,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Electrifier.Core.Forms {
+namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für BasicGUIAction.
 	/// </summary>
@@ -68,9 +68,9 @@ namespace Electrifier.Core.Forms {
 			OnEnabledChanged(sender, new EnabledChangedEventArgs(true));
 		}
 
-		public event Electrifier.Core.Forms.ExecutionEventHandler      Execution;
+		public event ExecutionEventHandler      Execution;
 
-		public event Electrifier.Core.Forms.EnabledChangedEventHandler EnabledChanged;
+		public event EnabledChangedEventHandler EnabledChanged;
 		#endregion
 	}
 }
