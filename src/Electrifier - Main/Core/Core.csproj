@@ -224,6 +224,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Forms\IDockControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Forms\IDockControlContainer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Forms\MainWindowForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -236,16 +246,6 @@
                 <File
                     RelPath = "Forms\DockControls\FolderBarDockControl.cs"
                     SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\DockControls\IDockControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\DockControls\IDockControlContainer.cs"
-                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

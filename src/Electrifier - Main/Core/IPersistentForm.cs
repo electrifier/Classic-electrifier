@@ -15,6 +15,6 @@ namespace Electrifier.Core
 	public interface IPersistentForm : IPersistent
 	{
 		void Show();
-		void RegisterToPersistentFormContainer(IPersistentFormContainer persistentFormContainer);
+		void AttachToFormContainer(IPersistentFormContainer persistentFormContainer);
 	}
 }

@@ -11,7 +11,7 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für IDockControl.
 	/// </summary>
-	public interface IDockControl {
-		void RegisterToDockControlContainer(IDockControlContainer dockControlContainer);
+	public interface IDockControl : IPersistent {
+		void AttachToDockControlContainer(IDockControlContainer dockControlContainer);
 	}
 }

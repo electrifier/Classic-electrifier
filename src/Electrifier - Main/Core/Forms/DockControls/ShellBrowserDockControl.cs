@@ -8,6 +8,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Xml;
 using TD.SandDock;
 
 using Electrifier.Core.Shell32.Controls;
@@ -17,10 +18,11 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>
-	public class ShellBrowserDockControl : DockControl {
-		protected ShellTreeView shellTreeView = null;
-		protected ShellListView shellListView = null;
-		protected Splitter      splitter      = null;
+	public class ShellBrowserDockControl : DockControl, IDockControl, IPersistent {
+		protected ShellTreeView         shellTreeView        = null;
+		protected ShellListView         shellListView        = null;
+		protected Splitter              splitter             = null;
+		protected IDockControlContainer dockControlContainer = null;
 
 		public ShellBrowserDockControl() : this(Guid.NewGuid()) { }
 
@@ -65,5 +67,33 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
 		}
+
+		#region IDockControl Member
+		public void AttachToDockControlContainer(IDockControlContainer dockControlContainer) {
+			this.dockControlContainer = dockControlContainer;
+			dockControlContainer.AttachDockControl(this);
+		}
+
+		#endregion
+
+		#region IPersistent Member
+
+		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument targetXmlDocument) {
+			XmlNode      dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);
+			XmlAttribute guidAttr        = targetXmlDocument.CreateAttribute("Guid");
+			guidAttr.Value               = Guid.ToString();
+			dockControlNode.Attributes.Append(guidAttr);
+
+			return dockControlNode;
+		}
+
+		public void ApplyPersistenceInfo(System.Xml.XmlNode persistenceInfo) {
+			Guid = new Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
+
+			Name = "ShellBrowserDockControl." + Guid.ToString();		// TODO: TestCode
+			Text = Name;															// TODO: TestCode
+		}
+
+		#endregion
 	}
 }

@@ -20,9 +20,13 @@ namespace Electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
-	public class MainWindowForm : System.Windows.Forms.Form, IPersistentForm {
-		protected Guid guid = Guid.NewGuid();
-		public    Guid Guid { get { return guid; } }
+	public class MainWindowForm : System.Windows.Forms.Form, IPersistentForm, IDockControlContainer {
+		protected Guid                     guid          = Guid.NewGuid();
+		public    Guid                     Guid          { get { return guid; } }
+		protected IPersistentFormContainer formContainer = null;
+		public    IPersistentFormContainer FormContainer { get { return formContainer; } }
+		protected ArrayList                dockControls  = new ArrayList();
+		public    ArrayList                DockControls  { get { return dockControls; } }
 
 
 		private TD.SandBar.ToolBarContainer leftSandBarDock;
@@ -62,7 +66,16 @@ namespace Electrifier.Core.Forms {
 			Icon = AppContext.Icon;
 
 			// Initialize form state regarding to the configuration saved
-			ApplyFormConfiguration();
+			// TODO: This is test code only; the default configuration will also be read out from XML
+//			ShellBrowserDockControl shellBrowser = new ShellBrowserDockControl();
+//			this.documentContainer.AddDocument(shellBrowser);
+//			shellBrowser.AttachToDockControlContainer(this);
+
+
+			FolderBarDockControl folderBar = new FolderBarDockControl();
+			folderBar.Manager = sandDockManager;
+			folderBar.Open(DockLocation.Left);
+			folderBar.LayoutSystem.Collapsed = true;
 		}
 
 		/// <summary>
@@ -77,24 +90,9 @@ namespace Electrifier.Core.Forms {
 			base.Dispose( disposing );
 		}
 
-		protected void ApplyFormConfiguration() {
-			ApplyFormConfiguration("default");
-		}
-
-		protected void ApplyFormConfiguration(string configuration) {
-			// TODO: This is test code only; the default configuration will also be read out from XML
-			ShellBrowserDockControl shellBrowser = new ShellBrowserDockControl();
-			this.documentContainer.AddDocument(shellBrowser);
-
-			FolderBarDockControl folderBar = new FolderBarDockControl();
-			folderBar.Manager = sandDockManager;
-			folderBar.Open(DockLocation.Left);
-			folderBar.LayoutSystem.Collapsed = true;
-		}
-
 		#region IPersistentForm Member
 		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
-			// Create persistence information for main window form
+			// Create persistence information for main window Form
 			XmlNode      mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
 			XmlAttribute guidAttr       = targetXmlDocument.CreateAttribute("Guid");
 			guidAttr.Value              = guid.ToString();
@@ -112,6 +110,13 @@ namespace Electrifier.Core.Forms {
 			mainWindowNode.Attributes.Append(widthAttr);
 			mainWindowNode.Attributes.Append(heightAttr);
 
+			// Append persistence information for each hosted DockControl
+			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
+			foreach(IDockControl dockControl in dockControls) {
+				dockControlsNode.AppendChild(dockControl.CreatePersistenceInfo(targetXmlDocument));
+			}
+			mainWindowNode.AppendChild(dockControlsNode);
+
 			// Append persistance information for SandBar and SandDock components
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
 				"SandBarManager", sandBarManager.GetLayout()));
@@ -124,24 +129,44 @@ namespace Electrifier.Core.Forms {
 		}
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
-			// Apply persistence information to main window form
+			// Apply persistence information to main window Form
 			guid   = new  Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
 			Left   = int.Parse(persistenceInfo.Attributes.GetNamedItem("Left").Value);
 			Top    = int.Parse(persistenceInfo.Attributes.GetNamedItem("Top").Value);
 			Width  = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
 			Height = int.Parse(persistenceInfo.Attributes.GetNamedItem("Height").Value);
 
+			// Apply persistence information for each hosted DockControl
+			XmlNode dockControlsNode = persistenceInfo.SelectSingleNode("DockedControls");
+			foreach(XmlNode dockControlNode in dockControlsNode.ChildNodes) {
+				Type dockControlType = Type.GetType(dockControlNode.LocalName);
+
+				if((dockControlType != null ) && (dockControlType.GetInterface("IDockControl") != null)) {
+					IDockControl dockControl = Activator.CreateInstance(dockControlType) as IDockControl;
+
+					dockControl.ApplyPersistenceInfo(dockControlNode);
+					dockControl.AttachToDockControlContainer(this);
+
+					// TODO: decide which container!
+					documentContainer.AddDocument(dockControl as DockControl);
+				} else {
+					// TODO: Exception
+					MessageBox.Show("Unknown DockControl type specified in configuration file");
+				}
+			}			
+
 			// Apply persistance information to SandBar and SandDock components
 			sandBarManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
 				"SandBarManager"));
 			sandDockManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
 				"SandDockManager"));
-//			documentContainer.Manager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
-//				"DocumentContainer"));
-
+			documentContainer.Manager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+				"DocumentContainer"));
 		}
 
-		public void RegisterToPersistentFormContainer(IPersistentFormContainer persistentFormContainer) {
+		public void AttachToFormContainer(IPersistentFormContainer persistentFormContainer) {
+			formContainer = persistentFormContainer;
+			persistentFormContainer.AttachPersistentForm(this);
 		}
 		#endregion
 
@@ -351,6 +376,24 @@ namespace Electrifier.Core.Forms {
 			this.topSandBarDock.ResumeLayout(false);
 			this.ResumeLayout(false);
 
+		}
+		#endregion
+
+		#region IDockControlContainer Member
+		public void AttachDockControl(IDockControl dockControl) {
+			if(!dockControls.Contains(dockControl)) {
+				dockControls.Add(dockControl);
+			} else {
+				throw new ArgumentException("Given DockControl instance already in list of hosted DockControls", "dockControl");
+			}
+		}
+
+		public void DetachDockControl(IDockControl dockControl) {
+			if(dockControls.Contains(dockControl)) {
+				dockControls.Remove(dockControl);
+			} else {
+				throw new ArgumentException("Given DockControl instance not in list of hosted DockControls", "dockControl");
+			}
 		}
 		#endregion
 	}

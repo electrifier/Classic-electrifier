@@ -64,7 +64,17 @@ namespace Electrifier.Core {
 
 			// TODO: Create tray notifyicon
 
+			// Load and apply the configuration used for this session
 			RestoreConfiguration();
+
+			if(showMainWindow) {
+				// TODO: Wenn alle minimiert waren werden sie es auch diesmal sein!
+				Form form = openWindows[0] as Form;
+
+				// TODO: Das aktive dokument wird das mainform...
+				form.Show();
+				MainForm = form;
+			}
 
 //			// Open new MainWindow, if not diabled
 //			if(showMainWindow) {
@@ -218,31 +228,38 @@ namespace Electrifier.Core {
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
 			XmlNode appContextNode  = persistenceInfo.SelectSingleNode("AppContext");
-			XmlNode openWindowsNode = appContextNode.SelectSingleNode("OpenWindows");
 
+			// Apply persistence informtion to every open window
+			XmlNode openWindowsNode = appContextNode.SelectSingleNode("OpenWindows");
 			foreach(XmlNode windowNode in openWindowsNode.ChildNodes) {
-				Type    windowFormType = Type.GetType(windowNode.LocalName);
+				Type windowFormType = Type.GetType(windowNode.LocalName);
 
 				if((windowFormType != null ) && (windowFormType.GetInterface("IPersistentForm") != null)) {
 					IPersistentForm windowForm = Activator.CreateInstance(windowFormType) as IPersistentForm;
 
 					windowForm.ApplyPersistenceInfo(windowNode);
-					windowForm.RegisterToPersistentFormContainer(this);
-					if(true == true) {	// TODO: Test-code
-						windowForm.Show();
-						openWindows.Add(windowForm as Form);
-						this.MainForm = windowForm as Form;
-					}
+					windowForm.AttachToFormContainer(this);
 				} else {
+					// TODO: Exception
 					MessageBox.Show("Unknown window type specified in configuration file");
 				}
 			}			
 		}
 
-		public void RegisterPersistentForm(IPersistentForm persistentForm) {
+		public void AttachPersistentForm(IPersistentForm persistentForm) {
+			if(!openWindows.Contains(persistentForm)) {
+				openWindows.Add(persistentForm);
+			} else {
+				throw new ArgumentException("Given Form instance already in list of hosted Forms", "persistentForm");
+			}
 		}
 
-		public void ReleasePersistentForm(IPersistentForm persistentForm) {
+		public void DetachPersistentForm(IPersistentForm persistentForm) {
+			if(openWindows.Contains(persistentForm)) {
+				openWindows.Remove(persistentForm);
+			} else {
+				throw new ArgumentException("Given Form instance not in list of hosted Forms", "persistentForm");
+			}
 		}
 		#endregion
 

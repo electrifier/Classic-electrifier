@@ -12,7 +12,7 @@ namespace Electrifier.Core {
 	/// Zusammenfassung für IPersistentFormContainer.
 	/// </summary>
 	public interface IPersistentFormContainer : IPersistent {
-		void RegisterPersistentForm(IPersistentForm persistentForm);
-		void ReleasePersistentForm(IPersistentForm persistentForm);
+		void AttachPersistentForm(IPersistentForm persistentForm);
+		void DetachPersistentForm(IPersistentForm persistentForm);
 	}
 }
