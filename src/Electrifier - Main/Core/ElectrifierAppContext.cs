@@ -34,12 +34,9 @@ namespace Electrifier.Core {
 		private System.Windows.Forms.GroupBox grpBxOpenForms;
 		private TD.SandBar.MenuBarItem mnuBarItmFile;
 		private TD.SandBar.DropDownMenuItem dropDownMenuItem1;
-		private TD.SandBar.MenuButtonItem mnuBarItmFileCloseAll;
 		private System.Windows.Forms.Panel pnlClientArea;
-		/// <summary>
-		/// Erforderliche Designervariable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private System.Windows.Forms.NotifyIcon notifyIcon;
+		private System.ComponentModel.IContainer components;
 
 
 
@@ -50,15 +47,17 @@ namespace Electrifier.Core {
 			InitializeComponent();
 
 			// Initialize actions implemented by ElectrifierAppContext
-			BasicGUIAction bacNewShellBrowser = new BasicGUIAction(new Guid("3552C6D4-F89C-47ea-9C4D-4C7BF9E27C8C"),
-				true, 0, new ExecutionEventHandler(acNewShellBrowser));
+			string acNameSpace = "Electrifier.Core.Actions.";
+			BasicGUIAction bacNewBrowserForm = new BasicGUIAction(acNameSpace + "NewBrowserForm",
+				true, 0, new ExecutionEventHandler(acNewBrowserForm));
 
 			// Initialize menu bar
-			ExtMenuButtonItem mnuBtnItemNewShellBrowser = new ExtMenuButtonItem(bacNewShellBrowser);
-			mnuBarItmFile.MenuItems.Insert(0, mnuBtnItemNewShellBrowser);
+			ExtMenuButtonItem mnuBtnItemNewShellBrowser = new ExtMenuButtonItem(bacNewBrowserForm);
+			mnuBarItmFile.MenuItems.Add(mnuBtnItemNewShellBrowser);
 
 
 			Icon = applicationIcon;
+			notifyIcon.Icon = applicationIcon;
 			splashScreenForm.Close();
 
 			// TODO: Test if already instantiated, if so => exception!
@@ -77,7 +76,7 @@ namespace Electrifier.Core {
 			base.Dispose( disposing );
 		}
 
-		void acNewShellBrowser(object source, ExecutionEventArgs e) {
+		void acNewBrowserForm(object source, ExecutionEventArgs e) {
 			MessageBox.Show("Hallo!");
 		}
 
@@ -87,20 +86,21 @@ namespace Electrifier.Core {
 		/// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
 		/// </summary>
 		private void InitializeComponent() {
+			this.components = new System.ComponentModel.Container();
 			this.statusBar = new System.Windows.Forms.StatusBar();
 			this.sandBarManager = new TD.SandBar.SandBarManager();
+			this.bottomSandBarDock = new TD.SandBar.ToolBarContainer();
 			this.leftSandBarDock = new TD.SandBar.ToolBarContainer();
 			this.rightSandBarDock = new TD.SandBar.ToolBarContainer();
-			this.bottomSandBarDock = new TD.SandBar.ToolBarContainer();
 			this.topSandBarDock = new TD.SandBar.ToolBarContainer();
 			this.menuBar = new TD.SandBar.MenuBar();
+			this.mnuBarItmFile = new TD.SandBar.MenuBarItem();
 			this.toolBar = new TD.SandBar.ToolBar();
+			this.dropDownMenuItem1 = new TD.SandBar.DropDownMenuItem();
 			this.pnlClientArea = new System.Windows.Forms.Panel();
 			this.grpBxOpenForms = new System.Windows.Forms.GroupBox();
 			this.trVwOpenForms = new System.Windows.Forms.TreeView();
-			this.mnuBarItmFile = new TD.SandBar.MenuBarItem();
-			this.dropDownMenuItem1 = new TD.SandBar.DropDownMenuItem();
-			this.mnuBarItmFileCloseAll = new TD.SandBar.MenuButtonItem();
+			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.topSandBarDock.SuspendLayout();
 			this.pnlClientArea.SuspendLayout();
 			this.grpBxOpenForms.SuspendLayout();
@@ -122,6 +122,15 @@ namespace Electrifier.Core {
 			this.sandBarManager.RightContainer = this.rightSandBarDock;
 			this.sandBarManager.TopContainer = this.topSandBarDock;
 			// 
+			// bottomSandBarDock
+			// 
+			this.bottomSandBarDock.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.bottomSandBarDock.Location = new System.Drawing.Point(0, 262);
+			this.bottomSandBarDock.Manager = this.sandBarManager;
+			this.bottomSandBarDock.Name = "bottomSandBarDock";
+			this.bottomSandBarDock.Size = new System.Drawing.Size(288, 0);
+			this.bottomSandBarDock.TabIndex = 3;
+			// 
 			// leftSandBarDock
 			// 
 			this.leftSandBarDock.Dock = System.Windows.Forms.DockStyle.Left;
@@ -139,15 +148,6 @@ namespace Electrifier.Core {
 			this.rightSandBarDock.Name = "rightSandBarDock";
 			this.rightSandBarDock.Size = new System.Drawing.Size(0, 214);
 			this.rightSandBarDock.TabIndex = 2;
-			// 
-			// bottomSandBarDock
-			// 
-			this.bottomSandBarDock.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.bottomSandBarDock.Location = new System.Drawing.Point(0, 262);
-			this.bottomSandBarDock.Manager = this.sandBarManager;
-			this.bottomSandBarDock.Name = "bottomSandBarDock";
-			this.bottomSandBarDock.Size = new System.Drawing.Size(288, 0);
-			this.bottomSandBarDock.TabIndex = 3;
 			// 
 			// topSandBarDock
 			// 
@@ -170,6 +170,10 @@ namespace Electrifier.Core {
 			this.menuBar.Size = new System.Drawing.Size(286, 24);
 			this.menuBar.TabIndex = 0;
 			// 
+			// mnuBarItmFile
+			// 
+			this.mnuBarItmFile.Text = "&File";
+			// 
 			// toolBar
 			// 
 			this.toolBar.Buttons.AddRange(new TD.SandBar.ToolbarItemBase[] {
@@ -178,9 +182,13 @@ namespace Electrifier.Core {
 			this.toolBar.Guid = new System.Guid("4680e90f-86e6-4c5d-81dd-e9925f05f13d");
 			this.toolBar.Location = new System.Drawing.Point(2, 24);
 			this.toolBar.Name = "toolBar";
-			this.toolBar.Size = new System.Drawing.Size(98, 24);
+			this.toolBar.Size = new System.Drawing.Size(70, 24);
 			this.toolBar.TabIndex = 1;
 			this.toolBar.Text = "toolBar1";
+			// 
+			// dropDownMenuItem1
+			// 
+			this.dropDownMenuItem1.Text = "New";
 			// 
 			// pnlClientArea
 			// 
@@ -217,16 +225,10 @@ namespace Electrifier.Core {
 			this.trVwOpenForms.Size = new System.Drawing.Size(256, 150);
 			this.trVwOpenForms.TabIndex = 0;
 			// 
-			// mnuBarItmFile
+			// notifyIcon
 			// 
-			this.mnuBarItmFile.MenuItems.AddRange(new TD.SandBar.MenuButtonItem[] {
-																											 this.mnuBarItmFileCloseAll});
-			this.mnuBarItmFile.Text = "&File";
-			// 
-			// mnuBarItmFileCloseAll
-			// 
-			this.mnuBarItmFileCloseAll.BeginGroup = true;
-			this.mnuBarItmFileCloseAll.Text = "CloseAll";
+			this.notifyIcon.Text = "Electrifier";
+			this.notifyIcon.Visible = true;
 			// 
 			// ElectrifierAppContext
 			// 

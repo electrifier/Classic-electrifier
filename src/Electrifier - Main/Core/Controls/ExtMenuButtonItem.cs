@@ -24,6 +24,9 @@ namespace Electrifier.Core.Controls {
 			this.action            = action;
 			action.EnabledChanged += new EnabledChangedEventHandler(action_EnabledChanged);
 			Activate              += new EventHandler(ExtMenuButtonItem_Activate);
+
+			// TODO: Get all other properties
+			Text            = action.Id.Substring(action.Id.LastIndexOf(".") + 1);
 		}
 
 		public void action_EnabledChanged(object sender, EnabledChangedEventArgs e) {

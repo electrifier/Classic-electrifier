@@ -6,26 +6,37 @@
 //	</file>
 
 using System;
+using System.Windows.Forms;
 
 namespace Electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für BasicGUIAction.
 	/// </summary>
 	public class BasicGUIAction : IGUIAction {
-		protected Guid guid       = Guid.Empty;
-		public    Guid Guid       { get { return guid; } }
-		protected bool enabled    = false;
-		public    bool Enabled    { get { return enabled; } }
-		protected int  imageIndex = -1;
-		public    int  ImageIndex { get { return imageIndex; } }
+		protected string   id;
+		public    string   Id          { get { return id; } }
+		protected bool     enabled     = false;
+		public    bool     Enabled     { get { return enabled; } }
+		protected int      imageIndex  = -1;
+		public    int      ImageIndex  { get { return imageIndex; } }
+		protected string   text;
+		public    string   Text        { get { return text; } }
+		protected string   toolTipText;
+		public    string   ToolTipText { get { return toolTipText; } }
+		protected bool     beginGroup  = false;
+		public    bool     BeginGroup  { get { return beginGroup; } }
+		protected Shortcut shortcut    = Shortcut.None;
+		public    Shortcut Shortcut    { get { return shortcut; } }
 
-		public BasicGUIAction(Guid guid, bool enabled, int imageIndex, ExecutionEventHandler executionEventHandler) {
-			this.guid       = guid;
+		public BasicGUIAction(string id, bool enabled, int imageIndex, ExecutionEventHandler executionEventHandler) {
+			this.id         = id;
 			this.enabled    = enabled;
 			this.imageIndex = imageIndex;
 			Execution      += executionEventHandler;
 
-			// TODO: Register by ActionManager!
+			// TODO: Register to ActionManager!
+			// TODO: Get texts from LocaleManager!
+			// TODO: Importance from ConfigManager!
 		}
 
 		protected virtual void OnExecution(object source, ExecutionEventArgs e) {
