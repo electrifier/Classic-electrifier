@@ -16,6 +16,8 @@ namespace Electrifier.Core.Controls {
 		public  char[] Text       { get { return text; } }
 		private int    imageIndex = -1;
 		public  int    ImageIndex { get { return imageIndex; } set { SetImageIndex(value); } }
+		private int    itemIndent = 0;
+		public  int    ItemIndent { get { return itemIndent; } }
 
 		public ExtListViewItem() {
 			//

@@ -14,5 +14,6 @@ namespace Electrifier.Core.Controls {
 	public interface IExtListViewItem {
 		char[] Text       { get; }
 		int    ImageIndex { get; }
+		int    ItemIndent { get; }
 	}
 }

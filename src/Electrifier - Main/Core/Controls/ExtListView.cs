@@ -80,7 +80,7 @@ namespace Electrifier.Core.Controls {
 
 				switch(nmhdr.code) {
 					case (int)WinAPI.LVN.GETDISPINFOW:
-						OnGetDisplayInfo(ref m);
+						GetDisplayInfo(ref m);
 						return;
 				}
 			}
@@ -88,7 +88,7 @@ namespace Electrifier.Core.Controls {
 			base.WndProc (ref m);
 		}
 
-		protected virtual void OnGetDisplayInfo(ref Message m) {
+		protected virtual void GetDisplayInfo(ref Message m) {
 			Win32API.LVDISPINFO dispInfo = (Win32API.LVDISPINFO)m.GetLParam(typeof(Win32API.LVDISPINFO));
 
 			if((dispInfo.item.mask & (uint)(Win32API.LVIF.TEXT | Win32API.LVIF.IMAGE | Win32API.LVIF.INDENT)) != 0) {
@@ -98,58 +98,21 @@ namespace Electrifier.Core.Controls {
 				if((dispInfo.item.mask & (uint)Win32API.LVIF.TEXT) != 0) {
 					// TODO: stringlength eceeds dispinfo.item.cchTextMax?
                Marshal.Copy(listViewItem.Text, 0, dispInfo.item.pszText, listViewItem.Text.Length);
+					// TODO: SubItems: info.item.iSubItem ist der index drauf!
 				}
 
 				if((dispInfo.item.mask & (uint)Win32API.LVIF.IMAGE) != 0) {
 					dispInfo.item.iImage = listViewItem.ImageIndex;
-					Marshal.StructureToPtr(dispInfo, m.LParam, true);		// TODO: letzter parameter ?!? => speicherleck!
+					Marshal.StructureToPtr(dispInfo, m.LParam, false);		// TODO: letzter parameter ?!? => speicherleck!
+				}
+
+				if((dispInfo.item.mask & (uint)Win32API.LVIF.INDENT) != 0) {
+					dispInfo.item.iIndent = listViewItem.ItemIndent;
+					Marshal.StructureToPtr(dispInfo, m.LParam, false);		// TODO: letzter parameter ?!? => speicherleck!
 				}
 			}
 
 		}
-
-
-//			LVDISPINFO info = (LVDISPINFO)m.GetLParam(typeof(LVDISPINFO)); 
-//			string lvtext = null;
-//          
-//			if((info.item.mask & (uint)ListViewItemMask.LVIF_TEXT) > 0) {
-//				if (QueryItemText != null) {
-//					QueryItemText(info.item.iItem, info.item.iSubItem, out lvtext);
-//					if (lvtext != null) {
-//						try {
-//							int maxIndex = Math.Min(info.item.cchTextMax-1, lvtext.Length);
-//							char[] data = new char[maxIndex+1];
-//							lvtext.CopyTo(0, data, 0, lvtext.Length);
-//							data[maxIndex] = '\0';
-//							System.Runtime.InteropServices.Marshal.Copy(data, 0, info.item.pszText, data.Length);
-//						}
-//						catch (Exception e) {
-//							Debug.WriteLine("Failed to copy text name from client: " + e.ToString(), "VirtualListView.OnDispInfoNotice");
-//						}
-//					}
-//				}
-//			}
-//
-//			if((info.item.mask & (uint)ListViewItemMask.LVIF_IMAGE) > 0) {
-//				int imageIndex = 0;
-//				if (QueryItemImage != null) {
-//					QueryItemImage(info.item.iItem, info.item.iSubItem, out imageIndex);
-//				}
-//				info.item.iImage = imageIndex;
-//				System.Runtime.InteropServices.Marshal.StructureToPtr(info, m.LParam, false);
-//			}
-//
-//			if ((info.item.mask & (uint)ListViewItemMask.LVIF_INDENT) > 0) {
-//				int itemIndent = 0;
-//				if (QueryItemIndent != null) {
-//					QueryItemIndent(info.item.iItem, out itemIndent);
-//				}
-//				info.item.iIndent = itemIndent;
-//				System.Runtime.InteropServices.Marshal.StructureToPtr(info, m.LParam, false);
-//			}
-//			m.Result = new IntPtr(0);
-//		}
-
 
 	}
 }
