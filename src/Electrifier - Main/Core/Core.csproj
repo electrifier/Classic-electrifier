@@ -134,7 +134,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Controls\ExtMenuBarItem.cs"
+                    RelPath = "Controls\ExtMenuButtonItem.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
@@ -160,6 +160,11 @@
                 />
                 <File
                     RelPath = "Controls\IExtTreeViewNodeCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Forms\BasicGUIAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -16,18 +16,22 @@ namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtMenuBarItem.
 	/// </summary>
-	public class ExtMenuBarItem : MenuBarItem {
+	public class ExtMenuButtonItem : MenuButtonItem {
 		private IGUIAction action = null;
 		public  IGUIAction Action { get { return action; } }
 
-		public ExtMenuBarItem(IGUIAction action) {
-			this.action = action;
-
+		public ExtMenuButtonItem(IGUIAction action) {
+			this.action            = action;
 			action.EnabledChanged += new EnabledChangedEventHandler(action_EnabledChanged);
+			Activate              += new EventHandler(ExtMenuButtonItem_Activate);
 		}
 
 		public void action_EnabledChanged(object sender, EnabledChangedEventArgs e) {
 			Enabled = e.Enabled;
+		}
+
+		private void ExtMenuButtonItem_Activate(object sender, EventArgs e) {
+			action.Execute(sender);
 		}
 	}
 }
