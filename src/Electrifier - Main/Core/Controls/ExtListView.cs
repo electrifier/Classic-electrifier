@@ -75,15 +75,22 @@ namespace Electrifier.Core.Controls {
 		}
 
 		protected override void WndProc(ref Message m) {
-			if(m.Msg == (int)(WinAPI.WM.NOTIFY | WinAPI.WM.REFLECT)) {
-				Win32API.NMHDR nmhdr = (Win32API.NMHDR)m.GetLParam(typeof(Win32API.NMHDR));
+			switch(m.Msg) {
+				case (int)(WinAPI.WM.NOTIFY | WinAPI.WM.REFLECT): {
+					Win32API.NMHDR nmhdr = (Win32API.NMHDR)m.GetLParam(typeof(Win32API.NMHDR));
 
-				switch(nmhdr.code) {
-					case (int)WinAPI.LVN.GETDISPINFOW:
-						GetDisplayInfo(ref m);
-						return;
-				}
-			}
+					switch(nmhdr.code) {
+						case (int)WinAPI.LVN.GETDISPINFOW:
+							GetDisplayInfo(ref m);
+							return;
+					}
+
+					break;
+				} // case (int)(WinAPI.WM.NOTIFY | WinAPI.WM.REFLECT)
+				case (int)(WinAPI.WM.SETFOCUS): {
+					return;
+				} // case (int)(WinAPI.WM.SETFOCUS)
+			} // switch(u.Msg)
 
 			base.WndProc (ref m);
 		}
@@ -111,8 +118,6 @@ namespace Electrifier.Core.Controls {
 					Marshal.StructureToPtr(dispInfo, m.LParam, false);		// TODO: letzter parameter ?!? => speicherleck!
 				}
 			}
-
 		}
-
 	}
 }

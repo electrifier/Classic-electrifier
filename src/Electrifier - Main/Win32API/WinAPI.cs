@@ -190,7 +190,9 @@ namespace Electrifier.Win32API {
 	}
 
 	public class WinAPI {
-		public enum WM : int {							// Windows Messages
+		public enum WM : int {							// General Windows Messages
+			SETFOCUS      = 0x00000007,
+			KILLFOCUS     = 0x00000008,
 			NOTIFY        = 0x0000004E,
 			NCHITTEST     = 0x00000084,
 			NCLBUTTONDOWN = 0x000000A1,
