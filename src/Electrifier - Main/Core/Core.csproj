@@ -164,6 +164,26 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ActionControls\ActionsDropDownMenuItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ActionControls\ActionsMenuBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ActionControls\ActionsMenuBarItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ActionControls\ActionsToolBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ActionControls\BasicAction.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -174,7 +194,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Controls\ActionControls\IActionContainer.cs"
+                    RelPath = "Controls\ActionControls\IActions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

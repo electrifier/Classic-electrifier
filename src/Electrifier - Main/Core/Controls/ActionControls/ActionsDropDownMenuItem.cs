@@ -9,10 +9,10 @@ using System;
 
 namespace Electrifier.Core.Controls.ActionControls {
 	/// <summary>
-	/// Zusammenfassung für IActionContainer.
+	/// Zusammenfassung für ActionContainerDropDownMenuItem.
 	/// </summary>
-	public class IActionContainer {
-		public IActionContainer() {
+	public class ActionsDropDownMenuItem {
+		public ActionsDropDownMenuItem() {
 			//
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
