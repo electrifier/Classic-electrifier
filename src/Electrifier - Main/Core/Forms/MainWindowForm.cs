@@ -92,7 +92,7 @@ namespace Electrifier.Core.Forms {
 			folderBar.LayoutSystem.Collapsed = true;
 		}
 
-		#region IPersistent Member
+		#region IPersistentForm Member
 		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
 			// Create persistence information for main window form
 			XmlNode      mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
@@ -124,11 +124,24 @@ namespace Electrifier.Core.Forms {
 		}
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
-			// TODO:  Implementierung von MainWindowForm.ApplyPersistenceInfo hinzufügen
+			// Apply persistence information to main window form
+			guid   = new  Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
+			Left   = int.Parse(persistenceInfo.Attributes.GetNamedItem("Left").Value);
+			Top    = int.Parse(persistenceInfo.Attributes.GetNamedItem("Top").Value);
+			Width  = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
+			Height = int.Parse(persistenceInfo.Attributes.GetNamedItem("Height").Value);
+
+			// Apply persistance information to SandBar and SandDock components
+			sandBarManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+				"SandBarManager"));
+			sandDockManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+				"SandDockManager"));
+//			documentContainer.Manager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+//				"DocumentContainer"));
+
 		}
 
-		public void RegisterByAppContext() {
-
+		public void RegisterToPersistentFormContainer(IPersistentFormContainer persistentFormContainer) {
 		}
 		#endregion
 
@@ -333,6 +346,7 @@ namespace Electrifier.Core.Forms {
 			this.Controls.Add(this.topSandBarDock);
 			this.Controls.Add(this.statusBar);
 			this.Name = "MainWindowForm";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "MainWindowForm";
 			this.topSandBarDock.ResumeLayout(false);
 			this.ResumeLayout(false);

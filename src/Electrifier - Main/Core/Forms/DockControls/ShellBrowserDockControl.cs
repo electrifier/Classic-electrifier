@@ -22,9 +22,11 @@ namespace Electrifier.Core.Forms.DockControls {
 		protected ShellListView shellListView = null;
 		protected Splitter      splitter      = null;
 
-		public ShellBrowserDockControl() : base() {
+		public ShellBrowserDockControl() : this(Guid.NewGuid()) { }
+
+		public ShellBrowserDockControl(Guid guid) : base() {
 			// Initialize the underlying DockControl
-			Guid = System.Guid.NewGuid();
+			Guid = guid;
 			Name = "ShellBrowserDockControl." + Guid.ToString();
 			Text = Name;
 

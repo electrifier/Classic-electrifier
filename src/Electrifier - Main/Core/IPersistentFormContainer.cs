@@ -7,14 +7,12 @@
 
 using System;
 
-namespace Electrifier.Core
-{
+namespace Electrifier.Core {
 	/// <summary>
-	/// Zusammenfassung für IPersistentForm.
+	/// Zusammenfassung für IPersistentFormContainer.
 	/// </summary>
-	public interface IPersistentForm : IPersistent
-	{
-		void Show();
-		void RegisterToPersistentFormContainer(IPersistentFormContainer persistentFormContainer);
+	public interface IPersistentFormContainer : IPersistent {
+		void RegisterPersistentForm(IPersistentForm persistentForm);
+		void ReleasePersistentForm(IPersistentForm persistentForm);
 	}
 }

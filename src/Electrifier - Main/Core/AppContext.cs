@@ -21,7 +21,7 @@ namespace Electrifier.Core {
 	/// <summary>
 	/// Zusammenfassung für AppContext.
 	/// </summary>
-	public sealed class AppContext : ApplicationContext, IPersistent {
+	public sealed class AppContext : ApplicationContext, IPersistentFormContainer {
 		// Static member variables and properties
 		private static AppContext instance    = null;
 		public  static AppContext Instance    { get { return instance; } }
@@ -174,7 +174,31 @@ namespace Electrifier.Core {
 			return xmlNode;
 		}
 
-		#region IPersistent Member
+		/// <summary>
+		/// Creates an new string, containing the complete given node childs as XmlDocument-string
+		/// </summary>
+		/// <param name="sourceXmlDocument"></param>
+		/// <param name="parentNode"></param>
+		/// <param name="localName">May be null</param>
+		/// <returns></returns>
+		public static string CreateXmlDocumentFromForeignXmlNode(XmlNode parentNode) {
+			return CreateXmlDocumentFromForeignXmlNode(parentNode, null);
+		}
+
+		public static string CreateXmlDocumentFromForeignXmlNode(XmlNode parentNode,
+			string optionalLocalNameChildNode) {
+			StringWriter  stringWriter = new StringWriter();
+			XmlTextWriter xmlWriter    = new XmlTextWriter(stringWriter);
+
+			if(optionalLocalNameChildNode != null) {
+				parentNode = parentNode.SelectSingleNode(optionalLocalNameChildNode);
+			}
+			parentNode.WriteContentTo(xmlWriter);
+
+			return stringWriter.ToString();
+		}
+
+		#region IPersistentFormContainer Member
 		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
 			// Create persistence information for the application context
 			XmlNode appContextNode  = targetXmlDocument.CreateElement("AppContext");
@@ -202,8 +226,8 @@ namespace Electrifier.Core {
 				if((windowFormType != null ) && (windowFormType.GetInterface("IPersistentForm") != null)) {
 					IPersistentForm windowForm = Activator.CreateInstance(windowFormType) as IPersistentForm;
 
-					windowForm.ApplyPersistenceInfo(windowNode.FirstChild);
-					windowForm.RegisterByAppContext();
+					windowForm.ApplyPersistenceInfo(windowNode);
+					windowForm.RegisterToPersistentFormContainer(this);
 					if(true == true) {	// TODO: Test-code
 						windowForm.Show();
 						openWindows.Add(windowForm as Form);
@@ -213,6 +237,12 @@ namespace Electrifier.Core {
 					MessageBox.Show("Unknown window type specified in configuration file");
 				}
 			}			
+		}
+
+		public void RegisterPersistentForm(IPersistentForm persistentForm) {
+		}
+
+		public void ReleasePersistentForm(IPersistentForm persistentForm) {
 		}
 		#endregion
 

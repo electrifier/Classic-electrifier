@@ -139,6 +139,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "IPersistentFormContainer.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ExtListView.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -231,6 +236,16 @@
                 <File
                     RelPath = "Forms\DockControls\FolderBarDockControl.cs"
                     SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Forms\DockControls\IDockControl.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Forms\DockControls\IDockControlContainer.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
