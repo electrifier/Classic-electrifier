@@ -1,3 +1,10 @@
+//	<file>
+//		<copyright see="www.electrifier.org"/>
+//		<license   see="www.electrifier.org"/>
+//		<owner     name="Thorsten Jung" email="taj@electrifier.org"/>
+//		<version   value="$Id: BasicShellObject.cs,v 1.13 2004/09/10 20:30:33 taj bender Exp $"/>
+//	</file>
+
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -6,14 +13,14 @@ using System.Runtime.CompilerServices;
 // gesteuert. Ändern Sie diese Attributswerte, um die Informationen zu modifizieren,
 // die mit einer Assembly verknüpft sind.
 //
-[assembly: AssemblyTitle("")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Electrifier Desktop Enhancement Suite")]		// Eigenschaften/Version/Beschreibung
+[assembly: AssemblyDescription("Electrifier Windows API Access Layer")]	// Eigenschaften/Version/Kommentare
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]		
+[assembly: AssemblyCompany("Electrifier.org")]									// Eigenschaften/Version/Firma
+[assembly: AssemblyProduct("Electrifier")]										// Eigenschaften/Version/Produktname
+[assembly: AssemblyCopyright("(c) 2004 Thorsten Jung")]						// Eigenschaften/Version/Copyright
+[assembly: AssemblyTrademark("")]													// Eigenschaften/Version/Marken
+[assembly: AssemblyCulture("")]
 
 //
 // Versionsinformationen für eine Assembly bestehen aus folgenden vier Werten:
@@ -26,7 +33,7 @@ using System.Runtime.CompilerServices;
 // Sie können alle Werte oder die standardmäßige Revision und Buildnummer 
 // mit '*' angeben:
 
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("0.0.1")]
 
 //
 // Um die Assembly zu signieren, müssen Sie einen Schlüssel angeben. Weitere Informationen 

@@ -1,3 +1,10 @@
+//	<file>
+//		<copyright see="www.electrifier.org"/>
+//		<license   see="www.electrifier.org"/>
+//		<owner     name="Thorsten Jung" email="taj@electrifier.org"/>
+//		<version   value="$Id: BasicShellObject.cs,v 1.13 2004/09/10 20:30:33 taj bender Exp $"/>
+//	</file>
+
 using System;
 using System.Drawing;
 using System.Reflection;
@@ -42,18 +49,13 @@ namespace Electrifier {
 
 			// Create an electrifier application context form and run as application
 			// TODO: Do dynamic binding...
-			try {
-				Application.Run(new ElectrifierAppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen));
-			} catch(System.Runtime.InteropServices.SEHException e) {
-				int errorCode = e.ErrorCode;
-			}
+			Application.Run(new ElectrifierAppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen));
 
 			// Free used resources
 			applicationIcon.Dispose();
 			splashScreen.Dispose();
 
-			// Quit application finally
-			return 0;		// TODO: Set return code
+			return 0;		// TODO: Return returncode
 		}
 	}
 }
