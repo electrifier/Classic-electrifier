@@ -45,15 +45,12 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellListView.Columns.Add("Name", 256, HorizontalAlignment.Left);
 			shellListView.Columns.Add("Size",  80, HorizontalAlignment.Right);
 
-			// TODO: Test-Code
-			shellListView.SetBrowsingFolder(this, ShellAPI.CSIDL.DESKTOP);
-
 			// Initialize Splitter
 			splitter      = new Splitter();
 			splitter.Dock = DockStyle.Left;
 			splitter.Size = new Size(4, Height);
 
-			// Add the controls
+			// Add the controls from right to left
 			Controls.AddRange(new Control[] { shellListView, splitter, shellTreeView });
 		}
 
