@@ -169,6 +169,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Forms\ElectrifierBrowserForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Forms\ElectrifierBrowserForm.resx"
+                    DependentUpon = "ElectrifierBrowserForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Forms\FolderBarDockControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"

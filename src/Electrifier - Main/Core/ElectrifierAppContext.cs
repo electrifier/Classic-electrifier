@@ -18,10 +18,15 @@ namespace Electrifier.Core {
 	/// <summary>
 	/// Zusammenfassung für ElectrifierAppContext.
 	/// </summary>
-	public class ElectrifierAppContext : System.Windows.Forms.Form {
-		protected static ElectrifierAppContext appContext = null;
-		public    static ElectrifierAppContext AppContext { get { return appContext; } }
+	public sealed class ElectrifierAppContext : System.Windows.Forms.Form {
+		private static ElectrifierAppContext appContext = null;
+		public  static ElectrifierAppContext AppContext { get { return appContext; } }
+		private static Icon                  appIcon    = null;
+		public  static Icon                  AppIcon    { get { return appIcon; } }
+		private static Bitmap                appLogo    = null;
+		public  static Bitmap                AppLogo    { get { return appLogo; } }
 
+		#region Erforderliche Designervariablen.
 		private TD.SandBar.ToolBarContainer leftSandBarDock;
 		private TD.SandBar.ToolBarContainer rightSandBarDock;
 		private TD.SandBar.ToolBarContainer bottomSandBarDock;
@@ -37,31 +42,42 @@ namespace Electrifier.Core {
 		private System.Windows.Forms.Panel pnlClientArea;
 		private System.Windows.Forms.NotifyIcon notifyIcon;
 		private System.ComponentModel.IContainer components;
+		#endregion
 
-
-
-		public ElectrifierAppContext(string[] args, Icon applicationIcon, Bitmap applicationLogo, Form splashScreenForm) {
+		public ElectrifierAppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) {
 			//
 			// Erforderlich für die Windows Form-Designerunterstützung
 			//
 			InitializeComponent();
 
+			//
+			// TODO: Fügen Sie den Konstruktorcode nach dem Aufruf von InitializeComponent hinzu
+			//
+			if(appContext == null) {
+				ElectrifierAppContext.appContext = this;
+				ElectrifierAppContext.appIcon    = appIcon;
+				ElectrifierAppContext.appLogo    = appLogo;
+			} else {
+				throw new InvalidOperationException("Electrifier.Core.ElectrifierAppContext: " +
+					"Instantion made although already instantiated");
+			}
+
+			Icon            = appIcon;
+			notifyIcon.Icon = appIcon;
+
 			// Initialize actions implemented by ElectrifierAppContext
 			string acNameSpace = "Electrifier.Core.Actions.";
 			BasicGUIAction bacNewBrowserForm = new BasicGUIAction(acNameSpace + "NewBrowserForm",
-				true, 0, new ExecutionEventHandler(acNewBrowserForm));
+				true, 0, new ExecutionEventHandler(action_NewElectrifierBrowserForm));
+			BasicGUIAction bacCloseAllForms = new BasicGUIAction(acNameSpace + "CloseAllForms",
+				true, 0, new ExecutionEventHandler(action_CloseAllForms));
 
 			// Initialize menu bar
-			ExtMenuButtonItem mnuBtnItemNewShellBrowser = new ExtMenuButtonItem(bacNewBrowserForm);
-			mnuBarItmFile.MenuItems.Add(mnuBtnItemNewShellBrowser);
+			mnuBarItmFile.MenuItems.Add(new ExtMenuButtonItem(bacNewBrowserForm));
+			mnuBarItmFile.MenuItems.Add(new ExtMenuButtonItem(bacCloseAllForms));
 
-
-			Icon = applicationIcon;
-			notifyIcon.Icon = applicationIcon;
+			// Close splash screen form
 			splashScreenForm.Close();
-
-			// TODO: Test if already instantiated, if so => exception!
-			appContext = this;
 		}
 
 		/// <summary>
@@ -76,8 +92,12 @@ namespace Electrifier.Core {
 			base.Dispose( disposing );
 		}
 
-		void acNewBrowserForm(object source, ExecutionEventArgs e) {
-			MessageBox.Show("Hallo!");
+		private void action_NewElectrifierBrowserForm(object sender, ExecutionEventArgs e) {
+			new ElectrifierBrowserForm().Show();
+		}
+
+		private void action_CloseAllForms(object sender, ExecutionEventArgs e) {
+			Close();
 		}
 
 		#region Vom Windows Form-Designer generierter Code
@@ -125,7 +145,7 @@ namespace Electrifier.Core {
 			// bottomSandBarDock
 			// 
 			this.bottomSandBarDock.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.bottomSandBarDock.Location = new System.Drawing.Point(0, 262);
+			this.bottomSandBarDock.Location = new System.Drawing.Point(0, 240);
 			this.bottomSandBarDock.Manager = this.sandBarManager;
 			this.bottomSandBarDock.Name = "bottomSandBarDock";
 			this.bottomSandBarDock.Size = new System.Drawing.Size(288, 0);
@@ -137,7 +157,7 @@ namespace Electrifier.Core {
 			this.leftSandBarDock.Location = new System.Drawing.Point(0, 48);
 			this.leftSandBarDock.Manager = this.sandBarManager;
 			this.leftSandBarDock.Name = "leftSandBarDock";
-			this.leftSandBarDock.Size = new System.Drawing.Size(0, 214);
+			this.leftSandBarDock.Size = new System.Drawing.Size(0, 192);
 			this.leftSandBarDock.TabIndex = 1;
 			// 
 			// rightSandBarDock
@@ -146,7 +166,7 @@ namespace Electrifier.Core {
 			this.rightSandBarDock.Location = new System.Drawing.Point(288, 48);
 			this.rightSandBarDock.Manager = this.sandBarManager;
 			this.rightSandBarDock.Name = "rightSandBarDock";
-			this.rightSandBarDock.Size = new System.Drawing.Size(0, 214);
+			this.rightSandBarDock.Size = new System.Drawing.Size(0, 192);
 			this.rightSandBarDock.TabIndex = 2;
 			// 
 			// topSandBarDock
@@ -235,11 +255,11 @@ namespace Electrifier.Core {
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(288, 262);
 			this.Controls.Add(this.pnlClientArea);
-			this.Controls.Add(this.statusBar);
 			this.Controls.Add(this.leftSandBarDock);
 			this.Controls.Add(this.rightSandBarDock);
 			this.Controls.Add(this.bottomSandBarDock);
 			this.Controls.Add(this.topSandBarDock);
+			this.Controls.Add(this.statusBar);
 			this.Name = "ElectrifierAppContext";
 			this.Text = "Electrifier";
 			this.topSandBarDock.ResumeLayout(false);
