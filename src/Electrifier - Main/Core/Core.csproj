@@ -119,16 +119,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ElectrifierAppContext.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ElectrifierAppContext.resx"
-                    DependentUpon = "ElectrifierAppContext.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "IPersistent.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -23,14 +23,14 @@ namespace Electrifier.Core {
 	/// </summary>
 	public sealed class AppContext : ApplicationContext, IPersistentFormContainer {
 		// Static member variables and properties
-		private static AppContext instance    = null;
-		public  static AppContext Instance    { get { return instance; } }
-		private static Icon       icon        = null;
-		public  static Icon       Icon        { get { return icon; } }
-		private static Bitmap     logo        = null;
-		public  static Bitmap     Logo        { get { return logo; } }
-		private static ArrayList  openWindows = new ArrayList();
-		public  static ArrayList  OpenWindows { get { return openWindows; } }
+		private static AppContext instance       = null;
+		public  static AppContext Instance       { get { return instance; } }
+		private static Icon       icon           = null;
+		public  static Icon       Icon           { get { return icon; } }
+		private static Bitmap     logo           = null;
+		public  static Bitmap     Logo           { get { return logo; } }
+		private static ArrayList  openWindowList = new ArrayList();
+		public  static ArrayList  OpenWindowList { get { return openWindowList; } }
 
 		/// <summary>
 		/// The default constructor of the AppContext.
@@ -69,7 +69,7 @@ namespace Electrifier.Core {
 
 			if(showMainWindow) {
 				// TODO: Wenn alle minimiert waren werden sie es auch diesmal sein!
-				Form form = openWindows[0] as Form;
+				Form form = openWindowList[0] as Form;
 
 				// TODO: Das aktive dokument wird das mainform...
 				form.Show();
@@ -217,7 +217,7 @@ namespace Electrifier.Core {
 			// TODO: add global settings to appcontextnode
 
 			// Append persistence informtion for every open window
-			foreach(IPersistentForm window in openWindows) {
+			foreach(IPersistentForm window in openWindowList) {
 				openWindowsNode.AppendChild(window.CreatePersistenceInfo(targetXmlDocument));
 			}
 
@@ -247,16 +247,16 @@ namespace Electrifier.Core {
 		}
 
 		public void AttachPersistentForm(IPersistentForm persistentForm) {
-			if(!openWindows.Contains(persistentForm)) {
-				openWindows.Add(persistentForm);
+			if(!openWindowList.Contains(persistentForm)) {
+				openWindowList.Add(persistentForm);
 			} else {
 				throw new ArgumentException("Given Form instance already in list of hosted Forms", "persistentForm");
 			}
 		}
 
 		public void DetachPersistentForm(IPersistentForm persistentForm) {
-			if(openWindows.Contains(persistentForm)) {
-				openWindows.Remove(persistentForm);
+			if(openWindowList.Contains(persistentForm)) {
+				openWindowList.Remove(persistentForm);
 			} else {
 				throw new ArgumentException("Given Form instance not in list of hosted Forms", "persistentForm");
 			}
