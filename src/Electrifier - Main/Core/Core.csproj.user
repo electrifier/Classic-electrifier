@@ -1,7 +1,7 @@
 <VisualStudioProject>
     <CSHARP LastOpenVersion = "7.10.3077" >
         <Build>
-            <Settings ReferencePath = "D:\Eigene Sourcen\electrifier\Workspace\#electrifier\src\Third Party Components\" >
+            <Settings ReferencePath = "D:\Eigene Sourcen\electrifier\Workspace\#electrifier\src\Third Party Components\;D:\Eigene Sourcen\electrifier\Workspace\trunk\electrifier\src\Third Party Components\" >
                 <Config
                     Name = "Debug"
                     EnableASPDebugging = "false"

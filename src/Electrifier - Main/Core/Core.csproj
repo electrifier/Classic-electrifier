@@ -124,11 +124,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Controls\ExtTreeView.resx"
-                    DependentUpon = "ExtTreeView.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "Controls\ExtTreeViewNode.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -212,11 +207,6 @@
                     RelPath = "Shell32\Controls\ShellListView.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellListView.resx"
-                    DependentUpon = "ShellListView.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Shell32\Controls\ShellListViewItem.cs"
