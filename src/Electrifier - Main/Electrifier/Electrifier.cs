@@ -57,6 +57,11 @@ namespace Electrifier {
 			AppContext appContext = new AppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen);
 			Application.Run(appContext);
 
+			// Save configuration file
+			if(true == true) {	// TODO: uebergabeparameter zum ausschalten & exceptions checken
+				appContext.SaveConfiguration();
+			}
+
 			// Free used resources
 			applicationIcon.Dispose();
 			splashScreen.Dispose();
