@@ -12,16 +12,16 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtListViewItem.
 	/// </summary>
 	public class ExtListViewItem : IExtListViewItem {
-		private char[]      text       = null;
-		public  char[]      Text       { get { return text; } }
-		private int         imageIndex = -1;
-		public  int         ImageIndex { get { return imageIndex; } set { SetImageIndex(value); } }
-		private int         itemIndent = 0;
-		public  int         ItemIndent { get { return itemIndent; } }
+		private char[]       text       = null;
+		public  char[]       Text       { get { return text; } }
+		private int          imageIndex = -1;
+		public  int          ImageIndex { get { return imageIndex; } set { SetImageIndex(value); } }
+		private int          itemIndent = 0;
+		public  int          ItemIndent { get { return itemIndent; } }
 		private IExtListView listView   = null;
 		public  IExtListView ListView   { get { return listView; } }
-		private int         index      = -1;
-		public  int         Index      { get { return index; } }
+		private int          index      = -1;
+		public  int          Index      { get { return index; } }
 
 		public ExtListViewItem() {
 			//

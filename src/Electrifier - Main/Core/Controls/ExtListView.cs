@@ -51,7 +51,7 @@ namespace Electrifier.Core.Controls {
 			lvItem.stateMask = WinAPI.LVIS.SELECTED;
 
 			// Send SetItemState-Message to ListView
-			SetItemState(lvItem);
+			SetItemState(ref lvItem);
 		}
 
 		public void SetItemFocusedState(int itemIndex, bool isFocused) {
@@ -64,10 +64,10 @@ namespace Electrifier.Core.Controls {
 			lvItem.stateMask = WinAPI.LVIS.FOCUSED;
 
 			// Send SetItemState-Message to ListView
-			SetItemState(lvItem);
+			SetItemState(ref lvItem);
 		}
 
-		protected int SetItemState(LVITEM lvItem) {
+		protected int SetItemState(ref LVITEM lvItem) {
 			IntPtr pItem      = IntPtr.Zero;
 			int    returnCode;
 
@@ -115,14 +115,23 @@ namespace Electrifier.Core.Controls {
 						case (int)WinAPI.LVN.GETDISPINFOW:
 							GetDisplayInfo(ref m);
 							return;
+						case (int)WinAPI.LVN.BEGINDRAG:
+							OnBeginDragMessage(MouseButtons.Left, ref m);
+							return;
+						case (int)WinAPI.LVN.BEGINRDRAG:
+							OnBeginDragMessage(MouseButtons.Right, ref m);
+							return;
 					}
 
 					break;
 				} // case (int)(WinAPI.WM.NOTIFY | WinAPI.WM.REFLECT)
+
 				case (int)(WinAPI.WM.SETFOCUS): {
 					SetItemFocusedState(0, true);
-					SetItemSelectedState(0, true);
-					Invalidate();
+					// TODO: Only test-code!
+					try {
+						base.WndProc (ref m);
+					} catch(System.ArgumentOutOfRangeException) { }
 					return;
 				} // case (int)(WinAPI.WM.SETFOCUS)
 			} // switch(u.Msg)
@@ -139,7 +148,7 @@ namespace Electrifier.Core.Controls {
 
 				if((dispInfo.item.mask & Win32API.LVIF.TEXT) != 0) {
 					// TODO: stringlength eceeds dispinfo.item.cchTextMax?
-               Marshal.Copy(listViewItem.Text, 0, dispInfo.item.pszText, listViewItem.Text.Length);
+					Marshal.Copy(listViewItem.Text, 0, dispInfo.item.pszText, listViewItem.Text.Length);
 					// TODO: SubItems: info.item.iSubItem ist der index drauf!
 				}
 
@@ -153,6 +162,12 @@ namespace Electrifier.Core.Controls {
 					Marshal.StructureToPtr(dispInfo, m.LParam, false);		// TODO: letzter parameter ?!? => speicherleck!
 				}
 			}
+		}
+
+		protected void OnBeginDragMessage(MouseButtons mouseButton, ref Message m) {
+			Win32API.NMLISTVIEW nmListView = (Win32API.NMLISTVIEW)m.GetLParam(typeof(Win32API.NMLISTVIEW));
+
+			base.OnItemDrag(new ItemDragEventArgs(mouseButton, nmListView.iItem));
 		}
 
 		#region IExtListView Member

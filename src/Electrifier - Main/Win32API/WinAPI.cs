@@ -176,6 +176,18 @@ namespace Electrifier.Win32API {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	public struct NMLISTVIEW {				// ListView Notify-Message
+		public NMHDR        hdr;
+		public int          iItem;
+		public int          iSubItem;
+		public uint         uNewState;
+		public uint         uOldState;
+		public uint         uChanged;
+		public WinAPI.Point ptAction;
+		public IntPtr       lParam;
+	}
+
+	[StructLayout(LayoutKind.Sequential)]
 	public struct TVItemEx {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
 		public IntPtr hItem;									//    HTREEITEM hItem;
@@ -410,7 +422,7 @@ namespace Electrifier.Win32API {
 		[DllImport("user32.dll")]
 		public static extern bool   UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pprSrc, Int32 crKey, ref BLENDFUNCTION pBlend, ULW dwFlags);
 
-		protected WinAPI() {
+		private WinAPI() {
 			// This class can't be instantiated directly
 		}
 	}
