@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
+using TD.SandDock;
 
 using Electrifier.Core;
 using Electrifier.Core.Forms.DockControls;
@@ -76,11 +77,12 @@ namespace Electrifier.Core.Forms {
 
 		protected void ApplyFormConfiguration(string configuration) {
 			// TODO: This is test code only; the default configuration will also be read out from XML
-			DockControlShellBrowser shellBrowser = new DockControlShellBrowser();
+			ShellBrowserDockControl shellBrowser = new ShellBrowserDockControl();
 			this.documentContainer.AddDocument(shellBrowser);
 
-			DockControlFolderBar folderBar = new DockControlFolderBar();
-
+			FolderBarDockControl folderBar = new FolderBarDockControl();
+			folderBar.Manager = sandDockManager;
+			folderBar.Open(DockLocation.Left);
 		}
 
 		#region Vom Windows Form-Designer generierter Code

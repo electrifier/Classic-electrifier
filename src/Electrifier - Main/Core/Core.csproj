@@ -219,12 +219,12 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Forms\DockControls\DockControlFolderBar.cs"
+                    RelPath = "Forms\DockControls\FolderBarDockControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Forms\DockControls\DockControlShellBrowser.cs"
+                    RelPath = "Forms\DockControls\ShellBrowserDockControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
