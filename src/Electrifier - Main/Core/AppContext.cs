@@ -9,6 +9,10 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
+using Electrifier.Core.Forms;
+using Electrifier.Core.Services;
+using Electrifier.Core.Shell32.Services;
+
 namespace Electrifier.Core {
 	/// <summary>
 	/// Zusammenfassung für AppContext.
@@ -33,10 +37,38 @@ namespace Electrifier.Core {
 		/// <param name="appLogo">The logo resource used by this application</param>
 		/// <param name="splashScreenForm">The form representing the logo as splash screen</param>
 		public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) {
-			// Initialize the Application Context Instance
+			bool showMainWindow = true;
+
+			// Initialize application context
 			instance = RegisterAppContextInstance(this);
 			icon     = appIcon;
 			logo     = appLogo;
+
+			// Initialize basic services
+			ServiceManager.Services.AddService(new DesktopFolderInstance());
+			ServiceManager.Services.AddService(new IconManager());
+			ServiceManager.Services.AddService(new PIDLManager());
+
+			// Search argument list for MainWindow-related arguments
+			foreach(string arg in args) {
+				if(arg.ToLower().Equals("/nomainwindow")) {
+					showMainWindow = false;
+				}
+			}
+
+			// TODO: Create tray notifyicon
+
+			// Open new MainWindow, if not diabled
+			if(showMainWindow) {
+				MainWindowForm mainWindowForm = new MainWindowForm();
+				mainWindowForm.Show();
+
+				// TODO: Action definieren, die neuen Electrifier aufmacht...
+				// TODO: Config auslesen, wenn gewuenscht this.OnMainFormClosed checken und
+				//       application am leben erhalten (Dialog "You closed all electrifier windows.
+				//       do you want to stay electrifier active in tray" blablablubb)
+				this.MainForm = mainWindowForm;
+			}
 
 			// Finally close splash screen
 			splashScreenForm.Close();

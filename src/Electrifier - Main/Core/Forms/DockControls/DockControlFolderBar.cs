@@ -14,7 +14,7 @@ using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
 
 
-namespace Electrifier.Core.Forms {
+namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellTreeViewDockControl.
 	/// </summary>

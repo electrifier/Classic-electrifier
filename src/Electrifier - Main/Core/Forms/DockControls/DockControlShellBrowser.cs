@@ -13,7 +13,7 @@ using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
 using TD.SandDock;
 
-namespace Electrifier.Core.Forms {
+namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>

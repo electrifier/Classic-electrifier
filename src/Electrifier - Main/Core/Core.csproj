@@ -209,12 +209,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Forms\DockControlFolderBar.cs"
+                    RelPath = "Forms\MainWindowForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Forms\MainWindowForm.resx"
+                    DependentUpon = "MainWindowForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "Forms\DockControls\DockControlFolderBar.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Forms\DockControlShellBrowser.cs"
+                    RelPath = "Forms\DockControls\DockControlShellBrowser.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
