@@ -91,12 +91,24 @@ namespace Electrifier.Core.Forms {
 		}
 
 		#region IPersistent Member
-		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument xmlDocument, string prefix, string nmspURI) {
-			// Create persistence information for the application context
-			XmlNode      xmlNode  = xmlDocument.CreateElement(prefix, "Core.Forms.MainWindowForm", nmspURI);
-			XmlAttribute guidAttr = xmlDocument.CreateAttribute(prefix, "Guid", nmspURI);
-			guidAttr.Value        = guid.ToString();
-			xmlNode.Attributes.Append(guidAttr);
+		public XmlNode CreatePersistenceInfo(System.Xml.XmlDocument xmlDocument, string prefix, string nmspURI) {
+			// Create persistence information for main window form
+			XmlNode      mainWindowNode = xmlDocument.CreateElement(prefix, "Core.Forms.MainWindowForm", nmspURI);
+			XmlAttribute guidAttr       = xmlDocument.CreateAttribute(prefix, "Guid", nmspURI);
+			guidAttr.Value              = guid.ToString();
+			XmlAttribute leftAttr       = xmlDocument.CreateAttribute(prefix, "Left", nmspURI);
+			leftAttr.Value              = Left.ToString();
+			XmlAttribute topAttr        = xmlDocument.CreateAttribute(prefix, "Top", nmspURI);
+			topAttr.Value               = Top.ToString();
+			XmlAttribute widthAttr      = xmlDocument.CreateAttribute(prefix, "Width", nmspURI);
+			widthAttr.Value             = Width.ToString();
+			XmlAttribute heightAttr     = xmlDocument.CreateAttribute(prefix, "Height", nmspURI);
+			heightAttr.Value            = Height.ToString();
+			mainWindowNode.Attributes.Append(guidAttr);
+			mainWindowNode.Attributes.Append(leftAttr);
+			mainWindowNode.Attributes.Append(topAttr);
+			mainWindowNode.Attributes.Append(widthAttr);
+			mainWindowNode.Attributes.Append(heightAttr);
 
 			// Append persistance information for SandBarManager's layout
 			XmlNode     sandBarMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandBarManager", nmspURI);
@@ -104,7 +116,7 @@ namespace Electrifier.Core.Forms {
 
 			sandBarMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandBarManager.GetLayout())));
 			sandBarMgrLayoutNode.AppendChild(xmlDocument.ImportNode(sandBarMgrLayoutDoc.DocumentElement, true));
-			xmlNode.AppendChild(sandBarMgrLayoutNode);
+			mainWindowNode.AppendChild(sandBarMgrLayoutNode);
 
 			// Append persistance information for SandDockManager's layout
 			XmlNode     sandDockMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandDockManager", nmspURI);
@@ -112,9 +124,9 @@ namespace Electrifier.Core.Forms {
 
 			sandDockMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandDockManager.GetLayout())));
 			sandDockMgrLayoutNode.AppendChild(xmlDocument.ImportNode(sandDockMgrLayoutDoc.DocumentElement, true));
-			xmlNode.AppendChild(sandDockMgrLayoutNode);
+			mainWindowNode.AppendChild(sandDockMgrLayoutNode);
 
-			return xmlNode;
+			return mainWindowNode;
 		}
 
 		public void ApplyPersistenceInfo(System.Xml.XmlNode persistenceInfo) {
