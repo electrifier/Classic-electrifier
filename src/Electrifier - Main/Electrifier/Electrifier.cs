@@ -29,6 +29,11 @@ namespace Electrifier {
 			bool             splashIsFadedOut = true;
 			Icon             applicationIcon  = null;
 
+			// TODO: Check if first instance
+			// Enable application to use Windows XP Visual Styles
+			Application.EnableVisualStyles();
+			Application.DoEvents();
+
 			// Search argument list for splasscreen-related arguments
 			foreach(string arg in args) {
 				if(arg.ToLower().Equals("/nosplash")) {

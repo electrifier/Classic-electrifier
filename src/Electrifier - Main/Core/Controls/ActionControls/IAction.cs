@@ -7,7 +7,6 @@
 
 using System;
 using System.Windows.Forms;
-using TD.SandBar;
 
 namespace Electrifier.Core.Controls {
 	/// <summary>
@@ -41,14 +40,10 @@ namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für IGUIAction.
 	/// </summary>
-	public interface IGUIAction {
+	public interface IAction {
 		// Properties
 		string   Id          { get; }
 		bool     Enabled     { get; }
-		int      ImageIndex  { get; }
-		string   Text        { get; }
-		string   ToolTipText { get; }
-		bool     BeginGroup  { get; }
 		Shortcut Shortcut    { get; }
 		// TODO: ButtonItem.importance property!
 

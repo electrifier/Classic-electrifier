@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 using Electrifier.Core.Forms;
 using Electrifier.Core.Controls;
+using Electrifier.Core.Controls.ActionControls;
 
 namespace Electrifier.Core {
 	/// <summary>
@@ -66,15 +67,15 @@ namespace Electrifier.Core {
 			notifyIcon.Icon = appIcon;
 
 			// Initialize actions implemented by ElectrifierAppContext
-//			string acNameSpace = "Electrifier.Core.Actions.";
-//			BasicGUIAction bacNewBrowserForm = new BasicGUIAction(acNameSpace + "NewBrowserForm",
-//				true, 0, new ExecutionEventHandler(action_NewElectrifierBrowserForm));
-//			BasicGUIAction bacCloseAllForms = new BasicGUIAction(acNameSpace + "CloseAllForms",
-//				true, 0, new ExecutionEventHandler(action_CloseAllForms));
-//
-//			// Initialize menu bar
-//			mnuBarItmFile.MenuItems.Add(new ExtMenuButtonItem(bacNewBrowserForm));
-//			mnuBarItmFile.MenuItems.Add(new ExtMenuButtonItem(bacCloseAllForms));
+			string acNameSpace = "Electrifier.Core.Actions.";
+			BasicAction bacNewBrowserForm = new BasicAction(acNameSpace + "NewBrowserForm",
+				true, 0, new ExecutionEventHandler(action_NewElectrifierBrowserForm));
+			BasicAction bacCloseAllForms = new BasicAction(acNameSpace + "CloseAllForms",
+				true, 0, new ExecutionEventHandler(action_CloseAllForms));
+
+			// Initialize menu bar
+			mnuBarItmFile.MenuItems.Add(new ActionMenuButtonItem(bacNewBrowserForm));
+			mnuBarItmFile.MenuItems.Add(new ActionMenuButtonItem(bacCloseAllForms));
 
 			// Close splash screen form
 			splashScreenForm.Close();

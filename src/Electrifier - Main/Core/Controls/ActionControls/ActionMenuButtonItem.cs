@@ -11,15 +11,15 @@ using TD.SandBar;
 
 // Electrifier uses
 
-namespace Electrifier.Core.Controls {
+namespace Electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für ExtMenuBarItem.
 	/// </summary>
-	public class ExtMenuButtonItem : MenuButtonItem {
-		private IGUIAction action = null;
-		public  IGUIAction Action { get { return action; } }
+	public class ActionMenuButtonItem : MenuButtonItem {
+		private IAction action = null;
+		public  IAction Action { get { return action; } }
 
-		public ExtMenuButtonItem(IGUIAction action) {
+		public ActionMenuButtonItem(IAction action) {
 			this.action            = action;
 			action.EnabledChanged += new EnabledChangedEventHandler(action_EnabledChanged);
 			Activate              += new EventHandler(ExtMenuButtonItem_Activate);

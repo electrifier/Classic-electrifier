@@ -8,11 +8,11 @@
 using System;
 using System.Windows.Forms;
 
-namespace Electrifier.Core.Controls {
+namespace Electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für BasicGUIAction.
 	/// </summary>
-	public class BasicGUIAction : IGUIAction {
+	public class BasicAction : IAction {
 		protected string   id;
 		public    string   Id          { get { return id; } }
 		protected bool     enabled     = false;
@@ -28,7 +28,7 @@ namespace Electrifier.Core.Controls {
 		protected Shortcut shortcut    = Shortcut.None;
 		public    Shortcut Shortcut    { get { return shortcut; } }
 
-		public BasicGUIAction(string id, bool enabled, int imageIndex, ExecutionEventHandler executionEventHandler) {
+		public BasicAction(string id, bool enabled, int imageIndex, ExecutionEventHandler executionEventHandler) {
 			this.id         = id;
 			this.enabled    = enabled;
 			this.imageIndex = imageIndex;
