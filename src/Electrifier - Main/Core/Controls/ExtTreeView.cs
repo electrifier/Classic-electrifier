@@ -15,18 +15,13 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtTreeView.
 	/// </summary>
 	public class ExtTreeView : TreeView {
-		protected ExtTreeViewNodeCollection nodes = null;
+		protected  ExtTreeViewNodeCollection nodes = null;
+		public new ExtTreeViewNodeCollection Nodes { get { return nodes; } }
 
 		public ExtTreeView() : base() {
 			nodes = new ExtTreeViewNodeCollection(base.Nodes);
 
 			BeforeExpand += new TreeViewCancelEventHandler(ExtTreeView_BeforeExpand);
-		}
-
-		public new ExtTreeViewNodeCollection Nodes {
-			get {
-				return nodes;
-			}
 		}
 
 		public IntPtr SystemImageList {
@@ -39,6 +34,7 @@ namespace Electrifier.Core.Controls {
 		}
 
 		protected void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
+			// TODO: Event ueberschreiben und casting vermeiden!
 			ExtTreeViewNode node = e.Node as ExtTreeViewNode;
 
 			if(node != null)

@@ -15,15 +15,31 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtTreeViewNode.
 	/// </summary>
 	public class ExtTreeViewNode : TreeNode, IExtTreeViewNode {
-		protected ExtTreeViewNodeCollection nodes             = null;
-		protected HTREEITEM                 hTreeItem         = new HTREEITEM(IntPtr.Zero);
-		protected bool                      treeViewIsKnown   = false;
-		protected bool                      isShownExpandable = false;
+		protected      ExtTreeViewNodeCollection nodes             = null;
+		public new     ExtTreeViewNodeCollection Nodes             { get { return nodes; } }
+		protected      bool                      handleCreated     = false;
+		public virtual bool                      IsExpandable      { get { return Nodes.Count > 0; } }
+		public new     ExtTreeViewNode           NextNode          { get { return base.NextNode as ExtTreeViewNode; } }
+		public new     ExtTreeViewNode           PrevNode          { get { return base.PrevNode as ExtTreeViewNode; } }
+		public new     ExtTreeViewNode           Parent            { get { return base.Parent as ExtTreeViewNode; } }
 
-		public ExtTreeViewNode() : base() {
-			nodes = new ExtTreeViewNodeCollection(base.Nodes);
+		protected      bool isShownExpandable = false;
+		public virtual bool IsShownExpandable {
+			get {
+				return isShownExpandable;
+			}
+			set {
+				if(isShownExpandable != value) {
+					isShownExpandable = value;
+
+					if(handleCreated) {
+						UpdateIsShownExpandable();
+					}
+				}
+			}
 		}
 
+		protected HTREEITEM hTreeItem = new HTREEITEM(IntPtr.Zero);
 		/// <summary>
 		/// Retrieve the handle to the TREEITEM structure of the node.
 		/// NOTE: This property only works when the node is already added to an treeview!
@@ -46,6 +62,10 @@ namespace Electrifier.Core.Controls {
 			}
 		}
 
+		public ExtTreeViewNode() : base() {
+			nodes = new ExtTreeViewNodeCollection(base.Nodes);
+		}
+
 		protected void UpdateIsShownExpandable() {
 			TVItemEx tvItemEx  = new TVItemEx();
 			tvItemEx.mask      = TVIF.CHILDREN;
@@ -62,55 +82,11 @@ namespace Electrifier.Core.Controls {
 			}
 		}
 
-		public virtual bool IsExpandable {
-			get {
-				return Nodes.Count > 0;
-			}
-		}
-
-		public virtual bool IsShownExpandable {
-			get {
-				return isShownExpandable;
-			}
-			set {
-				if(isShownExpandable != value) {
-					isShownExpandable = value;
-
-					if(treeViewIsKnown) {
-						UpdateIsShownExpandable();
-					}
-				}
-			}
-		}
-
-		public new ExtTreeViewNodeCollection Nodes {
-			get {
-				return nodes;
-			}
-		}
-
-		public new ExtTreeViewNode NextNode {
-			get {
-				return (ExtTreeViewNode)base.NextNode;
-			}
-		}
-
-		public new ExtTreeViewNode PrevNode {
-			get {
-				return (ExtTreeViewNode)base.PrevNode;
-			}
-		}
-
-		public new ExtTreeViewNode Parent {
-			get {
-				return (ExtTreeViewNode)base.Parent;
-			}
-		}
-
 		#region IExtTreeViewNode Member
+		// TODO: HandleCreated als Ersatz?!?
 		public void HasBeenAddedToTreeViewBy(IExtTreeViewNodeCollection sender) {
 			if(TreeView != null) {
-				treeViewIsKnown = true;
+				handleCreated = true;
 
 				// Update properties already set but still not updated
 				UpdateIsShownExpandable(true);
