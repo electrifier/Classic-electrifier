@@ -29,9 +29,10 @@ namespace Electrifier.Core.Forms.DockControls {
 			Text = Name;
 
 			// Initialize ShellTreeView
-			shellTreeView      = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-			shellTreeView.Dock = DockStyle.Left;
-			shellTreeView.Size = new Size(256, Height);
+			shellTreeView              = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
+			shellTreeView.Dock         = DockStyle.Left;
+			shellTreeView.Size         = new Size(256, Height);
+			shellTreeView.AfterSelect +=new TreeViewEventHandler(shellTreeView_AfterSelect);
 
 			// Initialize ShellListView
 			shellListView      = new ShellListView();
@@ -55,5 +56,12 @@ namespace Electrifier.Core.Forms.DockControls {
 		// TODO: Dispose when closed!!!
 		// http://www.divil.co.uk/net/forums/thread.aspx?id=386
 		// You can use the DocumentClosing event or the Closing or Closed events of the DockControl in question. When you dispose it, the form within will also be disposed.
+
+		private void shellTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
+			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
+			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
+			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
+		}
 	}
 }

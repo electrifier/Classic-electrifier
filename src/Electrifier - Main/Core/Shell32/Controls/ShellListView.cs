@@ -54,11 +54,11 @@ namespace Electrifier.Core.Shell32.Controls {
 				items[index++] = new ShellListViewItem(shellObject);
 			}
 
+			Items.Clear();		// TODO: Dispose all items!!!
+			Items.AddRange(items);
+
 			// Create a file info thread to gather visual info for all items
 			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(collection);
-
-			Items.Clear();
-			Items.AddRange(items);
 		}
 
 		#region IShellObjectCollection Member

@@ -32,10 +32,11 @@ namespace Electrifier.Core.Shell32.Controls {
 			: this(shellObjectPIDL, false) {}
 
 		public ShellTreeView(IntPtr pidl, bool pidlSelfCreated) : base() {
-			rootNode = new ShellTreeViewNode(pidl, pidlSelfCreated);
-			nodes    = new ShellTreeViewNodeCollection(base.Nodes);
-
+			// Initialize underlying ExtTreeView-component
+			rootNode        = new ShellTreeViewNode(pidl, pidlSelfCreated);
+			nodes           = new ShellTreeViewNodeCollection(base.Nodes);
 			SystemImageList = iconManager.SmallImageList;
+			HideSelection   = false;
 
 			Nodes.Add(rootNode);
 			rootNode.Expand();
