@@ -12,12 +12,16 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtListViewItem.
 	/// </summary>
 	public class ExtListViewItem : IExtListViewItem {
-		private char[] text       = null;
-		public  char[] Text       { get { return text; } }
-		private int    imageIndex = -1;
-		public  int    ImageIndex { get { return imageIndex; } set { SetImageIndex(value); } }
-		private int    itemIndent = 0;
-		public  int    ItemIndent { get { return itemIndent; } }
+		private char[]      text       = null;
+		public  char[]      Text       { get { return text; } }
+		private int         imageIndex = -1;
+		public  int         ImageIndex { get { return imageIndex; } set { SetImageIndex(value); } }
+		private int         itemIndent = 0;
+		public  int         ItemIndent { get { return itemIndent; } }
+		private IExtListView listView   = null;
+		public  IExtListView ListView   { get { return listView; } }
+		private int         index      = -1;
+		public  int         Index      { get { return index; } }
 
 		public ExtListViewItem() {
 			//
@@ -42,7 +46,25 @@ namespace Electrifier.Core.Controls {
 		}
 
 		protected void SetImageIndex(int newImageIndex) {
-			imageIndex = newImageIndex;
+			if(imageIndex != newImageIndex) {
+				imageIndex = newImageIndex;
+				Invalidate();
+			}
+		}
+
+		public void AddToIExtListView(IExtListView listView, int index) {
+			if(this.listView == null) {
+				this.listView = listView;
+				this.index    = index;
+			} else {
+				throw new InvalidOperationException("Already added to an ExtListView");
+			}
+		}
+
+		public void Invalidate() {
+			if(listView != null) {
+				listView.RedrawItems(index, index);
+			}
 		}
 	}
 }

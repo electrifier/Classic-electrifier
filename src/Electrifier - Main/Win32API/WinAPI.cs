@@ -14,6 +14,7 @@ namespace Electrifier.Win32API {
 		LVM_FIRST        = 0x00001000,			// ListView-Messages
 		LVM_GETIMAGELIST = LVM_FIRST +  2,
 		LVM_SETIMAGELIST = LVM_FIRST +  3,
+		LVM_REDRAWITEMS  = LVM_FIRST + 21,
 		LVM_SETITEMSTATE = LVM_FIRST + 43,
 		LVM_SETITEMCOUNT = LVM_FIRST + 47,
 		TV_FIRST         = 0x00001100,			// TreeView-Messages

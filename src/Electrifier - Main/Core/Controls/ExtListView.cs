@@ -15,7 +15,7 @@ namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtListView.
 	/// </summary>
-	public class ExtListView : ListView {
+	public class ExtListView : ListView, IExtListView {
 		protected  ExtListViewItemCollection items = null;
 		public new ExtListViewItemCollection Items { get { return items; } }
 
@@ -38,17 +38,6 @@ namespace Electrifier.Core.Controls {
 			}
 			set {
 				WinAPI.SendMessage(Handle, WMSG.LVM_SETIMAGELIST, LVSIL.NORMAL, value);
-			}
-		}
-
-		// TODO: protected machen, und auf event reagieren!
-		public void UpdateVirtualItemCount() {
-			UpdateVirtualItemCount(items.Count);
-		}
-
-		protected void UpdateVirtualItemCount(int itemCount) {
-			if(IsHandleCreated) {
-				WinAPI.SendMessage(Handle, Win32API.WMSG.LVM_SETITEMCOUNT, itemCount, 0);
 			}
 		}
 
@@ -165,5 +154,26 @@ namespace Electrifier.Core.Controls {
 				}
 			}
 		}
+
+		#region IExtListView Member
+
+		// TODO: protected machen, und auf event reagieren!
+		public void UpdateVirtualItemCount() {
+			UpdateVirtualItemCount(items.Count);
+		}
+
+		protected void UpdateVirtualItemCount(int itemCount) {
+			if(IsHandleCreated) {
+				WinAPI.SendMessage(Handle, Win32API.WMSG.LVM_SETITEMCOUNT, itemCount, 0);
+			}
+		}
+
+		public void RedrawItems(int firstIndex, int lastIndex) {
+			if(IsHandleCreated) {
+				WinAPI.SendMessage(Handle, Win32API.WMSG.LVM_REDRAWITEMS, firstIndex, lastIndex);
+			}
+		}
+
+		#endregion
 	}
 }

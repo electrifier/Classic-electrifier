@@ -12,8 +12,11 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für IExtListviewItem.
 	/// </summary>
 	public interface IExtListViewItem {
-		char[] Text       { get; }
-		int    ImageIndex { get; }
-		int    ItemIndent { get; }
+		char[]       Text       { get; }
+		int          ImageIndex { get; }
+		int          ItemIndent { get; }
+		int          Index      { get; }
+		IExtListView ListView   { get; }
+		void   AddToIExtListView(IExtListView listView, int index);
 	}
 }

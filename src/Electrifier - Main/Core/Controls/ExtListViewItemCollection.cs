@@ -15,10 +15,10 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtListViewItemCollection.
 	/// </summary>
 	public class ExtListViewItemCollection : ArrayList, ICollection, IList, IEnumerable {
-		protected ExtListView owner = null;
-		public    ExtListView Owner { get { return owner; } }
+		protected IExtListView owner = null;
+		public    IExtListView Owner { get { return owner; } }
 
-		public ExtListViewItemCollection(ExtListView owner) {
+		public ExtListViewItemCollection(IExtListView owner) {
 			this.owner = owner;
 		}
 
@@ -35,9 +35,15 @@ namespace Electrifier.Core.Controls {
 		}
 
 		public virtual int Add(IExtListViewItem item) {
+			int index = AddWithoutUpdatingItemCount(item);
+			owner.UpdateVirtualItemCount();
+			return index;
+		}
+
+		public virtual int AddWithoutUpdatingItemCount(IExtListViewItem item) {
 			if(item != null) {
 				int index = base.Add(item);
-				Owner.UpdateVirtualItemCount();
+				item.AddToIExtListView(owner, index);
 				return index;
 			} else {
 				return -1;
@@ -46,7 +52,7 @@ namespace Electrifier.Core.Controls {
 
 		public override void AddRange(ICollection collection) {
 			foreach(object obj in collection) {
-				if((obj == null) || (obj.GetType().GetInterface("IExtListView") == null)) {
+				if((obj != null) && (obj.GetType().GetInterface("IExtListView") == null)) {
 					throw new ArrayTypeMismatchException("All objects must implement interface IExtListView");
 				}
 			}
@@ -55,7 +61,12 @@ namespace Electrifier.Core.Controls {
 		}
 
 		public virtual void AddRange(IExtListViewItem[] items) {
-			base.AddRange(items);
+			foreach(IExtListViewItem item in items) {
+				if(item != null) {
+					AddWithoutUpdatingItemCount(item);
+				}
+			}
+
 			Owner.UpdateVirtualItemCount();
 		}
 

@@ -164,6 +164,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\IExtListView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\IExtListViewItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
