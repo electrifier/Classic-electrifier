@@ -12,7 +12,7 @@ namespace Electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für BasicGUIAction.
 	/// </summary>
-	public class BasicAction : IAction {
+	public class BasicAction : IViewableAction {
 		protected string   id;
 		public    string   Id          { get { return id; } }
 		protected bool     enabled     = false;

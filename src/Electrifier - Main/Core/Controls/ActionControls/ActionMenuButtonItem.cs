@@ -19,7 +19,7 @@ namespace Electrifier.Core.Controls.ActionControls {
 		private IAction action = null;
 		public  IAction Action { get { return action; } }
 
-		public ActionMenuButtonItem(IAction action) {
+		public ActionMenuButtonItem(IViewableAction action) {
 			this.action            = action;
 			action.EnabledChanged += new EnabledChangedEventHandler(action_EnabledChanged);
 			Activate              += new EventHandler(ExtMenuButtonItem_Activate);

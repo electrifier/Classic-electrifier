@@ -8,7 +8,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Electrifier.Core.Controls {
+namespace Electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// ExecutionEventArgs-class and ExecutionEventHandler delegate
 	/// </summary>
