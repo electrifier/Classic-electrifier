@@ -20,7 +20,7 @@ namespace Electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
-	public class MainWindowForm : System.Windows.Forms.Form, IPersistent {
+	public class MainWindowForm : System.Windows.Forms.Form, IPersistentForm {
 		protected Guid guid = Guid.NewGuid();
 		public    Guid Guid { get { return guid; } }
 
@@ -93,18 +93,18 @@ namespace Electrifier.Core.Forms {
 		}
 
 		#region IPersistent Member
-		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument, string prefix, string nmspURI) {
+		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
 			// Create persistence information for main window form
-			XmlNode      mainWindowNode = targetXmlDocument.CreateElement(prefix, "Core.Forms.MainWindowForm", nmspURI);
-			XmlAttribute guidAttr       = targetXmlDocument.CreateAttribute(prefix, "Guid", nmspURI);
+			XmlNode      mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
+			XmlAttribute guidAttr       = targetXmlDocument.CreateAttribute("Guid");
 			guidAttr.Value              = guid.ToString();
-			XmlAttribute leftAttr       = targetXmlDocument.CreateAttribute(prefix, "Left", nmspURI);
+			XmlAttribute leftAttr       = targetXmlDocument.CreateAttribute("Left");
 			leftAttr.Value              = Left.ToString();
-			XmlAttribute topAttr        = targetXmlDocument.CreateAttribute(prefix, "Top", nmspURI);
+			XmlAttribute topAttr        = targetXmlDocument.CreateAttribute("Top");
 			topAttr.Value               = Top.ToString();
-			XmlAttribute widthAttr      = targetXmlDocument.CreateAttribute(prefix, "Width", nmspURI);
+			XmlAttribute widthAttr      = targetXmlDocument.CreateAttribute("Width");
 			widthAttr.Value             = Width.ToString();
-			XmlAttribute heightAttr     = targetXmlDocument.CreateAttribute(prefix, "Height", nmspURI);
+			XmlAttribute heightAttr     = targetXmlDocument.CreateAttribute("Height");
 			heightAttr.Value            = Height.ToString();
 			mainWindowNode.Attributes.Append(guidAttr);
 			mainWindowNode.Attributes.Append(leftAttr);
@@ -114,17 +114,21 @@ namespace Electrifier.Core.Forms {
 
 			// Append persistance information for SandBar and SandDock components
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
-				prefix, "SandBarManager", nmspURI, sandBarManager.GetLayout()));
+				"SandBarManager", sandBarManager.GetLayout()));
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
-				prefix, "SandDockManager", nmspURI, sandDockManager.GetLayout()));
+				"SandDockManager", sandDockManager.GetLayout()));
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
-				prefix, "DocumentContainer", nmspURI, documentContainer.Manager.GetLayout()));
+				"DocumentContainer", documentContainer.Manager.GetLayout()));
 
 			return mainWindowNode;
 		}
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
 			// TODO:  Implementierung von MainWindowForm.ApplyPersistenceInfo hinzufügen
+		}
+
+		public void RegisterByAppContext() {
+
 		}
 		#endregion
 

@@ -6,16 +6,15 @@
 //	</file>
 
 using System;
-using System.Xml;
 
 namespace Electrifier.Core
 {
 	/// <summary>
-	/// Zusammenfassung für IPersistent.
+	/// Zusammenfassung für IPersistentForm.
 	/// </summary>
-	public interface IPersistent
+	public interface IPersistentForm : IPersistent
 	{
-		XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument);
-		void    ApplyPersistenceInfo(XmlNode persistenceInfo);
+		void Show();
+		void RegisterByAppContext();
 	}
 }
