@@ -42,13 +42,18 @@ namespace Electrifier {
 
 			// Create an electrifier application context form and run as application
 			// TODO: Do dynamic binding...
-			Application.Run(new ElectrifierAppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen));
+			try {
+				Application.Run(new ElectrifierAppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen));
+			} catch(System.Runtime.InteropServices.SEHException e) {
+				int errorCode = e.ErrorCode;
+			}
 
 			// Free used resources
 			applicationIcon.Dispose();
 			splashScreen.Dispose();
 
-			return 0;		// TODO: Return returncode
+			// Quit application finally
+			return 0;		// TODO: Set return code
 		}
 	}
 }
