@@ -9,7 +9,6 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
-using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using TD.SandDock;
@@ -23,6 +22,8 @@ namespace Electrifier.Core.Forms {
 	/// </summary>
 	public class MainWindowForm : System.Windows.Forms.Form, IPersistent {
 		protected Guid guid = Guid.NewGuid();
+		public    Guid Guid { get { return guid; } }
+
 
 		private TD.SandBar.ToolBarContainer leftSandBarDock;
 		private TD.SandBar.ToolBarContainer rightSandBarDock;
@@ -57,6 +58,7 @@ namespace Electrifier.Core.Forms {
 			//
 			// TODO: Fügen Sie den Konstruktorcode nach dem Aufruf von InitializeComponent hinzu
 			//
+			documentContainer.Manager = new SandDockManager();
 			Icon = AppContext.Icon;
 
 			// Initialize form state regarding to the configuration saved
@@ -91,18 +93,18 @@ namespace Electrifier.Core.Forms {
 		}
 
 		#region IPersistent Member
-		public XmlNode CreatePersistenceInfo(System.Xml.XmlDocument xmlDocument, string prefix, string nmspURI) {
+		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument, string prefix, string nmspURI) {
 			// Create persistence information for main window form
-			XmlNode      mainWindowNode = xmlDocument.CreateElement(prefix, "Core.Forms.MainWindowForm", nmspURI);
-			XmlAttribute guidAttr       = xmlDocument.CreateAttribute(prefix, "Guid", nmspURI);
+			XmlNode      mainWindowNode = targetXmlDocument.CreateElement(prefix, "Core.Forms.MainWindowForm", nmspURI);
+			XmlAttribute guidAttr       = targetXmlDocument.CreateAttribute(prefix, "Guid", nmspURI);
 			guidAttr.Value              = guid.ToString();
-			XmlAttribute leftAttr       = xmlDocument.CreateAttribute(prefix, "Left", nmspURI);
+			XmlAttribute leftAttr       = targetXmlDocument.CreateAttribute(prefix, "Left", nmspURI);
 			leftAttr.Value              = Left.ToString();
-			XmlAttribute topAttr        = xmlDocument.CreateAttribute(prefix, "Top", nmspURI);
+			XmlAttribute topAttr        = targetXmlDocument.CreateAttribute(prefix, "Top", nmspURI);
 			topAttr.Value               = Top.ToString();
-			XmlAttribute widthAttr      = xmlDocument.CreateAttribute(prefix, "Width", nmspURI);
+			XmlAttribute widthAttr      = targetXmlDocument.CreateAttribute(prefix, "Width", nmspURI);
 			widthAttr.Value             = Width.ToString();
-			XmlAttribute heightAttr     = xmlDocument.CreateAttribute(prefix, "Height", nmspURI);
+			XmlAttribute heightAttr     = targetXmlDocument.CreateAttribute(prefix, "Height", nmspURI);
 			heightAttr.Value            = Height.ToString();
 			mainWindowNode.Attributes.Append(guidAttr);
 			mainWindowNode.Attributes.Append(leftAttr);
@@ -110,26 +112,18 @@ namespace Electrifier.Core.Forms {
 			mainWindowNode.Attributes.Append(widthAttr);
 			mainWindowNode.Attributes.Append(heightAttr);
 
-			// Append persistance information for SandBarManager's layout
-			XmlNode     sandBarMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandBarManager", nmspURI);
-			XmlDocument sandBarMgrLayoutDoc  = new XmlDocument();
-
-			sandBarMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandBarManager.GetLayout())));
-			sandBarMgrLayoutNode.AppendChild(xmlDocument.ImportNode(sandBarMgrLayoutDoc.DocumentElement, true));
-			mainWindowNode.AppendChild(sandBarMgrLayoutNode);
-
-			// Append persistance information for SandDockManager's layout
-			XmlNode     sandDockMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandDockManager", nmspURI);
-			XmlDocument sandDockMgrLayoutDoc  = new XmlDocument();
-
-			sandDockMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandDockManager.GetLayout())));
-			sandDockMgrLayoutNode.AppendChild(xmlDocument.ImportNode(sandDockMgrLayoutDoc.DocumentElement, true));
-			mainWindowNode.AppendChild(sandDockMgrLayoutNode);
+			// Append persistance information for SandBar and SandDock components
+			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
+				prefix, "SandBarManager", nmspURI, sandBarManager.GetLayout()));
+			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
+				prefix, "SandDockManager", nmspURI, sandDockManager.GetLayout()));
+			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
+				prefix, "DocumentContainer", nmspURI, documentContainer.Manager.GetLayout()));
 
 			return mainWindowNode;
 		}
 
-		public void ApplyPersistenceInfo(System.Xml.XmlNode persistenceInfo) {
+		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
 			// TODO:  Implementierung von MainWindowForm.ApplyPersistenceInfo hinzufügen
 		}
 		#endregion

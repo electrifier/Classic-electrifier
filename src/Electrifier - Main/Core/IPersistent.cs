@@ -15,7 +15,7 @@ namespace Electrifier.Core
 	/// </summary>
 	public interface IPersistent
 	{
-		XmlNode CreatePersistenceInfo(XmlDocument xmlDocument, string prefix, string nmspURI);
+		XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument, string prefix, string nmspURI);
 		void    ApplyPersistenceInfo(XmlNode persistenceInfo);
 	}
 }
