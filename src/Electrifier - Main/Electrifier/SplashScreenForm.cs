@@ -33,7 +33,8 @@ namespace Electrifier {
 			ShowInTaskbar   = false;
 
 			if(splashIsShown) {
-				splashScreenBitmap = new Bitmap(Assembly.GetEntryAssembly().GetManifestResourceStream("Electrifier.SplashScreenForm.png"));
+				splashScreenBitmap = new Bitmap(Assembly.GetEntryAssembly().
+				                                GetManifestResourceStream("Electrifier.SplashScreenForm.png"));
 				Size               = splashScreenBitmap.Size;
 
 				// Change window mode from normal to layered window

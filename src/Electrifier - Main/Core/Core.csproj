@@ -114,6 +114,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ElectrifierApplicationContext.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ExtListView.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
@@ -140,6 +145,11 @@
                 />
                 <File
                     RelPath = "Controls\IExtTreeViewNodeCollection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\TrayNotifyIcon.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

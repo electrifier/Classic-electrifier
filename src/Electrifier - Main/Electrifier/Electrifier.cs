@@ -20,12 +20,11 @@ namespace Electrifier {
 		/// </summary>
 		[STAThread]
 		static void Main(string[] args) {
-			SplashScreenForm splashScreen   = null;
-			bool             splashIsShown  = true;
-			TrayNotifyIcon   trayNotifyIcon = null;
+			SplashScreenForm splashScreen  = null;
+			bool             splashIsShown = true;
 
 			foreach(string arg in args) {
-				if(arg.Equals("/nosplash")) {
+				if(arg.ToLower().Equals("/nosplash")) {
 					splashIsShown = false;
 					break;
 				}
@@ -35,41 +34,11 @@ namespace Electrifier {
 			splashScreen = new SplashScreenForm(splashIsShown);
 			splashScreen.Show();
 
-			// Create the tray-notify icon
-			trayNotifyIcon = new TrayNotifyIcon();
+			// Create the main virtual form
+			// TODO: Do dynamic binding...
+			ElectrifierApplicationContext appContext = new ElectrifierApplicationContext(args);
 
-
-
-
-			ServiceManager.Services.AddService(new DesktopFolderInstance());
-			ServiceManager.Services.AddService(new PIDLManager());
-			ServiceManager.Services.AddService(new IconManager());
-
-			ElectrifierForm electrifierForm = new ElectrifierForm();
-
-
-			
-
-//			ShellTreeView shtrv = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-//			shtrv.Name = "ShellTreeView";
-//			shtrv.Dock = DockStyle.Left;
-//			shtrv.Width = 250;
-//
-//			ShellListView shlsv = new ShellListView();
-//			shlsv.Name = "ShellListView";
-//			shlsv.Dock = DockStyle.Fill;
-//			shlsv.SetBrowsingFolder(null, ShellAPI.CSIDL.DESKTOP);
-//
-//			Form mainForm = new Form();
-//			mainForm.Controls.Add(shtrv);
-//			mainForm.Controls.Add(shlsv);
-//			mainForm.Width = 800;
-//			mainForm.Height = 600;
-//			mainForm.Text = "Electrifier SplashScreen preview release";
-
-			trayNotifyIcon.Visible = true;
-			Application.Run(electrifierForm);
-			trayNotifyIcon.Visible = false;
+			Application.Run(electrifierMainVirtualForm);
 		}
 	}
 }

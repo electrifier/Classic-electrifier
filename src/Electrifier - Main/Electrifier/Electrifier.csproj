@@ -126,11 +126,6 @@
                     RelPath = "SplashScreenForm.png"
                     BuildAction = "EmbeddedResource"
                 />
-                <File
-                    RelPath = "TrayNotifyIcon.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
             </Include>
         </Files>
     </CSHARP>
