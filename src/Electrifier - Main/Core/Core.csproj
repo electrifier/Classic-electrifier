@@ -124,7 +124,17 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Controls\ExtButtonItem.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Controls\ExtListView.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Controls\ExtMenuBarItem.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
                 />
