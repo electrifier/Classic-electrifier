@@ -98,13 +98,21 @@ namespace Electrifier.Core.Forms {
 			guidAttr.Value        = guid.ToString();
 			xmlNode.Attributes.Append(guidAttr);
 
-			// Append persistance information for SandDockManager's layout
-			XmlNode     dockMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandDockManagerLayout", nmspURI);
-			XmlDocument dockMgrLayoutDoc  = new XmlDocument();
+			// Append persistance information for SandBarManager's layout
+			XmlNode     sandBarMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandBarManager", nmspURI);
+			XmlDocument sandBarMgrLayoutDoc  = new XmlDocument();
 
-			dockMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandDockManager.GetLayout())));
-			dockMgrLayoutNode.AppendChild(xmlDocument.ImportNode(dockMgrLayoutDoc.DocumentElement, true));
-			xmlNode.AppendChild(dockMgrLayoutNode);
+			sandBarMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandBarManager.GetLayout())));
+			sandBarMgrLayoutNode.AppendChild(xmlDocument.ImportNode(sandBarMgrLayoutDoc.DocumentElement, true));
+			xmlNode.AppendChild(sandBarMgrLayoutNode);
+
+			// Append persistance information for SandDockManager's layout
+			XmlNode     sandDockMgrLayoutNode = xmlDocument.CreateElement(prefix, "SandDockManager", nmspURI);
+			XmlDocument sandDockMgrLayoutDoc  = new XmlDocument();
+
+			sandDockMgrLayoutDoc.Load(new XmlTextReader(new StringReader(sandDockManager.GetLayout())));
+			sandDockMgrLayoutNode.AppendChild(xmlDocument.ImportNode(sandDockMgrLayoutDoc.DocumentElement, true));
+			xmlNode.AppendChild(sandDockMgrLayoutNode);
 
 			return xmlNode;
 		}
