@@ -154,11 +154,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Controls\TrayNotifyIcon.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "Forms\FolderBarDockControl.cs"
                     SubType = "Component"
                     BuildAction = "Compile"
