@@ -130,13 +130,13 @@ namespace Electrifier.Core.Controls {
 					SetItemFocusedState(0, true);
 					// TODO: Only test-code!
 					try {
-						base.WndProc (ref m);
+						base.WndProc(ref m);
 					} catch(System.ArgumentOutOfRangeException) { }
 					return;
 				} // case (int)(WinAPI.WM.SETFOCUS)
 			} // switch(u.Msg)
 
-			base.WndProc (ref m);
+			base.WndProc(ref m);
 		}
 
 		protected virtual void GetDisplayInfo(ref Message m) {
@@ -167,7 +167,7 @@ namespace Electrifier.Core.Controls {
 		protected void OnBeginDragMessage(MouseButtons mouseButton, ref Message m) {
 			Win32API.NMLISTVIEW nmListView = (Win32API.NMLISTVIEW)m.GetLParam(typeof(Win32API.NMLISTVIEW));
 
-			base.OnItemDrag(new ItemDragEventArgs(mouseButton, nmListView.iItem));
+			OnItemDrag(new ItemDragEventArgs(mouseButton, nmListView.iItem));
 		}
 
 		#region IExtListView Member

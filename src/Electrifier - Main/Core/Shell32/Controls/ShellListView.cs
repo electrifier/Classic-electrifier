@@ -24,6 +24,8 @@ namespace Electrifier.Core.Shell32.Controls {
 		public ShellListView() : base() {
 			SmallSystemImageList = iconManager.SmallImageList;
 			LargeSystemImageList = iconManager.LargeImageList;
+
+			ItemDrag            += new ItemDragEventHandler(ShellListView_ItemDrag);
 		}
 
 		public void SetBrowsingFolder(object sender, ShellAPI.CSIDL shellObjectCSIDL) {
@@ -59,6 +61,11 @@ namespace Electrifier.Core.Shell32.Controls {
 
 			// Create a file info thread to gather visual info for all items
 			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(collection);
+		}
+
+		private void ShellListView_ItemDrag(object sender, ItemDragEventArgs e) {
+			// TODO: Enumerate available DragDropEffects!
+			DoDragDrop(e.Item, DragDropEffects.Move);
 		}
 
 		#region IShellObjectCollection Member
