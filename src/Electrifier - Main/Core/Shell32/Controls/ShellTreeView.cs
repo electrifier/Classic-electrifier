@@ -38,6 +38,9 @@ namespace Electrifier.Core.Shell32.Controls {
 			SystemImageList = iconManager.SmallImageList;
 			HideSelection   = false;
 
+			AllowDrop = true;
+			AllowDrag = true;
+
 			Nodes.Add(rootNode);
 			rootNode.Expand();
 
