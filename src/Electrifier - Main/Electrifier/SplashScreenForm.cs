@@ -10,23 +10,22 @@ namespace Electrifier {
 	/// Zusammenfassung für SplashScreenForm.
 	/// </summary>
 	public class SplashScreenForm : Form {
-		private    Bitmap  splashScreenBitmap = null;
-		private    bool    splashIsShown      = false;
-		private    byte    opacity            = 0xFF;
-		public new byte    Opacity {
-			get {
-				return opacity;
-			}
+		protected  Bitmap  splashScreenBitmap = null;
+		public     Bitmap  SplashScreenBitmap { get { return splashScreenBitmap; } }
+		protected  bool    splashIsShown      = false;
+		protected  bool    splashIsFadedOut   = false;
+		protected  byte    opacity            = 0xFF;
+		public new byte    Opacity            { get { return opacity; }
 			set {
 				opacity = value;
 				UpdateWindowLayer();
 			}
 		}
 
-		public SplashScreenForm(bool splashIsShown, byte initialOpacity)
-			: this(splashIsShown) { opacity = initialOpacity; }
+		public SplashScreenForm(bool splashIsShown, bool splashIsFadedOut, byte initialOpacity)
+			: this(splashIsShown, splashIsFadedOut) { opacity = initialOpacity; }
 
-		public SplashScreenForm(bool splashIsShown) {
+		public SplashScreenForm(bool splashIsShown, bool splashIsFadedOut) {
 			TopMost         = true;
 			FormBorderStyle = FormBorderStyle.None;
 			StartPosition   = FormStartPosition.CenterScreen;
@@ -34,13 +33,15 @@ namespace Electrifier {
 
 			if(splashIsShown) {
 				splashScreenBitmap = new Bitmap(Assembly.GetEntryAssembly().
-				                                GetManifestResourceStream("Electrifier.SplashScreenForm.png"));
+					GetManifestResourceStream("Electrifier.SplashScreenForm.png"));
 				Size               = splashScreenBitmap.Size;
 
-				// Change window mode from normal to layered window
+				// Change window mode to layered window
 				WinAPI.SetWindowLong(Handle, WinAPI.GWL.EXSTYLE, WinAPI.WS.EX_LAYERED);
 
+				// Show the splash screen form
 				this.splashIsShown = true;
+				Show();
 			}
 		}
 

@@ -1,12 +1,9 @@
 using System;
+using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 using Electrifier.Core;
-using Electrifier.Core.Forms;
-using Electrifier.Core.Services;
-using Electrifier.Core.Shell32;
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
 
 namespace Electrifier {
 	/// <summary>
@@ -19,26 +16,39 @@ namespace Electrifier {
 		/// The Main method is the entry point of the electrifier application.
 		/// </summary>
 		[STAThread]
-		static void Main(string[] args) {
-			SplashScreenForm splashScreen  = null;
-			bool             splashIsShown = true;
+		static int Main(string[] args) {
+			SplashScreenForm splashScreen     = null;
+			bool             splashIsShown    = true;
+			bool             splashIsFadedOut = true;
+			Icon             applicationIcon  = null;
 
+			// Search argument list for splasscreen-related arguments
 			foreach(string arg in args) {
 				if(arg.ToLower().Equals("/nosplash")) {
 					splashIsShown = false;
-					break;
+				}
+
+				if(arg.ToLower().Equals("/nosplashfadeout")) {
+					splashIsFadedOut = false;
 				}
 			}
 
 			// Create the splash-screen
-			splashScreen = new SplashScreenForm(splashIsShown);
-			splashScreen.Show();
+			splashScreen = new SplashScreenForm(splashIsShown, splashIsFadedOut);
 
-			// Create the main virtual form
+			// Get the application icon
+			applicationIcon = new Icon(Assembly.GetEntryAssembly().
+				GetManifestResourceStream("Electrifier.Electrifier.ico"));
+
+			// Create an electrifier application context form and run as application
 			// TODO: Do dynamic binding...
-			ElectrifierApplicationContext appContext = new ElectrifierApplicationContext(args);
+			Application.Run(new ElectrifierAppContext(args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen));
 
-			Application.Run(electrifierMainVirtualForm);
+			// Free used resources
+			applicationIcon.Dispose();
+			splashScreen.Dispose();
+
+			return 0;		// TODO: Return returncode
 		}
 	}
 }

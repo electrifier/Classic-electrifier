@@ -114,9 +114,14 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ElectrifierApplicationContext.cs"
-                    SubType = "Code"
+                    RelPath = "ElectrifierAppContext.cs"
+                    SubType = "Form"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ElectrifierAppContext.resx"
+                    DependentUpon = "ElectrifierAppContext.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Controls\ExtListView.cs"
@@ -152,16 +157,6 @@
                     RelPath = "Controls\TrayNotifyIcon.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\ElectrifierForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\ElectrifierForm.resx"
-                    DependentUpon = "ElectrifierForm.cs"
-                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "Forms\FolderBarDockControl.cs"
