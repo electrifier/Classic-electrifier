@@ -70,8 +70,12 @@ namespace Electrifier.Core.Forms.DockControls {
 
 		#region IDockControl Member
 		public void AttachToDockControlContainer(IDockControlContainer dockControlContainer) {
-			this.dockControlContainer = dockControlContainer;
-			dockControlContainer.AttachDockControl(this);
+			if(this.dockControlContainer == null) {
+				this.dockControlContainer = dockControlContainer;
+				dockControlContainer.AttachDockControl(this);
+			} else {
+				throw new InvalidOperationException("IDockControlContainer already set!");
+			}
 		}
 
 		#endregion

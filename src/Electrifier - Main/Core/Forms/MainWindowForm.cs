@@ -21,12 +21,12 @@ namespace Electrifier.Core.Forms {
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
 	public class MainWindowForm : System.Windows.Forms.Form, IPersistentForm, IDockControlContainer {
-		protected Guid                     guid          = Guid.NewGuid();
-		public    Guid                     Guid          { get { return guid; } }
-		protected IPersistentFormContainer formContainer = null;
-		public    IPersistentFormContainer FormContainer { get { return formContainer; } }
-		protected ArrayList                dockControls  = new ArrayList();
-		public    ArrayList                DockControls  { get { return dockControls; } }
+		protected Guid                     guid                    = Guid.NewGuid();
+		public    Guid                     Guid                    { get { return guid; } }
+		protected IPersistentFormContainer persistentFormContainer = null;
+		public    IPersistentFormContainer PersistentFormContainer { get { return persistentFormContainer; } }
+		protected ArrayList                dockControlList         = new ArrayList();
+		public    ArrayList                DockControlList         { get { return dockControlList; } }
 
 
 		private TD.SandBar.ToolBarContainer leftSandBarDock;
@@ -112,7 +112,7 @@ namespace Electrifier.Core.Forms {
 
 			// Append persistence information for each hosted DockControl
 			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
-			foreach(IDockControl dockControl in dockControls) {
+			foreach(IDockControl dockControl in dockControlList) {
 				dockControlsNode.AppendChild(dockControl.CreatePersistenceInfo(targetXmlDocument));
 			}
 			mainWindowNode.AppendChild(dockControlsNode);
@@ -165,8 +165,12 @@ namespace Electrifier.Core.Forms {
 		}
 
 		public void AttachToFormContainer(IPersistentFormContainer persistentFormContainer) {
-			formContainer = persistentFormContainer;
-			persistentFormContainer.AttachPersistentForm(this);
+			if(this.persistentFormContainer == null) {
+				this.persistentFormContainer = persistentFormContainer;
+				persistentFormContainer.AttachPersistentForm(this);
+			} else {
+				throw new InvalidOperationException("IPersistentFormContainer already set!");
+			}
 		}
 		#endregion
 
@@ -381,16 +385,16 @@ namespace Electrifier.Core.Forms {
 
 		#region IDockControlContainer Member
 		public void AttachDockControl(IDockControl dockControl) {
-			if(!dockControls.Contains(dockControl)) {
-				dockControls.Add(dockControl);
+			if(!dockControlList.Contains(dockControl)) {
+				dockControlList.Add(dockControl);
 			} else {
 				throw new ArgumentException("Given DockControl instance already in list of hosted DockControls", "dockControl");
 			}
 		}
 
 		public void DetachDockControl(IDockControl dockControl) {
-			if(dockControls.Contains(dockControl)) {
-				dockControls.Remove(dockControl);
+			if(dockControlList.Contains(dockControl)) {
+				dockControlList.Remove(dockControl);
 			} else {
 				throw new ArgumentException("Given DockControl instance not in list of hosted DockControls", "dockControl");
 			}
