@@ -46,7 +46,7 @@ namespace Electrifier.Core.Shell32.Controls {
 
 			// Get the collection of shell-items and add them
 			BasicShellObjectCollection collection = new BasicShellObjectCollection(shellObjectPIDL,
-				ShellAPI.SHCONTF.DefaultForListView, ShellObjectPIDLComparer.SortMode.Ascending);
+				ShellAPI.SHCONTF.DefaultForListView, ShellObjectPIDLComparer.SortMode.Unsorted);
 			ExtListViewItem[]          items      = new ExtListViewItem[collection.Count];
 			int                        index      = 0;
 

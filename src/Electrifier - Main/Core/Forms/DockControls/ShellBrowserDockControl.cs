@@ -61,8 +61,10 @@ namespace Electrifier.Core.Forms.DockControls {
 		private void shellTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
+			this.Cursor = Cursors.WaitCursor;
 			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
+			this.Cursor = Cursors.Default;
 		}
 
 		#region IDockControl Member
