@@ -44,6 +44,9 @@ namespace Electrifier.Core.Shell32.Controls {
 			Nodes.Add(rootNode);
 			rootNode.Expand();
 
+			ItemDrag +=new ItemDragEventHandler(ShellTreeView_ItemDrag);
+//			ItemDrag            += new ItemDragEventHandler(ShellListView_ItemDrag);
+
 			// Create a file info thread to gather visual info for root item
 			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(rootNode);
 		}
@@ -52,6 +55,11 @@ namespace Electrifier.Core.Shell32.Controls {
 			get {
 				return nodes;
 			}
+		}
+
+		private void ShellTreeView_ItemDrag(object sender, ItemDragEventArgs e) {
+			
+			DoDragDrop(e.Item, DragDropEffects.Move);
 		}
 	}
 }

@@ -188,6 +188,62 @@ namespace Electrifier.Win32API {
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
+	public struct NMTREEVIEW {
+		public NMHDR        hdr;
+		public UInt32       action;
+//		public IntPtr       itemOld;
+//		public IntPtr       itemNew;
+		public IntPtr x11;
+		public IntPtr x12;
+		public IntPtr x13;
+		public IntPtr x14;
+		public IntPtr x21;
+		public IntPtr x22;
+		public IntPtr x23;
+		public IntPtr x24;
+
+
+		public WinAPI.Point ptDrag;
+	}
+/*
+typedef struct tagNMTREEVIEW {
+    NMHDR hdr;
+    UINT action;
+    TVITEM itemOld;
+    TVITEM itemNew;
+    POINT ptDrag;
+} NMTREEVIEW, *LPNMTREEVIEW;
+ * */
+	[StructLayout(LayoutKind.Sequential)]
+	public struct TVItem {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
+		public TVIF   mask;									//    UINT mask;
+		public IntPtr hItem;									//    HTREEITEM hItem;
+		public UInt32 state;									//    UINT state;
+		public UInt32 stateMask;							//    UINT stateMask;
+		[MarshalAs(UnmanagedType.LPWStr)]
+		public string pszText;								//    LPTSTR pszText;
+		public Int32  cchTextMax;							//    int cchTextMax;
+		public Int32  iImage;								//    int iImage;
+		public Int32  iSelectedImage;						//    int iSelectedImage;
+		public Int32  cChildren;							//    int cChildren;
+		public Int32  lParam;								//    LPARAM lParam;
+//		public Int32  iIntegral;							//    int iIntegral;
+	}
+/*
+typedef struct tagTVITEM {
+    UINT mask;
+    HTREEITEM hItem;
+    UINT state;
+    UINT stateMask;
+    LPTSTR pszText;
+    int cchTextMax;
+    int iImage;
+    int iSelectedImage;
+    int cChildren;
+    LPARAM lParam;
+} TVITEM, *LPTVITEM;
+ * **/
+	[StructLayout(LayoutKind.Sequential)]
 	public struct TVItemEx {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
 		public IntPtr hItem;									//    HTREEITEM hItem;
@@ -225,6 +281,16 @@ namespace Electrifier.Win32API {
 			SETDISPINFOW   = FIRST - 78,
 			ODCACHEHINT    = FIRST - 13,
 			ODFINDITEMW    = FIRST - 79,
+		}
+
+		public enum TVN : int {
+			FIRST           =      (0-400),       // treeview
+			LAST            =     (0-499),
+			BEGINDRAGA      =    FIRST-7,
+			BEGINDRAGW      =    FIRST-56,
+			BEGINRDRAGA     =    FIRST-8,
+			BEGINRDRAGW     =    FIRST-57,
+
 		}
 
 		public enum LVIS : uint {
