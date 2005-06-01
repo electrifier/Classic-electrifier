@@ -204,11 +204,11 @@ namespace Electrifier.Core.Forms {
 			// 
 			// sandBarManager
 			// 
-			this.sandBarManager.BottomContainer = this.bottomSandBarDock;
-			this.sandBarManager.LeftContainer = this.leftSandBarDock;
+//			this.sandBarManager.BottomContainer = this.bottomSandBarDock;
+//			this.sandBarManager.LeftContainer = this.leftSandBarDock;
 			this.sandBarManager.OwnerForm = this;
-			this.sandBarManager.RightContainer = this.rightSandBarDock;
-			this.sandBarManager.TopContainer = this.topSandBarDock;
+//			this.sandBarManager.RightContainer = this.rightSandBarDock;
+//			this.sandBarManager.TopContainer = this.topSandBarDock;
 			// 
 			// bottomSandBarDock
 			// 
@@ -250,7 +250,7 @@ namespace Electrifier.Core.Forms {
 			// 
 			// menuBar1
 			// 
-			this.menuBar1.Buttons.AddRange(new TD.SandBar.ToolbarItemBase[] {
+			this.menuBar1.Items.AddRange(new TD.SandBar.ToolbarItemBase[] {
 																									 this.menuBarItem1,
 																									 this.menuBarItem2,
 																									 this.menuBarItem3,
