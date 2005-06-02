@@ -31,6 +31,8 @@ namespace Electrifier.Core {
 		public  static Bitmap     Logo           { get { return logo; } }
 		private static ArrayList  openWindowList = new ArrayList();
 		public  static ArrayList  OpenWindowList { get { return openWindowList; } }
+		private static NotifyIcon notifyIcon     = new NotifyIcon();
+		public  static NotifyIcon NotifyIcon     { get { return notifyIcon; } }
 
 		/// <summary>
 		/// The default constructor of the AppContext.
@@ -62,9 +64,25 @@ namespace Electrifier.Core {
 				}
 			}
 
-			// TODO: Create tray notifyicon
+			// Create NotifyIcon
+			notifyIcon.Icon = new Icon(appIcon, 16, 16);	// TODO: width & height from regisry?!?
+			notifyIcon.Visible = true;
 
+			//			// Open new MainWindow, if not diabled
+			//			if(showMainWindow) {
+			//				MainWindowForm mainWindowForm = new MainWindowForm();
+			//				mainWindowForm.Show();
+			//
+			//				openWindowList.Add(mainWindowForm);
+			//
+			//				// TODO: Action definieren, die neuen Electrifier aufmacht...
+			//				// TODO: Config auslesen, wenn gewuenscht this.OnMainFormClosed checken und
+			//				//       application am leben erhalten (Dialog "You closed all electrifier windows.
+			//				//       do you want to stay electrifier active in tray" blablablubb)
+			//				this.MainForm = mainWindowForm;
+			//			}
 			// Load and apply the configuration used for this session
+
 			RestoreConfiguration();
 
 			if(showMainWindow) {
@@ -76,20 +94,6 @@ namespace Electrifier.Core {
 				MainForm = form;
 			}
 
-//			// Open new MainWindow, if not diabled
-//			if(showMainWindow) {
-//				MainWindowForm mainWindowForm = new MainWindowForm();
-//				mainWindowForm.Show();
-//
-//				openWindows.Add(mainWindowForm);
-//
-//				// TODO: Action definieren, die neuen Electrifier aufmacht...
-//				// TODO: Config auslesen, wenn gewuenscht this.OnMainFormClosed checken und
-//				//       application am leben erhalten (Dialog "You closed all electrifier windows.
-//				//       do you want to stay electrifier active in tray" blablablubb)
-//				this.MainForm = mainWindowForm;
-//			}
-
 			// Add handler to save configuration before closing
 			ThreadExit += new EventHandler(AppContext_ThreadExit);
 
@@ -97,7 +101,21 @@ namespace Electrifier.Core {
 			splashScreenForm.Close();
 		}
 
-		private AppContext RegisterAppContextInstance(AppContext appContextInstance) {
+		private void AppContext_ThreadExit(object sender, EventArgs e) 
+		{
+			// Save configuration file
+			if(true == true) 
+			{	// TODO: uebergabeparameter zum ausschalten & exceptions checken
+				SaveConfiguration();
+			}
+
+			// Destroy NotifyIcon
+			AppContext.NotifyIcon.Visible = false;
+			AppContext.NotifyIcon.Dispose();
+		}
+
+		private AppContext RegisterAppContextInstance(AppContext appContextInstance) 
+		{
 			// Check if another instance was already instantiated
 			if(instance != null) {
 				throw new InvalidOperationException("Electrifier.Core.AppContext.RegisterInstance: " +
@@ -263,11 +281,5 @@ namespace Electrifier.Core {
 		}
 		#endregion
 
-		private void AppContext_ThreadExit(object sender, EventArgs e) {
-			// Save configuration file
-			if(true == true) {	// TODO: uebergabeparameter zum ausschalten & exceptions checken
-				SaveConfiguration();
-			}
-		}
 	}
 }
