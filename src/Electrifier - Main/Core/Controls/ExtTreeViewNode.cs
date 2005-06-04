@@ -19,9 +19,16 @@ namespace Electrifier.Core.Controls {
 		public new     ExtTreeViewNodeCollection Nodes             { get { return nodes; } }
 		protected      bool                      handleCreated     = false;
 		public virtual bool                      IsExpandable      { get { return Nodes.Count > 0; } }
-		public new     ExtTreeViewNode           NextNode          { get { return base.NextNode as ExtTreeViewNode; } }
-		public new     ExtTreeViewNode           PrevNode          { get { return base.PrevNode as ExtTreeViewNode; } }
-		public new     ExtTreeViewNode           Parent            { get { return base.Parent as ExtTreeViewNode; } }
+
+		#region Overriden properties to ensure type strictness
+
+		public new ExtTreeViewNode NextNode        { get { return base.NextNode as ExtTreeViewNode; } }
+		public new ExtTreeViewNode PrevNode        { get { return base.PrevNode as ExtTreeViewNode; } }
+		public new ExtTreeViewNode Parent          { get { return base.Parent as ExtTreeViewNode; } }
+		public new ExtTreeViewNode PrevVisibleNode { get { return base.PrevVisibleNode as ExtTreeViewNode; } }
+		public new ExtTreeViewNode NextVisibleNode { get { return base.NextVisibleNode as ExtTreeViewNode; } }
+
+		#endregion
 
 		protected      bool isShownExpandable = false;
 		public virtual bool IsShownExpandable {
