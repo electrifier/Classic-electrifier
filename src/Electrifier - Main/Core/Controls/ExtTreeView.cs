@@ -89,13 +89,19 @@ namespace Electrifier.Core.Controls {
 				e.Cancel = !node.IsExpandable;
 		}
 
+		/// <summary>
+		/// ItemDrag-event-handler initiates an drag and drop operation
+		/// </summary>
+		/// <param name="sender">Sender's reference</param>
+		/// <param name="e">ItemDragEventArgs information</param>
 		private void ExtTreeView_ItemDrag(object sender, ItemDragEventArgs e) {
 			ExtTreeViewNode dragNode = e.Item as ExtTreeViewNode;
 
 			if(dragNode != null) {
-				Point     mousePosition = this.PointToClient(Control.MousePosition);
-				Bitmap    dragBitmap    = dragNode.CreateNodeBitmap(Win32API.ILD.NORMAL);
-				ImageList dragImageList = new ImageList();
+				Point     mousePosition      = this.PointToClient(Control.MousePosition);
+				Bitmap    dragBitmap         = dragNode.CreateNodeBitmap(Win32API.ILD.NORMAL);
+				ImageList dragImageList      = new ImageList();
+				bool      dragImageListBegun = false;
 
 				try {
 					// Create drag image's image list
@@ -103,16 +109,17 @@ namespace Electrifier.Core.Controls {
 					dragImageList.Images.Add(dragBitmap);
 
 					// Enter drag and drop loop
-					WinAPI.ImageList_BeginDrag(dragImageList.Handle, 0,
+					dragImageListBegun = WinAPI.ImageList_BeginDrag(dragImageList.Handle, 0,
 						(mousePosition.X + this.Indent - dragNode.Bounds.Left),
 						(mousePosition.Y - dragNode.Bounds.Top));
 
 					// TODO: Gather object to be given to DoDragDrop
+					// TODO: Gather Drag and Drop effects allowed for this object
 					this.DoDragDrop(dragNode, DragDropEffects.All);
+				} finally {
+					if(dragImageListBegun)
+						WinAPI.ImageList_EndDrag();
 
-					WinAPI.ImageList_EndDrag();
-				}
-				finally {
 					dragImageList.Dispose();
 					dragBitmap.Dispose();
 				}
