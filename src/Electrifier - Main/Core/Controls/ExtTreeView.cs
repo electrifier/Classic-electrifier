@@ -16,30 +16,39 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtTreeView.
 	/// </summary>
 	public class ExtTreeView : TreeView {
-		protected  ExtTreeViewNodeCollection nodes          = null;
-		public new ExtTreeViewNodeCollection Nodes          { get { return nodes; } }
-		private    bool                      allowDrag      = false;
-		public     bool                      AllowDrag      { get { return allowDrag; } set { allowDrag = value; } }
-		private    bool                      isDragging     = false;
-		public     bool                      IsDragging     { get { return isDragging; } }
-		private    ExtTreeViewNode           dragTreeNode   = null;
-		public     ExtTreeViewNode           DragTreeNode   { get { return dragTreeNode; } }
-		private    Rectangle                 dragSourceRect = Rectangle.Empty;
-		public     Rectangle                 DragSourceRect { get { return dragSourceRect; } }
+		/// <summary>
+		/// Collection of ExtTreeViewNode items hosted by the TreeView
+		/// </summary>
+		protected  ExtTreeViewNodeCollection			nodes         = null;
+		public new ExtTreeViewNodeCollection			Nodes         { get { return nodes; } }
 
-		public ExtTreeView() : base() {
-			nodes = new ExtTreeViewNodeCollection(base.Nodes);
-
-			BeforeExpand += new TreeViewCancelEventHandler(ExtTreeView_BeforeExpand);
-		}
-
+		/// <summary>
+		/// System's ImageList used for rendering the node icons
+		/// </summary>
 		public IntPtr SystemImageList {
 			get {
-				return WinAPI.SendMessage(Handle, WMSG.TVM_GETIMAGELIST, TVSIL.NORMAL, IntPtr.Zero);
+				return WinAPI.SendMessage(this.Handle, WMSG.TVM_GETIMAGELIST, TVSIL.NORMAL, IntPtr.Zero);
 			}
 			set {
-				WinAPI.SendMessage(Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value);
+				WinAPI.SendMessage(this.Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value);
 			}
+		}
+
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public ExtTreeView() : base() {
+			this.nodes = new ExtTreeViewNodeCollection(base.Nodes);
+
+			// 
+			this.BeforeExpand += new TreeViewCancelEventHandler(ExtTreeView_BeforeExpand);
+
+			// Initialize drag and drop-event handlers
+			this.ItemDrag  += new ItemDragEventHandler(ExtTreeView_ItemDrag);
+			this.DragEnter += new DragEventHandler(ExtTreeView_DragEnter);
+			this.DragLeave += new EventHandler(ExtTreeView_DragLeave);
+			this.DragOver  += new DragEventHandler(ExtTreeView_DragOver);
+			this.DragDrop  += new DragEventHandler(ExtTreeView_DragDrop);
 		}
 
 		#region Overriden member methods to ensure type strictness
@@ -62,104 +71,63 @@ namespace Electrifier.Core.Controls {
 				e.Cancel = !node.IsExpandable;
 		}
 
-		protected override void WndProc(ref Message m) 
-		{
-			switch(m.Msg) 
-			{
-				case (int)(WinAPI.WM.NOTIFY/* | WinAPI.WM.REFLECT*/): 
-				{
-					Win32API.NMHDR nmhdr = (Win32API.NMHDR)m.GetLParam(typeof(Win32API.NMHDR));
+		private void ExtTreeView_ItemDrag(object sender, ItemDragEventArgs e) {
+			ExtTreeViewNode dragNode = e.Item as ExtTreeViewNode;
 
-					switch(nmhdr.code) 
-					{
-//						case (int)WinAPI.TVN.BEGINDRAGA:
-						case (int)WinAPI.TVN.BEGINDRAGW:
-							OnBeginDragMessage(MouseButtons.Left, ref m);
-							return;
-//						case (int)WinAPI.TVN.BEGINRDRAGA:
-						case (int)WinAPI.TVN.BEGINRDRAGW:
-							OnBeginDragMessage(MouseButtons.Right, ref m);
-							return;
-					}
+			if(dragNode != null) {
+				Point     mousePosition = this.PointToClient(Control.MousePosition);
+				ImageList dragImageList = new ImageList();
+				Rectangle dragBounds    = dragNode.Bounds;
+				Bitmap    dragBitmap    = null;
+				Graphics  dragGfx       = null;
 
-					break;
-				} // case (int)(WinAPI.WM.NOTIFY | WinAPI.WM.REFLECT)
-			} // switch(u.Msg)
+				dragBounds.Width += this.Indent;
 
-			base.WndProc(ref m);
+				try {
+					// Render drag image using nodes image and text
+					dragBitmap = new Bitmap(dragBounds.Width, dragBounds.Height);
+					dragGfx    = Graphics.FromImage(dragBitmap);
+
+					// TODO: Move node drawing code into node's class
+					IntPtr hdc = dragGfx.GetHdc();
+					WinAPI.ImageList_Draw(this.SystemImageList, dragNode.ImageIndex, hdc, 0, 0, 0);
+					dragGfx.ReleaseHdc(hdc);
+
+					dragGfx.DrawString(dragNode.Text, this.Font,
+						new SolidBrush(this.ForeColor), (float)this.Indent, 1.0f);
+
+					// Create drag image's image list
+					dragImageList.ImageSize = new Size(dragBounds.Width, dragBounds.Height);
+					dragImageList.Images.Add(dragBitmap);
+
+					// Enter drag and drop loop
+					WinAPI.ImageList_BeginDrag(dragImageList.Handle, 0,
+						(mousePosition.X + this.Indent - dragBounds.Left), (mousePosition.Y - dragBounds.Top));
+					this.DoDragDrop(dragNode, DragDropEffects.All);
+					WinAPI.ImageList_EndDrag();
+				}
+				finally {
+					dragImageList.Dispose();
+					dragBitmap.Dispose();
+				}
+			}
 		}
 
-		protected void OnBeginDragMessage(MouseButtons mouseButton, ref Message m) 
-		{
-//			try {
-				Win32API.NMTREEVIEW nmTreeView = (Win32API.NMTREEVIEW)m.GetLParam(typeof(Win32API.NMTREEVIEW));
-//			} catch (Exception e) {
-//				string x = e.Message;
-//
-//			}
-			OnItemDrag(new ItemDragEventArgs(mouseButton, 0));
+		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
+			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
 		}
 
-//		private void SetAllowDrag(bool value) {
-//			allowDrag = value;
-//
-//			if(allowDrag) {
-//				// Initialize Drag-Event handlers
-//				MouseDown += new MouseEventHandler(ExtTreeView_MouseDown);
-//				MouseMove += new MouseEventHandler(ExtTreeView_MouseMove);
-//				MouseUp   += new MouseEventHandler(ExtTreeView_MouseUp);
-//			} else {
-//				// TODO: How to remove event handlers properly?!?
-//				MouseDown -= new MouseEventHandler(ExtTreeView_MouseDown);
-//				MouseMove -= new MouseEventHandler(ExtTreeView_MouseMove);
-//				MouseUp   -= new MouseEventHandler(ExtTreeView_MouseUp);
-//
-//				ResetDragMembers();
-//			}
-//		}
+		private void ExtTreeView_DragLeave(object sender, EventArgs e) {
+			WinAPI.ImageList_DragLeave(this.Handle);
+		}
 
-//		/// <summary>
-//		/// Reset any drag-related member variables
-//		/// </summary>
-//		private void ResetDragMembers() {
-//			isDragging     = false;
-//			dragTreeNode   = null;
-//			dragSourceRect = Rectangle.Empty;
-//		}
+		private void ExtTreeView_DragOver(object sender, DragEventArgs e) {
+			Point pos = this.PointToClient(new Point(e.X, e.Y));
+			WinAPI.ImageList_DragMove((pos.X - this.Left), (pos.Y - this.Top));
+		}
 
-//		private void ExtTreeView_MouseDown(object sender, MouseEventArgs e) {
-//			// If mouse is pointing to a valid node, initialize drags source rectangle
-//			if((e.Button & (MouseButtons.Left | MouseButtons.Middle | MouseButtons.Right)) != 0) {
-//				dragTreeNode = GetNodeAt(e.X, e.Y);
-//
-//				if(dragTreeNode != null) {
-//					Size  dragSize = SystemInformation.DragSize;
-//					Point srcPoint = new Point((e.X - (dragSize.Width / 2)), (e.Y - (dragSize.Height / 2)));
-//					dragSourceRect = new Rectangle(srcPoint, dragSize);
-//				} else {
-//					dragSourceRect = Rectangle.Empty;
-//				}
-//			}
-//		}
-
-//		private void ExtTreeView_MouseMove(object sender, MouseEventArgs e) {
-//			// Check if any mouse button was pressed while moving the mouse pointer
-//			if((e.Button & (MouseButtons.Left | MouseButtons.Middle | MouseButtons.Right)) != 0) {
-//				// Check if a node was selected previously and the drag source rectangle was initialized
-//				if((dragTreeNode != null) && (dragSourceRect != Rectangle.Empty)) {
-//					// Finally, if the mouse pointer leaved the drag source rectangle begin drag operation
-//					if(!dragSourceRect.Contains(e.X, e.Y)) {
-//						isDragging = true;
-//
-//						// TODO: Query allowed dragdropeffects from exttreeviewnode-item
-//						DragDropEffects dndeffects = DoDragDrop(dragTreeNode, DragDropEffects.All);
-//					}
-//				}
-//			}
-//		}
-
-//		private void ExtTreeView_MouseUp(object sender, MouseEventArgs e) {
-//			ResetDragMembers();
-//		}
+		private void ExtTreeView_DragDrop(object sender, DragEventArgs e) {
+			WinAPI.ImageList_DragLeave(this.Handle);
+		}
 	}
 }

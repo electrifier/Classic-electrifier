@@ -39,7 +39,7 @@ namespace Electrifier.Core.Shell32.Controls {
 			HideSelection   = false;
 
 			AllowDrop = true;
-			AllowDrag = true;
+//			AllowDrag = true;
 
 			Nodes.Add(rootNode);
 			rootNode.Expand();

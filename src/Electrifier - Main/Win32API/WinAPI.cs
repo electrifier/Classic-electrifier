@@ -11,25 +11,32 @@ using System.Runtime.InteropServices;
 
 namespace Electrifier.Win32API {
 	public enum WMSG : uint {
-		LVM_FIRST        = 0x00001000,			// ListView-Messages
-		LVM_GETIMAGELIST = LVM_FIRST +  2,
-		LVM_SETIMAGELIST = LVM_FIRST +  3,
-		LVM_REDRAWITEMS  = LVM_FIRST + 21,
-		LVM_SETITEMSTATE = LVM_FIRST + 43,
-		LVM_SETITEMCOUNT = LVM_FIRST + 47,
-		TV_FIRST         = 0x00001100,			// TreeView-Messages
-		TVM_INSERTITEMA  = TV_FIRST  +  0,
-		TVM_DELETEITEM   = TV_FIRST  +  1,
-		TVM_EXPAND       = TV_FIRST  +  2,
-		TVM_GETITEMRECT  = TV_FIRST  +  4,
-		TVM_GETCOUNT     = TV_FIRST  +  5,
-		TVM_GETINDENT    = TV_FIRST  +  6,
-		TVM_SETINDENT    = TV_FIRST  +  7,
-		TVM_GETIMAGELIST = TV_FIRST  +  8,
-		TVM_SETIMAGELIST = TV_FIRST  +  9,
-		TVM_GETNEXTITEM  = TV_FIRST  + 10,
-		TVM_INSERTITEMW  = TV_FIRST  + 50,
-		TVM_SETITEM      = TV_FIRST  + 63,
+		/**
+		 * ListView-Control Messages
+		 */
+		LVM_FIRST						= 0x00001000,
+		LVM_GETIMAGELIST		= LVM_FIRST +  2,
+		LVM_SETIMAGELIST		= LVM_FIRST +  3,
+		LVM_REDRAWITEMS			= LVM_FIRST + 21,
+		LVM_SETITEMSTATE		= LVM_FIRST + 43,
+		LVM_SETITEMCOUNT		= LVM_FIRST + 47,
+		/**
+		 * TreeView-Control Messages
+		 */
+		TV_FIRST						= 0x00001100,
+		TVM_INSERTITEMA			= TV_FIRST +  0,
+		TVM_DELETEITEM			= TV_FIRST +  1,
+		TVM_EXPAND					= TV_FIRST +  2,
+		TVM_GETITEMRECT			= TV_FIRST +  4,
+		TVM_GETCOUNT				= TV_FIRST +  5,
+		TVM_GETINDENT				= TV_FIRST +  6,
+		TVM_SETINDENT				= TV_FIRST +  7,
+		TVM_GETIMAGELIST		= TV_FIRST +  8,
+		TVM_SETIMAGELIST		= TV_FIRST +  9,
+		TVM_GETNEXTITEM			= TV_FIRST + 10,
+		TVM_CREATEDRAGIMAGE	= TV_FIRST + 18,
+		TVM_INSERTITEMW     = TV_FIRST + 50,
+		TVM_SETITEM         = TV_FIRST + 63,
 	}
 
 	public enum TVIF : uint {			// TVItemEx flags
@@ -460,13 +467,15 @@ typedef struct tagTVITEM {
 		[DllImport("User32.dll")]
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, int lParam);
 		[DllImport("User32.dll")]	 // TVM_GETNEXTITEM-overloading
-		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVGN lParam, IntPtr wParam);
+		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVGN wParam, IntPtr lParam);
 		[DllImport("User32.dll")]	 // TVM_SETIMAGELIST/TVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVSIL wParam, IntPtr lParam);
 		[DllImport("User32.dll")]	 // LVM_SETIMAGELIST/LVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, LVSIL wParam, IntPtr lParam);
 //		[DllImport("User32.dll")]   // LVM_SETITEMSTATE/LVM_GETITEMSTATE-overloading
 //		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref LVITEM lParam);
+		[DllImport("User32.dll")]	 // TVM_CREATEDRAGIMAGE-overloading
+		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, IntPtr lParam);
 		[DllImport("User32.dll")]
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref TVItemEx lParam);
 
@@ -488,6 +497,23 @@ typedef struct tagTVITEM {
 		[DllImport("user32.dll")]
 		public static extern bool   UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pprSrc, Int32 crKey, ref BLENDFUNCTION pBlend, ULW dwFlags);
 
+		[DllImport("comctl32.dll")]
+		public static extern bool		ImageList_BeginDrag(IntPtr himlTrack, int iTrack, int dxHotspot, int dyHotspot);
+		[DllImport("comctl32.dll")]
+		public static extern bool		ImageList_DragMove(int x, int y);
+		[DllImport("comctl32.dll")]
+		public static extern void		ImageList_EndDrag();
+		[DllImport("comctl32.dll")]
+		public static extern bool		ImageList_DragEnter(IntPtr hwndLock, int x, int y);
+		[DllImport("comctl32.dll")]
+		public static extern bool		ImageList_DragLeave(IntPtr hwndLock);
+		[DllImport("comctl32.dll")]
+		public static extern bool		ImageList_DragShowNolock(bool fShow);
+		[DllImport("comctl32.dll")]
+		public static extern bool		ImageList_Draw(IntPtr himl, int i, IntPtr hdcDst, int x, int y, UInt32 fStyle);
+
+		
+		
 		private WinAPI() {
 			// This class can't be instantiated directly
 		}
