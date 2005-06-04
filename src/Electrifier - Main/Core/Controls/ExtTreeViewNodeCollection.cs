@@ -35,11 +35,11 @@ namespace Electrifier.Core.Controls {
 			}
 		}
 
-		public virtual TreeNode this[int index] {
-			get{
-				return collection[index];
-			}
-		}
+//		public virtual TreeNode this[int index] {
+//			get{
+//				return collection[index];
+//			}
+//		}
 
 
 

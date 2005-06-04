@@ -6,6 +6,7 @@
 //	</file>
 
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 using Electrifier.Win32API;
@@ -22,6 +23,7 @@ namespace Electrifier.Core.Controls {
 
 		#region Overriden properties to ensure type strictness
 
+		public new ExtTreeView     TreeView        { get { return base.TreeView as ExtTreeView; } }
 		public new ExtTreeViewNode NextNode        { get { return base.NextNode as ExtTreeViewNode; } }
 		public new ExtTreeViewNode PrevNode        { get { return base.PrevNode as ExtTreeViewNode; } }
 		public new ExtTreeViewNode Parent          { get { return base.Parent as ExtTreeViewNode; } }
@@ -87,6 +89,30 @@ namespace Electrifier.Core.Controls {
 			if(causedByHasBeenAddedToTreeViewBy && isShownExpandable) {
 				UpdateIsShownExpandable();
 			}
+		}
+
+		/// <summary>
+		/// Generates a Bitmap representation of this node
+		/// </summary>
+		/// <param name="iconDrawStyle">One of the ILD_-style constants for call to ImageList_Draw</param>
+		/// <returns>The generated Bitmap</returns>
+		public Bitmap CreateNodeBitmap(Win32API.ILD iconDrawStyle) {
+			if(handleCreated) {
+				ExtTreeView treeView  = this.TreeView;
+				Bitmap      bitmap    = new Bitmap((this.Bounds.Width + treeView.Indent), this.Bounds.Height);
+				Graphics    graphics  = Graphics.FromImage(bitmap);
+				IntPtr      hdcontext = graphics.GetHdc();
+
+				WinAPI.ImageList_Draw(treeView.SystemImageList, this.ImageIndex, hdcontext, 0, 0, iconDrawStyle);
+
+				graphics.ReleaseHdc(hdcontext);
+
+				graphics.DrawString(this.Text, treeView.Font,
+					new SolidBrush(treeView.ForeColor), (float)treeView.Indent, 1.0f);
+
+				return bitmap;
+			} else
+				return null;
 		}
 
 		#region IExtTreeViewNode Member

@@ -94,35 +94,22 @@ namespace Electrifier.Core.Controls {
 
 			if(dragNode != null) {
 				Point     mousePosition = this.PointToClient(Control.MousePosition);
+				Bitmap    dragBitmap    = dragNode.CreateNodeBitmap(Win32API.ILD.NORMAL);
 				ImageList dragImageList = new ImageList();
-				Rectangle dragBounds    = dragNode.Bounds;
-				Bitmap    dragBitmap    = null;
-				Graphics  dragGfx       = null;
-
-				dragBounds.Width += this.Indent;
 
 				try {
-					// Render drag image using nodes image and text
-					dragBitmap = new Bitmap(dragBounds.Width, dragBounds.Height);
-					dragGfx    = Graphics.FromImage(dragBitmap);
-
-					// TODO: Move node drawing code into node's class
-					IntPtr hdc = dragGfx.GetHdc();
-					// TODO: Enumeration for style :-)
-					WinAPI.ImageList_Draw(this.SystemImageList, dragNode.ImageIndex, hdc, 0, 0, 0);
-					dragGfx.ReleaseHdc(hdc);
-
-					dragGfx.DrawString(dragNode.Text, this.Font,
-						new SolidBrush(this.ForeColor), (float)this.Indent, 1.0f);
-
 					// Create drag image's image list
-					dragImageList.ImageSize = new Size(dragBounds.Width, dragBounds.Height);
+					dragImageList.ImageSize = new Size(dragBitmap.Width, dragBitmap.Height);
 					dragImageList.Images.Add(dragBitmap);
 
 					// Enter drag and drop loop
 					WinAPI.ImageList_BeginDrag(dragImageList.Handle, 0,
-						(mousePosition.X + this.Indent - dragBounds.Left), (mousePosition.Y - dragBounds.Top));
+						(mousePosition.X + this.Indent - dragNode.Bounds.Left),
+						(mousePosition.Y - dragNode.Bounds.Top));
+
+					// TODO: Gather object to be given to DoDragDrop
 					this.DoDragDrop(dragNode, DragDropEffects.All);
+
 					WinAPI.ImageList_EndDrag();
 				}
 				finally {
@@ -153,6 +140,10 @@ namespace Electrifier.Core.Controls {
 
 		private void ExtTreeView_DragDrop(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
+
+			// TODO: If frop successful, then...
+			if(this.dragAutoScrollTimer.Enabled)
+				this.dragAutoScrollTimer.Enabled = false;
 		}
 
 		private void dragAutoScrollTimer_Tick(object sender, EventArgs e) {
