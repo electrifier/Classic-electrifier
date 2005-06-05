@@ -56,12 +56,12 @@ namespace Electrifier.Core.Controls {
 		protected HTREEITEM HTreeItem {
 			get {
 				if(!hTreeItem.IsValid) {
-					if(PrevNode != null) {              // Is there a previous item?
+					if(PrevNode != null) {																			// Is there a previous item?
 						hTreeItem = PrevNode.HTreeItem.NextNode(TreeView.Handle);
 					} else {
-						if(Parent != null) {             // No, so is there a parent item?
+						if(Parent != null) {																			// No, so is there a parent item?
 							hTreeItem = Parent.HTreeItem.FirstNode(TreeView.Handle);
-						} else {                         // No, so we are the root item
+						} else {																									// No, so we are the root item
 							hTreeItem = HTREEITEM.GetRootItem(TreeView.Handle);
 						}
 					}
@@ -97,7 +97,7 @@ namespace Electrifier.Core.Controls {
 		/// <param name="iconDrawStyle">One of the ILD_-style constants for call to ImageList_Draw</param>
 		/// <returns>The generated Bitmap</returns>
 		public Bitmap CreateNodeBitmap(Win32API.ILD iconDrawStyle) {
-			if(handleCreated) {
+			if(this.handleCreated) {
 				ExtTreeView treeView  = this.TreeView;
 				Bitmap      bitmap    = new Bitmap((this.Bounds.Width + treeView.Indent), this.Bounds.Height);
 				Graphics    graphics  = Graphics.FromImage(bitmap);
