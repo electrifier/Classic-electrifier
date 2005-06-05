@@ -27,9 +27,13 @@ namespace Electrifier.Core.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		private Timer dragAutoScrollTimer = new Timer();
-		private bool  dragAutoScroll      = true;
-		public  bool  DragAutoScroll      { get { return this.dragAutoScroll; } set { this.dragAutoScroll = value; } }
+		private Timer dragAutoScrollTimer        = new Timer();
+		private bool  dragAutoScrollEnabled      = true;
+		public  bool  DragAutoScrollEnabled      { get { return this.dragAutoScrollEnabled; } set { this.dragAutoScrollEnabled = value; } }
+		private int   dragAutoScrollSlowInterval = 200;
+		public  int   DragAutoScrollSlowInterval { get { return this.dragAutoScrollSlowInterval; } set { this.dragAutoScrollSlowInterval = value; } }
+		private int   dragAutoScrollFastInterval = 100;
+		public  int   DragAutoScrollFastInterval { get { return this.dragAutoScrollFastInterval; } set { this.dragAutoScrollFastInterval = value; } }
 
 		/// <summary>
 		/// 
@@ -78,7 +82,7 @@ namespace Electrifier.Core.Controls {
 			this.DragDrop  += new DragEventHandler(ExtTreeView_DragDrop);
 
 			// Initialize drag and drop auto-scroll
-			this.dragAutoScrollTimer.Interval = 200;
+			this.dragAutoScrollTimer.Interval = this.dragAutoScrollSlowInterval;
 			this.dragAutoScrollTimer.Enabled  = false;
 			this.dragAutoScrollTimer.Tick    += new EventHandler(dragAutoScrollTimer_Tick);
 		} // public ExtTreeView() : base()
@@ -131,7 +135,7 @@ namespace Electrifier.Core.Controls {
 		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
 
-			if(this.DragAutoScroll)
+			if(this.DragAutoScrollEnabled)
 				this.dragAutoScrollTimer.Enabled = true;
 		} // private void ExtTreeView_DragEnter(object sender, DragEventArgs e)
 
@@ -159,40 +163,58 @@ namespace Electrifier.Core.Controls {
 			Point           mousePos = this.PointToClient(Control.MousePosition);
 			ExtTreeViewNode node     = this.GetNodeAt(mousePos);
 
-			// TODO: Dual-speed scrolling!?!
 			// TODO: Mouse-wheel support!!!
 			if(node != null) {
 				// Do vertical scroll if necessary
-				if(mousePos.Y <= node.Bounds.Height) {
+				if(mousePos.Y <= (2 * node.Bounds.Height)) {
 					WinAPI.ImageList_DragShowNolock(false);
 
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.VSCROLL, WinAPI.SB.LINEUP, IntPtr.Zero);
 
 					WinAPI.ImageList_DragShowNolock(true);
-				} else if (mousePos.Y >= (this.ClientRectangle.Height - node.Bounds.Height)) {
+
+					// Set dual-speed scroll interval
+					this.dragAutoScrollTimer.Interval =
+						((mousePos.Y <= node.Bounds.Height) ?
+						this.dragAutoScrollFastInterval : this.dragAutoScrollSlowInterval);
+				} else if (mousePos.Y >= (this.ClientRectangle.Height - (2 * node.Bounds.Height))) {
 					WinAPI.ImageList_DragShowNolock(false);
 
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.VSCROLL, WinAPI.SB.LINEDOWN, IntPtr.Zero);
 
 					WinAPI.ImageList_DragShowNolock(true);
+
+					// Set dual-speed scroll interval
+					this.dragAutoScrollTimer.Interval =
+						((mousePos.Y >= (this.ClientRectangle.Height - node.Bounds.Height)) ?
+						this.dragAutoScrollFastInterval : this.dragAutoScrollSlowInterval);
 				}
 
 				// Do horizontal scroll if necessary
-				if(mousePos.X <= node.Bounds.Height) {
+				if(mousePos.X <= (2 * node.Bounds.Height)) {
 					WinAPI.ImageList_DragShowNolock(false);
 
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.HSCROLL, WinAPI.SB.LINELEFT, IntPtr.Zero);
 
 					WinAPI.ImageList_DragShowNolock(true);
-				} else if (mousePos.X >= (this.ClientRectangle.Width - node.Bounds.Height)) {
+
+					// Set dual-speed scroll interval
+					this.dragAutoScrollTimer.Interval =
+						((mousePos.X <= node.Bounds.Height) ?
+						this.dragAutoScrollFastInterval : this.dragAutoScrollSlowInterval);
+				} else if (mousePos.X >= (this.ClientRectangle.Width - (2 * node.Bounds.Height))) {
 					WinAPI.ImageList_DragShowNolock(false);
 
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.HSCROLL, WinAPI.SB.LINERIGHT, IntPtr.Zero);
 
 					WinAPI.ImageList_DragShowNolock(true);
+
+					// Set dual-speed scroll interval
+					this.dragAutoScrollTimer.Interval =
+						((mousePos.X >= (this.ClientRectangle.Width - node.Bounds.Height)) ?
+						this.dragAutoScrollFastInterval : this.dragAutoScrollSlowInterval);
 				}
 			}
 		}	// private void dragAutoScrollTimer_Tick(object sender, EventArgs e)
-
 	}
 }
