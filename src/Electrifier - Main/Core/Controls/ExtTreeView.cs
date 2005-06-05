@@ -13,27 +13,29 @@ using Electrifier.Win32API;
 
 namespace Electrifier.Core.Controls {
 	/// <summary>
-	/// Zusammenfassung für ExtTreeView.
+	/// ExtTreeView is based on System.Windows.Forms.TreeView but provides additional functionality
+	/// like enhanced Drag and Drop support and the use of the globally unique system imagelist
+	/// instead of System.Windows.Forms.ImageList
 	/// </summary>
 	public class ExtTreeView : TreeView {
 		/// <summary>
 		/// Collection of ExtTreeViewNode items hosted by this TreeView
 		/// </summary>
 		protected  ExtTreeViewNodeCollection nodes = null;
-		public new ExtTreeViewNodeCollection Nodes { get { return nodes; } }
+		public new ExtTreeViewNodeCollection Nodes { get { return this.nodes; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		private Timer dragAutoScrollTimer = new Timer();
 		private bool  dragAutoScroll      = true;
-		public  bool  DragAutoScroll      { get { return dragAutoScroll; } set { dragAutoScroll = value; } }
+		public  bool  DragAutoScroll      { get { return this.dragAutoScroll; } set { this.dragAutoScroll = value; } }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		private bool dragAutoExpand = true;
-		public  bool DragAutoExpand { get { return dragAutoExpand; } set { dragAutoExpand = value; } }
+		public  bool DragAutoExpand { get { return this.dragAutoExpand; } set { this.dragAutoExpand = value; } }
 
 		/// <summary>
 		/// System's ImageList used for rendering the node icons
@@ -46,6 +48,18 @@ namespace Electrifier.Core.Controls {
 				WinAPI.SendMessage(this.Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value);
 			}
 		}
+
+		#region Overriden members to ensure type strictness
+
+		public new ExtTreeViewNode GetNodeAt(Point point) {
+			return base.GetNodeAt(point) as ExtTreeViewNode;
+		}
+
+		public new ExtTreeViewNode GetNodeAt(int x, int y) {
+			return base.GetNodeAt(x, y) as ExtTreeViewNode;
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Default Constructor
@@ -63,23 +77,11 @@ namespace Electrifier.Core.Controls {
 			this.DragOver  += new DragEventHandler(ExtTreeView_DragOver);
 			this.DragDrop  += new DragEventHandler(ExtTreeView_DragDrop);
 
-			// Initialize drag and drop auto-expand and -scroll timer
+			// Initialize drag and drop auto-scroll
 			this.dragAutoScrollTimer.Interval = 200;
-			this.dragAutoScrollTimer.Enabled = false;
-			this.dragAutoScrollTimer.Tick += new EventHandler(dragAutoScrollTimer_Tick);
-		}
-
-		#region Overriden member methods to ensure type strictness
-
-		public new ExtTreeViewNode GetNodeAt(Point point) {
-			return base.GetNodeAt(point) as ExtTreeViewNode;
-		}
-
-		public new ExtTreeViewNode GetNodeAt(int x, int y) {
-			return base.GetNodeAt(x, y) as ExtTreeViewNode;
-		}
-
-		#endregion
+			this.dragAutoScrollTimer.Enabled  = false;
+			this.dragAutoScrollTimer.Tick    += new EventHandler(dragAutoScrollTimer_Tick);
+		} // public ExtTreeView() : base()
 
 		private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
 			// TODO: Event ueberschreiben und casting vermeiden!
@@ -87,7 +89,7 @@ namespace Electrifier.Core.Controls {
 
 			if(node != null)
 				e.Cancel = !node.IsExpandable;
-		}
+		} // private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
 
 		/// <summary>
 		/// ItemDrag-event-handler initiates an drag and drop operation
@@ -124,26 +126,26 @@ namespace Electrifier.Core.Controls {
 					dragBitmap.Dispose();
 				}
 			}
-		}
+		} // private void ExtTreeView_ItemDrag(object sender, ItemDragEventArgs e)
 
 		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
 
 			if(this.DragAutoScroll)
 				this.dragAutoScrollTimer.Enabled = true;
-		}
+		} // private void ExtTreeView_DragEnter(object sender, DragEventArgs e)
 
 		private void ExtTreeView_DragLeave(object sender, EventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
 
 			if(this.dragAutoScrollTimer.Enabled)
 				this.dragAutoScrollTimer.Enabled = false;
-		}
+		} // private void ExtTreeView_DragLeave(object sender, EventArgs e)
 
 		private void ExtTreeView_DragOver(object sender, DragEventArgs e) {
 			Point pos = this.PointToClient(new Point(e.X, e.Y));
 			WinAPI.ImageList_DragMove((pos.X - this.Left), (pos.Y - this.Top));
-		}
+		} // private void ExtTreeView_DragOver(object sender, DragEventArgs e)
 
 		private void ExtTreeView_DragDrop(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
@@ -151,36 +153,46 @@ namespace Electrifier.Core.Controls {
 			// TODO: If frop successful, then...
 			if(this.dragAutoScrollTimer.Enabled)
 				this.dragAutoScrollTimer.Enabled = false;
-		}
+		} // private void ExtTreeView_DragDrop(object sender, DragEventArgs e)
 
 		private void dragAutoScrollTimer_Tick(object sender, EventArgs e) {
-			Point mousePosition = this.PointToClient(Control.MousePosition);
-			ExtTreeViewNode node = this.GetNodeAt(mousePosition);
+			Point           mousePos = this.PointToClient(Control.MousePosition);
+			ExtTreeViewNode node     = this.GetNodeAt(mousePos);
 
+			// TODO: Dual-speed scrolling!?!
+			// TODO: Mouse-wheel support!!!
 			if(node != null) {
-				// TODO: Send message    SendMessage(AWindow, (AVertical ? WM_VSCROLL : WM_HSCROLL), ADirection, 0);
-				// TODO: Two different scroll speeds :-)
-				if(mousePosition.Y < 32) {													// Try to scroll up
-					if((node = node.PrevVisibleNode) != null) {
-						WinAPI.ImageList_DragShowNolock(false);
+				// Do vertical scroll if necessary
+				if(mousePos.Y <= node.Bounds.Height) {
+					WinAPI.ImageList_DragShowNolock(false);
 
-						node.EnsureVisible();
-						this.Refresh();
+					WinAPI.SendMessage(this.Handle, WinAPI.WM.VSCROLL, WinAPI.SB.LINEUP, IntPtr.Zero);
 
-						WinAPI.ImageList_DragShowNolock(true);
-					}
-				} else if(mousePosition.Y > (this.Height - 32)) {		// Try to scroll down
-					if((node = node.NextVisibleNode) != null) {
-						WinAPI.ImageList_DragShowNolock(false);
+					WinAPI.ImageList_DragShowNolock(true);
+				} else if (mousePos.Y >= (this.ClientRectangle.Height - node.Bounds.Height)) {
+					WinAPI.ImageList_DragShowNolock(false);
 
-						node.EnsureVisible();
-						this.Refresh();
+					WinAPI.SendMessage(this.Handle, WinAPI.WM.VSCROLL, WinAPI.SB.LINEDOWN, IntPtr.Zero);
 
-						WinAPI.ImageList_DragShowNolock(true);
-					}
+					WinAPI.ImageList_DragShowNolock(true);
+				}
+
+				// Do horizontal scroll if necessary
+				if(mousePos.X <= node.Bounds.Height) {
+					WinAPI.ImageList_DragShowNolock(false);
+
+					WinAPI.SendMessage(this.Handle, WinAPI.WM.HSCROLL, WinAPI.SB.LINELEFT, IntPtr.Zero);
+
+					WinAPI.ImageList_DragShowNolock(true);
+				} else if (mousePos.X >= (this.ClientRectangle.Width - node.Bounds.Height)) {
+					WinAPI.ImageList_DragShowNolock(false);
+
+					WinAPI.SendMessage(this.Handle, WinAPI.WM.HSCROLL, WinAPI.SB.LINERIGHT, IntPtr.Zero);
+
+					WinAPI.ImageList_DragShowNolock(true);
 				}
 			}
-		}
+		}	// private void dragAutoScrollTimer_Tick(object sender, EventArgs e)
 
 	}
 }

@@ -6,7 +6,6 @@
 //	</file>
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Electrifier.Win32API {
@@ -20,6 +19,7 @@ namespace Electrifier.Win32API {
 		LVM_REDRAWITEMS			= LVM_FIRST + 21,
 		LVM_SETITEMSTATE		= LVM_FIRST + 43,
 		LVM_SETITEMCOUNT		= LVM_FIRST + 47,
+
 		/**
 		 * TreeView-Control Messages
 		 */
@@ -152,20 +152,13 @@ namespace Electrifier.Win32API {
 		LASTVISIBLE     = 0x000A,		// WIN32_IE >= 0x0400
 	}
 
+	/// <summary>
+	/// Self-created helper object for dealing with HTREEITEM-handles of TreeView-nodes
+	/// </summary>
 	public struct HTREEITEM {
 		private IntPtr handle;
-
-		public IntPtr Handle {
-			get {
-				return handle;
-			}
-		}
-
-		public bool IsValid {
-			get {
-				return !handle.Equals(IntPtr.Zero);
-			}
-		}
+		public  IntPtr Handle  { get { return handle; } }
+		public  bool   IsValid { get { return !handle.Equals(IntPtr.Zero); } }
 
 		public HTREEITEM(IntPtr handle) {
 			this.handle = handle;
@@ -173,19 +166,19 @@ namespace Electrifier.Win32API {
 
 		public HTREEITEM NextNode(IntPtr treeViewHandle) {
 			return new HTREEITEM(
-				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.NEXT, handle));
+				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.NEXT, this.handle));
 		}
 		public HTREEITEM PrevNode(IntPtr treeViewHandle) {
 			return new HTREEITEM(
-				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.PREVIOUS, handle));
+				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.PREVIOUS, this.handle));
 		}
 		public HTREEITEM FirstNode(IntPtr treeViewHandle) {
 			return new HTREEITEM(
-				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.CHILD, handle));
+				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.CHILD, this.handle));
 		}
 		public HTREEITEM Parent(IntPtr treeViewHandle) {
 			return new HTREEITEM(
-				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.PARENT, handle));
+				WinAPI.SendMessage(treeViewHandle, WMSG.TVM_GETNEXTITEM, TVGN.PARENT, this.handle));
 		}
 		public static HTREEITEM GetRootItem(IntPtr treeViewHandle) {
 			return new HTREEITEM(
@@ -254,20 +247,7 @@ typedef struct tagNMTREEVIEW {
 		public Int32  lParam;								//    LPARAM lParam;
 //		public Int32  iIntegral;							//    int iIntegral;
 	}
-/*
-typedef struct tagTVITEM {
-    UINT mask;
-    HTREEITEM hItem;
-    UINT state;
-    UINT stateMask;
-    LPTSTR pszText;
-    int cchTextMax;
-    int iImage;
-    int iSelectedImage;
-    int cChildren;
-    LPARAM lParam;
-} TVITEM, *LPTVITEM;
- * **/
+
 	[StructLayout(LayoutKind.Sequential)]
 	public struct TVItemEx {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
@@ -291,8 +271,39 @@ typedef struct tagTVITEM {
 			NOTIFY        = 0x0000004E,
 			NCHITTEST     = 0x00000084,
 			NCLBUTTONDOWN = 0x000000A1,
+			HSCROLL       = 0x00000114,
+			VSCROLL       = 0x00000115,
 			USER          = 0x00000400,
 			REFLECT       = USER + 0x1c00,
+		}
+
+		public enum SB : int {								// Scroll bar related constants
+			/*
+			 * Scroll Bar Constants
+			 */
+			HORZ            = 0,
+			VERT            = 1,
+			CTL             = 2,
+			BOTH            = 3,
+
+			/*
+			 * Scroll Bar Commands
+			 */
+			LINEUP          = 0,
+			LINELEFT        = 0,
+			LINEDOWN        = 1,
+			LINERIGHT       = 1,
+			PAGEUP          = 2,
+			PAGELEFT        = 2,
+			PAGEDOWN        = 3,
+			PAGERIGHT       = 3,
+			THUMBPOSITION   = 4,
+			THUMBTRACK      = 5,
+			TOP             = 6,
+			LEFT            = 6,
+			BOTTOM          = 7,
+			RIGHT           = 7,
+			ENDSCROLL       = 8,
 		}
 
 		public enum LVN : int {							// ListView Notify Messages
@@ -395,17 +406,6 @@ typedef struct tagTVITEM {
 			EX_NOACTIVATE       = 0x08000000
 		}
 
-		public enum AC : byte {
-			SRC_OVER  = 0x00,
-			SRC_ALPHA = 0x01,
-		}
-
-		public enum ULW : uint {
-			COLORKEY = 0x00000001,
-			ALPHA    = 0x00000002,
-			OPAQUE   = 0x00000004,
-		}
-
 		[StructLayout(LayoutKind.Sequential)]
 		public struct Point {
 			public Int32 X;
@@ -467,6 +467,17 @@ typedef struct tagTVITEM {
 			}
 		}
 
+		public enum AC : byte {
+			SRC_OVER  = 0x00,
+			SRC_ALPHA = 0x01,
+		}
+
+		public enum ULW : uint {
+			COLORKEY = 0x00000001,
+			ALPHA    = 0x00000002,
+			OPAQUE   = 0x00000004,
+		}
+
 		[StructLayout(LayoutKind.Sequential, Pack=1)]
 		public struct BLENDFUNCTION {
 			public AC   BlendOp;
@@ -482,22 +493,24 @@ typedef struct tagTVITEM {
 			}
 		}
 
-		[DllImport("User32.dll")]
+		[DllImport("user32.dll")]
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, int lParam);
-		[DllImport("User32.dll")]	 // TVM_GETNEXTITEM-overloading
+		[DllImport("user32.dll")]		// TVM_GETNEXTITEM-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVGN wParam, IntPtr lParam);
-		[DllImport("User32.dll")]	 // TVM_SETIMAGELIST/TVM_GETIMAGELIST-overloading
+		[DllImport("user32.dll")]		// TVM_SETIMAGELIST/TVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVSIL wParam, IntPtr lParam);
-		[DllImport("User32.dll")]	 // LVM_SETIMAGELIST/LVM_GETIMAGELIST-overloading
+		[DllImport("user32.dll")]		// LVM_SETIMAGELIST/LVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, LVSIL wParam, IntPtr lParam);
-//		[DllImport("User32.dll")]   // LVM_SETITEMSTATE/LVM_GETITEMSTATE-overloading
+//		[DllImport("user32.dll")]   // LVM_SETITEMSTATE/LVM_GETITEMSTATE-overloading
 //		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref LVITEM lParam);
-		[DllImport("User32.dll")]	 // TVM_CREATEDRAGIMAGE-overloading
+		[DllImport("user32.dll")]		// TVM_CREATEDRAGIMAGE-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, IntPtr lParam);
-		[DllImport("User32.dll")]
+		[DllImport("user32.dll")]		// WM_
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref TVItemEx lParam);
+		[DllImport("user32.dll")]		// WM_VSCROLL/WM_HSCROLL-overloading
+		public static extern int    SendMessage(IntPtr hWnd, WM wMsg, SB wParam, IntPtr lParam);
 
-		[DllImport("User32.dll")]
+		[DllImport("user32.dll")]
 		public static extern Int32  SetWindowLong(IntPtr hWnd, GWL nIndex, WS dwNewLong);
 
 		[DllImport("user32.dll")]

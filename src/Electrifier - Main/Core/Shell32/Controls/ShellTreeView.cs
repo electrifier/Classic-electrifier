@@ -21,6 +21,7 @@ namespace Electrifier.Core.Shell32.Controls {
 		protected static IconManager                 iconManager = (IconManager)ServiceManager.Services.GetService(typeof(IconManager));
 		protected        ShellTreeViewNode           rootNode    = null;
 		protected new    ShellTreeViewNodeCollection nodes       = null;
+		public    new    ShellTreeViewNodeCollection Nodes       { get { return nodes; } }
 
 		public ShellTreeView(ShellAPI.CSIDL shellObjectCSIDL)
 			: this(PIDLManager.CreateFromCSIDL(shellObjectCSIDL), true) {}
@@ -33,33 +34,23 @@ namespace Electrifier.Core.Shell32.Controls {
 
 		public ShellTreeView(IntPtr pidl, bool pidlSelfCreated) : base() {
 			// Initialize underlying ExtTreeView-component
-			rootNode        = new ShellTreeViewNode(pidl, pidlSelfCreated);
-			nodes           = new ShellTreeViewNodeCollection(base.Nodes);
-			SystemImageList = iconManager.SmallImageList;
-			HideSelection   = false;
+			this.rootNode        = new ShellTreeViewNode(pidl, pidlSelfCreated);
+			this.nodes           = new ShellTreeViewNodeCollection(base.Nodes);
+			this.SystemImageList = iconManager.SmallImageList;
+			this.HideSelection   = false;
+			this.AllowDrop       = true;
+			this.ShowRootLines   = false;
 
-			AllowDrop = true;
-//			AllowDrag = true;
-
-			Nodes.Add(rootNode);
-			rootNode.Expand();
-
-			ItemDrag +=new ItemDragEventHandler(ShellTreeView_ItemDrag);
-//			ItemDrag            += new ItemDragEventHandler(ShellListView_ItemDrag);
+			this.Nodes.Add(rootNode);
+			this.rootNode.Expand();
+			if(this.rootNode.FirstNode != null) {
+				this.rootNode.FirstNode.Expand();
+				this.SelectedNode = rootNode.FirstNode;
+			}
 
 			// Create a file info thread to gather visual info for root item
 			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(rootNode);
 		}
 
-		public new ShellTreeViewNodeCollection Nodes {
-			get {
-				return nodes;
-			}
-		}
-
-		private void ShellTreeView_ItemDrag(object sender, ItemDragEventArgs e) {
-			
-			DoDragDrop(e.Item, DragDropEffects.Move);
-		}
 	}
 }
