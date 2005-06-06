@@ -38,8 +38,14 @@ namespace Electrifier.Core.Controls {
 		/// <summary>
 		/// 
 		/// </summary>
-		private bool dragAutoExpandEnabled = true;
-		public  bool DragAutoExpandEnabled { get { return this.dragAutoExpandEnabled; } set { this.dragAutoExpandEnabled = value; } }
+		private Timer           dragAutoExpandTimer    = new Timer();
+		private bool            dragAutoExpandEnabled  = true;
+		public  bool            DragAutoExpandEnabled  { get { return this.dragAutoExpandEnabled; } set { this.dragAutoExpandEnabled = value; } }
+		private int             dragAutoExpandInterval = 1000;
+		public  int             DragAutoExpandInterval { get { return this.dragAutoExpandInterval; } set { this.dragAutoExpandInterval = value; } }
+		private ExtTreeViewNode dragAutoExpandNode     = null;
+
+		protected ExtTreeViewNode dropTargetNode = null;
 
 		/// <summary>
 		/// System's ImageList used for rendering the node icons
@@ -82,10 +88,14 @@ namespace Electrifier.Core.Controls {
 			this.DragDrop  += new DragEventHandler(ExtTreeView_DragDrop);
 
 			// Initialize drag and drop auto-scroll
-			this.dragAutoScrollTimer.Interval = this.dragAutoScrollSlowInterval;
 			this.dragAutoScrollTimer.Enabled  = false;
 			this.dragAutoScrollTimer.Tick    += new EventHandler(dragAutoScrollTimer_Tick);
-		} // public ExtTreeView() : base()
+
+			// Initialize drag and drop auto-expand
+			this.dragAutoExpandTimer.Enabled  = false;
+			this.dragAutoExpandTimer.Tick    +=new EventHandler(dragAutoExpandTimer_Tick);
+			
+		}
 
 		private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
 			// TODO: Event ueberschreiben und casting vermeiden!
@@ -93,7 +103,7 @@ namespace Electrifier.Core.Controls {
 
 			if(node != null)
 				e.Cancel = !node.IsExpandable;
-		} // private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+		}
 
 		/// <summary>
 		/// ItemDrag-event-handler initiates an drag and drop operation
@@ -130,26 +140,48 @@ namespace Electrifier.Core.Controls {
 					dragBitmap.Dispose();
 				}
 			}
-		} // private void ExtTreeView_ItemDrag(object sender, ItemDragEventArgs e)
+		}
 
 		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
 
-			if(this.DragAutoScrollEnabled)
-				this.dragAutoScrollTimer.Enabled = true;
-		} // private void ExtTreeView_DragEnter(object sender, DragEventArgs e)
+			if(this.DragAutoScrollEnabled) {
+				this.dragAutoScrollTimer.Enabled  = true;
+				this.dragAutoScrollTimer.Interval = this.DragAutoScrollSlowInterval;
+			}
+		}
 
 		private void ExtTreeView_DragLeave(object sender, EventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
 
 			if(this.dragAutoScrollTimer.Enabled)
 				this.dragAutoScrollTimer.Enabled = false;
-		} // private void ExtTreeView_DragLeave(object sender, EventArgs e)
+		}
 
 		private void ExtTreeView_DragOver(object sender, DragEventArgs e) {
-			Point pos = this.PointToClient(new Point(e.X, e.Y));
-			WinAPI.ImageList_DragMove((pos.X - this.Left), (pos.Y - this.Top));
-		} // private void ExtTreeView_DragOver(object sender, DragEventArgs e)
+			Point           mousePos          = this.PointToClient(new Point(e.X, e.Y));
+			ExtTreeViewNode newDropTargetNode = this.GetNodeAt(mousePos);
+
+			if(this.dropTargetNode != newDropTargetNode) {
+				// Update TreeView item states regarding the new drop target node
+				WinAPI.ImageList_DragShowNolock(false);
+
+				if(this.dropTargetNode != null)
+					this.dropTargetNode.IsDropHighlited = false;
+				newDropTargetNode.IsDropHighlited = true;
+
+				WinAPI.ImageList_DragShowNolock(true);
+
+				this.dropTargetNode     = newDropTargetNode;
+
+				// Initialize drag and drop auto expand members
+				this.dragAutoExpandTimer.Interval = this.DragAutoExpandInterval;
+				this.dragAutoExpandTimer.Enabled  = true;
+				this.dragAutoExpandNode           = newDropTargetNode;
+			}
+
+			WinAPI.ImageList_DragMove((mousePos.X - this.Left), (mousePos.Y - this.Top));
+		}
 
 		private void ExtTreeView_DragDrop(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
@@ -157,7 +189,7 @@ namespace Electrifier.Core.Controls {
 			// TODO: If frop successful, then...
 			if(this.dragAutoScrollTimer.Enabled)
 				this.dragAutoScrollTimer.Enabled = false;
-		} // private void ExtTreeView_DragDrop(object sender, DragEventArgs e)
+		}
 
 		/// <summary>
 		/// All the autoscroll-related behaviour is managed within this method
@@ -216,6 +248,17 @@ namespace Electrifier.Core.Controls {
 
 			this.dragAutoScrollTimer.Interval =
 				(scrollFast ? this.DragAutoScrollFastInterval : this.DragAutoScrollSlowInterval);
-		}	// private void dragAutoScrollTimer_Tick(object sender, EventArgs e)
+		}
+
+		private void dragAutoExpandTimer_Tick(object sender, EventArgs e) {
+			Point           mousePos = this.PointToClient(Control.MousePosition);
+			ExtTreeViewNode node     = this.GetNodeAt(mousePos);
+
+			if(this.dragAutoExpandNode.Equals(node)) {
+				// TODO: Expand-methode mit BeginInvoke aufrufen und somit Multi-Threaded zu machen :-)
+				if(!node.IsExpanded)
+					node.Expand();
+			}
+		}
 	}
 }

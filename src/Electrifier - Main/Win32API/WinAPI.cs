@@ -152,6 +152,19 @@ namespace Electrifier.Win32API {
 		LASTVISIBLE     = 0x000A,		// WIN32_IE >= 0x0400
 	}
 
+	public enum TVIS : uint {			// TreeView Item states
+		SELECTED           = 0x00000002,
+		CUT                = 0x00000004,
+		DROPHILITED        = 0x00000008,
+		BOLD               = 0x00000010,
+		EXPANDED           = 0x00000020,
+		EXPANDEDONCE       = 0x00000040,
+		EXPANDPARTIAL      = 0x00000080,
+		OVERLAYMASK        = 0x00000F00,
+		STATEIMAGEMASK     = 0x0000F000,
+		USERMASK           = 0x0000F000,
+	}
+
 	/// <summary>
 	/// Self-created helper object for dealing with HTREEITEM-handles of TreeView-nodes
 	/// </summary>
@@ -236,8 +249,8 @@ typedef struct tagNMTREEVIEW {
 	public struct TVItem {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
 		public IntPtr hItem;									//    HTREEITEM hItem;
-		public UInt32 state;									//    UINT state;
-		public UInt32 stateMask;							//    UINT stateMask;
+		public TVIS state;									//    UINT state;
+		public TVIS stateMask;							//    UINT stateMask;
 		[MarshalAs(UnmanagedType.LPWStr)]
 		public string pszText;								//    LPTSTR pszText;
 		public Int32  cchTextMax;							//    int cchTextMax;
@@ -252,8 +265,8 @@ typedef struct tagNMTREEVIEW {
 	public struct TVItemEx {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
 		public IntPtr hItem;									//    HTREEITEM hItem;
-		public UInt32 state;									//    UINT state;
-		public UInt32 stateMask;							//    UINT stateMask;
+		public TVIS state;									//    UINT state;
+		public TVIS stateMask;							//    UINT stateMask;
 		[MarshalAs(UnmanagedType.LPStr)]
 		public string pszText;								//    LPTSTR pszText;
 		public Int32  cchTextMax;							//    int cchTextMax;

@@ -16,14 +16,14 @@ namespace Electrifier.Core.Controls {
 	/// Zusammenfassung für ExtTreeViewNode.
 	/// </summary>
 	public class ExtTreeViewNode : TreeNode, IExtTreeViewNode {
-		protected      ExtTreeViewNodeCollection nodes             = null;
-		public new     ExtTreeViewNodeCollection Nodes             { get { return nodes; } }
-		protected      bool                      handleCreated     = false;
-		public virtual bool                      IsExpandable      { get { return Nodes.Count > 0; } }
+		protected      ExtTreeViewNodeCollection nodes         = null;
+		public new     ExtTreeViewNodeCollection Nodes         { get { return this.nodes; } }
+		protected      bool                      handleCreated = false;
+		public virtual bool                      IsExpandable  { get { return this.Nodes.Count > 0; } }
 
-		#region Overriden properties to ensure type strictness
+			#region Overriden properties to ensure type strictness
 
-		public new ExtTreeView     TreeView        { get { return base.TreeView as ExtTreeView; } }
+			public new ExtTreeView     TreeView        { get { return base.TreeView as ExtTreeView; } }
 		public new ExtTreeViewNode NextNode        { get { return base.NextNode as ExtTreeViewNode; } }
 		public new ExtTreeViewNode PrevNode        { get { return base.PrevNode as ExtTreeViewNode; } }
 		public new ExtTreeViewNode Parent          { get { return base.Parent as ExtTreeViewNode; } }
@@ -44,6 +44,30 @@ namespace Electrifier.Core.Controls {
 					if(handleCreated) {
 						UpdateIsShownExpandable();
 					}
+				}
+			}
+		}
+
+		protected      bool isDropHighlited = false;
+		public virtual bool IsDropHighlited {
+			get { 
+				return this.isDropHighlited;
+			}
+			set {	// TODO: See UpdateIsShownExpandable() for behaviour when not added to treeview
+				if(this.isDropHighlited != value) {
+					this.isDropHighlited = value;
+
+					TVItemEx tvItemEx  = new TVItemEx();
+					tvItemEx.mask      = TVIF.STATE;
+					tvItemEx.hItem     = HTreeItem.Handle;
+					tvItemEx.state     = (value ? Win32API.TVIS.DROPHILITED : 0);
+					tvItemEx.stateMask = Win32API.TVIS.DROPHILITED;
+			
+					int x = WinAPI.SendMessage(TreeView.Handle, WMSG.TVM_SETITEM, 0, ref tvItemEx);
+
+
+					this.TreeView.Invalidate(this.Bounds);
+					this.TreeView.Update();
 				}
 			}
 		}
