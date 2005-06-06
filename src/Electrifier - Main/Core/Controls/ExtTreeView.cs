@@ -144,7 +144,10 @@ namespace Electrifier.Core.Controls {
 		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
 
+			// TODO: Call to ImageList_GetDragImage ?!?
+
 			if(this.DragAutoScrollEnabled) {
+				this.dragAutoScrollTimer.Stop();
 				this.dragAutoScrollTimer.Interval = this.DragAutoScrollSlowInterval;
 				this.dragAutoScrollTimer.Start();
 			}

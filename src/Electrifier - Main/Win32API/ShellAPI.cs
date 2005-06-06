@@ -9,21 +9,16 @@ using System;
 using System.Runtime.InteropServices;
 
 namespace Electrifier.Win32API {
-	/// <summary>
-	/// Zusammenfassung für SHObjIdl.
-	/// </summary>
-	/// 
-	public enum Test : int {
-		x,
-		y,
-		z,
-	}
 
 	public class ShellAPI {
-		public static Guid IID_IShellFolder = 
-			new Guid("{000214E6-0000-0000-C000-000000000046}");
-		public static Guid IID_IMalloc = 
-			new Guid("{00000002-0000-0000-C000-000000000046}");
+		/// <summary>
+		/// System interface id for IShellFolder interface
+		/// </summary>
+		public static Guid IID_IShellFolder = new Guid("{000214E6-0000-0000-C000-000000000046}");
+		/// <summary>
+		/// System interface id for IMalloc interface
+		/// </summary>
+		public static Guid IID_IMalloc      = new Guid("{00000002-0000-0000-C000-000000000046}");
 
 		#region Public functions imported from Shell32.dll
 		#region CSIDL - Enumeration: Special Folder types

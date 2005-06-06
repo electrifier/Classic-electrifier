@@ -48,6 +48,7 @@ namespace Electrifier.Core.Forms {
 		private TD.SandDock.SandDockManager sandDockManager;
 		private System.Windows.Forms.StatusBar statusBar;
 		private TD.SandDock.DocumentContainer documentContainer;
+		private TD.SandBar.MenuButtonItem menuButtonItem1;
 		/// <summary>
 		/// Erforderliche Designervariable.
 		/// </summary>
@@ -199,75 +200,75 @@ namespace Electrifier.Core.Forms {
 			this.topSandDock = new TD.SandDock.DockContainer();
 			this.statusBar = new System.Windows.Forms.StatusBar();
 			this.documentContainer = new TD.SandDock.DocumentContainer();
+			this.menuButtonItem1 = new TD.SandBar.MenuButtonItem();
 			this.topSandBarDock.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// sandBarManager
 			// 
-//			this.sandBarManager.BottomContainer = this.bottomSandBarDock;
-//			this.sandBarManager.LeftContainer = this.leftSandBarDock;
 			this.sandBarManager.OwnerForm = this;
-//			this.sandBarManager.RightContainer = this.rightSandBarDock;
-//			this.sandBarManager.TopContainer = this.topSandBarDock;
 			// 
 			// bottomSandBarDock
 			// 
 			this.bottomSandBarDock.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.bottomSandBarDock.Guid = new System.Guid("ab098a39-eed2-4847-ac3e-1b443c89cf0f");
 			this.bottomSandBarDock.Location = new System.Drawing.Point(0, 376);
 			this.bottomSandBarDock.Manager = this.sandBarManager;
 			this.bottomSandBarDock.Name = "bottomSandBarDock";
 			this.bottomSandBarDock.Size = new System.Drawing.Size(824, 0);
 			this.bottomSandBarDock.TabIndex = 2;
-			this.bottomSandBarDock.Guid = new Guid("{AB098A39-EED2-4847-AC3E-1B443C89CF0F}");
 			// 
 			// leftSandBarDock
 			// 
 			this.leftSandBarDock.Dock = System.Windows.Forms.DockStyle.Left;
-			this.leftSandBarDock.Location = new System.Drawing.Point(0, 47);
+			this.leftSandBarDock.Guid = new System.Guid("d615f676-30e2-4507-94e1-1fa01fb93dc7");
+			this.leftSandBarDock.Location = new System.Drawing.Point(0, 42);
 			this.leftSandBarDock.Manager = this.sandBarManager;
 			this.leftSandBarDock.Name = "leftSandBarDock";
-			this.leftSandBarDock.Size = new System.Drawing.Size(0, 329);
+			this.leftSandBarDock.Size = new System.Drawing.Size(0, 334);
 			this.leftSandBarDock.TabIndex = 0;
-			this.leftSandBarDock.Guid = new Guid("{D615F676-30E2-4507-94E1-1FA01FB93DC7}");
 			// 
 			// rightSandBarDock
 			// 
 			this.rightSandBarDock.Dock = System.Windows.Forms.DockStyle.Right;
-			this.rightSandBarDock.Location = new System.Drawing.Point(824, 47);
+			this.rightSandBarDock.Guid = new System.Guid("96dcfe7c-2a5c-491e-835d-2e8362769981");
+			this.rightSandBarDock.Location = new System.Drawing.Point(824, 42);
 			this.rightSandBarDock.Manager = this.sandBarManager;
 			this.rightSandBarDock.Name = "rightSandBarDock";
-			this.rightSandBarDock.Size = new System.Drawing.Size(0, 329);
+			this.rightSandBarDock.Size = new System.Drawing.Size(0, 334);
 			this.rightSandBarDock.TabIndex = 1;
-			this.rightSandBarDock.Guid = new Guid("{96DCFE7C-2A5C-491e-835D-2E8362769981}");
 			// 
 			// topSandBarDock
 			// 
 			this.topSandBarDock.Controls.Add(this.menuBar1);
 			this.topSandBarDock.Controls.Add(this.toolBar1);
 			this.topSandBarDock.Dock = System.Windows.Forms.DockStyle.Top;
+			this.topSandBarDock.Guid = new System.Guid("e968b7b1-f5cc-42fa-8652-a5714452c0c8");
 			this.topSandBarDock.Location = new System.Drawing.Point(0, 0);
 			this.topSandBarDock.Manager = this.sandBarManager;
 			this.topSandBarDock.Name = "topSandBarDock";
-			this.topSandBarDock.Size = new System.Drawing.Size(824, 47);
+			this.topSandBarDock.Size = new System.Drawing.Size(824, 42);
 			this.topSandBarDock.TabIndex = 3;
-			this.topSandBarDock.Guid = new Guid("{E968B7B1-F5CC-42fa-8652-A5714452C0C8}");
 			// 
 			// menuBar1
 			// 
-			this.menuBar1.Items.AddRange(new TD.SandBar.ToolbarItemBase[] {
-																									 this.menuBarItem1,
-																									 this.menuBarItem2,
-																									 this.menuBarItem3,
-																									 this.menuBarItem4,
-																									 this.menuBarItem5});
 			this.menuBar1.Guid = new System.Guid("53385c5b-0171-4b5c-8952-6532dee0c99e");
+			this.menuBar1.Items.AddRange(new TD.SandBar.ToolbarItemBase[] {
+																																			this.menuBarItem1,
+																																			this.menuBarItem2,
+																																			this.menuBarItem3,
+																																			this.menuBarItem4,
+																																			this.menuBarItem5});
 			this.menuBar1.Location = new System.Drawing.Point(2, 0);
 			this.menuBar1.Name = "menuBar1";
+			this.menuBar1.OwnerForm = this;
 			this.menuBar1.Size = new System.Drawing.Size(822, 24);
 			this.menuBar1.TabIndex = 0;
 			// 
 			// menuBarItem1
 			// 
+			this.menuBarItem1.Items.AddRange(new TD.SandBar.ToolbarItemBase[] {
+																																					this.menuButtonItem1});
 			this.menuBarItem1.Text = "&File";
 			// 
 			// menuBarItem2
@@ -292,7 +293,7 @@ namespace Electrifier.Core.Forms {
 			this.toolBar1.Guid = new System.Guid("ed97398b-31e0-472f-989f-9fd6fbf9d484");
 			this.toolBar1.Location = new System.Drawing.Point(2, 24);
 			this.toolBar1.Name = "toolBar1";
-			this.toolBar1.Size = new System.Drawing.Size(25, 23);
+			this.toolBar1.Size = new System.Drawing.Size(24, 18);
 			this.toolBar1.TabIndex = 1;
 			this.toolBar1.Text = "toolBar1";
 			// 
@@ -306,10 +307,10 @@ namespace Electrifier.Core.Forms {
 			this.leftSandDock.Dock = System.Windows.Forms.DockStyle.Left;
 			this.leftSandDock.Guid = new System.Guid("54e6ba6b-4e12-473f-bb62-27faa6e6a5bf");
 			this.leftSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.leftSandDock.Location = new System.Drawing.Point(0, 47);
+			this.leftSandDock.Location = new System.Drawing.Point(0, 42);
 			this.leftSandDock.Manager = this.sandDockManager;
 			this.leftSandDock.Name = "leftSandDock";
-			this.leftSandDock.Size = new System.Drawing.Size(0, 329);
+			this.leftSandDock.Size = new System.Drawing.Size(0, 334);
 			this.leftSandDock.TabIndex = 4;
 			// 
 			// rightSandDock
@@ -317,10 +318,10 @@ namespace Electrifier.Core.Forms {
 			this.rightSandDock.Dock = System.Windows.Forms.DockStyle.Right;
 			this.rightSandDock.Guid = new System.Guid("e418ed79-77ed-46ad-b05a-6df7e33e3d50");
 			this.rightSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.rightSandDock.Location = new System.Drawing.Point(824, 47);
+			this.rightSandDock.Location = new System.Drawing.Point(824, 42);
 			this.rightSandDock.Manager = this.sandDockManager;
 			this.rightSandDock.Name = "rightSandDock";
-			this.rightSandDock.Size = new System.Drawing.Size(0, 329);
+			this.rightSandDock.Size = new System.Drawing.Size(0, 334);
 			this.rightSandDock.TabIndex = 5;
 			// 
 			// bottomSandDock
@@ -339,7 +340,7 @@ namespace Electrifier.Core.Forms {
 			this.topSandDock.Dock = System.Windows.Forms.DockStyle.Top;
 			this.topSandDock.Guid = new System.Guid("ce745625-08ab-489f-bc70-4641d0341748");
 			this.topSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.topSandDock.Location = new System.Drawing.Point(0, 47);
+			this.topSandDock.Location = new System.Drawing.Point(0, 42);
 			this.topSandDock.Manager = this.sandDockManager;
 			this.topSandDock.Name = "topSandDock";
 			this.topSandDock.Size = new System.Drawing.Size(824, 0);
@@ -357,12 +358,17 @@ namespace Electrifier.Core.Forms {
 			// 
 			this.documentContainer.Guid = new System.Guid("3a9e7f87-b0d9-4fe2-9218-692edde57bbc");
 			this.documentContainer.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.documentContainer.Location = new System.Drawing.Point(0, 47);
+			this.documentContainer.Location = new System.Drawing.Point(0, 42);
 			this.documentContainer.Manager = null;
 			this.documentContainer.Name = "documentContainer";
 			this.documentContainer.Renderer = new TD.SandDock.Rendering.Office2003Renderer();
-			this.documentContainer.Size = new System.Drawing.Size(824, 329);
+			this.documentContainer.Size = new System.Drawing.Size(824, 334);
 			this.documentContainer.TabIndex = 9;
+			// 
+			// menuButtonItem1
+			// 
+			this.menuButtonItem1.Text = "New &Shell Browser";
+			this.menuButtonItem1.Activate += new System.EventHandler(this.menuButtonItem1_Activate);
 			// 
 			// MainWindowForm
 			// 
@@ -404,5 +410,12 @@ namespace Electrifier.Core.Forms {
 			}
 		}
 		#endregion
+
+		private void menuButtonItem1_Activate(object sender, System.EventArgs e) {
+			// TODO: Experimental code :-)
+			ShellBrowserDockControl shellBrowser = new ShellBrowserDockControl();
+			this.documentContainer.AddDocument(shellBrowser);
+			shellBrowser.AttachToDockControlContainer(this);	
+		}
 	}
 }
