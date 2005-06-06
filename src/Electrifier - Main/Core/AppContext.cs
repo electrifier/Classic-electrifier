@@ -68,21 +68,21 @@ namespace Electrifier.Core {
 			notifyIcon.Icon = new Icon(appIcon, 16, 16);	// TODO: width & height from regisry?!?
 			notifyIcon.Visible = true;
 
-			//			// Open new MainWindow, if not diabled
-			//			if(showMainWindow) {
-			//				MainWindowForm mainWindowForm = new MainWindowForm();
-			//				mainWindowForm.Show();
-			//
-			//				openWindowList.Add(mainWindowForm);
-			//
-			//				// TODO: Action definieren, die neuen Electrifier aufmacht...
-			//				// TODO: Config auslesen, wenn gewuenscht this.OnMainFormClosed checken und
-			//				//       application am leben erhalten (Dialog "You closed all electrifier windows.
-			//				//       do you want to stay electrifier active in tray" blablablubb)
-			//				this.MainForm = mainWindowForm;
-			//			}
-			// Load and apply the configuration used for this session
+//						// Open new MainWindow, if not diabled
+//						if(showMainWindow) {
+//							MainWindowForm mainWindowForm = new MainWindowForm();
+//							mainWindowForm.Show();
+//			
+//							openWindowList.Add(mainWindowForm);
+//			
+//							// TODO: Action definieren, die neuen Electrifier aufmacht...
+//							// TODO: Config auslesen, wenn gewuenscht this.OnMainFormClosed checken und
+//							//       application am leben erhalten (Dialog "You closed all electrifier windows.
+//							//       do you want to stay electrifier active in tray" blablablubb)
+//							this.MainForm = mainWindowForm;
+//						}
 
+			// Load and apply the configuration used for this session
 			RestoreConfiguration();
 
 			if(showMainWindow) {

@@ -218,6 +218,7 @@ namespace Electrifier.Core.Forms {
 			this.bottomSandBarDock.Name = "bottomSandBarDock";
 			this.bottomSandBarDock.Size = new System.Drawing.Size(824, 0);
 			this.bottomSandBarDock.TabIndex = 2;
+			this.bottomSandBarDock.Guid = new Guid("{AB098A39-EED2-4847-AC3E-1B443C89CF0F}");
 			// 
 			// leftSandBarDock
 			// 
@@ -227,6 +228,7 @@ namespace Electrifier.Core.Forms {
 			this.leftSandBarDock.Name = "leftSandBarDock";
 			this.leftSandBarDock.Size = new System.Drawing.Size(0, 329);
 			this.leftSandBarDock.TabIndex = 0;
+			this.leftSandBarDock.Guid = new Guid("{D615F676-30E2-4507-94E1-1FA01FB93DC7}");
 			// 
 			// rightSandBarDock
 			// 
@@ -236,6 +238,7 @@ namespace Electrifier.Core.Forms {
 			this.rightSandBarDock.Name = "rightSandBarDock";
 			this.rightSandBarDock.Size = new System.Drawing.Size(0, 329);
 			this.rightSandBarDock.TabIndex = 1;
+			this.rightSandBarDock.Guid = new Guid("{96DCFE7C-2A5C-491e-835D-2E8362769981}");
 			// 
 			// topSandBarDock
 			// 
@@ -247,6 +250,7 @@ namespace Electrifier.Core.Forms {
 			this.topSandBarDock.Name = "topSandBarDock";
 			this.topSandBarDock.Size = new System.Drawing.Size(824, 47);
 			this.topSandBarDock.TabIndex = 3;
+			this.topSandBarDock.Guid = new Guid("{E968B7B1-F5CC-42fa-8652-A5714452C0C8}");
 			// 
 			// menuBar1
 			// 

@@ -23,7 +23,7 @@ namespace Electrifier.Core.Forms.DockControls {
 
 		public FolderBarDockControl() : base(){
 			// Initialize the underlying DockControl
-			Guid = new Guid("2B552F10-0847-44b2-A244-D595B7DDD1AE");
+			Guid = new Guid("{2B552F10-0847-44b2-A244-D595B7DDD1AE}");
 			Name = "FolderBarDockControl." + Guid.ToString();
 			Text = "FolderBar";
 
