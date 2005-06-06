@@ -41,7 +41,7 @@ namespace Electrifier.Core.Controls {
 		private Timer           dragAutoExpandTimer    = new Timer();
 		private bool            dragAutoExpandEnabled  = true;
 		public  bool            DragAutoExpandEnabled  { get { return this.dragAutoExpandEnabled; } set { this.dragAutoExpandEnabled = value; } }
-		private int             dragAutoExpandInterval = 1000;
+		private int             dragAutoExpandInterval = 750;
 		public  int             DragAutoExpandInterval { get { return this.dragAutoExpandInterval; } set { this.dragAutoExpandInterval = value; } }
 		private ExtTreeViewNode dragAutoExpandNode     = null;
 
@@ -94,7 +94,6 @@ namespace Electrifier.Core.Controls {
 			// Initialize drag and drop auto-expand
 			this.dragAutoExpandTimer.Enabled  = false;
 			this.dragAutoExpandTimer.Tick    +=new EventHandler(dragAutoExpandTimer_Tick);
-			
 		}
 
 		private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
@@ -146,16 +145,17 @@ namespace Electrifier.Core.Controls {
 			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
 
 			if(this.DragAutoScrollEnabled) {
-				this.dragAutoScrollTimer.Enabled  = true;
 				this.dragAutoScrollTimer.Interval = this.DragAutoScrollSlowInterval;
+				this.dragAutoScrollTimer.Start();
 			}
 		}
 
 		private void ExtTreeView_DragLeave(object sender, EventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
 
-			if(this.dragAutoScrollTimer.Enabled)
-				this.dragAutoScrollTimer.Enabled = false;
+			this.dropTargetNode.IsDropHighlited = false;
+			this.dragAutoScrollTimer.Stop();
+			this.dragAutoExpandTimer.Stop();
 		}
 
 		private void ExtTreeView_DragOver(object sender, DragEventArgs e) {
@@ -168,16 +168,16 @@ namespace Electrifier.Core.Controls {
 
 				if(this.dropTargetNode != null)
 					this.dropTargetNode.IsDropHighlited = false;
-				newDropTargetNode.IsDropHighlited = true;
+				this.dropTargetNode = newDropTargetNode;
+				this.dropTargetNode.IsDropHighlited = true;
 
 				WinAPI.ImageList_DragShowNolock(true);
 
-				this.dropTargetNode     = newDropTargetNode;
-
 				// Initialize drag and drop auto expand members
+				this.dragAutoExpandTimer.Stop();
+				this.dragAutoExpandNode = newDropTargetNode;
 				this.dragAutoExpandTimer.Interval = this.DragAutoExpandInterval;
-				this.dragAutoExpandTimer.Enabled  = true;
-				this.dragAutoExpandNode           = newDropTargetNode;
+				this.dragAutoExpandTimer.Start();
 			}
 
 			WinAPI.ImageList_DragMove((mousePos.X - this.Left), (mousePos.Y - this.Top));
@@ -187,8 +187,9 @@ namespace Electrifier.Core.Controls {
 			WinAPI.ImageList_DragLeave(this.Handle);
 
 			// TODO: If frop successful, then...
-			if(this.dragAutoScrollTimer.Enabled)
-				this.dragAutoScrollTimer.Enabled = false;
+			this.dropTargetNode.IsDropHighlited = false;
+			this.dragAutoScrollTimer.Stop();
+			this.dragAutoExpandTimer.Stop();
 		}
 
 		/// <summary>
