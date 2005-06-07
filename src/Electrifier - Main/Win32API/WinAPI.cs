@@ -422,28 +422,28 @@ typedef struct tagNMTREEVIEW {
 		[StructLayout(LayoutKind.Sequential)]
 		public struct Point {
 			public Int32 X;
-			public Int32 Vertical {
+			public Int32 Horizontal {
 				get {
-					return X;
+					return this.X;
 				}
 				set {
-					X = value;
+					this.X = value;
 				}
 			}
 
 			public Int32 Y;
-			public Int32 Horizontal {
+			public Int32 Vertical {
 				get {
-					return Y;
+					return this.Y;
 				}
 				set {
-					Y = value;
+					this.Y = value;
 				}
 			}
 
 			public Point(Int32 x, Int32 y) {
-				X = x;
-				Y = y;
+				this.X = x;
+				this.Y = y;
 			}
 		}
 
@@ -555,7 +555,8 @@ typedef struct tagNMTREEVIEW {
 		public static extern bool		ImageList_DragShowNolock(bool fShow);
 		[DllImport("comctl32.dll")]
 		public static extern bool		ImageList_Draw(IntPtr himl, int i, IntPtr hdcDst, int x, int y, ILD fStyle);
-
+		[DllImport("comctl32.dll")]
+		public static extern IntPtr ImageList_GetDragImage(ref Point ppt, ref Point pptHotspot);
 		
 		
 		private WinAPI() {

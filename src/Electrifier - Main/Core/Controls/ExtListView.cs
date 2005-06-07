@@ -6,6 +6,7 @@
 //	</file>
 
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -21,6 +22,16 @@ namespace Electrifier.Core.Controls {
 
 		public ExtListView() : base() {
 			items = new ExtListViewItemCollection(this);
+
+			// TODO: Remove!
+			this.AllowDrop = true;
+
+			// Initialize drag and drop-event handlers
+//			this.ItemDrag  += new ItemDragEventHandler(ExtTreeView_ItemDrag);
+			this.DragEnter += new DragEventHandler(ExtListView_DragEnter);
+			this.DragLeave += new EventHandler(ExtListView_DragLeave);
+			this.DragOver  += new DragEventHandler(ExtListView_DragOver);
+			this.DragDrop  += new DragEventHandler(ExtListView_DragDrop);
 		}
 
 		public IntPtr SmallSystemImageList {
@@ -96,12 +107,12 @@ namespace Electrifier.Core.Controls {
 		protected override void OnHandleCreated(EventArgs e) {
 			base.OnHandleCreated(e);
 
-			UpdateVirtualItemCount();
+			this.UpdateVirtualItemCount();
 		}
 
 		protected override void OnHandleDestroyed(EventArgs e) {
 			// Set item count to zero, since ListViews OnHandleDestroyed-method accesses the selected items
-			UpdateVirtualItemCount(0);
+			this.UpdateVirtualItemCount(0);
 
 			base.OnHandleDestroyed(e);
 		}
@@ -167,7 +178,7 @@ namespace Electrifier.Core.Controls {
 		protected void OnBeginDragMessage(MouseButtons mouseButton, ref Message m) {
 			Win32API.NMLISTVIEW nmListView = (Win32API.NMLISTVIEW)m.GetLParam(typeof(Win32API.NMLISTVIEW));
 
-			OnItemDrag(new ItemDragEventArgs(mouseButton, nmListView.iItem));
+			this.OnItemDrag(new ItemDragEventArgs(mouseButton, nmListView.iItem));
 		}
 
 		#region IExtListView Member
@@ -190,5 +201,25 @@ namespace Electrifier.Core.Controls {
 		}
 
 		#endregion
+
+		private void ExtListView_DragEnter(object sender, DragEventArgs e) {
+			Point mousePos = this.PointToClient(new Point(e.X, e.Y));
+
+			WinAPI.ImageList_DragEnter(this.Handle, mousePos.X, mousePos.Y);
+		}
+
+		private void ExtListView_DragLeave(object sender, EventArgs e) {
+			WinAPI.ImageList_DragLeave(this.Handle);
+		}
+
+		private void ExtListView_DragOver(object sender, DragEventArgs e) {
+			Point mousePos = this.PointToClient(new Point(e.X, e.Y));
+
+			WinAPI.ImageList_DragMove((mousePos.X), (mousePos.Y));
+		}
+
+		private void ExtListView_DragDrop(object sender, DragEventArgs e) {
+			WinAPI.ImageList_DragLeave(this.Handle);
+		}
 	}
 }

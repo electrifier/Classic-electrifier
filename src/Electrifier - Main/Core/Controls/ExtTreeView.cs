@@ -142,10 +142,11 @@ namespace Electrifier.Core.Controls {
 		}
 
 		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
-			WinAPI.ImageList_DragEnter(this.Handle, (e.X - this.Left), (e.Y - this.Top));
+			Point mousePos = this.PointToClient(new Point(e.X, e.Y));
+
+			WinAPI.ImageList_DragEnter(this.Handle, mousePos.X, mousePos.Y);
 
 			// TODO: Call to ImageList_GetDragImage ?!?
-
 			if(this.DragAutoScrollEnabled) {
 				this.dragAutoScrollTimer.Stop();
 				this.dragAutoScrollTimer.Interval = this.DragAutoScrollSlowInterval;
@@ -156,6 +157,7 @@ namespace Electrifier.Core.Controls {
 		private void ExtTreeView_DragLeave(object sender, EventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
 
+			// TODO: ImageList_DragShowNolock before .IsDropHighlited
 			this.dropTargetNode.IsDropHighlited = false;
 			this.dragAutoScrollTimer.Stop();
 			this.dragAutoExpandTimer.Stop();
@@ -172,7 +174,7 @@ namespace Electrifier.Core.Controls {
 				if(this.dropTargetNode != null)
 					this.dropTargetNode.IsDropHighlited = false;
 				this.dropTargetNode = newDropTargetNode;
-				this.dropTargetNode.IsDropHighlited = true;
+				newDropTargetNode.IsDropHighlited = true;
 
 				WinAPI.ImageList_DragShowNolock(true);
 
@@ -183,13 +185,14 @@ namespace Electrifier.Core.Controls {
 				this.dragAutoExpandTimer.Start();
 			}
 
-			WinAPI.ImageList_DragMove((mousePos.X - this.Left), (mousePos.Y - this.Top));
+			WinAPI.ImageList_DragMove(mousePos.X, mousePos.Y);
 		}
 
 		private void ExtTreeView_DragDrop(object sender, DragEventArgs e) {
 			WinAPI.ImageList_DragLeave(this.Handle);
 
 			// TODO: If frop successful, then...
+			// TODO: ImageList_DragShowNolock before .IsDropHighlited
 			this.dropTargetNode.IsDropHighlited = false;
 			this.dragAutoScrollTimer.Stop();
 			this.dragAutoExpandTimer.Stop();
@@ -260,8 +263,14 @@ namespace Electrifier.Core.Controls {
 
 			if(this.dragAutoExpandNode.Equals(node)) {
 				// TODO: Expand-methode mit BeginInvoke aufrufen und somit Multi-Threaded zu machen :-)
-				if(!node.IsExpanded)
+				if(!node.IsExpanded) {
+					WinAPI.ImageList_DragShowNolock(false);
+
 					node.Expand();
+					this.Update();
+
+					WinAPI.ImageList_DragShowNolock(true);
+				}
 			}
 		}
 	}
