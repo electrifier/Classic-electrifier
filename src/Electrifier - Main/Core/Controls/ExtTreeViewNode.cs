@@ -21,9 +21,9 @@ namespace Electrifier.Core.Controls {
 		protected      bool                      handleCreated = false;
 		public virtual bool                      IsExpandable  { get { return this.Nodes.Count > 0; } }
 
-			#region Overriden properties to ensure type strictness
+		#region Overriden properties to ensure type strictness
 
-			public new ExtTreeView     TreeView        { get { return base.TreeView as ExtTreeView; } }
+		public new ExtTreeView     TreeView        { get { return base.TreeView as ExtTreeView; } }
 		public new ExtTreeViewNode NextNode        { get { return base.NextNode as ExtTreeViewNode; } }
 		public new ExtTreeViewNode PrevNode        { get { return base.PrevNode as ExtTreeViewNode; } }
 		public new ExtTreeViewNode Parent          { get { return base.Parent as ExtTreeViewNode; } }
@@ -31,6 +31,15 @@ namespace Electrifier.Core.Controls {
 		public new ExtTreeViewNode NextVisibleNode { get { return base.NextVisibleNode as ExtTreeViewNode; } }
 
 		#endregion
+
+		public virtual WinAPI.IDataObject GetIDataObject() {
+			return null;	// Don't know how to do :-)
+		}
+
+		public virtual WinAPI.IDropTarget GetIDropTarget() {
+			return null;	// Don't know how to do :-)
+		}
+
 
 		protected      bool isShownExpandable = false;
 		public virtual bool IsShownExpandable {

@@ -22,10 +22,10 @@ namespace Electrifier.Core.Shell32.Controls {
 		protected        IntPtr      browsingFolder = IntPtr.Zero;
 
 		public ShellListView() : base() {
-			SmallSystemImageList = iconManager.SmallImageList;
-			LargeSystemImageList = iconManager.LargeImageList;
+			this.SmallSystemImageList  = iconManager.SmallImageList;
+			this.NormalSystemImageList = iconManager.LargeImageList;
 
-			ItemDrag            += new ItemDragEventHandler(ShellListView_ItemDrag);
+			this.ItemDrag            += new ItemDragEventHandler(ShellListView_ItemDrag);
 		}
 
 		public void SetBrowsingFolder(object sender, ShellAPI.CSIDL shellObjectCSIDL) {

@@ -46,6 +46,9 @@ namespace Electrifier.Core.Shell32 {
 
 		BasicShellObjectCollection GetFolderItemCollection();
 
+		WinAPI.IDataObject GetIDataObject();
+		WinAPI.IDropTarget GetIDropTarget();
+
 		string DisplayName { get; }
 		string FullPathName { get; }
 

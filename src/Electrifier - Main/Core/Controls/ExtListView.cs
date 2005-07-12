@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using Electrifier.Core.Shell32;
 using Electrifier.Win32API;
 
 namespace Electrifier.Core.Controls {
@@ -20,36 +21,24 @@ namespace Electrifier.Core.Controls {
 		protected  ExtListViewItemCollection items = null;
 		public new ExtListViewItemCollection Items { get { return items; } }
 
-		public ExtListView() : base() {
-			items = new ExtListViewItemCollection(this);
+		protected ShellDragDropHelper shellDragDropHelper = null;
 
-			// TODO: Remove!
-			this.AllowDrop = true;
+		public ExtListView() : base() {
+			this.items = new ExtListViewItemCollection(this);
+			this.shellDragDropHelper = new ShellDragDropHelper(this.Handle);
 
 			// Initialize drag and drop-event handlers
-//			this.ItemDrag  += new ItemDragEventHandler(ExtTreeView_ItemDrag);
-			this.DragEnter += new DragEventHandler(ExtListView_DragEnter);
-			this.DragLeave += new EventHandler(ExtListView_DragLeave);
-			this.DragOver  += new DragEventHandler(ExtListView_DragOver);
-			this.DragDrop  += new DragEventHandler(ExtListView_DragDrop);
+			this.ItemDrag  += new ItemDragEventHandler(ExtListView_ItemDrag);
 		}
 
 		public IntPtr SmallSystemImageList {
-			get {
-				return WinAPI.SendMessage(Handle, WMSG.LVM_GETIMAGELIST, LVSIL.SMALL, IntPtr.Zero);
-			}
-			set {
-				WinAPI.SendMessage(Handle, WMSG.LVM_SETIMAGELIST, LVSIL.SMALL, value);
-			}
+			get { return WinAPI.SendMessage(Handle, WMSG.LVM_GETIMAGELIST, LVSIL.SMALL, IntPtr.Zero); }
+			set { WinAPI.SendMessage(Handle, WMSG.LVM_SETIMAGELIST, LVSIL.SMALL, value); }
 		}
 
-		public IntPtr LargeSystemImageList {
-			get {
-				return WinAPI.SendMessage(Handle, WMSG.LVM_GETIMAGELIST, LVSIL.NORMAL, IntPtr.Zero);
-			}
-			set {
-				WinAPI.SendMessage(Handle, WMSG.LVM_SETIMAGELIST, LVSIL.NORMAL, value);
-			}
+		public IntPtr NormalSystemImageList {
+			get { return WinAPI.SendMessage(Handle, WMSG.LVM_GETIMAGELIST, LVSIL.NORMAL, IntPtr.Zero); }
+			set { WinAPI.SendMessage(Handle, WMSG.LVM_SETIMAGELIST, LVSIL.NORMAL, value); }
 		}
 
 		public void SetItemSelectedState(int itemIndex, bool isSelected) {
@@ -178,14 +167,15 @@ namespace Electrifier.Core.Controls {
 		protected void OnBeginDragMessage(MouseButtons mouseButton, ref Message m) {
 			Win32API.NMLISTVIEW nmListView = (Win32API.NMLISTVIEW)m.GetLParam(typeof(Win32API.NMLISTVIEW));
 
-			this.OnItemDrag(new ItemDragEventArgs(mouseButton, nmListView.iItem));
+			// TODO: What about multi-selection?!?
+			this.OnItemDrag(new ItemDragEventArgs(mouseButton, this.Items[nmListView.iItem]));
 		}
 
 		#region IExtListView Member
 
 		// TODO: protected machen, und auf event reagieren!
 		public void UpdateVirtualItemCount() {
-			UpdateVirtualItemCount(items.Count);
+			this.UpdateVirtualItemCount(items.Count);
 		}
 
 		protected void UpdateVirtualItemCount(int itemCount) {
@@ -202,24 +192,18 @@ namespace Electrifier.Core.Controls {
 
 		#endregion
 
-		private void ExtListView_DragEnter(object sender, DragEventArgs e) {
-			Point mousePos = this.PointToClient(new Point(e.X, e.Y));
+		private void ExtListView_ItemDrag(object sender, ItemDragEventArgs e) {
+			ExtListViewItem dragItem = e.Item as ExtListViewItem;
 
-			WinAPI.ImageList_DragEnter(this.Handle, mousePos.X, mousePos.Y);
+			if(dragItem != null) {
+				WinAPI.IDataObject dataObject = dragItem.GetIDataObject();
+
+				this.shellDragDropHelper.PrepareDragImage(dataObject);
+
+				this.DoDragDrop(dataObject, (DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link));
+			}
 		}
 
-		private void ExtListView_DragLeave(object sender, EventArgs e) {
-			WinAPI.ImageList_DragLeave(this.Handle);
-		}
 
-		private void ExtListView_DragOver(object sender, DragEventArgs e) {
-			Point mousePos = this.PointToClient(new Point(e.X, e.Y));
-
-			WinAPI.ImageList_DragMove((mousePos.X), (mousePos.Y));
-		}
-
-		private void ExtListView_DragDrop(object sender, DragEventArgs e) {
-			WinAPI.ImageList_DragLeave(this.Handle);
-		}
 	}
 }

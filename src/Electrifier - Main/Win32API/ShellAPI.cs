@@ -7,18 +7,11 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Electrifier.Win32API {
 
 	public class ShellAPI {
-		/// <summary>
-		/// System interface id for IShellFolder interface
-		/// </summary>
-		public static Guid IID_IShellFolder = new Guid("{000214E6-0000-0000-C000-000000000046}");
-		/// <summary>
-		/// System interface id for IMalloc interface
-		/// </summary>
-		public static Guid IID_IMalloc      = new Guid("{00000002-0000-0000-C000-000000000046}");
 
 		#region Public functions imported from Shell32.dll
 		#region CSIDL - Enumeration: Special Folder types
@@ -167,23 +160,32 @@ namespace Electrifier.Win32API {
 			[MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
 			public string szTypeName;
 		}
-		
+
+		[StructLayout(LayoutKind.Sequential)]
+			public struct SHDRAGIMAGE {
+			public WinAPI.SIZE     sizeDragImage;
+			public WinAPI.POINT    ptOffset;
+			public IntPtr          hbmpDragImage;
+			public WinAPI.COLORREF crColorKey;
+		}
+
 		public enum SHGFI {
-			LargeIcon			= 0x00000000,
-			SmallIcon			= 0x00000001,
-			OpenIcon      = 0x00000002,
-			PIDL          = 0x00000008,
-			Icon					= 0x00000100,
-			DisplayName			= 0x00000200,
-			Typename				= 0x00000400,
-			SysIconIndex		= 0x00004000,
-			UseFileAttributes	= 0x00000010
+			LargeIcon         = 0x00000000,
+			SmallIcon         = 0x00000001,
+			OpenIcon          = 0x00000002,
+			PIDL              = 0x00000008,
+			Icon              = 0x00000100,
+			DisplayName       = 0x00000200,
+			Typename          = 0x00000400,
+			SysIconIndex      = 0x00004000,
+			UseFileAttributes = 0x00000010,
 		}
 
 		// Retrieves the IShellFolder interface for the desktop folder,
 		//which is the root of the Shell's namespace. 
-		[DllImport("Shell32.Dll")]
+		[DllImport("shell32.dll")]
 		public static extern Int32 SHGetDesktopFolder(
+			// TODO: [MarshalAs(UnmanagedType.IUnknown)]
 			out IntPtr ppshf);        // Address that receives an IShellFolder interface
 		// pointer for the 
 		// desktop folder.
@@ -191,6 +193,7 @@ namespace Electrifier.Win32API {
 		// Retrieves a pointer to the Shell's IMalloc interface.
 		[DllImport("shell32.dll")]
 		public static extern Int32 SHGetMalloc(
+			// TODO: [MarshalAs(UnmanagedType.IUnknown)]
 			out IntPtr hObject);    // Address of a pointer that receives the Shell's
 		// IMalloc interface pointer. 
 
@@ -203,6 +206,11 @@ namespace Electrifier.Win32API {
 			FORADDRESSBAR      = 0x4000,		// UI friendly parsing name (remove ugly stuff)
 			FORPARSING         = 0x8000,		// parsing name for ParseDisplayName()
 		}
+
+		/// <summary>
+		/// System interface id for IMalloc interface
+		/// </summary>
+		public static Guid IID_IMalloc = new Guid("{00000002-0000-0000-C000-000000000046}");
 
 		[ComImport]
 			[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
@@ -293,7 +301,59 @@ namespace Electrifier.Win32API {
 				ref IEnumIDList ppenum);
 		};
 
+		#region IDropTargetHelper - COM - Interface: Drop Target Helper interface
+
+		/// <summary>
+		/// System interface id for IDropTargetHelper interface
+		/// </summary>
+		public static Guid CLSID_DragDropHelper  = new Guid("{4657278A-411B-11d2-839A-00C04FD918D0}");
+
+		public static Guid IID_IDropTargetHelper = new Guid("{4657278B-411B-11d2-839A-00C04FD918D0}");
+		public static Guid IID_IDragSourceHelper = new Guid("{DE5BF786-477A-11D2-839D-00C04FD918D0}");
+		public static Guid IID_IDataObject       = new Guid("{0000010e-0000-0000-C000-000000000046}");
+		public static Guid IID_IDropTarget       = new Guid("{00000122-0000-0000-C000-000000000046}");
+
+		[ComImport]																							// IDropTargetHelper
+			[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+			[Guid("4657278B-411B-11d2-839A-00C04FD918D0")]
+			public interface IDropTargetHelper {
+			[PreserveSig]		// TODO: pDataObject       => IDataObject*
+				// TODO: Int32 DragEnter() => HRESULT DragEnter()
+				// TODO: Int32 dwEffect    => DWORD dwEffect
+			Int32 DragEnter(IntPtr hwndTarget, WinAPI.IDataObject pDataObject, ref WinAPI.POINT ppt, DragDropEffects dwEffect);
+			[PreserveSig]		// TODO: Int32 DragLeave() => HRESULT DragLeave()
+			Int32 DragLeave();
+			[PreserveSig]		// TODO: Int32 DragOver()  => HRESULT DragOver()
+				// TODO: Int32 dwEffect    => DWORD dwEffect
+			Int32 DragOver(ref WinAPI.POINT ppt, DragDropEffects dwEffect);
+			[PreserveSig]		// TODO: pDataObject       => IDataObject*
+				// TODO: Int32 Drop()      => HRESULT Drop()
+				// TODO: Int32 dwEffect    => DWORD dwEffect
+			Int32 Drop(IntPtr pDataObject, ref WinAPI.POINT ppt, DragDropEffects dwEffect);
+			[PreserveSig]		// TODO: Int32 Show()      => HRESULT Show()
+			Int32 Show(bool fShow);
+		}
+
+		[ComImport]																							// IDragSourceHelper
+			[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+			[Guid("DE5BF786-477A-11D2-839D-00C04FD918D0")]
+			public interface IDragSourceHelper {
+			[PreserveSig]		// TODO: Int32 InitializeFromBitmap()      => HRESULT InitializeFromBitmap()
+			int InitializeFromBitmap(SHDRAGIMAGE pshdi, WinAPI.IDataObject pDataObject);
+			[PreserveSig]		// TODO: Int32 InitializeFromWindow()      => HRESULT InitializeFromWindow()
+			int InitializeFromWindow(IntPtr hwnd, ref WinAPI.POINT ppt,	WinAPI.IDataObject pDataObject);
+		}
+
+		#endregion
+
+
 		#region IShellFolder - COM - Interface: Shell Folder interface
+
+		/// <summary>
+		/// System interface id for IShellFolder interface
+		/// </summary>
+		public static Guid IID_IShellFolder = new Guid("{000214E6-0000-0000-C000-000000000046}");
+
 		[ComImport]
 			[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 			[Guid("000214E6-0000-0000-C000-000000000046")]
@@ -412,7 +472,7 @@ namespace Electrifier.Win32API {
 			// attributes that are common to all of the
 			// specified objects. this value can
 			// be from the SFGAO enum
-       
+
 			// Retrieves an OLE interface that can be used to carry out actions on the
 			// specified file objects or folders.
 			// Return value: error code, if any
@@ -423,12 +483,15 @@ namespace Electrifier.Win32API {
 				// a dialog box or message box.
 				UInt32 cidl,										// Number of file objects or subfolders specified
 				// in the apidl parameter. 
+				[MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]
 				IntPtr[] apidl,									// Address of an array of pointers to ITEMIDLIST
 				// structures, each of which 
 				// uniquely identifies a file object or subfolder
 				// relative to the parent folder.
-				Guid riid,											// Identifier of the COM interface object to return.
+				ref Guid riid,											// Identifier of the COM interface object to return.
 				ref UInt32 rgfReserved,					// Reserved. 
+//				out object ppv);								// Pointer to the requested interface.
+//			// TODO:	[MarshalAs(UnmanagedType.IUnknown)]
 				out IntPtr ppv);								// Pointer to the requested interface.
 
 			// Retrieves the display name for the specified file object or subfolder. 
@@ -492,10 +555,8 @@ namespace Electrifier.Win32API {
 			DefaultForListView  = ShellAPI.SHCONTF.FOLDERS | ShellAPI.SHCONTF.NONFOLDERS | ShellAPI.SHCONTF.INCLUDEHIDDEN,
 		}
 
-		public ShellAPI() {
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
+		private ShellAPI() {
+			// No instantion allowed.
 		}
 	}
 }

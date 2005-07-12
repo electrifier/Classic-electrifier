@@ -12,45 +12,37 @@ namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtTreeViewNodeCollection.
 	/// </summary>
-
 	public class ExtTreeViewNodeCollection : IExtTreeViewNodeCollection {
 		protected TreeNodeCollection collection;
 
-		public ExtTreeViewNodeCollection(ExtTreeViewNodeCollection collection)
-			: this(collection.collection) { }
+		public ExtTreeViewNodeCollection(ExtTreeViewNodeCollection collection) {
+			this.collection = collection.collection;
+		}
 
 		public ExtTreeViewNodeCollection(TreeNodeCollection treeNodeCollection) {
-			collection = treeNodeCollection;
+			this.collection = treeNodeCollection;
 		}
 
 		public virtual int Count {
-			get{
-				return collection.Count;
-			}
+			get{ return this.collection.Count; }
 		}
 
 		public virtual bool IsReadOnly {
-			get {
-				return collection.IsReadOnly;
-			}
+			get { return this.collection.IsReadOnly; }
 		}
 
-//		public virtual TreeNode this[int index] {
-//			get{
-//				return collection[index];
-//			}
-//		}
-
-
+		public virtual ExtTreeViewNode this[int index] {
+			get{ return this.collection[index] as ExtTreeViewNode; }
+		}
 
 		public void Add(ExtTreeViewNode node) {			
-			collection.Add(node);
+			this.collection.Add(node);
 
 			node.HasBeenAddedToTreeViewBy(this);
 		}
 
 		public void AddRange(ExtTreeViewNode[] nodes) {
-			collection.AddRange(nodes);
+			this.collection.AddRange(nodes);
 
 			foreach(ExtTreeViewNode node in nodes) {
 				node.HasBeenAddedToTreeViewBy(this);

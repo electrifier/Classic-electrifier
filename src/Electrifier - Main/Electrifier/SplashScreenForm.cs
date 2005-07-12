@@ -77,11 +77,11 @@ namespace Electrifier {
 			IntPtr      memoryDC         = IntPtr.Zero;
 			IntPtr      bitmapHandle     = IntPtr.Zero;
 			IntPtr      oldBitmapHandle  = IntPtr.Zero;
-			WinAPI.Size splashScreenSize = new WinAPI.Size(splashScreenBitmap.Size);
+			WinAPI.SIZE splashScreenSize = new WinAPI.SIZE(splashScreenBitmap.Size);
 
 			try {
-				WinAPI.Point         destinationPosition = new WinAPI.Point(Left, Top);
-				WinAPI.Point         sourcePosition      = new WinAPI.Point(0, 0);
+				WinAPI.POINT         destinationPosition = new WinAPI.POINT(Left, Top);
+				WinAPI.POINT         sourcePosition      = new WinAPI.POINT(0, 0);
 				WinAPI.BLENDFUNCTION blendFunction       =
 					new WinAPI.BLENDFUNCTION(WinAPI.AC.SRC_OVER, 0, opacity, WinAPI.AC.SRC_ALPHA);
 

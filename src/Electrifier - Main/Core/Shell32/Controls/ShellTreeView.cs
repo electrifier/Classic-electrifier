@@ -38,7 +38,6 @@ namespace Electrifier.Core.Shell32.Controls {
 			this.nodes           = new ShellTreeViewNodeCollection(base.Nodes);
 			this.SystemImageList = iconManager.SmallImageList;
 			this.HideSelection   = false;
-			this.AllowDrop       = true;
 			this.ShowRootLines   = false;
 
 			this.Nodes.Add(rootNode);

@@ -75,6 +75,14 @@ namespace Electrifier.Core.Shell32.Controls {
 			return basicShellObject.GetFolderItemCollection();
 		}
 
+		public override WinAPI.IDataObject GetIDataObject() {
+			return basicShellObject.GetIDataObject();					
+		}
+
+		public override WinAPI.IDropTarget GetIDropTarget() {
+			return basicShellObject.GetIDropTarget();
+		}
+
 		public string DisplayName {
 			get {
 				return basicShellObject.DisplayName;

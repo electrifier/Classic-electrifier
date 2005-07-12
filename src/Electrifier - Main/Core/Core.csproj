@@ -299,6 +299,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Shell32\ShellDragDropHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Shell32\ShellObjectPIDLComparer.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

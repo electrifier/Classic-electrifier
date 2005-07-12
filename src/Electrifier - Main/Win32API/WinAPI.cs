@@ -7,6 +7,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Electrifier.Win32API {
 	public enum WMSG : uint {
@@ -77,6 +78,40 @@ namespace Electrifier.Win32API {
 		NORECOMPUTE = 0x0800,
 		GROUPID     = 0x0100,		// WIN32_WINNT >= 0x0501
 		COLUMNS     = 0x0200,		// WIN32_WINNT >= 0x0501
+	}
+
+	[Flags]
+	[Serializable]
+	public enum MK : uint {				// Key State Masks for Mouse Messages
+		NONE            = 0x0000,
+		LBUTTON         = 0x0001,
+		RBUTTON         = 0x0002,
+		SHIFT           = 0x0004,
+		CONTROL         = 0x0008,
+		MBUTTON         = 0x0010,
+		ALT             = 0x0020,
+		ALTCONTROL      = (ALT | CONTROL),
+		XBUTTON1        = 0x0020,		// _WIN32_WINNT >= 0x0500
+		XBUTTON2        = 0x0040,		// _WIN32_WINNT >= 0x0500
+	}
+
+	/// <summary>
+	/// A helper class for representing the grfKeyState enumeration while doing
+	/// drag and drop operations. It is derived from MK-enumeration.
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct DragKeyState {
+		public MK ModKeys;
+
+		public DragKeyState(MK modifierKeys) { this.ModKeys = modifierKeys; }
+		public static implicit operator DragKeyState(MK source) { return new DragKeyState(source); }
+
+		public bool Alt        { get { return ((this.ModKeys & MK.ALT)        == MK.ALT);        } }
+		public bool AltControl { get { return ((this.ModKeys & MK.ALTCONTROL) == MK.ALTCONTROL); } }
+		public bool Control    { get { return ((this.ModKeys & MK.CONTROL)    == MK.CONTROL);    } }
+		public bool Shift      { get { return ((this.ModKeys & MK.SHIFT)      == MK.SHIFT);      } }
+		public bool MouseLeft  { get { return ((this.ModKeys & MK.LBUTTON)    == MK.LBUTTON);    } }
+		public bool MouseRight { get { return ((this.ModKeys & MK.RBUTTON)    == MK.RBUTTON);    } }
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -168,6 +203,7 @@ namespace Electrifier.Win32API {
 	/// <summary>
 	/// Self-created helper object for dealing with HTREEITEM-handles of TreeView-nodes
 	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
 	public struct HTREEITEM {
 		private IntPtr handle;
 		public  IntPtr Handle  { get { return handle; } }
@@ -214,7 +250,7 @@ namespace Electrifier.Win32API {
 		public uint         uNewState;
 		public uint         uOldState;
 		public uint         uChanged;
-		public WinAPI.Point ptAction;
+		public WinAPI.POINT ptAction;
 		public IntPtr       lParam;
 	}
 
@@ -222,8 +258,8 @@ namespace Electrifier.Win32API {
 	public struct NMTREEVIEW {
 		public NMHDR        hdr;
 		public UInt32       action;
-//		public IntPtr       itemOld;
-//		public IntPtr       itemNew;
+		//		public IntPtr       itemOld;
+		//		public IntPtr       itemNew;
 		public IntPtr x11;
 		public IntPtr x12;
 		public IntPtr x13;
@@ -234,17 +270,17 @@ namespace Electrifier.Win32API {
 		public IntPtr x24;
 
 
-		public WinAPI.Point ptDrag;
+		public WinAPI.POINT ptDrag;
 	}
-/*
-typedef struct tagNMTREEVIEW {
-    NMHDR hdr;
-    UINT action;
-    TVITEM itemOld;
-    TVITEM itemNew;
-    POINT ptDrag;
-} NMTREEVIEW, *LPNMTREEVIEW;
- * */
+	/*
+	typedef struct tagNMTREEVIEW {
+			NMHDR hdr;
+			UINT action;
+			TVITEM itemOld;
+			TVITEM itemNew;
+			POINT ptDrag;
+	} NMTREEVIEW, *LPNMTREEVIEW;
+	 * */
 	[StructLayout(LayoutKind.Sequential)]
 	public struct TVItem {				//TODO: Marshaling pruefen (typedef struct tagTVITEMEX)
 		public TVIF   mask;									//    UINT mask;
@@ -258,7 +294,7 @@ typedef struct tagNMTREEVIEW {
 		public Int32  iSelectedImage;						//    int iSelectedImage;
 		public Int32  cChildren;							//    int cChildren;
 		public Int32  lParam;								//    LPARAM lParam;
-//		public Int32  iIntegral;							//    int iIntegral;
+		//		public Int32  iIntegral;							//    int iIntegral;
 	}
 
 	[StructLayout(LayoutKind.Sequential)]
@@ -420,35 +456,72 @@ typedef struct tagNMTREEVIEW {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct Point {
+			public struct POINT {
 			public Int32 X;
 			public Int32 Horizontal {
-				get {
-					return this.X;
-				}
-				set {
-					this.X = value;
-				}
+				get { return this.X; }
+				set { this.X = value; }
 			}
 
 			public Int32 Y;
 			public Int32 Vertical {
-				get {
-					return this.Y;
-				}
-				set {
-					this.Y = value;
-				}
+				get { return this.Y; }
+				set { this.Y = value; }
 			}
 
-			public Point(Int32 x, Int32 y) {
+			public POINT(Int32 x, Int32 y) {
 				this.X = x;
 				this.Y = y;
+			}
+
+			public POINT(POINT point) {
+				this.X = point.X;
+				this.Y = point.Y;
+			}
+
+			public POINT(System.Drawing.Point point) {
+				this.X = point.X;
+				this.Y = point.Y;
+			}
+
+			public override string ToString() {
+				return "(" + this.X + "," + this.Y + ")";
+			}
+		}
+
+		public static byte GetRValue(COLORREF color) { return color.Red; }
+		public static byte GetGValue(COLORREF color) { return color.Green; }
+		public static byte GetBValue(COLORREF color) { return color.Blue; }
+
+		[StructLayout(LayoutKind.Sequential)]
+			public struct COLORREF {
+			Int32 value;					// Color value in format 0x00BBGGRR
+
+			// Red Color Component Properties
+			public byte Red {
+				get {	return (byte)(this.value);	}
+				set {	this.value = ((this.value & 0x00FFFF00) | (value));	}
+			}
+
+			// Green Color Component Properties
+			public byte Green {
+				get { return (byte)(this.value >> 8); }
+				set { this.value = ((this.value & 0x00FF00FF) | (value << 8)); }
+			}
+
+			// Blue Color Component Properties
+			public byte Blue {
+				get { return (byte)(this.value >> 16); }
+				set { this.value = ((this.value & 0x0000FFFF) | (value << 16)); }
+			}
+
+			public COLORREF(byte red, byte green, byte blue) {
+				this.value = (red | (green << 8) | (blue << 16));
 			}
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-		public struct Size {
+			public struct SIZE {
 			public Int32 Cx;
 			public Int32 Width {
 				get {
@@ -469,12 +542,12 @@ typedef struct tagNMTREEVIEW {
 				}
 			}
 
-			public Size(Int32 width, Int32 height) {
+			public SIZE(Int32 width, Int32 height) {
 				Cx = width;
 				Cy = height;
 			}
 
-			public Size(System.Drawing.Size size) {
+			public SIZE(System.Drawing.Size size) {
 				Cx = size.Width;
 				Cy = size.Height;
 			}
@@ -492,7 +565,7 @@ typedef struct tagNMTREEVIEW {
 		}
 
 		[StructLayout(LayoutKind.Sequential, Pack=1)]
-		public struct BLENDFUNCTION {
+			public struct BLENDFUNCTION {
 			public AC   BlendOp;
 			public byte BlendFlags;
 			public byte SourceConstantAlpha;
@@ -514,8 +587,8 @@ typedef struct tagNMTREEVIEW {
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVSIL wParam, IntPtr lParam);
 		[DllImport("user32.dll")]		// LVM_SETIMAGELIST/LVM_GETIMAGELIST-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, LVSIL wParam, IntPtr lParam);
-//		[DllImport("user32.dll")]   // LVM_SETITEMSTATE/LVM_GETITEMSTATE-overloading
-//		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref LVITEM lParam);
+		//		[DllImport("user32.dll")]   // LVM_SETITEMSTATE/LVM_GETITEMSTATE-overloading
+		//		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, ref LVITEM lParam);
 		[DllImport("user32.dll")]		// TVM_CREATEDRAGIMAGE-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, IntPtr lParam);
 		[DllImport("user32.dll")]		// WM_
@@ -539,7 +612,7 @@ typedef struct tagNMTREEVIEW {
 		[DllImport("gdi32.dll")]
 		public static extern bool   DeleteObject(IntPtr hObject);
 		[DllImport("user32.dll")]
-		public static extern bool   UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref Point pptDst, ref Size psize, IntPtr hdcSrc, ref Point pprSrc, Int32 crKey, ref BLENDFUNCTION pBlend, ULW dwFlags);
+		public static extern bool   UpdateLayeredWindow(IntPtr hwnd, IntPtr hdcDst, ref POINT pptDst, ref SIZE psize, IntPtr hdcSrc, ref POINT pprSrc, Int32 crKey, ref BLENDFUNCTION pBlend, ULW dwFlags);
 
 		[DllImport("comctl32.dll")]
 		public static extern bool		ImageList_BeginDrag(IntPtr himlTrack, int iTrack, int dxHotspot, int dyHotspot);
@@ -556,11 +629,162 @@ typedef struct tagNMTREEVIEW {
 		[DllImport("comctl32.dll")]
 		public static extern bool		ImageList_Draw(IntPtr himl, int i, IntPtr hdcDst, int x, int y, ILD fStyle);
 		[DllImport("comctl32.dll")]
-		public static extern IntPtr ImageList_GetDragImage(ref Point ppt, ref Point pptHotspot);
+		public static extern IntPtr ImageList_GetDragImage(ref POINT ppt, ref POINT pptHotspot);
 		
-		
+		[DllImport("ole32.Dll")]
+		public static extern int CoCreateInstance(ref Guid clsid,
+			[MarshalAs(UnmanagedType.IUnknown)] object inner,
+			Win32API.WTypes.CLSCTX context, ref Guid uuid,
+			[MarshalAs(UnmanagedType.IUnknown)] out object rReturnedComObject);
+
+		public static Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
+		/*
+		 * Drag and Drop stuff
+		 **/
+
+		public enum CLIPFORMAT : uint {
+			TEXT            = 1,
+			BITMAP          = 2,
+			METAFILEPICT    = 3,
+			SYLK            = 4,
+			DIF             = 5,
+			TIFF            = 6,
+			OEMTEXT         = 7,
+			DIB             = 8,
+			PALETTE         = 9,
+			PENDATA         = 10,
+			RIFF            = 11,
+			WAVE            = 12,
+			UNICODETEXT     = 13,
+			ENHMETAFILE     = 14,
+			HDROP           = 15,
+			LOCALE          = 16,
+			MAX             = 17,
+			OWNERDISPLAY    = 0x0080,
+			DSPTEXT         = 0x0081,
+			DSPBITMAP       = 0x0082,
+			DSPMETAFILEPICT = 0x0083,
+			DSPENHMETAFILE  = 0x008E,
+			PRIVATEFIRST    = 0x0200,
+			PRIVATELAST     = 0x02FF,
+			GDIOBJFIRST     = 0x0300,
+			GDIOBJLAST      = 0x03FF,
+		}
+
+		public enum DVASPECT : uint {
+			CONTENT   = 1,
+			THUMBNAIL = 2,
+			ICON      = 4,
+			DOCPRINT  = 8,
+		}
+
+		public enum TYMED : uint {
+			NULL     = 0,
+			HGLOBAL  = 1,
+			FILE     = 2,
+			ISTREAM  = 4,
+			ISTORAGE = 8,
+			GDI      = 16,
+			MFPICT   = 32,
+			ENHMF    = 64,
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+			public struct FORMATETC {
+			public CLIPFORMAT cfFormat;
+			public uint ptd;
+			public DVASPECT dwAspect;
+			public int lindex;
+			public TYMED tymed;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+			public struct STGMEDIUM {
+			public uint tymed;
+			public uint hGlobal;
+			public uint pUnkForRelease;
+		}
+
+		[ComImport(),
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+			GuidAttribute("0000010e-0000-0000-C000-000000000046")]
+			public interface IDataObject {
+			[PreserveSig()]
+			int GetData(ref FORMATETC pformatetcIn, ref STGMEDIUM pmedium);
+			[PreserveSig()]
+			int GetDataHere(ref FORMATETC pformatetc, ref STGMEDIUM pmedium);
+			[PreserveSig()]
+			int QueryGetData(ref FORMATETC pformatetc);
+			[PreserveSig()]
+			int GetCanonicalFormatEtc(ref FORMATETC pformatectIn, out FORMATETC pformatetcOut);
+			[PreserveSig()]
+			int SetData(ref FORMATETC pformatetc, ref STGMEDIUM pmedium, bool fRelease);
+			[PreserveSig()]
+			int EnumFormatEtc(uint dwDirection, out Object ppenumFormatEtc);
+			[PreserveSig()]
+			int DAdvise(ref FORMATETC pformatetc, uint advf, ref Object pAdvSink, out uint pdwConnection);
+			[PreserveSig()]
+			int DUnadvise(uint dwConnection);
+			[PreserveSig()]
+			int EnumDAdvise(out Object ppenumAdvise);
+		}
+
+		/// <summary>
+		/// IDropSource - COM-Interface
+		/// </summary>
+		[ComImport(),
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+			GuidAttribute("00000121-0000-0000-C000-000000000046")]
+			public interface IDropSource {
+			[PreserveSig()]
+			int QueryContinueDrag(bool fEscapePressed, DragKeyState KeyState);
+			[PreserveSig()]
+			int GiveFeedback(int dwEffect);
+		}
+
+		/// <summary>
+		/// IDropTarget - COM-Interface
+		/// </summary>
+		[ComImport(),
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+			GuidAttribute("00000122-0000-0000-C000-000000000046")]
+			public interface IDropTarget {
+			[PreserveSig()]
+			int DragEnter(IDataObject pDataObj, DragKeyState KeyState, WinAPI.POINT pt, ref DragDropEffects pdwEffect);
+			[PreserveSig()]
+			int DragOver(DragKeyState KeyState, WinAPI.POINT pt, ref DragDropEffects pdwEffect);
+			[PreserveSig()]
+			int DragLeave();
+			[PreserveSig()]
+			int Drop(IDataObject pDataObj, DragKeyState KeyState, WinAPI.POINT pt, ref DragDropEffects pdwEffect);
+		}
+
+
+
+
+		[DllImport("ole32.dll")]
+		public static extern int OleLoadFromStream(UCOMIStream pStm,ref Guid
+			iidInterface,[MarshalAs(UnmanagedType.Interface)] out object ppvObj);
+
+		[DllImport("OLE32.DLL", EntryPoint="CreateStreamOnHGlobal")]
+		public static extern int CreateStreamOnHGlobal(int hGlobalMemHandle, bool
+			fDeleteOnRelease, out UCOMIStream pOutStm);
+
+		[DllImport("ole32.dll")]
+			// TODO: What does HandleRef do?!? How benefit from? Exchange all Win32API-Handles with it?
+		public static extern int RegisterDragDrop(IntPtr hwnd, IDropTarget target);
+		//public static extern int RegisterDragDrop(IntPtr hwnd, IDropTarget target);
+
+		[DllImport("user32.dll",
+			 CharSet = CharSet.Auto,
+			 ExactSpelling = true,
+			 EntryPoint = "RegisterClipboardFormatA")]
+		public static extern int RegisterClipboardFormat( string lpszFormat );
+
+
+
 		private WinAPI() {
-			// This class can't be instantiated directly
+			// No instantion allowed.
 		}
 	}
 }

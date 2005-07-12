@@ -52,7 +52,7 @@ namespace Electrifier.Core.Shell32 {
 				ShellAPI.STRRET strRet;
 				IntPtr          strRetPidl = IntPtr.Zero;
 
-				if(PIDLManager.IsDesktop(AbsolutePIDL)) {
+				if(PIDLManager.IsDesktop(this.AbsolutePIDL)) {
 					strRetPidl = AbsolutePIDL;
 
 					desktopFolderInstance.Get.GetDisplayNameOf(strRetPidl, shGdn, out strRet);
@@ -74,6 +74,57 @@ namespace Electrifier.Core.Shell32 {
 			}
 
 			return displayName;
+		}
+
+		public virtual WinAPI.IDataObject GetIDataObject() {
+			IntPtr ppv      = IntPtr.Zero;
+			uint   reserved = 0;
+			int    hResult  = 0;
+
+			if(PIDLManager.IsDesktop(this.AbsolutePIDL)) {
+				hResult = desktopFolderInstance.Get.GetUIObjectOf(IntPtr.Zero, 0, null, ref ShellAPI.IID_IDataObject, ref reserved, out ppv);
+			} else {
+				IntPtr parentPidl = PIDLManager.CreateParentPIDL(AbsolutePIDL);
+
+				try {
+					ShellAPI.IShellFolder parentFolder = desktopFolderInstance.GetIShellFolder(parentPidl);
+					IntPtr[]              pidls        = { this.RelativePIDL };
+
+					hResult = parentFolder.GetUIObjectOf(IntPtr.Zero, 1, pidls, ref ShellAPI.IID_IDataObject, ref reserved, out ppv);
+				} finally {
+					PIDLManager.Free(parentPidl);
+				}
+			}
+			// TODO: Refactor the code above
+
+//			Marshal.ThrowExceptionForHR(hResult);
+
+			return ((ppv != IntPtr.Zero) ? (Marshal.GetObjectForIUnknown(ppv) as WinAPI.IDataObject) : null);
+		}
+
+		public virtual WinAPI.IDropTarget GetIDropTarget() {
+			IntPtr                ppv          = IntPtr.Zero;
+			uint                  reserved     = 0;
+			int                   hResult      = 0;
+
+			if(PIDLManager.IsDesktop(this.AbsolutePIDL)) {
+				hResult = desktopFolderInstance.Get.GetUIObjectOf(IntPtr.Zero, 0, null, ref ShellAPI.IID_IDropTarget, ref reserved, out ppv);
+			} else {
+				IntPtr parentPidl = PIDLManager.CreateParentPIDL(AbsolutePIDL);
+
+				try {
+					ShellAPI.IShellFolder parentFolder = desktopFolderInstance.GetIShellFolder(parentPidl);
+					IntPtr[]              pidls        = { this.RelativePIDL };
+
+					hResult = parentFolder.GetUIObjectOf(IntPtr.Zero, 1, pidls, ref ShellAPI.IID_IDropTarget, ref reserved, out ppv);
+				} finally {
+					PIDLManager.Free(parentPidl);
+				}
+			}
+			// TODO: Refactor the code above
+
+//			Marshal.ThrowExceptionForHR(hResult);
+			return ((ppv != IntPtr.Zero) ? (Marshal.GetObjectForIUnknown(ppv) as WinAPI.IDropTarget) : null);
 		}
 
 		protected virtual string GetFullPathName() {

@@ -6,6 +6,7 @@
 //	</file>
 
 using System;
+using Electrifier.Win32API;
 
 namespace Electrifier.Core.Controls {
 	/// <summary>
@@ -18,5 +19,7 @@ namespace Electrifier.Core.Controls {
 		int          Index      { get; }
 		IExtListView ListView   { get; }
 		void   AddToIExtListView(IExtListView listView, int index);
+		WinAPI.IDataObject GetIDataObject();
+		WinAPI.IDropTarget GetIDropTarget();
 	}
 }

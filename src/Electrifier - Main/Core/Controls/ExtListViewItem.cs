@@ -7,6 +7,8 @@
 
 using System;
 
+using Electrifier.Win32API;
+
 namespace Electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtListViewItem.
@@ -27,6 +29,14 @@ namespace Electrifier.Core.Controls {
 			//
 			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
 			//
+		}
+
+		public virtual WinAPI.IDataObject GetIDataObject() {
+			return null;	// Don't know how to do :-)
+		}
+
+		public virtual WinAPI.IDropTarget GetIDropTarget() {
+			return null;	// Don't know how to do :-)
 		}
 
 		protected void SetText(string text) {

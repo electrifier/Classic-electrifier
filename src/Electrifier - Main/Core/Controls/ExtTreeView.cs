@@ -7,8 +7,13 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using Electrifier.Core.Services;
+using Electrifier.Core.Shell32;
+using Electrifier.Core.Shell32.Controls;
+using Electrifier.Core.Shell32.Services;
 using Electrifier.Win32API;
 
 namespace Electrifier.Core.Controls {
@@ -18,6 +23,8 @@ namespace Electrifier.Core.Controls {
 	/// instead of System.Windows.Forms.ImageList
 	/// </summary>
 	public class ExtTreeView : TreeView {
+		protected static DesktopFolderInstance desktopFolderInstance = (DesktopFolderInstance)ServiceManager.Services.GetService(typeof(DesktopFolderInstance));
+
 		/// <summary>
 		/// Collection of ExtTreeViewNode items hosted by this TreeView
 		/// </summary>
@@ -47,16 +54,15 @@ namespace Electrifier.Core.Controls {
 
 		protected ExtTreeViewNode dropTargetNode = null;
 
+		public    ShellDragDropHelper ShellDragDropHelper { get { return this.shellDragDropHelper; } }
+		protected ShellDragDropHelper shellDragDropHelper = null;
+
 		/// <summary>
 		/// System's ImageList used for rendering the node icons
 		/// </summary>
 		public IntPtr SystemImageList {
-			get {
-				return WinAPI.SendMessage(this.Handle, WMSG.TVM_GETIMAGELIST, TVSIL.NORMAL, IntPtr.Zero);
-			}
-			set {
-				WinAPI.SendMessage(this.Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value);
-			}
+			get { return WinAPI.SendMessage(this.Handle, WMSG.TVM_GETIMAGELIST, TVSIL.NORMAL, IntPtr.Zero); }
+			set { WinAPI.SendMessage(this.Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value); }
 		}
 
 		#region Overriden members to ensure type strictness
@@ -76,16 +82,10 @@ namespace Electrifier.Core.Controls {
 		/// </summary>
 		public ExtTreeView() : base() {
 			this.nodes = new ExtTreeViewNodeCollection(base.Nodes);
+			this.shellDragDropHelper = new ShellDragDropHelper(this.Handle);
 
 			// 
 			this.BeforeExpand += new TreeViewCancelEventHandler(ExtTreeView_BeforeExpand);
-
-			// Initialize drag and drop-event handlers
-			this.ItemDrag  += new ItemDragEventHandler(ExtTreeView_ItemDrag);
-			this.DragEnter += new DragEventHandler(ExtTreeView_DragEnter);
-			this.DragLeave += new EventHandler(ExtTreeView_DragLeave);
-			this.DragOver  += new DragEventHandler(ExtTreeView_DragOver);
-			this.DragDrop  += new DragEventHandler(ExtTreeView_DragDrop);
 
 			// Initialize drag and drop auto-scroll
 			this.dragAutoScrollTimer.Enabled  = false;
@@ -94,6 +94,18 @@ namespace Electrifier.Core.Controls {
 			// Initialize drag and drop auto-expand
 			this.dragAutoExpandTimer.Enabled  = false;
 			this.dragAutoExpandTimer.Tick    +=new EventHandler(dragAutoExpandTimer_Tick);
+
+			// Initialize drag and drop-event handlers
+			this.ItemDrag +=
+				new ItemDragEventHandler(this.ExtTreeView_ItemDrag);
+			this.ShellDragDropHelper.DropTargetEnter +=
+				new DropTargetEnterEventHandler(this.ShellDragDropHelper_DropTargetEnter);
+			this.ShellDragDropHelper.DropTargetOver +=
+				new DropTargetOverEventHandler(this.ShellDragDropHelper_DropTargetOver);
+			this.ShellDragDropHelper.DropTargetLeave += 
+				new DropTargetLeaveEventHandler(this.ShellDragDropHelper_DropTargetLeave);
+			this.ShellDragDropHelper.DropTargetDrop += 
+				new DropTargetDropEventHandler(this.ShellDragDropHelper_DropTargetDrop);
 		}
 
 		private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
@@ -113,70 +125,89 @@ namespace Electrifier.Core.Controls {
 			ExtTreeViewNode dragNode = e.Item as ExtTreeViewNode;
 
 			if(dragNode != null) {
-				Point     mousePosition      = this.PointToClient(Control.MousePosition);
-				Bitmap    dragBitmap         = dragNode.CreateNodeBitmap(Win32API.ILD.NORMAL);
-				ImageList dragImageList      = new ImageList();
-				bool      dragImageListBegun = false;
+				WinAPI.IDataObject dataObject = dragNode.GetIDataObject();
 
-				try {
-					// Create drag image's image list
-					dragImageList.ImageSize = new Size(dragBitmap.Width, dragBitmap.Height);
-					dragImageList.Images.Add(dragBitmap);
+				this.shellDragDropHelper.PrepareDragImage(dataObject);
 
-					// Enter drag and drop loop
-					dragImageListBegun = WinAPI.ImageList_BeginDrag(dragImageList.Handle, 0,
-						(mousePosition.X + this.Indent - dragNode.Bounds.Left),
-						(mousePosition.Y - dragNode.Bounds.Top));
-
-					// TODO: Gather object to be given to DoDragDrop
-					// TODO: Gather Drag and Drop effects allowed for this object
-					this.DoDragDrop(dragNode, DragDropEffects.All);
-				} finally {
-					if(dragImageListBegun)
-						WinAPI.ImageList_EndDrag();
-
-					dragImageList.Dispose();
-					dragBitmap.Dispose();
-				}
+				this.DoDragDrop(dataObject, (DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link));
 			}
 		}
 
-		private void ExtTreeView_DragEnter(object sender, DragEventArgs e) {
-			Point mousePos = this.PointToClient(new Point(e.X, e.Y));
+		private DragDropEffects ShellDragDropHelper_DropTargetEnter(object source, DropTargetEventArgs e) {
+			DragDropEffects effects = e.Effects;
 
-			WinAPI.ImageList_DragEnter(this.Handle, mousePos.X, mousePos.Y);
+			// TODO: Override WinAPI.POINT to get Point(.NET)-instance
+			ExtTreeViewNode dropTargetNode = this.GetNodeAt(this.PointToClient(new Point(e.MousePos.X, e.MousePos.Y)));
 
-			// TODO: Call to ImageList_GetDragImage ?!?
+			// TODO: Very experimental code this is:
+			if(dropTargetNode != null) {
+				try {
+					WinAPI.IDropTarget dropTarget = dropTargetNode.GetIDropTarget();
+
+					if(dropTarget != null) {
+						dropTarget.DragEnter(e.DataObject, e.KeyState, e.MousePos, ref e.Effects);
+						dropTarget.DragLeave();
+
+						effects = e.Effects;
+					}
+
+				} catch (Exception ex) {
+					System.Windows.Forms.MessageBox.Show(ex.StackTrace, ex.Message);
+				}
+			}
+
 			if(this.DragAutoScrollEnabled) {
 				this.dragAutoScrollTimer.Stop();
 				this.dragAutoScrollTimer.Interval = this.DragAutoScrollSlowInterval;
 				this.dragAutoScrollTimer.Start();
 			}
+
+			return effects;
 		}
 
-		private void ExtTreeView_DragLeave(object sender, EventArgs e) {
-			WinAPI.ImageList_DragLeave(this.Handle);
+		private DragDropEffects ShellDragDropHelper_DropTargetOver(object source, DropTargetEventArgs e) {
+			DragDropEffects effects = e.Effects;
 
-			// TODO: ImageList_DragShowNolock before .IsDropHighlited
-			this.dropTargetNode.IsDropHighlited = false;
-			this.dragAutoScrollTimer.Stop();
-			this.dragAutoExpandTimer.Stop();
-		}
-
-		private void ExtTreeView_DragOver(object sender, DragEventArgs e) {
-			Point           mousePos          = this.PointToClient(new Point(e.X, e.Y));
+			// TODO: Override WinAPI.POINT to get Point(.NET)-instance
+			Point           mousePos          = this.PointToClient(new Point(e.MousePos.X, e.MousePos.Y));
 			ExtTreeViewNode newDropTargetNode = this.GetNodeAt(mousePos);
 
 			if(this.dropTargetNode != newDropTargetNode) {
 				// Update TreeView item states regarding the new drop target node
-				WinAPI.ImageList_DragShowNolock(false);
 
 				if(this.dropTargetNode != null)
 					this.dropTargetNode.IsDropHighlited = false;
 				this.dropTargetNode = newDropTargetNode;
-				newDropTargetNode.IsDropHighlited = true;
+				if(this.dropTargetNode != null)
+					this.dropTargetNode.IsDropHighlited = true;
 
-				WinAPI.ImageList_DragShowNolock(true);
+				// TODO: Very experimental code this is:
+				if(newDropTargetNode != null) {
+					int hResult = 0;
+
+					try {
+						WinAPI.IDropTarget dropTarget = newDropTargetNode.GetIDropTarget();
+
+						if(dropTarget != null) {
+							hResult = dropTarget.DragEnter(e.DataObject, e.KeyState, e.MousePos, ref e.Effects);
+							hResult = dropTarget.DragOver(e.KeyState, e.MousePos, ref e.Effects);
+							hResult = dropTarget.DragLeave();
+
+							effects = e.Effects;
+						}
+						// TODO: else e.Effects = DragDropEffects.None;
+					} catch (Exception ex) {
+						string body = "EXCEPTION-TYPE: " + ex.GetType().FullName +
+							            "\n=> TARGET-SITE: " + ex.TargetSite.ToString() +
+							            "\n=> hResult: " + hResult.ToString() +
+							            "\n=> STACKTRACE:\n" + ex.StackTrace.ToString() +
+							            "\n=> KEYSTATE: " + e.KeyState.ToString() +
+							            "\n=> MOUSEPOS: " + e.MousePos.ToString() +
+							            "\n=> EFFECTS: " + e.Effects.ToString();
+						
+						System.Windows.Forms.MessageBox.Show(body, ex.Message);
+					}
+				}
 
 				// Initialize drag and drop auto expand members
 				this.dragAutoExpandTimer.Stop();
@@ -185,15 +216,46 @@ namespace Electrifier.Core.Controls {
 				this.dragAutoExpandTimer.Start();
 			}
 
-			WinAPI.ImageList_DragMove(mousePos.X, mousePos.Y);
+			return effects;
 		}
 
-		private void ExtTreeView_DragDrop(object sender, DragEventArgs e) {
-			WinAPI.ImageList_DragLeave(this.Handle);
+		private void ShellDragDropHelper_DropTargetLeave(object source, EventArgs e) {
+		// TODO: DropTarget->Leave :-)
+			if(this.dropTargetNode != null)
+				this.dropTargetNode.IsDropHighlited = false;
+			this.dragAutoScrollTimer.Stop();
+			this.dragAutoExpandTimer.Stop();
+		}
+
+		private void ShellDragDropHelper_DropTargetDrop(object source, DropTargetEventArgs e) {
+			// TODO: Override WinAPI.POINT to get Point(.NET)-instance
+			ExtTreeViewNode dropTargetNode = this.GetNodeAt(this.PointToClient(new Point(e.MousePos.X, e.MousePos.Y)));
+
+			if(dropTargetNode != null) {
+				try {
+					WinAPI.IDropTarget dropTarget = dropTargetNode.GetIDropTarget();
+					DragDropEffects unused = new DragDropEffects();
+
+					if(dropTarget != null) {
+						dropTarget.DragEnter(e.DataObject, e.KeyState,e .MousePos, ref unused);
+						dropTarget.DragOver(e.KeyState, e.MousePos, ref unused);
+						dropTarget.Drop(e.DataObject, e.KeyState, e.MousePos, ref e.Effects);
+					}
+				} catch (Exception ex) {
+					string body = "==> STACKTRACE:\n" + ex.StackTrace.ToString() +
+						"\n==> KEYSTATE: " + e.KeyState.ToString() +
+						"\n==> MOUSEPOS: " + e.MousePos.ToString() +
+						"\n==> EFFECTS: " + e.Effects.ToString();
+					System.Windows.Forms.MessageBox.Show(body, ex.Message);
+				}
+			}
+
+
+
 
 			// TODO: If frop successful, then...
-			// TODO: ImageList_DragShowNolock before .IsDropHighlited
-			this.dropTargetNode.IsDropHighlited = false;
+			if(this.dropTargetNode != null)
+				this.dropTargetNode.IsDropHighlited = false;
 			this.dragAutoScrollTimer.Stop();
 			this.dragAutoExpandTimer.Stop();
 		}
@@ -212,20 +274,12 @@ namespace Electrifier.Core.Controls {
 			if(node != null) {
 				// Do vertical scroll if necessary
 				if(mousePos.Y <= (2 * node.Bounds.Height)) {
-					WinAPI.ImageList_DragShowNolock(false);
-
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.VSCROLL, WinAPI.SB.LINEUP, IntPtr.Zero);
-
-					WinAPI.ImageList_DragShowNolock(true);
 
 					if(mousePos.Y <= node.Bounds.Height)
 						scrollFast = true;
 				} else if (mousePos.Y >= (this.ClientRectangle.Height - (2 * node.Bounds.Height))) {
-					WinAPI.ImageList_DragShowNolock(false);
-
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.VSCROLL, WinAPI.SB.LINEDOWN, IntPtr.Zero);
-
-					WinAPI.ImageList_DragShowNolock(true);
 
 					if(mousePos.Y >= (this.ClientRectangle.Height - node.Bounds.Height))
 						scrollFast = true;
@@ -233,20 +287,12 @@ namespace Electrifier.Core.Controls {
 
 				// Do horizontal scroll if necessary
 				if(mousePos.X <= (2 * node.Bounds.Height)) {
-					WinAPI.ImageList_DragShowNolock(false);
-
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.HSCROLL, WinAPI.SB.LINELEFT, IntPtr.Zero);
-
-					WinAPI.ImageList_DragShowNolock(true);
 
 					if(mousePos.X <= node.Bounds.Height)
 						scrollFast = true;
 				} else if (mousePos.X >= (this.ClientRectangle.Width - (2 * node.Bounds.Height))) {
-					WinAPI.ImageList_DragShowNolock(false);
-
 					WinAPI.SendMessage(this.Handle, WinAPI.WM.HSCROLL, WinAPI.SB.LINERIGHT, IntPtr.Zero);
-
-					WinAPI.ImageList_DragShowNolock(true);
 
 					if(mousePos.X >= (this.ClientRectangle.Width - node.Bounds.Height))
 						scrollFast = true;
@@ -258,20 +304,15 @@ namespace Electrifier.Core.Controls {
 		}
 
 		private void dragAutoExpandTimer_Tick(object sender, EventArgs e) {
-			Point           mousePos = this.PointToClient(Control.MousePosition);
-			ExtTreeViewNode node     = this.GetNodeAt(mousePos);
+			ExtTreeViewNode node = this.GetNodeAt(this.PointToClient(Control.MousePosition));
 
-			if(this.dragAutoExpandNode.Equals(node)) {
+			if((this.dragAutoExpandNode != null) && (this.dragAutoExpandNode.Equals(node))) {
 				// TODO: Expand-methode mit BeginInvoke aufrufen und somit Multi-Threaded zu machen :-)
-				if(!node.IsExpanded) {
-					WinAPI.ImageList_DragShowNolock(false);
-
-					node.Expand();
-					this.Update();
-
-					WinAPI.ImageList_DragShowNolock(true);
-				}
+				this.dragAutoExpandNode.Expand();
 			}
+
+			this.dragAutoExpandTimer.Stop();
 		}
+
 	}
 }

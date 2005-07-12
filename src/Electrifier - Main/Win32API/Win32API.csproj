@@ -84,6 +84,11 @@
                     AssemblyName = "System.Drawing"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
                 />
+                <Reference
+                    Name = "System.Windows.Forms"
+                    AssemblyName = "System.Windows.Forms"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -100,6 +105,11 @@
                 />
                 <File
                     RelPath = "WinAPI.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "WTypes.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
