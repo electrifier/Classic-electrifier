@@ -309,6 +309,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Shell32\Controls\ShellBrowser.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Shell32\Controls\ShellBrowser.resx"
+                    DependentUpon = "ShellBrowser.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "Shell32\Controls\ShellListView.cs"
                     SubType = "Component"
                     BuildAction = "Compile"

@@ -22,6 +22,14 @@ namespace Electrifier.Core.Shell32.Controls {
 		protected        BasicShellObject            basicShellObject = null;
 		protected new    ShellTreeViewNodeCollection nodes            = null;
 
+		public new ShellTreeViewNode FirstNode {
+			get { return base.FirstNode as ShellTreeViewNode; }
+		}
+
+		public new ShellTreeViewNode NextNode {
+			get { return base.NextNode as ShellTreeViewNode; }
+		}
+
 		public ShellTreeViewNode(ShellAPI.CSIDL shellObjectCSIDL)
 			: this(PIDLManager.CreateFromCSIDL(shellObjectCSIDL), true) {}
 
@@ -165,6 +173,30 @@ namespace Electrifier.Core.Shell32.Controls {
 
 		public void UpdateFileInfo(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo) {
 			basicShellObject.UpdateFileInfo(fileInfoThread, shFileInfo);
+		}
+
+		public ShellTreeViewNode FindChildNodeByPIDL(IntPtr shellObjectPIDL) {
+			// First of all, test whether the given PIDL anyhow derives from this node
+			if(PIDLManager.IsParent(this.AbsolutePIDL, shellObjectPIDL, false)) {
+				// If we have luck, just the this node itself is requested
+				if(PIDLManager.IsEqual(this.AbsolutePIDL, shellObjectPIDL))
+					return this;
+
+				ShellTreeViewNode actNode = this.FirstNode;
+				do {
+					if(PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
+						return actNode;
+					if(PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
+						if(actNode.Nodes.Count == 0)
+							actNode.Expand();
+
+						return actNode.FindChildNodeByPIDL(shellObjectPIDL);
+					}
+				} while((actNode = actNode.NextNode) != null);
+
+			}
+			
+			return null;
 		}
 
 		public event FileInfoUpdatedHandler FileInfoUpdated {

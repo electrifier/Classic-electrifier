@@ -120,6 +120,21 @@ namespace Electrifier.Win32API {
 		public LVITEM item;
 	}
 
+	[StructLayout(LayoutKind.Sequential)]
+	public struct RECT {
+		public int Left;
+		public int Top;
+		public int Right;
+		public int Bottom;
+
+		public RECT(System.Drawing.Rectangle Rectangle) {
+			this.Left   = Rectangle.Left;
+			this.Top    = Rectangle.Top;
+			this.Right  = Rectangle.Right;
+			this.Bottom = Rectangle.Bottom;
+		}
+	};
+
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
 	public struct LVITEM {
 		public LVIF        mask;
@@ -315,15 +330,22 @@ namespace Electrifier.Win32API {
 
 	public class WinAPI {
 		public enum WM : int {							// General Windows Messages
-			SETFOCUS      = 0x00000007,
-			KILLFOCUS     = 0x00000008,
-			NOTIFY        = 0x0000004E,
-			NCHITTEST     = 0x00000084,
-			NCLBUTTONDOWN = 0x000000A1,
-			HSCROLL       = 0x00000114,
-			VSCROLL       = 0x00000115,
-			USER          = 0x00000400,
-			REFLECT       = USER + 0x1c00,
+			NULL             = 0x00000000,
+			CREATE           = 0x00000001,
+			DESTROY          = 0x00000002,
+			MOVE             = 0x00000003,
+			SIZE             = 0x00000005,
+			ACTIVATE         = 0x00000006,
+			SETFOCUS         = 0x00000007,
+			KILLFOCUS        = 0x00000008,
+			NOTIFY           = 0x0000004E,
+			NCHITTEST        = 0x00000084,
+			NCLBUTTONDOWN    = 0x000000A1,
+			HSCROLL          = 0x00000114,
+			VSCROLL          = 0x00000115,
+			USER             = 0x00000400,
+			GETISHELLBROWSER = 0x00000007 + USER,		// See KB 157247
+			REFLECT          = 0x00001c00 + USER,
 		}
 
 		public enum SB : int {								// Scroll bar related constants
@@ -580,6 +602,12 @@ namespace Electrifier.Win32API {
 		}
 
 		[DllImport("user32.dll")]
+		public static extern int    SendMessage(IntPtr hWnd, WM wMsg, IntPtr wParam, IntPtr lParam);
+
+		[DllImport("user32.dll")]
+		public static extern bool   MoveWindow(IntPtr hWnd, int X, int Y, int Width, int Height, bool Repaint);
+
+		[DllImport("user32.dll")]
 		public static extern int    SendMessage(IntPtr hWnd, WMSG wMsg, int wParam, int lParam);
 		[DllImport("user32.dll")]		// TVM_GETNEXTITEM-overloading
 		public static extern IntPtr SendMessage(IntPtr hWnd, WMSG wMsg, TVGN wParam, IntPtr lParam);
@@ -600,7 +628,17 @@ namespace Electrifier.Win32API {
 		public static extern Int32  SetWindowLong(IntPtr hWnd, GWL nIndex, WS dwNewLong);
 
 		[DllImport("user32.dll")]
+		public static extern IntPtr GetWindowThreadProcessId(IntPtr hWnd, out IntPtr lpdwProcessId);
+
+		[DllImport("user32.dll")]
+		public static extern bool   AttachThreadInput(IntPtr idAttach, IntPtr idAttachTo, bool Attach);
+		
+		[DllImport("user32.dll")]
 		public static extern IntPtr GetDC(IntPtr hWnd);
+
+		[DllImport("user32.dll")]
+		public static extern IntPtr SetFocus(IntPtr hWnd);
+
 		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
 		[DllImport("user32.dll")]
@@ -630,7 +668,7 @@ namespace Electrifier.Win32API {
 		public static extern bool		ImageList_Draw(IntPtr himl, int i, IntPtr hdcDst, int x, int y, ILD fStyle);
 		[DllImport("comctl32.dll")]
 		public static extern IntPtr ImageList_GetDragImage(ref POINT ppt, ref POINT pptHotspot);
-		
+
 		[DllImport("ole32.Dll")]
 		public static extern int CoCreateInstance(ref Guid clsid,
 			[MarshalAs(UnmanagedType.IUnknown)] object inner,
@@ -704,6 +742,22 @@ namespace Electrifier.Win32API {
 			public uint hGlobal;
 			public uint pUnkForRelease;
 		}
+
+		
+		public const string GuidStr_SID_STopWindow = "49E1B500-4636-11D3-97F7-00C04F45D0B3";
+		public static Guid SID_STopWindow = new Guid(GuidStr_SID_STopWindow);
+
+
+		public const string GuidStr_IID_IServiceProvider = "6D5140C1-7436-11CE-8034-00AA006009FA";
+		public static Guid IID_IServiceProvider = new Guid(GuidStr_IID_IServiceProvider);
+
+		[ComImport(),
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+			GuidAttribute(GuidStr_IID_IServiceProvider)]
+			public interface IServiceProvider  {
+			[PreserveSig] uint QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppv);
+		}
+
 
 		[ComImport(),
 			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),

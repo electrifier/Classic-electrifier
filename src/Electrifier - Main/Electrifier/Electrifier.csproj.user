@@ -11,7 +11,7 @@
                     RemoteDebugEnabled = "false"
                     RemoteDebugMachine = ""
                     StartAction = "Project"
-                    StartArguments = ""
+                    StartArguments = "/nosplash"
                     StartPage = ""
                     StartProgram = ""
                     StartURL = ""

@@ -20,9 +20,11 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// </summary>
 	public class ShellBrowserDockControl : DockControl, IDockControl, IPersistent {
 		protected ShellTreeView         shellTreeView        = null;
-		protected ShellListView         shellListView        = null;
+//		protected ShellListView         shellListView        = null;
 		protected Splitter              splitter             = null;
 		protected IDockControlContainer dockControlContainer = null;
+
+		protected ShellBrowser shellBrowser = null;
 
 		public ShellBrowserDockControl() : this(Guid.NewGuid()) { }
 
@@ -37,13 +39,14 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellTreeView.Dock         = DockStyle.Left;
 			shellTreeView.Size         = new Size(256, Height);
 			shellTreeView.AfterSelect +=new TreeViewEventHandler(shellTreeView_AfterSelect);
+			this.Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
 
-			// Initialize ShellListView
-			shellListView      = new ShellListView();
-			shellListView.Dock = DockStyle.Fill;
-			shellListView.View = View.Details;
-			shellListView.Columns.Add("Name", 256, HorizontalAlignment.Left);
-			shellListView.Columns.Add("Size",  80, HorizontalAlignment.Right);
+			// Initialize ShellBrowser
+			shellBrowser = new ShellBrowser((shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			shellBrowser.Dock = DockStyle.Fill;
+			shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
+
+
 
 			// Initialize Splitter
 			splitter      = new Splitter();
@@ -51,7 +54,9 @@ namespace Electrifier.Core.Forms.DockControls {
 			splitter.Size = new Size(4, Height);
 
 			// Add the controls from right to left
-			Controls.AddRange(new Control[] { shellListView, splitter, shellTreeView });
+			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
+
+
 		}
 
 		// TODO: Dispose when closed!!!
@@ -62,7 +67,8 @@ namespace Electrifier.Core.Forms.DockControls {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
 			this.Cursor = Cursors.WaitCursor;
-			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			shellBrowser.SetBrowsingFolder((shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+//			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
 			this.Cursor = Cursors.Default;
 		}
@@ -94,9 +100,22 @@ namespace Electrifier.Core.Forms.DockControls {
 			Guid = new Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
 
 			Name = "ShellBrowserDockControl." + Guid.ToString();		// TODO: TestCode
-			Text = Name;															// TODO: TestCode
 		}
 
 		#endregion
+
+		private void shellBrowser_BrowseShellObject(object source, BrowseShellObjectEventArgs e) {
+			// Currently, the IShellView seems to know that a new folder was browsed to,
+			// and updates itself accordingly
+//			this.shellBrowser.SetBrowsingFolder(e.ShellObjectPIDL);
+			// TODO: The following statements should be ran in another thread
+			this.shellTreeView.SelectedNode = this.shellTreeView.FindNodeByPIDL(e.ShellObjectPIDL);
+
+
+			// TODO: Hehe, i like this feature; however, put something into our configuration dialog
+			// to turn this off; also, do this when navigating with the help of the TreeView itself
+			this.shellTreeView.SelectedNode.Expand();
+
+		}
 	}
 }

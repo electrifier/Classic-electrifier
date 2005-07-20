@@ -36,11 +36,11 @@ namespace Electrifier.Core.Shell32.Services {
 		}
 
 		#region Public Properties
+
 		public ShellAPI.IMalloc Malloc {
-			get {
-				return malloc;
-			}
+			get { return this.malloc; }
 		}
+
 		#endregion
 
 		#region IService Interface Members

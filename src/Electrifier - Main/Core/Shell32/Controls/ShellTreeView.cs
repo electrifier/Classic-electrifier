@@ -23,6 +23,11 @@ namespace Electrifier.Core.Shell32.Controls {
 		protected new    ShellTreeViewNodeCollection nodes       = null;
 		public    new    ShellTreeViewNodeCollection Nodes       { get { return nodes; } }
 
+		public    new    ShellTreeViewNode           SelectedNode {
+			get { return base.SelectedNode as ShellTreeViewNode; }
+			set { base.SelectedNode = value; }
+		}
+
 		public ShellTreeView(ShellAPI.CSIDL shellObjectCSIDL)
 			: this(PIDLManager.CreateFromCSIDL(shellObjectCSIDL), true) {}
 
@@ -49,6 +54,38 @@ namespace Electrifier.Core.Shell32.Controls {
 
 			// Create a file info thread to gather visual info for root item
 			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(rootNode);
+
+			this.BorderStyle = BorderStyle.None;
+		}
+
+		public ShellTreeViewNode FindNodeByPIDL(IntPtr shellObjectPIDL) {
+			this.BeginUpdate();
+
+			try {
+
+				// First of all, test whether the given PIDL anyhow derives from our root node
+				if(PIDLManager.IsParent(this.rootNode.AbsolutePIDL, shellObjectPIDL, false)) {
+					// If we have luck, just the root node itself is requested
+					if(PIDLManager.IsEqual(this.rootNode.AbsolutePIDL, shellObjectPIDL))
+						return this.rootNode;
+
+					ShellTreeViewNode actNode = this.rootNode.FirstNode;
+					do {
+						if(PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
+							return actNode;
+						if(PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
+							if(actNode.Nodes.Count == 0)
+								actNode.Expand();
+
+							return actNode.FindChildNodeByPIDL(shellObjectPIDL);
+						}
+					} while((actNode = actNode.NextNode) != null);
+				}
+			} finally {
+				this.EndUpdate();
+			}
+			
+			return null;
 		}
 
 	}
