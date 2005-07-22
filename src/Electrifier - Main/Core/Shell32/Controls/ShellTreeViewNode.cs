@@ -49,15 +49,20 @@ namespace Electrifier.Core.Shell32.Controls {
 			IsShownExpandable  = true;
 			Text               = DisplayName;
 			ImageIndex         = iconManager.ClosedFolderIndex;
-			SelectedImageIndex = iconManager.OpenedFolderIndex;
 
 			FileInfoUpdated += new FileInfoUpdatedHandler(IShellObject_FileInfoUpdated);
 		}
 
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
-			if(ImageIndex != e.ShFileInfo.iIcon) {
-				ImageIndex = e.ShFileInfo.iIcon;
+			if(this.ImageIndex != e.ShFileInfo.iIcon) {
+				this.ImageIndex = e.ShFileInfo.iIcon;
 			}
+			// TODO: Request real OpenFolderIndex
+			// TODO: Only if TVIF_SELECTEDIMAGE is set, an open image is available
+			if(e.ShFileInfo.iIcon == iconManager.ClosedFolderIndex)
+				this.SelectedImageIndex = iconManager.OpenedFolderIndex;
+			else
+				this.SelectedImageIndex = e.ShFileInfo.iIcon;
 		}
 
 		public new ShellTreeViewNodeCollection Nodes {
@@ -69,15 +74,6 @@ namespace Electrifier.Core.Shell32.Controls {
 		public BasicShellObjectCollection GetFolderItemCollection() {
 			return basicShellObject.GetFolderItemCollection();
 		}
-
-		public override WinAPI.IDataObject GetIDataObject() {
-			return basicShellObject.GetIDataObject();					
-		}
-
-		public override WinAPI.IDropTarget GetIDropTarget() {
-			return basicShellObject.GetIDropTarget();
-		}
-
 
 		/// <summary>
 		/// Since IsExpandable property is only evaluated, when IsShownExpandable is set,
@@ -161,6 +157,18 @@ namespace Electrifier.Core.Shell32.Controls {
 			get {
 				return basicShellObject.FullPathName;
 			}
+		}
+
+		public override WinAPI.IDataObject GetIDataObject() {
+			return basicShellObject.GetIDataObject();					
+		}
+
+		public override WinAPI.IDropTarget GetIDropTarget() {
+			return basicShellObject.GetIDropTarget();
+		}
+
+		public ShellAPI.IContextMenu GetIContextMenu() {
+			return this.basicShellObject.GetIContextMenu();
 		}
 
 		public bool AttachFileInfoThread(IFileInfoThread fileInfoThread) {

@@ -95,6 +95,24 @@ namespace Electrifier.Win32API {
 		XBUTTON2        = 0x0040,		// _WIN32_WINNT >= 0x0500
 	}
 
+	public enum SW : uint {				// ShowWindow() Commands
+		HIDE             = 0,
+		SHOWNORMAL       = 1,
+		NORMAL           = 1,
+		SHOWMINIMIZED    = 2,
+		SHOWMAXIMIZED    = 3,
+		MAXIMIZE         = 3,
+		SHOWNOACTIVATE   = 4,
+		SHOW             = 5,
+		MINIMIZE         = 6,
+		SHOWMINNOACTIVE  = 7,
+		SHOWNA           = 8,
+		RESTORE          = 9,
+		SHOWDEFAULT      = 10,
+		FORCEMINIMIZE    = 11,
+		MAX              = 11,
+	}
+
 	/// <summary>
 	/// A helper class for representing the grfKeyState enumeration while doing
 	/// drag and drop operations. It is derived from MK-enumeration.
@@ -421,6 +439,28 @@ namespace Electrifier.Win32API {
 			ID         = -12,
 		}
 
+		[Flags] public enum TPM : uint {	// Flags for TrackPopupMenu
+			LEFTBUTTON      = 0x0000,
+			RIGHTBUTTON     = 0x0002,
+			LEFTALIGN       = 0x0000,
+			CENTERALIGN     = 0x0004,
+			RIGHTALIGN      = 0x0008,
+			TOPALIGN        = 0x0000,		// WINVER >= 0x0400
+			VCENTERALIGN    = 0x0010,		// WINVER >= 0x0400
+			BOTTOMALIGN     = 0x0020,		// WINVER >= 0x0400
+			HORIZONTAL      = 0x0000,		// WINVER >= 0x0400     /* Horz alignment matters more */
+			VERTICAL        = 0x0040,		// WINVER >= 0x0400     /* Vert alignment matters more */
+			NONOTIFY        = 0x0080,		// WINVER >= 0x0400     /* Don't send any notification msgs */
+			RETURNCMD       = 0x0100,		// WINVER >= 0x0400
+			RECURSE         = 0x0001,		// WINVER >= 0x0500
+			HORPOSANIMATION = 0x0400,		// WINVER >= 0x0500
+			HORNEGANIMATION = 0x0800,		// WINVER >= 0x0500
+			VERPOSANIMATION = 0x1000,		// WINVER >= 0x0500
+			VERNEGANIMATION = 0x2000,		// WINVER >= 0x0500
+			NOANIMATION     = 0x4000,		// _WIN32_WINNT >= 0x0500
+			LAYOUTRTL       = 0x8000,		// _WIN32_WINNT >= 0x0501
+		}
+
 		public enum WS : uint {			// Window Styles
 			OVERLAPPED          = 0x00000000,
 			POPUP               = 0x80000000,
@@ -632,12 +672,18 @@ namespace Electrifier.Win32API {
 
 		[DllImport("user32.dll")]
 		public static extern bool   AttachThreadInput(IntPtr idAttach, IntPtr idAttachTo, bool Attach);
-		
+
 		[DllImport("user32.dll")]
 		public static extern IntPtr GetDC(IntPtr hWnd);
 
 		[DllImport("user32.dll")]
 		public static extern IntPtr SetFocus(IntPtr hWnd);
+
+		[DllImport("user32.dll")]
+		public static extern IntPtr CreatePopupMenu();
+		[DllImport("user32.dll")]
+		public static extern uint   TrackPopupMenu(IntPtr hMenu, TPM uFlags, int x, int y, int nReserved, IntPtr hWnd, IntPtr prcRect);
+
 
 		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
@@ -743,7 +789,7 @@ namespace Electrifier.Win32API {
 			public uint pUnkForRelease;
 		}
 
-		
+
 		public const string GuidStr_SID_STopWindow = "49E1B500-4636-11D3-97F7-00C04F45D0B3";
 		public static Guid SID_STopWindow = new Guid(GuidStr_SID_STopWindow);
 

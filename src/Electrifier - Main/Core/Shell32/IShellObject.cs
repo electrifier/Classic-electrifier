@@ -48,6 +48,7 @@ namespace Electrifier.Core.Shell32 {
 
 		WinAPI.IDataObject GetIDataObject();
 		WinAPI.IDropTarget GetIDropTarget();
+		ShellAPI.IContextMenu GetIContextMenu();
 
 		string DisplayName { get; }
 		string FullPathName { get; }

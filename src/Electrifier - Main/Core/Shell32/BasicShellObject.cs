@@ -127,6 +127,32 @@ namespace Electrifier.Core.Shell32 {
 			return ((ppv != IntPtr.Zero) ? (Marshal.GetObjectForIUnknown(ppv) as WinAPI.IDropTarget) : null);
 		}
 
+		public virtual ShellAPI.IContextMenu GetIContextMenu() {
+			IntPtr                ppv          = IntPtr.Zero;
+			uint                  reserved     = 0;
+			int                   hResult      = 0;
+
+			if(PIDLManager.IsDesktop(this.AbsolutePIDL)) {
+				hResult = desktopFolderInstance.Get.GetUIObjectOf(IntPtr.Zero, 0, null, ref ShellAPI.IID_IContextMenu, ref reserved, out ppv);
+			} else {
+				IntPtr parentPidl = PIDLManager.CreateParentPIDL(AbsolutePIDL);
+
+				try {
+					ShellAPI.IShellFolder parentFolder = desktopFolderInstance.GetIShellFolder(parentPidl);
+					IntPtr[]              pidls        = { this.RelativePIDL };
+
+					hResult = parentFolder.GetUIObjectOf(IntPtr.Zero, 1, pidls, ref ShellAPI.IID_IContextMenu, ref reserved, out ppv);
+				} finally {
+					PIDLManager.Free(parentPidl);
+				}
+			}
+			// TODO: Refactor the code above
+
+			//			Marshal.ThrowExceptionForHR(hResult);
+			return ((ppv != IntPtr.Zero) ? (Marshal.GetObjectForIUnknown(ppv) as ShellAPI.IContextMenu) : null);
+		}
+
+
 		protected virtual string GetFullPathName() {
 			return "C:\\System\\Desktop";
 		}

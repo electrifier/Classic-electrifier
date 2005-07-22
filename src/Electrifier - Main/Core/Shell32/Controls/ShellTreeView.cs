@@ -6,6 +6,8 @@
 //	</file>
 
 using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using Electrifier.Core.Controls;
@@ -26,6 +28,13 @@ namespace Electrifier.Core.Shell32.Controls {
 		public    new    ShellTreeViewNode           SelectedNode {
 			get { return base.SelectedNode as ShellTreeViewNode; }
 			set { base.SelectedNode = value; }
+		}
+
+		public new ShellTreeViewNode GetNodeAt(int x, int y) {
+			return base.GetNodeAt(x, y) as ShellTreeViewNode;
+		}
+		public new ShellTreeViewNode GetNodeAt(Point pt) {
+			return base.GetNodeAt(pt) as ShellTreeViewNode;
 		}
 
 		public ShellTreeView(ShellAPI.CSIDL shellObjectCSIDL)
@@ -54,6 +63,8 @@ namespace Electrifier.Core.Shell32.Controls {
 
 			// Create a file info thread to gather visual info for root item
 			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(rootNode);
+
+			this.MouseUp += new MouseEventHandler(ShellTreeView_MouseUp);
 
 			this.BorderStyle = BorderStyle.None;
 		}
@@ -88,5 +99,39 @@ namespace Electrifier.Core.Shell32.Controls {
 			return null;
 		}
 
+		private void ShellTreeView_MouseUp(object sender, MouseEventArgs e) {
+			if(e.Button == MouseButtons.Right) {
+				// TODO: Refactor, refactor, refactor and move to TreeViewNode and others where appropriate
+				Point             mousePoint = new Point(e.X, e.Y);
+				ShellTreeViewNode node       = this.GetNodeAt(mousePoint);
+
+				if(node != null) {
+					ShellAPI.IContextMenu ctxtMenu = node.GetIContextMenu();
+					IntPtr                hMenu    = WinAPI.CreatePopupMenu();
+
+					if((ctxtMenu != null) && (hMenu != IntPtr.Zero)) {
+						Point scrPoint = this.PointToScreen(mousePoint);
+
+						ctxtMenu.QueryContextMenu(hMenu, 0, 1, 0x7FFF, ShellAPI.CMF.NORMAL | ShellAPI.CMF.EXPLORE);
+
+						WinAPI.TPM tpmFlags = WinAPI.TPM.LEFTALIGN | WinAPI.TPM.RETURNCMD | WinAPI.TPM.RIGHTBUTTON;
+
+						uint idCmd = WinAPI.TrackPopupMenu(hMenu, tpmFlags, scrPoint.X, scrPoint.Y, 0, this.Handle, IntPtr.Zero);
+
+						if(idCmd != 0) {
+							// TODO: Refactor
+							ShellAPI.CMINVOKECOMMANDINFO cmici = new ShellAPI.CMINVOKECOMMANDINFO();
+							cmici.cbSize = Marshal.SizeOf(typeof(ShellAPI.CMINVOKECOMMANDINFO));
+							cmici.hwnd = this.Handle;
+							cmici.lpVerb = (IntPtr)(idCmd - 1);
+							cmici.nShow = Win32API.SW.SHOWNORMAL;
+
+							uint hRes = ctxtMenu.InvokeCommand(ref cmici);
+						}
+					}
+				}
+				// else do treeview-contextmenu
+			}
+		}
 	}
 }

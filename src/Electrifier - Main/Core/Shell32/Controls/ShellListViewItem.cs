@@ -82,6 +82,10 @@ namespace Electrifier.Core.Shell32.Controls {
 		public override WinAPI.IDropTarget GetIDropTarget() {
 			return basicShellObject.GetIDropTarget();
 		}
+		
+		public ShellAPI.IContextMenu GetIContextMenu() {
+			return this.basicShellObject.GetIContextMenu();
+		}
 
 		public string DisplayName {
 			get {

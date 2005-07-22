@@ -92,6 +92,20 @@ namespace Electrifier.Win32API {
 			FLAG_MASK               = 0xFF00,	// mask for all possible flag values
 		}
 
+		[Flags]
+			public enum CMF : uint {			// QueryContextMenu uFlags
+			NORMAL              = 0x00000000,
+			DEFAULTONLY         = 0x00000001,
+			VERBSONLY           = 0x00000002,
+			EXPLORE             = 0x00000004,
+			NOVERBS             = 0x00000008,
+			CANRENAME           = 0x00000010,
+			NODEFAULT           = 0x00000020,
+			INCLUDESTATIC       = 0x00000040,
+			EXTENDEDVERBS       = 0x00000100,     // rarely used verbs
+			RESERVED            = 0xffff0000,     // View specific
+		}
+
 		// All the PIDL-functions
 		[DllImport("shell32.dll")]
 		public static extern IntPtr ILAppendID(IntPtr pidl, IntPtr pmkid, bool fAppend);
@@ -124,7 +138,7 @@ namespace Electrifier.Win32API {
 		public static extern IntPtr SHGetFileInfo(	// TODO: IntPtr eigentlich Int
 			string pszPath,
 			uint dwFileAttributes,
-			ref SHFILEINFO psfi,
+			out SHFILEINFO psfi,
 			UInt32 cbfileInfo,
 			SHGFI uFlags);
 
@@ -132,7 +146,7 @@ namespace Electrifier.Win32API {
 		public static extern IntPtr SHGetFileInfo(	// TODO: IntPtr eigentlich Int
 			IntPtr pszPath,														// TODO: Overloaded
 			uint dwFileAttributes,
-			ref SHFILEINFO psfi,
+			out SHFILEINFO psfi,
 			UInt32 cbfileInfo,
 			SHGFI uFlags);
 
@@ -166,6 +180,19 @@ namespace Electrifier.Win32API {
 				this.Flags    = Flags;
 			}
 		};
+
+		[StructLayout(LayoutKind.Sequential)]
+			public struct CMINVOKECOMMANDINFO {
+			public int cbSize;
+			public uint fMask;
+			public IntPtr hwnd;
+			public IntPtr /* LPCSTR */ lpVerb;
+			public IntPtr /* LPCSTR */ lpParameters;
+			public IntPtr /* LPCSTR */lpDirectory;
+			public Win32API.SW nShow;
+			public uint dwHotKey;
+			public IntPtr hIcon;
+		}
 
 		public enum FOLDERVIEWMODE : uint {
 			FIRST      = 1,
@@ -208,7 +235,8 @@ namespace Electrifier.Win32API {
 			INPLACEACTIVATE	  = 3,
 		};
 
-		public enum SHGFI {
+		[Flags]
+		public enum SHGFI : uint {
 			LargeIcon         = 0x00000000,
 			SmallIcon         = 0x00000001,
 			OpenIcon          = 0x00000002,
@@ -276,6 +304,20 @@ namespace Electrifier.Win32API {
 			[PreserveSig] Int16 DidAlloc(IntPtr pv);
 			[PreserveSig] void HeapMinimize();
 		}
+
+
+		public const string IIDS_IContextMenu = "000214E4-0000-0000-C000-000000000046";
+		public static Guid IID_IContextMenu = new Guid(IIDS_IContextMenu);
+
+		[ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid(IIDS_IContextMenu)]
+			public interface IContextMenu {
+			[PreserveSig] uint QueryContextMenu(IntPtr hmenu, uint indexMenu, uint idCmdFirst, uint idCmdLast, CMF uFlags);
+			[PreserveSig] uint InvokeCommand(ref CMINVOKECOMMANDINFO CMInvokeCommandInfo);
+			[PreserveSig] uint GetCommandString(IntPtr idCmd, uint uType, uint pwReserved,
+				[MarshalAs(UnmanagedType.LPStr)] string pszName, uint cchMax);
+		}
+
+
 
 		public const string IIDS_IOleWindow = "00000114-0000-0000-C000-000000000046";
 		public static Guid IID_IOleWindow = new Guid(IIDS_IOleWindow);

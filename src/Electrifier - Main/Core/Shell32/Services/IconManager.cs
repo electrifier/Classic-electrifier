@@ -51,16 +51,17 @@ namespace Electrifier.Core.Shell32.Services {
 
 		public IconManager() : base() {
 			string              systemPath = Environment.SystemDirectory;
-			ShellAPI.SHFILEINFO shFileInfo = new ShellAPI.SHFILEINFO();
-			UInt32              cbFileInfo = (UInt32)Marshal.SizeOf(shFileInfo);
+			ShellAPI.SHFILEINFO shFileInfo;
+			UInt32              cbFileInfo = (UInt32)Marshal.SizeOf(typeof(ShellAPI.SHFILEINFO));
 
 			// Get small system image list together with closed folder icon index.
-			smallImageList = ShellAPI.SHGetFileInfo(systemPath, 0, ref shFileInfo, cbFileInfo,
+			smallImageList = ShellAPI.SHGetFileInfo(systemPath, 0, out shFileInfo, cbFileInfo,
 				(ShellAPI.SHGFI.SysIconIndex | ShellAPI.SHGFI.SmallIcon));
 			closedFolderIndex = shFileInfo.iIcon;
 
+			// TODO: Only if TVIF_SELECTEDIMAGE is set, an open image is available
 			// Get large system image list together with opened folder icon index.
-			largeImageList = ShellAPI.SHGetFileInfo(systemPath, 0, ref shFileInfo, cbFileInfo,
+			largeImageList = ShellAPI.SHGetFileInfo(systemPath, 0, out shFileInfo, cbFileInfo,
 				(ShellAPI.SHGFI.SysIconIndex | ShellAPI.SHGFI.LargeIcon | ShellAPI.SHGFI.OpenIcon));
 			openedFolderIndex = shFileInfo.iIcon;
 		}
@@ -110,8 +111,8 @@ namespace Electrifier.Core.Shell32.Services {
 			}
 
 			protected void Process() {
-				ShellAPI.SHFILEINFO shFileInfo = new ShellAPI.SHFILEINFO();
-				UInt32              cbFileInfo = (UInt32)Marshal.SizeOf(shFileInfo);
+				ShellAPI.SHFILEINFO shFileInfo;
+				UInt32              cbFileInfo = (UInt32)Marshal.SizeOf(typeof(ShellAPI.SHFILEINFO));
 
 				// Attach to every IShellObject item
 				foreach(IShellObject shellObject in sequence) {
@@ -124,7 +125,7 @@ namespace Electrifier.Core.Shell32.Services {
 
 					if(!excluded.Contains(shellObject)){
 						try {
-							ShellAPI.SHGetFileInfo(shellObject.AbsolutePIDL, 0, ref shFileInfo, cbFileInfo,
+							ShellAPI.SHGetFileInfo(shellObject.AbsolutePIDL, 0, out shFileInfo, cbFileInfo,
 								(ShellAPI.SHGFI.PIDL | ShellAPI.SHGFI.SysIconIndex));
 
 							shellObject.UpdateFileInfo(this, shFileInfo);
