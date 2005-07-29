@@ -134,6 +134,30 @@ namespace Electrifier.Core.Shell32.Controls {
 			}
 		}
 
+		public ShellTreeViewNode FindChildNodeByPIDL(IntPtr shellObjectPIDL) {
+			// First of all, test whether the given PIDL anyhow derives from this node
+			if(PIDLManager.IsParent(this.AbsolutePIDL, shellObjectPIDL, false)) {
+				// If we have luck, just the this node itself is requested
+				if(PIDLManager.IsEqual(this.AbsolutePIDL, shellObjectPIDL))
+					return this;
+
+				ShellTreeViewNode actNode = this.FirstNode;
+				do {
+					if(PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
+						return actNode;
+					if(PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
+						if(actNode.Nodes.Count == 0)
+							actNode.Expand();
+
+						return actNode.FindChildNodeByPIDL(shellObjectPIDL);
+					}
+				} while((actNode = actNode.NextNode) != null);
+
+			}
+			
+			return null;
+		}
+
 		#region IShellObject Member
 		public IntPtr AbsolutePIDL {
 			get {
@@ -147,16 +171,10 @@ namespace Electrifier.Core.Shell32.Controls {
 			}
 		}
 
-		public string DisplayName {
-			get {
-				return basicShellObject.DisplayName;
-			}
-		}
+		public string DisplayName { get { return this.basicShellObject.DisplayName; } }
 
-		public string FullPathName {
-			get {
-				return basicShellObject.FullPathName;
-			}
+		public string GetDisplayNameOf(bool relativeToParentFolder, ShellAPI.SHGDN SHGDNFlags) {
+			return this.basicShellObject.GetDisplayNameOf(relativeToParentFolder, SHGDNFlags);
 		}
 
 		public override WinAPI.IDataObject GetIDataObject() {
@@ -181,30 +199,6 @@ namespace Electrifier.Core.Shell32.Controls {
 
 		public void UpdateFileInfo(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo) {
 			basicShellObject.UpdateFileInfo(fileInfoThread, shFileInfo);
-		}
-
-		public ShellTreeViewNode FindChildNodeByPIDL(IntPtr shellObjectPIDL) {
-			// First of all, test whether the given PIDL anyhow derives from this node
-			if(PIDLManager.IsParent(this.AbsolutePIDL, shellObjectPIDL, false)) {
-				// If we have luck, just the this node itself is requested
-				if(PIDLManager.IsEqual(this.AbsolutePIDL, shellObjectPIDL))
-					return this;
-
-				ShellTreeViewNode actNode = this.FirstNode;
-				do {
-					if(PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
-						return actNode;
-					if(PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
-						if(actNode.Nodes.Count == 0)
-							actNode.Expand();
-
-						return actNode.FindChildNodeByPIDL(shellObjectPIDL);
-					}
-				} while((actNode = actNode.NextNode) != null);
-
-			}
-			
-			return null;
 		}
 
 		public event FileInfoUpdatedHandler FileInfoUpdated {

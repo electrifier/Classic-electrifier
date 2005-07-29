@@ -87,16 +87,10 @@ namespace Electrifier.Core.Shell32.Controls {
 			return this.basicShellObject.GetIContextMenu();
 		}
 
-		public string DisplayName {
-			get {
-				return basicShellObject.DisplayName;
-			}
-		}
+		public string DisplayName { get { return this.basicShellObject.DisplayName; } }
 
-		public string FullPathName {
-			get {
-				return basicShellObject.FullPathName;
-			}
+		public string GetDisplayNameOf(bool relativeToParentFolder, ShellAPI.SHGDN SHGDNFlags) {
+			return this.basicShellObject.GetDisplayNameOf(relativeToParentFolder, SHGDNFlags);
 		}
 
 		public event FileInfoUpdatedHandler FileInfoUpdated {

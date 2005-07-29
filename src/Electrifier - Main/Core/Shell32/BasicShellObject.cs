@@ -47,33 +47,35 @@ namespace Electrifier.Core.Shell32 {
 		}
 
 		protected virtual string GetDisplayName() {
-			if(displayName == null) {
-				ShellAPI.SHGDN  shGdn = ShellAPI.SHGDN.INFOLDER;
-				ShellAPI.STRRET strRet;
-				IntPtr          strRetPidl = IntPtr.Zero;
+			return this.GetDisplayNameOf(true, ShellAPI.SHGDN.INFOLDER);
+		}
 
-				if(PIDLManager.IsDesktop(this.AbsolutePIDL)) {
-					strRetPidl = AbsolutePIDL;
+		public virtual string GetDisplayNameOf(bool relativeToParentFolder, ShellAPI.SHGDN SHGDNFlags) {
+			string result = null;
+			ShellAPI.STRRET strRet;
+			IntPtr strRetPidl = IntPtr.Zero;
 
-					desktopFolderInstance.Get.GetDisplayNameOf(strRetPidl, shGdn, out strRet);
-				} else {
-					IntPtr                parentPidl   = PIDLManager.CreateParentPIDL(AbsolutePIDL);
-					ShellAPI.IShellFolder parentFolder = desktopFolderInstance.GetIShellFolder(parentPidl);
+			if((!relativeToParentFolder) || PIDLManager.IsDesktop(this.AbsolutePIDL)) {
+				strRetPidl = AbsolutePIDL;
 
-					strRetPidl = RelativePIDL;
+				desktopFolderInstance.Get.GetDisplayNameOf(strRetPidl, SHGDNFlags, out strRet);
+			} else {
+				IntPtr                parentPidl   = PIDLManager.CreateParentPIDL(AbsolutePIDL);
+				ShellAPI.IShellFolder parentFolder = desktopFolderInstance.GetIShellFolder(parentPidl);
 
-					parentFolder.GetDisplayNameOf(strRetPidl, shGdn, out strRet);
+				strRetPidl = RelativePIDL;
 
-					Marshal.ReleaseComObject(parentFolder);	// TODO: Put IShellInterface into disposible class
-					PIDLManager.Free(parentPidl);
-				}
+				parentFolder.GetDisplayNameOf(strRetPidl, SHGDNFlags, out strRet);
 
-				// TODO: Won't work using W2K
-				// TODO: Converting functions into STRRET.ToString (struct)
-				ShellAPI.StrRetToBSTR(ref strRet, strRetPidl, out displayName);
+				Marshal.ReleaseComObject(parentFolder);	// TODO: Put IShellInterface into disposible class
+				PIDLManager.Free(parentPidl);
 			}
 
-			return displayName;
+			// TODO: Won't work using W2K
+			// TODO: Converting functions into STRRET.ToString (struct)
+			ShellAPI.StrRetToBSTR(ref strRet, this.AbsolutePIDL, out result);
+
+			return result;
 		}
 
 		public virtual WinAPI.IDataObject GetIDataObject() {
@@ -153,10 +155,6 @@ namespace Electrifier.Core.Shell32 {
 		}
 
 
-		protected virtual string GetFullPathName() {
-			return "C:\\System\\Desktop";
-		}
-
 		#region IShellObject Member
 		public IntPtr AbsolutePIDL {
 			get {
@@ -170,17 +168,8 @@ namespace Electrifier.Core.Shell32 {
 			}
 		}
 
-		public string DisplayName {
-			get {
-				return GetDisplayName();
-			}
-		}
+		public string DisplayName { get { return GetDisplayName(); } }
 
-		public string FullPathName {
-			get {
-				return GetFullPathName();
-			}
-		}
 
 		public bool AttachFileInfoThread(IFileInfoThread fileInfoThread) {
 			if(this.fileInfoThread == null) {

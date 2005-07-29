@@ -234,6 +234,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Controls\ToolBars\AddressToolBar.cs"
+                    SubType = "Component"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Forms\IDockControl.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

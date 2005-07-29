@@ -51,7 +51,8 @@ namespace Electrifier.Core.Shell32 {
 		ShellAPI.IContextMenu GetIContextMenu();
 
 		string DisplayName { get; }
-		string FullPathName { get; }
+
+		string GetDisplayNameOf(bool relativeToParentFolder, ShellAPI.SHGDN SHGDNFlags);
 
 		event FileInfoUpdatedHandler FileInfoUpdated;
 	}

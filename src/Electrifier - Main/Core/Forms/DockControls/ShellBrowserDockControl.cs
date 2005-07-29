@@ -15,16 +15,27 @@ using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
 
 namespace Electrifier.Core.Forms.DockControls {
+	public delegate void BrowsingAddressChangedEventHandler(object source, EventArgs e);
+
 	/// <summary>
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>
 	public class ShellBrowserDockControl : DockControl, IDockControl, IPersistent {
 		protected ShellTreeView         shellTreeView        = null;
-//		protected ShellListView         shellListView        = null;
+		protected ShellBrowser          shellBrowser         = null;
 		protected Splitter              splitter             = null;
 		protected IDockControlContainer dockControlContainer = null;
+		protected string                browsingAddress      = null;
+		public    string                BrowsingAddress {
+			get { return this.browsingAddress; }
+		}
 
-		protected ShellBrowser shellBrowser = null;
+		public event BrowsingAddressChangedEventHandler BrowsingAddressChanged = null;
+		protected void OnBrowsingAddressChanged() {
+			if(this.BrowsingAddressChanged != null)
+				this.BrowsingAddressChanged(this, EventArgs.Empty);
+		}
+
 
 		public ShellBrowserDockControl() : this(Guid.NewGuid()) { }
 
@@ -47,11 +58,11 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
 
 
-
 			// Initialize Splitter
 			splitter      = new Splitter();
 			splitter.Dock = DockStyle.Left;
 			splitter.Size = new Size(4, Height);
+			splitter.BackColor = Color.White;			// TODO: Do as sandbar/sanddock suggests
 
 			// Add the controls from right to left
 			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
@@ -67,9 +78,11 @@ namespace Electrifier.Core.Forms.DockControls {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
 			this.Cursor = Cursors.WaitCursor;
-			shellBrowser.SetBrowsingFolder((shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			shellBrowser.SetBrowsingFolder(shellTreeView.SelectedNode.AbsolutePIDL);
 //			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
-			Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
+			this.Text = shellTreeView.SelectedNode.GetDisplayNameOf(false, (ShellAPI.SHGDN.FORPARSING | ShellAPI.SHGDN.FORADDRESSBAR));
+			this.browsingAddress = this.Text;
+			this.OnBrowsingAddressChanged();
 			this.Cursor = Cursors.Default;
 		}
 

@@ -14,6 +14,7 @@ using System.Xml;
 using TD.SandDock;
 
 using Electrifier.Core;
+using Electrifier.Core.Controls.ToolBars;
 using Electrifier.Core.Forms.DockControls;
 
 namespace Electrifier.Core.Forms {
@@ -39,7 +40,7 @@ namespace Electrifier.Core.Forms {
 		private TD.SandBar.MenuBarItem menuBarItem3;
 		private TD.SandBar.MenuBarItem menuBarItem4;
 		private TD.SandBar.MenuBarItem menuBarItem5;
-		private TD.SandBar.ToolBar toolBar1;
+		private AddressToolBar toolBar1;
 		private TD.SandDock.DockContainer leftSandDock;
 		private TD.SandDock.DockContainer rightSandDock;
 		private TD.SandDock.DockContainer bottomSandDock;
@@ -63,6 +64,7 @@ namespace Electrifier.Core.Forms {
 			//
 			// TODO: Fügen Sie den Konstruktorcode nach dem Aufruf von InitializeComponent hinzu
 			//
+			this.Text = @"electrifier";
 			documentContainer.Manager = new SandDockManager();
 			Icon = AppContext.Icon;
 
@@ -148,6 +150,14 @@ namespace Electrifier.Core.Forms {
 					dockControl.ApplyPersistenceInfo(dockControlNode);
 					dockControl.AttachToDockControlContainer(this);
 
+					// TODO: Hard coded shit follows :-)
+					if(dockControlType.Equals(typeof(ShellBrowserDockControl))) {
+						ShellBrowserDockControl shbrwsr = dockControl as ShellBrowserDockControl;
+
+						shbrwsr.BrowsingAddressChanged +=new BrowsingAddressChangedEventHandler(shbrwsr_BrowsingAddressChanged);
+					}
+
+
 					// TODO: decide which container!
 					documentContainer.AddDocument(dockControl as DockControl);
 				} else {
@@ -192,7 +202,7 @@ namespace Electrifier.Core.Forms {
 			this.menuBarItem3 = new TD.SandBar.MenuBarItem();
 			this.menuBarItem4 = new TD.SandBar.MenuBarItem();
 			this.menuBarItem5 = new TD.SandBar.MenuBarItem();
-			this.toolBar1 = new TD.SandBar.ToolBar();
+			this.toolBar1 = new AddressToolBar();
 			this.sandDockManager = new TD.SandDock.SandDockManager();
 			this.leftSandDock = new TD.SandDock.DockContainer();
 			this.rightSandDock = new TD.SandDock.DockContainer();
@@ -292,10 +302,10 @@ namespace Electrifier.Core.Forms {
 			this.toolBar1.DockLine = 1;
 			this.toolBar1.Guid = new System.Guid("ed97398b-31e0-472f-989f-9fd6fbf9d484");
 			this.toolBar1.Location = new System.Drawing.Point(2, 24);
-			this.toolBar1.Name = "toolBar1";
-			this.toolBar1.Size = new System.Drawing.Size(24, 18);
+			this.toolBar1.Name = "Address Bar";
+			this.toolBar1.Size = new System.Drawing.Size(128, 18);
 			this.toolBar1.TabIndex = 1;
-			this.toolBar1.Text = "toolBar1";
+			this.toolBar1.Text = "Address Bar";
 			// 
 			// sandDockManager
 			// 
@@ -416,6 +426,14 @@ namespace Electrifier.Core.Forms {
 			ShellBrowserDockControl shellBrowser = new ShellBrowserDockControl();
 			this.documentContainer.AddDocument(shellBrowser);
 			shellBrowser.AttachToDockControlContainer(this);	
+		}
+
+		private void shbrwsr_BrowsingAddressChanged(object source, EventArgs e) {
+			ShellBrowserDockControl shbrwsr = source as ShellBrowserDockControl;
+
+			if(shbrwsr != null) {
+				this.toolBar1.Address = shbrwsr.BrowsingAddress;
+			}
 		}
 	}
 }
