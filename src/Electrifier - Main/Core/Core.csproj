@@ -174,7 +174,9 @@
     </Compile>
     <Compile Include="Controls\ToolBars\AddressToolBar.cs" />
     <Compile Include="Forms\DockControls\FolderBarDockControl.cs" />
-    <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs" />
+    <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Forms\IDockControl.cs">
       <SubType>Code</SubType>
     </Compile>

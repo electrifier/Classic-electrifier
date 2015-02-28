@@ -10,6 +10,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 
+using WeifenLuo.WinFormsUI.Docking;
+
 using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
 
@@ -19,10 +21,8 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>
-	public class ShellBrowserDockControl : /* DockControl, */ IDockControl, IPersistent {
+	public class ShellBrowserDockControl : DockContent, IDockControl, IPersistent {
         protected Guid Guid;
-        protected string Name;
-        protected string Text;
 
         protected ShellTreeView         shellTreeView        = null;
 		protected ShellBrowser          shellBrowser         = null;
@@ -67,7 +67,7 @@ namespace Electrifier.Core.Forms.DockControls {
 			//splitter.Size = new Size(4, Height);
 
 			// Add the controls from right to left
-			//Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
+			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
 
 
 		}

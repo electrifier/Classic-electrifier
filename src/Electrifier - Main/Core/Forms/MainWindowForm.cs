@@ -42,6 +42,21 @@ namespace Electrifier.Core.Forms {
 			*/
 		}
 
+		private void newShellBrowserToolStripMenuItem_Click(object sender, EventArgs e) {
+			ShellBrowserDockControl shellBrowserDockControl = new ShellBrowserDockControl();
+
+			if (this.dockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi) {
+				shellBrowserDockControl.Show();
+				shellBrowserDockControl.MdiParent = this;
+			} else {
+				shellBrowserDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+			}
+		}
+
+		private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
+			this.Close();
+		}
+
 		#region IPersistentForm Member
 		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
 			// Create persistence information for main window Form
