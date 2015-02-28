@@ -64,12 +64,10 @@ namespace Electrifier.Core.Forms.DockControls {
 			// Initialize Splitter
 			splitter      = new Splitter();
 			splitter.Dock = DockStyle.Left;
-			//splitter.Size = new Size(4, Height);
+			splitter.Size = new Size(6, this.Height);
 
 			// Add the controls from right to left
 			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
-
-
 		}
 
 		// TODO: Dispose when closed!!!

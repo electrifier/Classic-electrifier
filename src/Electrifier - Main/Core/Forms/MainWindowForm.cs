@@ -30,6 +30,10 @@ namespace Electrifier.Core.Forms {
 			InitializeComponent();
 
 			this.Icon = AppContext.Icon;
+
+			// TODO: RELAUNCH: Test-Code...
+			FolderBarDockControl folderBarDockControl = new FolderBarDockControl();
+			folderBarDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockLeftAutoHide);
 		}
 
 		private void shbrwsr_BrowsingAddressChanged(object source, EventArgs e) {
