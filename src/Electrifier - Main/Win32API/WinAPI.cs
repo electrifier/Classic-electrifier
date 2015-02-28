@@ -862,13 +862,13 @@ namespace Electrifier.Win32API {
 
 
 
-		[DllImport("ole32.dll")]
-		public static extern int OleLoadFromStream(UCOMIStream pStm,ref Guid
-			iidInterface,[MarshalAs(UnmanagedType.Interface)] out object ppvObj);
+        //[DllImport("ole32.dll")]              // TODO: RELAUNCH: Commented out due compatibility
+        //public static extern int OleLoadFromStream(UCOMIStream pStm,ref Guid
+        //    iidInterface,[MarshalAs(UnmanagedType.Interface)] out object ppvObj);
 
-		[DllImport("OLE32.DLL", EntryPoint="CreateStreamOnHGlobal")]
-		public static extern int CreateStreamOnHGlobal(int hGlobalMemHandle, bool
-			fDeleteOnRelease, out UCOMIStream pOutStm);
+        //[DllImport("OLE32.DLL", EntryPoint="CreateStreamOnHGlobal")]
+        //public static extern int CreateStreamOnHGlobal(int hGlobalMemHandle, bool
+        //    fDeleteOnRelease, out UCOMIStream pOutStm);
 
 		[DllImport("ole32.dll")]
 			// TODO: What does HandleRef do?!? How benefit from? Exchange all Win32API-Handles with it?

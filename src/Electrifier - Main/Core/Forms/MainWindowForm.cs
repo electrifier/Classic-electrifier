@@ -27,29 +27,12 @@ namespace Electrifier.Core.Forms {
 		protected IPersistentFormContainer persistentFormContainer = null;
 		public    IPersistentFormContainer PersistentFormContainer { get { return persistentFormContainer; } }
 		protected ArrayList                dockControlList         = new ArrayList();
-		public    ArrayList                DockControlList         { get { return dockControlList; } }
-
-
-		private TD.SandBar.ToolBarContainer leftSandBarDock;
-		private TD.SandBar.ToolBarContainer rightSandBarDock;
-		private TD.SandBar.ToolBarContainer bottomSandBarDock;
-		private TD.SandBar.ToolBarContainer topSandBarDock;
-		private TD.SandBar.MenuBar menuBar1;
-		private TD.SandBar.MenuBarItem menuBarItem1;
-		private TD.SandBar.MenuBarItem menuBarItem2;
-		private TD.SandBar.MenuBarItem menuBarItem3;
-		private TD.SandBar.MenuBarItem menuBarItem4;
-		private TD.SandBar.MenuBarItem menuBarItem5;
-		private AddressToolBar toolBar1;
-		private TD.SandDock.DockContainer leftSandDock;
-		private TD.SandDock.DockContainer rightSandDock;
-		private TD.SandDock.DockContainer bottomSandDock;
-		private TD.SandDock.DockContainer topSandDock;
-		private TD.SandBar.SandBarManager sandBarManager;
-		private TD.SandDock.SandDockManager sandDockManager;
-		private System.Windows.Forms.StatusBar statusBar;
-		private TD.SandDock.DocumentContainer documentContainer;
-		private TD.SandBar.MenuButtonItem menuButtonItem1;
+        private ToolStripContainer tscToolStripContainer;
+        private MenuStrip mstMenuStrip;
+        private ToolStripMenuItem mniFileToolStripMenuItem;
+        private ToolStripMenuItem mniFileNewWindowToolStripMenuItem;
+    
+        public ArrayList DockControlList { get { return dockControlList; } }
 		/// <summary>
 		/// Erforderliche Designervariable.
 		/// </summary>
@@ -65,7 +48,7 @@ namespace Electrifier.Core.Forms {
 			// TODO: Fügen Sie den Konstruktorcode nach dem Aufruf von InitializeComponent hinzu
 			//
 			this.Text = @"electrifier";
-			documentContainer.Manager = new SandDockManager();
+//			documentContainer.Manager = new SandDockManager();
 			Icon = AppContext.Icon;
 
 			// Initialize form state regarding to the configuration saved
@@ -75,11 +58,14 @@ namespace Electrifier.Core.Forms {
 //			shellBrowser.AttachToDockControlContainer(this);
 
 
-			FolderBarDockControl folderBar = new FolderBarDockControl();
+/* TODO: RELAUNCH: Commented out
+            FolderBarDockControl folderBar = new FolderBarDockControl();
 			folderBar.Manager = sandDockManager;
 			folderBar.Open(DockLocation.Left);
 			folderBar.LayoutSystem.Collapsed = true;
-		}
+
+ */
+        }
 
 		/// <summary>
 		/// Die verwendeten Ressourcen bereinigen.
@@ -120,14 +106,15 @@ namespace Electrifier.Core.Forms {
 			}
 			mainWindowNode.AppendChild(dockControlsNode);
 
-			// Append persistance information for SandBar and SandDock components
+            /* TODO: RELAUNCH: Commented out
+            // Append persistance information for SandBar and SandDock components
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
 				"SandBarManager", sandBarManager.GetLayout()));
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
 				"SandDockManager", sandDockManager.GetLayout()));
 			mainWindowNode.AppendChild(AppContext.CreateXmlNodeFromForeignXmlDocument(targetXmlDocument,
 				"DocumentContainer", documentContainer.Manager.GetLayout()));
-
+            */
 			return mainWindowNode;
 		}
 
@@ -159,7 +146,7 @@ namespace Electrifier.Core.Forms {
 
 
 					// TODO: decide which container!
-					documentContainer.AddDocument(dockControl as DockControl);
+//					documentContainer.AddDocument(dockControl as DockControl);
 				} else {
 					// TODO: Exception
 					MessageBox.Show("Unknown DockControl type specified in configuration file");
@@ -167,12 +154,14 @@ namespace Electrifier.Core.Forms {
 			}			
 
 			// Apply persistance information to SandBar and SandDock components
-			sandBarManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
-				"SandBarManager"));
-			sandDockManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
-				"SandDockManager"));
-			documentContainer.Manager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
-				"DocumentContainer"));
+            /* TODO: RELAUNCH: Commented out
+            sandBarManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+                "SandBarManager"));
+            sandDockManager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+                "SandDockManager"));
+            documentContainer.Manager.SetLayout(AppContext.CreateXmlDocumentFromForeignXmlNode(persistenceInfo,
+                "DocumentContainer"));
+             */
 		}
 
 		public void AttachToFormContainer(IPersistentFormContainer persistentFormContainer) {
@@ -191,214 +180,74 @@ namespace Electrifier.Core.Forms {
 		/// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
 		/// </summary>
 		private void InitializeComponent() {
-			this.sandBarManager = new TD.SandBar.SandBarManager();
-			this.bottomSandBarDock = new TD.SandBar.ToolBarContainer();
-			this.leftSandBarDock = new TD.SandBar.ToolBarContainer();
-			this.rightSandBarDock = new TD.SandBar.ToolBarContainer();
-			this.topSandBarDock = new TD.SandBar.ToolBarContainer();
-			this.menuBar1 = new TD.SandBar.MenuBar();
-			this.menuBarItem1 = new TD.SandBar.MenuBarItem();
-			this.menuBarItem2 = new TD.SandBar.MenuBarItem();
-			this.menuBarItem3 = new TD.SandBar.MenuBarItem();
-			this.menuBarItem4 = new TD.SandBar.MenuBarItem();
-			this.menuBarItem5 = new TD.SandBar.MenuBarItem();
-			this.toolBar1 = new AddressToolBar();
-			this.sandDockManager = new TD.SandDock.SandDockManager();
-			this.leftSandDock = new TD.SandDock.DockContainer();
-			this.rightSandDock = new TD.SandDock.DockContainer();
-			this.bottomSandDock = new TD.SandDock.DockContainer();
-			this.topSandDock = new TD.SandDock.DockContainer();
-			this.statusBar = new System.Windows.Forms.StatusBar();
-			this.documentContainer = new TD.SandDock.DocumentContainer();
-			this.menuButtonItem1 = new TD.SandBar.MenuButtonItem();
-			this.topSandBarDock.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// sandBarManager
-			// 
-			this.sandBarManager.OwnerForm = this;
-			// 
-			// bottomSandBarDock
-			// 
-			this.bottomSandBarDock.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.bottomSandBarDock.Guid = new System.Guid("ab098a39-eed2-4847-ac3e-1b443c89cf0f");
-			this.bottomSandBarDock.Location = new System.Drawing.Point(0, 376);
-			this.bottomSandBarDock.Manager = this.sandBarManager;
-			this.bottomSandBarDock.Name = "bottomSandBarDock";
-			this.bottomSandBarDock.Size = new System.Drawing.Size(824, 0);
-			this.bottomSandBarDock.TabIndex = 2;
-			// 
-			// leftSandBarDock
-			// 
-			this.leftSandBarDock.Dock = System.Windows.Forms.DockStyle.Left;
-			this.leftSandBarDock.Guid = new System.Guid("d615f676-30e2-4507-94e1-1fa01fb93dc7");
-			this.leftSandBarDock.Location = new System.Drawing.Point(0, 42);
-			this.leftSandBarDock.Manager = this.sandBarManager;
-			this.leftSandBarDock.Name = "leftSandBarDock";
-			this.leftSandBarDock.Size = new System.Drawing.Size(0, 334);
-			this.leftSandBarDock.TabIndex = 0;
-			// 
-			// rightSandBarDock
-			// 
-			this.rightSandBarDock.Dock = System.Windows.Forms.DockStyle.Right;
-			this.rightSandBarDock.Guid = new System.Guid("96dcfe7c-2a5c-491e-835d-2e8362769981");
-			this.rightSandBarDock.Location = new System.Drawing.Point(824, 42);
-			this.rightSandBarDock.Manager = this.sandBarManager;
-			this.rightSandBarDock.Name = "rightSandBarDock";
-			this.rightSandBarDock.Size = new System.Drawing.Size(0, 334);
-			this.rightSandBarDock.TabIndex = 1;
-			// 
-			// topSandBarDock
-			// 
-			this.topSandBarDock.Controls.Add(this.menuBar1);
-			this.topSandBarDock.Controls.Add(this.toolBar1);
-			this.topSandBarDock.Dock = System.Windows.Forms.DockStyle.Top;
-			this.topSandBarDock.Guid = new System.Guid("e968b7b1-f5cc-42fa-8652-a5714452c0c8");
-			this.topSandBarDock.Location = new System.Drawing.Point(0, 0);
-			this.topSandBarDock.Manager = this.sandBarManager;
-			this.topSandBarDock.Name = "topSandBarDock";
-			this.topSandBarDock.Size = new System.Drawing.Size(824, 42);
-			this.topSandBarDock.TabIndex = 3;
-			// 
-			// menuBar1
-			// 
-			this.menuBar1.Guid = new System.Guid("53385c5b-0171-4b5c-8952-6532dee0c99e");
-			this.menuBar1.Items.AddRange(new TD.SandBar.ToolbarItemBase[] {
-																																			this.menuBarItem1,
-																																			this.menuBarItem2,
-																																			this.menuBarItem3,
-																																			this.menuBarItem4,
-																																			this.menuBarItem5});
-			this.menuBar1.Location = new System.Drawing.Point(2, 0);
-			this.menuBar1.Name = "menuBar1";
-			this.menuBar1.OwnerForm = this;
-			this.menuBar1.Size = new System.Drawing.Size(822, 24);
-			this.menuBar1.TabIndex = 0;
-			// 
-			// menuBarItem1
-			// 
-			this.menuBarItem1.Items.AddRange(new TD.SandBar.ToolbarItemBase[] {
-																																					this.menuButtonItem1});
-			this.menuBarItem1.Text = "&File";
-			// 
-			// menuBarItem2
-			// 
-			this.menuBarItem2.Text = "&Edit";
-			// 
-			// menuBarItem3
-			// 
-			this.menuBarItem3.Text = "&View";
-			// 
-			// menuBarItem4
-			// 
-			this.menuBarItem4.Text = "&Window";
-			// 
-			// menuBarItem5
-			// 
-			this.menuBarItem5.Text = "&Help";
-			// 
-			// toolBar1
-			// 
-			this.toolBar1.DockLine = 1;
-			this.toolBar1.Guid = new System.Guid("ed97398b-31e0-472f-989f-9fd6fbf9d484");
-			this.toolBar1.Location = new System.Drawing.Point(2, 24);
-			this.toolBar1.Name = "Address Bar";
-			this.toolBar1.Size = new System.Drawing.Size(128, 18);
-			this.toolBar1.TabIndex = 1;
-			this.toolBar1.Text = "Address Bar";
-			// 
-			// sandDockManager
-			// 
-			this.sandDockManager.OwnerForm = this;
-			this.sandDockManager.Renderer = new TD.SandDock.Rendering.Office2003Renderer();
-			// 
-			// leftSandDock
-			// 
-			this.leftSandDock.Dock = System.Windows.Forms.DockStyle.Left;
-			this.leftSandDock.Guid = new System.Guid("54e6ba6b-4e12-473f-bb62-27faa6e6a5bf");
-			this.leftSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.leftSandDock.Location = new System.Drawing.Point(0, 42);
-			this.leftSandDock.Manager = this.sandDockManager;
-			this.leftSandDock.Name = "leftSandDock";
-			this.leftSandDock.Size = new System.Drawing.Size(0, 334);
-			this.leftSandDock.TabIndex = 4;
-			// 
-			// rightSandDock
-			// 
-			this.rightSandDock.Dock = System.Windows.Forms.DockStyle.Right;
-			this.rightSandDock.Guid = new System.Guid("e418ed79-77ed-46ad-b05a-6df7e33e3d50");
-			this.rightSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.rightSandDock.Location = new System.Drawing.Point(824, 42);
-			this.rightSandDock.Manager = this.sandDockManager;
-			this.rightSandDock.Name = "rightSandDock";
-			this.rightSandDock.Size = new System.Drawing.Size(0, 334);
-			this.rightSandDock.TabIndex = 5;
-			// 
-			// bottomSandDock
-			// 
-			this.bottomSandDock.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.bottomSandDock.Guid = new System.Guid("ab458e69-9139-4278-a38f-d1b3c02245b1");
-			this.bottomSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.bottomSandDock.Location = new System.Drawing.Point(0, 376);
-			this.bottomSandDock.Manager = this.sandDockManager;
-			this.bottomSandDock.Name = "bottomSandDock";
-			this.bottomSandDock.Size = new System.Drawing.Size(824, 0);
-			this.bottomSandDock.TabIndex = 6;
-			// 
-			// topSandDock
-			// 
-			this.topSandDock.Dock = System.Windows.Forms.DockStyle.Top;
-			this.topSandDock.Guid = new System.Guid("ce745625-08ab-489f-bc70-4641d0341748");
-			this.topSandDock.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.topSandDock.Location = new System.Drawing.Point(0, 42);
-			this.topSandDock.Manager = this.sandDockManager;
-			this.topSandDock.Name = "topSandDock";
-			this.topSandDock.Size = new System.Drawing.Size(824, 0);
-			this.topSandDock.TabIndex = 7;
-			// 
-			// statusBar
-			// 
-			this.statusBar.Location = new System.Drawing.Point(0, 376);
-			this.statusBar.Name = "statusBar";
-			this.statusBar.Size = new System.Drawing.Size(824, 22);
-			this.statusBar.TabIndex = 8;
-			this.statusBar.Text = "statusBar1";
-			// 
-			// documentContainer
-			// 
-			this.documentContainer.Guid = new System.Guid("3a9e7f87-b0d9-4fe2-9218-692edde57bbc");
-			this.documentContainer.LayoutSystem = new TD.SandDock.SplitLayoutSystem(250, 400);
-			this.documentContainer.Location = new System.Drawing.Point(0, 42);
-			this.documentContainer.Manager = null;
-			this.documentContainer.Name = "documentContainer";
-			this.documentContainer.Renderer = new TD.SandDock.Rendering.Office2003Renderer();
-			this.documentContainer.Size = new System.Drawing.Size(824, 334);
-			this.documentContainer.TabIndex = 9;
-			// 
-			// menuButtonItem1
-			// 
-			this.menuButtonItem1.Text = "New &Shell Browser";
-			this.menuButtonItem1.Activate += new System.EventHandler(this.menuButtonItem1_Activate);
-			// 
-			// MainWindowForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(824, 398);
-			this.Controls.Add(this.documentContainer);
-			this.Controls.Add(this.leftSandDock);
-			this.Controls.Add(this.rightSandDock);
-			this.Controls.Add(this.bottomSandDock);
-			this.Controls.Add(this.topSandDock);
-			this.Controls.Add(this.leftSandBarDock);
-			this.Controls.Add(this.rightSandBarDock);
-			this.Controls.Add(this.bottomSandBarDock);
-			this.Controls.Add(this.topSandBarDock);
-			this.Controls.Add(this.statusBar);
-			this.Name = "MainWindowForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "MainWindowForm";
-			this.topSandBarDock.ResumeLayout(false);
-			this.ResumeLayout(false);
+            this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
+            this.mstMenuStrip = new System.Windows.Forms.MenuStrip();
+            this.mniFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniFileNewWindowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tscToolStripContainer.TopToolStripPanel.SuspendLayout();
+            this.tscToolStripContainer.SuspendLayout();
+            this.mstMenuStrip.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // tscToolStripContainer
+            // 
+            // 
+            // tscToolStripContainer.ContentPanel
+            // 
+            this.tscToolStripContainer.ContentPanel.Size = new System.Drawing.Size(824, 374);
+            this.tscToolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tscToolStripContainer.Location = new System.Drawing.Point(0, 0);
+            this.tscToolStripContainer.Name = "tscToolStripContainer";
+            this.tscToolStripContainer.Size = new System.Drawing.Size(824, 398);
+            this.tscToolStripContainer.TabIndex = 0;
+            this.tscToolStripContainer.Text = "toolStripContainer1";
+            // 
+            // tscToolStripContainer.TopToolStripPanel
+            // 
+            this.tscToolStripContainer.TopToolStripPanel.Controls.Add(this.mstMenuStrip);
+            // 
+            // mstMenuStrip
+            // 
+            this.mstMenuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.mstMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniFileToolStripMenuItem});
+            this.mstMenuStrip.Location = new System.Drawing.Point(0, 0);
+            this.mstMenuStrip.Name = "mstMenuStrip";
+            this.mstMenuStrip.Size = new System.Drawing.Size(824, 24);
+            this.mstMenuStrip.TabIndex = 0;
+            this.mstMenuStrip.Text = "menuStrip1";
+            // 
+            // mniFileToolStripMenuItem
+            // 
+            this.mniFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniFileNewWindowToolStripMenuItem});
+            this.mniFileToolStripMenuItem.Name = "mniFileToolStripMenuItem";
+            this.mniFileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.mniFileToolStripMenuItem.Text = "&File";
+            // 
+            // mniFileNewWindowToolStripMenuItem
+            // 
+            this.mniFileNewWindowToolStripMenuItem.Name = "mniFileNewWindowToolStripMenuItem";
+            this.mniFileNewWindowToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.mniFileNewWindowToolStripMenuItem.Text = "&New Window";
+            this.mniFileNewWindowToolStripMenuItem.Click += new System.EventHandler(this.mniNewWindowToolStripMenuItem_Click);
+            // 
+            // MainWindowForm
+            // 
+            this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+            this.ClientSize = new System.Drawing.Size(824, 398);
+            this.Controls.Add(this.tscToolStripContainer);
+            this.MainMenuStrip = this.mstMenuStrip;
+            this.Name = "MainWindowForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.Text = "electrifier";
+            this.tscToolStripContainer.TopToolStripPanel.ResumeLayout(false);
+            this.tscToolStripContainer.TopToolStripPanel.PerformLayout();
+            this.tscToolStripContainer.ResumeLayout(false);
+            this.tscToolStripContainer.PerformLayout();
+            this.mstMenuStrip.ResumeLayout(false);
+            this.mstMenuStrip.PerformLayout();
+            this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -421,19 +270,27 @@ namespace Electrifier.Core.Forms {
 		}
 		#endregion
 
-		private void menuButtonItem1_Activate(object sender, System.EventArgs e) {
+/* TODO: RELAUNCH: Commented out
+        private void menuButtonItem1_Activate(object sender, System.EventArgs e) {
 			// TODO: Experimental code :-)
 			ShellBrowserDockControl shellBrowser = new ShellBrowserDockControl();
-			this.documentContainer.AddDocument(shellBrowser);
+//			this.documentContainer.AddDocument(shellBrowser);
 			shellBrowser.AttachToDockControlContainer(this);	
 		}
+ */
 
 		private void shbrwsr_BrowsingAddressChanged(object source, EventArgs e) {
 			ShellBrowserDockControl shbrwsr = source as ShellBrowserDockControl;
 
+            /* TODO: RELAUNCH: Commented out
 			if(shbrwsr != null) {
 				this.toolBar1.Address = shbrwsr.BrowsingAddress;
 			}
+            */
 		}
+
+        private void mniNewWindowToolStripMenuItem_Click(object sender, EventArgs e) {
+
+        }
 	}
 }

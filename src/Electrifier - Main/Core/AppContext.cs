@@ -82,8 +82,15 @@ namespace Electrifier.Core {
 //							this.MainForm = mainWindowForm;
 //						}
 
-			// Load and apply the configuration used for this session
-			RestoreConfiguration();
+			// Try to load and apply the configuration used for this session
+            if (!RestoreConfiguration()) {
+                // Start a new session since restoring configuration failed
+                MainWindowForm mainWindowForm = new MainWindowForm();
+                mainWindowForm.Show();
+
+                openWindowList.Add(mainWindowForm);
+                this.MainForm = mainWindowForm;
+            }
 
 			if(showMainWindow) {
 				// TODO: Wenn alle minimiert waren werden sie es auch diesmal sein!
@@ -126,22 +133,29 @@ namespace Electrifier.Core {
 			}
 		}
 
-		public void RestoreConfiguration() {
-			RestoreConfiguration("Default.Config.xml");
+		public bool RestoreConfiguration() {
+			return RestoreConfiguration("Default.Config.xml");
 		}
 
-		public void RestoreConfiguration(string configurationFileName) {
+		public bool RestoreConfiguration(string configurationFileName) {
 			try {
-				XmlDocument configXml = new XmlDocument();
-				configXml.Load(configurationFileName);
+                if (File.Exists(configurationFileName)) {
+                    XmlDocument configXml = new XmlDocument();
+                    configXml.Load(configurationFileName);
 
-				XmlNode node = configXml.DocumentElement;
-				string text = node.LocalName;
-				ApplyPersistenceInfo(node);
+                    XmlNode node = configXml.DocumentElement;
+                    string text = node.LocalName;
+                    ApplyPersistenceInfo(node);
 
-			} finally {
+                    return true;
+                }
+			} catch(Exception e) {
 				// TODO: Add error-handling here...
+
+                System.Windows.Forms.MessageBox.Show("AppContext.RestoreConfiguration: Exception occured:" + e.Message, "electrifier: Error!");
 			}
+
+            return false;
 		}
 
 		public void SaveConfiguration() {

@@ -62,7 +62,6 @@ namespace Electrifier.Core.Forms.DockControls {
 			splitter      = new Splitter();
 			splitter.Dock = DockStyle.Left;
 			splitter.Size = new Size(4, Height);
-			splitter.BackColor = Color.White;			// TODO: Do as sandbar/sanddock suggests
 
 			// Add the controls from right to left
 			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });

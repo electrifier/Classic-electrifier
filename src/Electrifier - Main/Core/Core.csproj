@@ -90,10 +90,6 @@
       <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <Reference Include="SandBar">
-      <Name>SandBar</Name>
-      <HintPath>..\..\Third Party Components\SandBar.dll</HintPath>
-    </Reference>
     <Reference Include="SandDock">
       <Name>SandDock</Name>
       <HintPath>..\..\Third Party Components\SandDock.dll</HintPath>
@@ -121,12 +117,8 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ActionControls\ActionButtonItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\ActionMenuButtonItem.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\ActionControls\ActionButtonItem.cs" />
+    <Compile Include="Controls\ActionControls\ActionMenuButtonItem.cs" />
     <Compile Include="Controls\ActionControls\ActionsDropDownMenuItem.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -181,9 +173,7 @@
     <Compile Include="Controls\IExtTreeViewNodeCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ToolBars\AddressToolBar.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Controls\ToolBars\AddressToolBar.cs" />
     <Compile Include="Forms\DockControls\FolderBarDockControl.cs">
       <SubType>Component</SubType>
     </Compile>

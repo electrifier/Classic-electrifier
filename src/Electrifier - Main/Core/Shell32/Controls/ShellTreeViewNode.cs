@@ -54,15 +54,17 @@ namespace Electrifier.Core.Shell32.Controls {
 		}
 
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
-			if(this.ImageIndex != e.ShFileInfo.iIcon) {
-				this.ImageIndex = e.ShFileInfo.iIcon;
-			}
-			// TODO: Request real OpenFolderIndex
-			// TODO: Only if TVIF_SELECTEDIMAGE is set, an open image is available
-			if(e.ShFileInfo.iIcon == iconManager.ClosedFolderIndex)
-				this.SelectedImageIndex = iconManager.OpenedFolderIndex;
-			else
-				this.SelectedImageIndex = e.ShFileInfo.iIcon;
+/* TODO: RELAUNCH: Commented out due incompatibility
+            if (this.imageindex != e.shfileinfo.iicon) {
+                this.imageindex = e.shfileinfo.iicon;
+            }
+            // todo: request real openfolderindex
+            // todo: only if tvif_selectedimage is set, an open image is available
+            if (e.shfileinfo.iicon == iconmanager.closedfolderindex)
+                this.selectedimageindex = iconmanager.openedfolderindex;
+            else
+                this.selectedimageindex = e.shfileinfo.iicon;
+ */
 		}
 
 		public new ShellTreeViewNodeCollection Nodes {
