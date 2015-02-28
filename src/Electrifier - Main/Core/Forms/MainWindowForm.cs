@@ -11,7 +11,6 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
-using TD.SandDock;
 
 using Electrifier.Core;
 using Electrifier.Core.Controls.ToolBars;

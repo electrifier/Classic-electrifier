@@ -90,10 +90,6 @@
       <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <Reference Include="SandDock">
-      <Name>SandDock</Name>
-      <HintPath>..\..\Third Party Components\SandDock.dll</HintPath>
-    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -174,12 +170,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\ToolBars\AddressToolBar.cs" />
-    <Compile Include="Forms\DockControls\FolderBarDockControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Forms\DockControls\FolderBarDockControl.cs" />
+    <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs" />
     <Compile Include="Forms\IDockControl.cs">
       <SubType>Code</SubType>
     </Compile>

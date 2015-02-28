@@ -8,7 +8,6 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using TD.SandDock;
 
 using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
@@ -18,10 +17,13 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellTreeViewDockControl.
 	/// </summary>
-	public class FolderBarDockControl : DockControl {
+	public class FolderBarDockControl /* : DockControl */ {
 		protected ShellTreeView shellTreeView = null;
+        protected Guid Guid;
+        protected string Name;
+        protected string Text;
 
-		public FolderBarDockControl() : base(){
+		public FolderBarDockControl() : base() {
 			// Initialize the underlying DockControl
 			Guid = new Guid("{2B552F10-0847-44b2-A244-D595B7DDD1AE}");
 			Name = "FolderBarDockControl." + Guid.ToString();
@@ -34,11 +36,9 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellTreeView.ShowRootLines = false;
 
 			// Add the controls
-			Controls.Add(shellTreeView);
+			//Controls.Add(shellTreeView);
 		}
 
 		// TODO: Dispose when closed!!!
-		// http://www.divil.co.uk/net/forums/thread.aspx?id=386
-		// You can use the DocumentClosing event or the Closing or Closed events of the DockControl in question. When you dispose it, the form within will also be disposed.
 	}
 }
