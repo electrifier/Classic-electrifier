@@ -44,6 +44,7 @@
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newShellBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.vS2012LightTheme = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
 			this.toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer.SuspendLayout();
@@ -76,7 +77,7 @@
 			this.dockPanel.Name = "dockPanel";
 			this.dockPanel.Size = new System.Drawing.Size(1016, 436);
 			dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
-			dockPanelGradient1.StartColor = System.Drawing.SystemColors.ControlLight;
+			dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
 			autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
 			tabGradient1.EndColor = System.Drawing.SystemColors.Control;
 			tabGradient1.StartColor = System.Drawing.SystemColors.Control;
@@ -84,44 +85,44 @@
 			autoHideStripSkin1.TabGradient = tabGradient1;
 			autoHideStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
 			dockPanelSkin1.AutoHideStripSkin = autoHideStripSkin1;
-			tabGradient2.EndColor = System.Drawing.SystemColors.ControlLightLight;
-			tabGradient2.StartColor = System.Drawing.SystemColors.ControlLightLight;
-			tabGradient2.TextColor = System.Drawing.SystemColors.ControlText;
+			tabGradient2.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(204)))), ((int)(((byte)(206)))), ((int)(((byte)(219)))));
+			tabGradient2.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+			tabGradient2.TextColor = System.Drawing.Color.White;
 			dockPaneStripGradient1.ActiveTabGradient = tabGradient2;
 			dockPanelGradient2.EndColor = System.Drawing.SystemColors.Control;
 			dockPanelGradient2.StartColor = System.Drawing.SystemColors.Control;
 			dockPaneStripGradient1.DockStripGradient = dockPanelGradient2;
-			tabGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
-			tabGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
-			tabGradient3.TextColor = System.Drawing.SystemColors.ControlText;
+			tabGradient3.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(151)))), ((int)(((byte)(234)))));
+			tabGradient3.StartColor = System.Drawing.SystemColors.Control;
+			tabGradient3.TextColor = System.Drawing.Color.Black;
 			dockPaneStripGradient1.InactiveTabGradient = tabGradient3;
 			dockPaneStripSkin1.DocumentGradient = dockPaneStripGradient1;
 			dockPaneStripSkin1.TextFont = new System.Drawing.Font("Segoe UI", 9F);
-			tabGradient4.EndColor = System.Drawing.SystemColors.ActiveCaption;
+			tabGradient4.EndColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(170)))), ((int)(((byte)(220)))));
 			tabGradient4.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-			tabGradient4.StartColor = System.Drawing.SystemColors.GradientActiveCaption;
-			tabGradient4.TextColor = System.Drawing.SystemColors.ActiveCaptionText;
+			tabGradient4.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
+			tabGradient4.TextColor = System.Drawing.Color.White;
 			dockPaneStripToolWindowGradient1.ActiveCaptionGradient = tabGradient4;
-			tabGradient5.EndColor = System.Drawing.SystemColors.Control;
-			tabGradient5.StartColor = System.Drawing.SystemColors.Control;
-			tabGradient5.TextColor = System.Drawing.SystemColors.ControlText;
+			tabGradient5.EndColor = System.Drawing.SystemColors.ControlLightLight;
+			tabGradient5.StartColor = System.Drawing.SystemColors.ControlLightLight;
+			tabGradient5.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
 			dockPaneStripToolWindowGradient1.ActiveTabGradient = tabGradient5;
-			dockPanelGradient3.EndColor = System.Drawing.SystemColors.ControlLight;
-			dockPanelGradient3.StartColor = System.Drawing.SystemColors.ControlLight;
+			dockPanelGradient3.EndColor = System.Drawing.SystemColors.Control;
+			dockPanelGradient3.StartColor = System.Drawing.SystemColors.Control;
 			dockPaneStripToolWindowGradient1.DockStripGradient = dockPanelGradient3;
-			tabGradient6.EndColor = System.Drawing.SystemColors.InactiveCaption;
+			tabGradient6.EndColor = System.Drawing.SystemColors.ControlDark;
 			tabGradient6.LinearGradientMode = System.Drawing.Drawing2D.LinearGradientMode.Vertical;
-			tabGradient6.StartColor = System.Drawing.SystemColors.GradientInactiveCaption;
-			tabGradient6.TextColor = System.Drawing.SystemColors.InactiveCaptionText;
+			tabGradient6.StartColor = System.Drawing.SystemColors.Control;
+			tabGradient6.TextColor = System.Drawing.SystemColors.GrayText;
 			dockPaneStripToolWindowGradient1.InactiveCaptionGradient = tabGradient6;
-			tabGradient7.EndColor = System.Drawing.Color.Transparent;
-			tabGradient7.StartColor = System.Drawing.Color.Transparent;
-			tabGradient7.TextColor = System.Drawing.SystemColors.ControlDarkDark;
+			tabGradient7.EndColor = System.Drawing.SystemColors.Control;
+			tabGradient7.StartColor = System.Drawing.SystemColors.Control;
+			tabGradient7.TextColor = System.Drawing.SystemColors.GrayText;
 			dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
 			dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
 			dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
-			this.dockPanel.Skin = dockPanelSkin1;
 			this.dockPanel.TabIndex = 0;
+			this.dockPanel.Theme = this.vS2012LightTheme;
 			// 
 			// menuStrip
 			// 
@@ -187,5 +188,6 @@
 		private System.Windows.Forms.ToolStripMenuItem newShellBrowserToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
 		private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
+		private WeifenLuo.WinFormsUI.Docking.VS2012LightTheme vS2012LightTheme;
     }
 }
