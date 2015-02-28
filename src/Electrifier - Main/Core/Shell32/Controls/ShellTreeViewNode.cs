@@ -54,6 +54,12 @@ namespace Electrifier.Core.Shell32.Controls {
 		}
 
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
+			// See http://stackoverflow.com/questions/14388136/how-to-use-begininvoke-c-sharp
+			base.TreeView.BeginInvoke((Action)(() => {
+				this.ImageIndex = e.ShFileInfo.iIcon;
+				this.SelectedImageIndex = e.ShFileInfo.iIcon;		// TODO: Request real openedfolderindex, see below
+			}));
+
 /* TODO: RELAUNCH: Commented out due incompatibility
             if (this.imageindex != e.shfileinfo.iicon) {
                 this.imageindex = e.shfileinfo.iicon;

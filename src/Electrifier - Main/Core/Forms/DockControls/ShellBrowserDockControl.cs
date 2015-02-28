@@ -51,7 +51,7 @@ namespace Electrifier.Core.Forms.DockControls {
 			// Initialize ShellTreeView
 			shellTreeView              = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
 			shellTreeView.Dock         = DockStyle.Left;
-			//shellTreeView.Size         = new Size(256, Height);
+			shellTreeView.Size         = new Size(256, this.Size.Height);
 			shellTreeView.AfterSelect +=new TreeViewEventHandler(shellTreeView_AfterSelect);
 			this.Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
 
