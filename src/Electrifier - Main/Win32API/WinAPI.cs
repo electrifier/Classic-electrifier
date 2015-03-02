@@ -36,6 +36,8 @@ namespace Electrifier.Win32API {
 		TVM_SETIMAGELIST		= TV_FIRST +  9,
 		TVM_GETNEXTITEM			= TV_FIRST + 10,
 		TVM_CREATEDRAGIMAGE	= TV_FIRST + 18,
+		TVM_SETEXTENDEDSTYLE = TV_FIRST + 44,
+		TVM_GETEXTENDEDSTYLE = TV_FIRST + 45,
 		TVM_INSERTITEMW     = TV_FIRST + 50,
 		TVM_SETITEM         = TV_FIRST + 63,
 	}
@@ -881,7 +883,8 @@ namespace Electrifier.Win32API {
 			 EntryPoint = "RegisterClipboardFormatA")]
 		public static extern int RegisterClipboardFormat( string lpszFormat );
 
-
+		[DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
+		public extern static int SetWindowTheme(IntPtr hWnd, string subAppName, string subIdList);
 
 		private WinAPI() {
 			// No instantion allowed.

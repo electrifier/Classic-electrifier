@@ -65,6 +65,50 @@ namespace Electrifier.Core.Controls {
 			set { WinAPI.SendMessage(this.Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value); }
 		}
 
+		#region Tree-View Control Extended Styles
+		/// <summary>
+		/// Tree-View Control Extended Styles
+		/// <br/>See <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/bb759981%28v=vs.85%29.aspx"/>
+		/// </summary>
+		[DllImport("user32.dll")]
+		protected static extern TVS_EX SendMessage(IntPtr hWnd, Win32API.WMSG wMsg, TVS_EX wParam, TVS_EX lParam);
+
+		[FlagsAttribute]
+		protected enum TVS_EX : uint {
+			None = 0,
+			MULTISELECT = 0x0002,
+			DOUBLEBUFFER = 0x0004,
+			NOINDENTSTATE = 0x0008,
+			RICHTOOLTIP = 0x0010,
+			AUTOHSCROLL = 0x0020,
+			FADEINOUTEXPANDOS = 0x0040,
+			PARTIALCHECKBOXES = 0x0080,
+			EXCLUSIONCHECKBOXES = 0x0100,
+			DIMMEDCHECKBOXES = 0x0200,
+			DRAWIMAGEASYNC = 0x0400,
+		}
+
+		protected TVS_EX ExtendedStyle {
+			get { return ExtTreeView.SendMessage(this.Handle, WMSG.TVM_GETEXTENDEDSTYLE, TVS_EX.None, TVS_EX.None); }
+			set { ExtTreeView.SendMessage(this.Handle, WMSG.TVM_SETEXTENDEDSTYLE, value, TVS_EX.None); }		// Don't know why only mask (wParam) is set, not (lParam) value, but works...
+		}
+
+		/// <summary>
+		/// See < a href="http://www.programmershare.com/3772974/"/>
+		/// 
+		/// TODO: Using this makes the dragimages look crippled...
+		/// </summary>
+		public void EnableThemeStyles() {
+			this.HotTracking = true;
+			this.ShowLines = false;
+			this.ItemHeight = this.ItemHeight + 4;			// TODO: +4 works, +5 not (and it should be 5)... Perhaps we have to use the large image list?!?
+
+			WinAPI.SetWindowTheme(this.Handle, @"Explorer", null);
+ 
+			this.ExtendedStyle |= TVS_EX.DOUBLEBUFFER | TVS_EX.FADEINOUTEXPANDOS;
+		}
+		#endregion
+
 		#region Overriden members to ensure type strictness
 
 		public new ExtTreeViewNode GetNodeAt(Point point) {

@@ -67,6 +67,8 @@ namespace Electrifier.Core.Shell32.Controls {
 			this.MouseUp += new MouseEventHandler(ShellTreeView_MouseUp);
 
 			this.BorderStyle = BorderStyle.None;
+
+			this.EnableThemeStyles();
 		}
 
 		public ShellTreeViewNode FindNodeByPIDL(IntPtr shellObjectPIDL) {
