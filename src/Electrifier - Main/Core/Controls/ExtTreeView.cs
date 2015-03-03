@@ -65,6 +65,40 @@ namespace Electrifier.Core.Controls {
 			set { WinAPI.SendMessage(this.Handle, WMSG.TVM_SETIMAGELIST, TVSIL.NORMAL, value); }
 		}
 
+		/// <summary>
+		/// Tree-View Control Window Styles
+		/// <br/>See <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb760013%28v=vs.85%29.aspx"/>
+		/// </summary>
+		[FlagsAttribute]
+		protected enum TVS : uint {
+			None = 0,
+			HASBUTTONS = 0x0001,
+			HASLINES = 0x0002,
+			LINESATROOT = 0x0004,
+			EDITLABELS = 0x0008,
+			DISABLEDRAGDROP = 0x0010,
+			SHOWSELALWAYS = 0x0020,
+			RTLREADING = 0x0040,
+			NOTOOLTIPS = 0x0080,
+			CHECKBOXES = 0x0100,
+			TRACKSELECT = 0x0200,
+			SINGLEEXPAND = 0x0400,
+			INFOTIP = 0x0800,
+			FULLROWSELECT = 0x1000,
+			NOSCROLL = 0x2000,
+			NONEVENHEIGHT = 0x4000,
+			NOHSCROLL = 0x8000,
+		}
+
+		protected override CreateParams CreateParams {
+			get {
+				CreateParams createParams = base.CreateParams;
+				createParams.Style |= (int)TVS.NOHSCROLL;
+
+				return createParams;
+			}
+		}
+
 		#region Tree-View Control Extended Styles
 		/// <summary>
 		/// Tree-View Control Extended Styles
@@ -99,6 +133,7 @@ namespace Electrifier.Core.Controls {
 		/// TODO: Using this makes the dragimages look crippled...
 		/// </summary>
 		public void EnableThemeStyles() {
+			this.FullRowSelect = true;
 			this.HotTracking = true;
 			this.ShowLines = false;
 			this.ItemHeight = this.ItemHeight + 4;			// TODO: +4 works, +5 not (and it should be 5)... Perhaps we have to use the large image list?!?
