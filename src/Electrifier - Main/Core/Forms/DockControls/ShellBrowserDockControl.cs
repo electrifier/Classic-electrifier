@@ -12,6 +12,7 @@ using System.Xml;
 
 using WeifenLuo.WinFormsUI.Docking;
 
+using Electrifier.Core.Shell32.Services;
 using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
 
@@ -53,13 +54,13 @@ namespace Electrifier.Core.Forms.DockControls {
 			shellTreeView.Dock         = DockStyle.Left;
 			shellTreeView.Size         = new Size(256, this.Size.Height);
 			shellTreeView.AfterSelect +=new TreeViewEventHandler(shellTreeView_AfterSelect);
-			this.Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
 
 			// Initialize ShellBrowser
-			shellBrowser = new ShellBrowser((shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			shellBrowser = new ShellBrowser(shellTreeView.SelectedNode.AbsolutePIDL);
 			shellBrowser.Dock = DockStyle.Fill;
 			shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
 
+			this.UpdateDockCaption();
 
 			// Initialize Splitter
 			splitter      = new Splitter();
@@ -78,10 +79,15 @@ namespace Electrifier.Core.Forms.DockControls {
 			//this.Cursor = Cursors.WaitCursor;
 			shellBrowser.SetBrowsingFolder(shellTreeView.SelectedNode.AbsolutePIDL);
 //			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
-			this.Text = shellTreeView.SelectedNode.GetDisplayNameOf(false, (ShellAPI.SHGDN.FORPARSING | ShellAPI.SHGDN.FORADDRESSBAR));
+			this.UpdateDockCaption();
 			this.browsingAddress = this.Text;
 			this.OnBrowsingAddressChanged();
 			//this.Cursor = Cursors.Default;
+		}
+
+		protected void UpdateDockCaption() {
+			this.Text = shellTreeView.SelectedNode.Text;
+			this.Icon = IconManager.GetIconFromPIDL(shellTreeView.SelectedNode.AbsolutePIDL, false);
 		}
 
 		#region IDockControl Member

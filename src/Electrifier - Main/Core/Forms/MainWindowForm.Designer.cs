@@ -40,11 +40,11 @@
 			WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
 			this.toolStripContainer = new System.Windows.Forms.ToolStripContainer();
 			this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+			this.vS2012LightTheme = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
 			this.menuStrip = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.newShellBrowserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.vS2012LightTheme = new WeifenLuo.WinFormsUI.Docking.VS2012LightTheme();
 			this.toolStripContainer.ContentPanel.SuspendLayout();
 			this.toolStripContainer.TopToolStripPanel.SuspendLayout();
 			this.toolStripContainer.SuspendLayout();
@@ -75,6 +75,7 @@
 			this.dockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
 			this.dockPanel.Location = new System.Drawing.Point(0, 0);
 			this.dockPanel.Name = "dockPanel";
+			this.dockPanel.ShowDocumentIcon = true;
 			this.dockPanel.Size = new System.Drawing.Size(1016, 436);
 			dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
 			dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));

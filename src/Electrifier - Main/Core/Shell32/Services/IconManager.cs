@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -64,6 +65,28 @@ namespace Electrifier.Core.Shell32.Services {
 			largeImageList = ShellAPI.SHGetFileInfo(systemPath, 0, out shFileInfo, cbFileInfo,
 				(ShellAPI.SHGFI.SysIconIndex | ShellAPI.SHGFI.LargeIcon | ShellAPI.SHGFI.OpenIcon));
 			openedFolderIndex = shFileInfo.iIcon;
+		}
+
+		/// <summary>
+		/// Creates a managed icon object for the given shell object
+		/// </summary>
+		/// <param name="absolutePIDL">The shell object's PIDL</param>
+		/// <param name="large">True for large icon</param>
+		/// <returns></returns>
+		public static Icon GetIconFromPIDL(IntPtr absolutePIDL, bool largeIcon) {
+			Icon iconFromPIDL = null;
+			ShellAPI.SHFILEINFO shFileInfo = new ShellAPI.SHFILEINFO();
+			UInt32 cbFileInfo = (UInt32)Marshal.SizeOf(typeof(ShellAPI.SHFILEINFO));
+
+			IntPtr hImage = Win32API.ShellAPI.SHGetFileInfo(absolutePIDL, 0, out shFileInfo, cbFileInfo,
+				((largeIcon ? ShellAPI.SHGFI.LargeIcon : ShellAPI.SHGFI.SmallIcon) | 
+				ShellAPI.SHGFI.Icon | ShellAPI.SHGFI.PIDL /*| ShellAPI.SHGFI.UseFileAttributes*/));
+
+			iconFromPIDL = Icon.FromHandle(shFileInfo.hIcon).Clone() as Icon;
+
+			WinAPI.DestroyIcon(shFileInfo.hIcon);
+
+			return iconFromPIDL;
 		}
 
 		#region Sub-Class FileInfoThread

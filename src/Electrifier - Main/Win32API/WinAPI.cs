@@ -686,6 +686,8 @@ namespace Electrifier.Win32API {
 		[DllImport("user32.dll")]
 		public static extern uint   TrackPopupMenu(IntPtr hMenu, TPM uFlags, int x, int y, int nReserved, IntPtr hWnd, IntPtr prcRect);
 
+		[DllImport("User32.dll")]
+		public static extern int	DestroyIcon(IntPtr hIcon);
 
 		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
