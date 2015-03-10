@@ -11,12 +11,25 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Xml;
 
+//using RibbonLib;
+using RibbonLib.Controls;
+using RibbonLib.Controls.Events;
+//using RibbonLib.Interop;
+
 using Electrifier.Core;
 using Electrifier.Core.Controls.ToolBars;
 using Electrifier.Core.Forms.DockControls;
 
 namespace Electrifier.Core.Forms {
-	/// <summary>
+    public enum RibbonMarkupCommands : uint {
+        cmdTab = 1012,
+        cmdGroup = 1015,
+        cmdButtonOne = 1008,
+        cmdButtonTwo = 1009,
+        cmdButtonThree = 1010,
+    }
+
+    /// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
 	public partial class MainWindowForm : Form, IPersistentForm, IDockControlContainer {
@@ -26,14 +39,26 @@ namespace Electrifier.Core.Forms {
 		public    IPersistentFormContainer PersistentFormContainer { get { return persistentFormContainer; } }
 		protected ArrayList                dockControlList         = new ArrayList();
 
+        private RibbonTab _ribbonTab;
+        private RibbonButton _ribbonButton1;
+
+
 		public MainWindowForm() {
 			InitializeComponent();
 
 			this.Icon = AppContext.Icon;
 
-			// TODO: RELAUNCH: Test-Code...
+            this._ribbonTab = new RibbonTab(this.ribbon1, (uint)RibbonMarkupCommands.cmdTab);
+            this._ribbonButton1 = new RibbonButton(this.ribbon1, (uint)RibbonMarkupCommands.cmdButtonOne);
+            this._ribbonButton1.ExecuteEvent += new EventHandler<ExecuteEventArgs>(newShellBrowserToolStripMenuItem_Click);
+
+            // TODO: RELAUNCH: Test-Code...
 			FolderBarDockControl folderBarDockControl = new FolderBarDockControl();
 			folderBarDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockLeftAutoHide);
+		}
+
+		private void MainWindowForm_Load(object sender, EventArgs e) {
+
 		}
 
 		private void shbrwsr_BrowsingAddressChanged(object source, EventArgs e) {
@@ -83,7 +108,7 @@ namespace Electrifier.Core.Forms {
 
 			// Append persistence information for each hosted DockControl
 			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
-			foreach(IDockControl dockControl in dockControlList) {
+			foreach (IDockControl dockControl in dockControlList) {
 				dockControlsNode.AppendChild(dockControl.CreatePersistenceInfo(targetXmlDocument));
 			}
 			mainWindowNode.AppendChild(dockControlsNode);
@@ -93,42 +118,42 @@ namespace Electrifier.Core.Forms {
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
 			// Apply persistence information to main window Form
-			this.guid   = new  Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
-			this.Left   = int.Parse(persistenceInfo.Attributes.GetNamedItem("Left").Value);
-			this.Top    = int.Parse(persistenceInfo.Attributes.GetNamedItem("Top").Value);
-			this.Width  = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
+			this.guid = new Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
+			this.Left = int.Parse(persistenceInfo.Attributes.GetNamedItem("Left").Value);
+			this.Top = int.Parse(persistenceInfo.Attributes.GetNamedItem("Top").Value);
+			this.Width = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
 			this.Height = int.Parse(persistenceInfo.Attributes.GetNamedItem("Height").Value);
 
 			// Apply persistence information for each hosted DockControl
 			XmlNode dockControlsNode = persistenceInfo.SelectSingleNode("DockedControls");
-			foreach(XmlNode dockControlNode in dockControlsNode.ChildNodes) {
+			foreach (XmlNode dockControlNode in dockControlsNode.ChildNodes) {
 				Type dockControlType = Type.GetType(dockControlNode.LocalName);
 
-				if((dockControlType != null ) && (dockControlType.GetInterface("IDockControl") != null)) {
+				if ((dockControlType != null) && (dockControlType.GetInterface("IDockControl") != null)) {
 					IDockControl dockControl = Activator.CreateInstance(dockControlType) as IDockControl;
 
 					dockControl.ApplyPersistenceInfo(dockControlNode);
 					dockControl.AttachToDockControlContainer(this);
 
 					// TODO: Hard coded shit follows :-)
-					if(dockControlType.Equals(typeof(ShellBrowserDockControl))) {
+					if (dockControlType.Equals(typeof(ShellBrowserDockControl))) {
 						ShellBrowserDockControl shbrwsr = dockControl as ShellBrowserDockControl;
 
-						shbrwsr.BrowsingAddressChanged +=new BrowsingAddressChangedEventHandler(shbrwsr_BrowsingAddressChanged);
+						shbrwsr.BrowsingAddressChanged += new BrowsingAddressChangedEventHandler(shbrwsr_BrowsingAddressChanged);
 					}
 
 
 					// TODO: decide which container!
-//					documentContainer.AddDocument(dockControl as DockControl);
+					//					documentContainer.AddDocument(dockControl as DockControl);
 				} else {
 					// TODO: Exception
 					MessageBox.Show("Unknown DockControl type specified in configuration file");
 				}
-			}			
+			}
 		}
 
 		public void AttachToFormContainer(IPersistentFormContainer persistentFormContainer) {
-			if(this.persistentFormContainer == null) {
+			if (this.persistentFormContainer == null) {
 				this.persistentFormContainer = persistentFormContainer;
 				persistentFormContainer.AttachPersistentForm(this);
 			} else {
@@ -139,7 +164,7 @@ namespace Electrifier.Core.Forms {
 
 		#region IDockControlContainer Member
 		public void AttachDockControl(IDockControl dockControl) {
-			if(!dockControlList.Contains(dockControl)) {
+			if (!dockControlList.Contains(dockControl)) {
 				dockControlList.Add(dockControl);
 			} else {
 				throw new ArgumentException("Given DockControl instance already in list of hosted DockControls", "dockControl");
@@ -147,12 +172,13 @@ namespace Electrifier.Core.Forms {
 		}
 
 		public void DetachDockControl(IDockControl dockControl) {
-			if(dockControlList.Contains(dockControl)) {
+			if (dockControlList.Contains(dockControl)) {
 				dockControlList.Remove(dockControl);
 			} else {
 				throw new ArgumentException("Given DockControl instance not in list of hosted DockControls", "dockControl");
 			}
 		}
 		#endregion
+
 	}
 }
