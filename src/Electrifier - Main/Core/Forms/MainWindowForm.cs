@@ -8,6 +8,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -29,6 +30,12 @@ namespace Electrifier.Core.Forms {
         cmdButtonThree = 1010,
     }
 
+    public struct LastKnownFormState {
+        public FormWindowState FormWindowState;
+        public Point Location;
+        public Size Size;        
+    }
+
     /// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
@@ -41,6 +48,8 @@ namespace Electrifier.Core.Forms {
 
         private RibbonTab _ribbonTab;
         private RibbonButton _ribbonButton1;
+
+        protected LastKnownFormState lastKnownFormState;
 
 
 		public MainWindowForm() {
@@ -55,7 +64,23 @@ namespace Electrifier.Core.Forms {
             // TODO: RELAUNCH: Test-Code...
 			FolderBarDockControl folderBarDockControl = new FolderBarDockControl();
 			folderBarDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockLeftAutoHide);
+
+            this.Resize += new System.EventHandler(this.MainWindowForm_Resize);
+            this.LocationChanged += new System.EventHandler(this.MainWindowForm_LocationChanged);
 		}
+
+        public void MainWindowForm_Resize(object sender, EventArgs e) {
+            this.lastKnownFormState.FormWindowState = this.WindowState;
+
+            if (this.lastKnownFormState.FormWindowState == FormWindowState.Normal)
+                this.lastKnownFormState.Size = this.Size;
+        }
+
+        public void MainWindowForm_LocationChanged(object sender, EventArgs e) {
+            if (this.WindowState == FormWindowState.Normal)
+                this.lastKnownFormState.Location = this.Location;
+        }
+
 
 		private void MainWindowForm_Load(object sender, EventArgs e) {
 
@@ -89,23 +114,26 @@ namespace Electrifier.Core.Forms {
 		#region IPersistentForm Member
 		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
 			// Create persistence information for main window Form
-			XmlNode      mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
-			XmlAttribute guidAttr       = targetXmlDocument.CreateAttribute("Guid");
-			guidAttr.Value              = this.guid.ToString();
-			XmlAttribute leftAttr       = targetXmlDocument.CreateAttribute("Left");
-			leftAttr.Value              = this.Left.ToString();
-			XmlAttribute topAttr        = targetXmlDocument.CreateAttribute("Top");
-			topAttr.Value               = this.Top.ToString();
-			XmlAttribute widthAttr      = targetXmlDocument.CreateAttribute("Width");
-			widthAttr.Value             = this.Width.ToString();
-			XmlAttribute heightAttr     = targetXmlDocument.CreateAttribute("Height");
-			heightAttr.Value            = this.Height.ToString();
-			mainWindowNode.Attributes.Append(guidAttr);
-			mainWindowNode.Attributes.Append(leftAttr);
+            XmlNode mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
+            XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
+            guidAttr.Value = this.guid.ToString();
+            XmlAttribute leftAttr = targetXmlDocument.CreateAttribute("Left");
+            leftAttr.Value = this.lastKnownFormState.Location.X.ToString();
+            XmlAttribute topAttr = targetXmlDocument.CreateAttribute("Top");
+            topAttr.Value = this.lastKnownFormState.Location.Y.ToString();
+            XmlAttribute widthAttr = targetXmlDocument.CreateAttribute("Width");
+            widthAttr.Value = this.lastKnownFormState.Size.Width.ToString();
+            XmlAttribute heightAttr = targetXmlDocument.CreateAttribute("Height");
+            heightAttr.Value = this.lastKnownFormState.Size.Height.ToString();
+            XmlAttribute windowStateAttr = targetXmlDocument.CreateAttribute("WindowState");
+            windowStateAttr.Value = this.WindowState.ToString();
+            mainWindowNode.Attributes.Append(guidAttr);
+            mainWindowNode.Attributes.Append(leftAttr);
 			mainWindowNode.Attributes.Append(topAttr);
 			mainWindowNode.Attributes.Append(widthAttr);
 			mainWindowNode.Attributes.Append(heightAttr);
-
+            mainWindowNode.Attributes.Append(windowStateAttr);
+			
 			// Append persistence information for each hosted DockControl
 			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
 			foreach (IDockControl dockControl in dockControlList) {
@@ -123,6 +151,19 @@ namespace Electrifier.Core.Forms {
 			this.Top = int.Parse(persistenceInfo.Attributes.GetNamedItem("Top").Value);
 			this.Width = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
 			this.Height = int.Parse(persistenceInfo.Attributes.GetNamedItem("Height").Value);
+
+            switch(persistenceInfo.Attributes.GetNamedItem("WindowState").Value.ToUpper()) {
+                case "MAXIMIZED":
+                    this.WindowState = FormWindowState.Maximized;
+                    break;
+                case "MINIMIZED":
+                    this.WindowState = FormWindowState.Minimized;
+                    break;
+                default:
+                    this.WindowState = FormWindowState.Normal;
+                    break;
+            }
+
 
 			// Apply persistence information for each hosted DockControl
 			XmlNode dockControlsNode = persistenceInfo.SelectSingleNode("DockedControls");
@@ -179,6 +220,8 @@ namespace Electrifier.Core.Forms {
 			}
 		}
 		#endregion
+
+
 
 	}
 }

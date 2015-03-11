@@ -4,7 +4,7 @@
 
     <Command Name="cmdTab"
          Id="1012"
-         LabelTitle="{Resource:cmdFileTab_LabelTitle}">
+         LabelTitle="{Resource:cmdHomeTab_LabelTitle}">
     </Command>
 
     <Command Name="cmdGroup"

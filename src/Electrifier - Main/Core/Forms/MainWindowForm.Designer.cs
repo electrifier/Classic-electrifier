@@ -116,6 +116,7 @@
             dockPaneStripToolWindowGradient1.InactiveTabGradient = tabGradient7;
             dockPaneStripSkin1.ToolWindowGradient = dockPaneStripToolWindowGradient1;
             dockPanelSkin1.DockPaneStripSkin = dockPaneStripSkin1;
+            this.dockPanel.Skin = dockPanelSkin1;
             this.dockPanel.TabIndex = 0;
             // 
             // MainWindowForm
@@ -126,6 +127,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.ribbon1);
             this.Name = "MainWindowForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "MainWindowForm";
             this.Load += new System.EventHandler(this.MainWindowForm_Load);
             this.panel1.ResumeLayout(false);
