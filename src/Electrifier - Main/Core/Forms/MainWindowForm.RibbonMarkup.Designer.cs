@@ -61,11 +61,20 @@ namespace Electrifier.Core.Forms {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die File ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die New Panel ähnelt.
         /// </summary>
-        internal static string cmdFileTab_LabelTitle {
+        internal static string cmdHomeNewShellBrowserPanel_LabelTitle {
             get {
-                return ResourceManager.GetString("cmdFileTab_LabelTitle", resourceCulture);
+                return ResourceManager.GetString("cmdHomeNewShellBrowserPanel_LabelTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Home ähnelt.
+        /// </summary>
+        internal static string cmdHomeTab_LabelTitle {
+            get {
+                return ResourceManager.GetString("cmdHomeTab_LabelTitle", resourceCulture);
             }
         }
     }

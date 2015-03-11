@@ -15,10 +15,10 @@
 
     <Command Name="cmdButtonOne"
              Id="1008"
-             LabelTitle="{Resource:cmdButtonOne_LabelTitle}">
-      <!--<Command.LargeImages>
-        <Image>Res/DropA32.bmp</Image>
-      </Command.LargeImages>-->
+             LabelTitle="{Resource:cmdHomeNewShellBrowserPanel_LabelTitle}">
+      <Command.LargeImages>
+        <Image>../Resources/Commands/New_Tab.bmp</Image>
+      </Command.LargeImages>
     </Command>
 
     <Command Name="cmdButtonNew"
@@ -62,7 +62,7 @@
             <Button CommandName='cmdButtonNew' />
             <Button CommandName='cmdButtonOpen' />
             <Button CommandName='cmdButtonSave' />
-            <Button CommandName='cmdButtonBlubb' />
+            <Button CommandName='cmdButtonOne' />
           </MenuGroup>
           <MenuGroup>
             <Button CommandName='cmdButtonExit' />

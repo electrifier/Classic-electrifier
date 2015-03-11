@@ -313,7 +313,9 @@
       <LastGenOutput>MainWindowForm.RibbonMarkup.log</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="Resources\Commands\New_tab.bmp" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
