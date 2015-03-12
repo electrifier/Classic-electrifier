@@ -105,10 +105,16 @@ namespace Electrifier.Core.Forms.DockControls {
 		#region IPersistent Member
 
 		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument targetXmlDocument) {
-			XmlNode      dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);
-			XmlAttribute guidAttr        = targetXmlDocument.CreateAttribute("Guid");
-			guidAttr.Value               = Guid.ToString();
+			XmlNode dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);
+			XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
+			XmlNode browsingAddressNode = targetXmlDocument.CreateElement("BrowsingAddress");
+
+
+			guidAttr.Value = Guid.ToString();
+			// TODO: RELAUNCH: Set browsingadress in browsingAddressNode
+
 			dockControlNode.Attributes.Append(guidAttr);
+			dockControlNode.AppendChild(browsingAddressNode);
 
 			return dockControlNode;
 		}

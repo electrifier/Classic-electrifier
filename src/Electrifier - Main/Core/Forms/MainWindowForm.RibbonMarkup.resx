@@ -120,6 +120,12 @@
   <data name="cmdHomeNewShellBrowserPanel_LabelTitle" xml:space="preserve">
     <value>New Panel</value>
   </data>
+  <data name="cmdHomeNewShellBrowserPanel_TooltipDescription" xml:space="preserve">
+    <value>Opens a new electrifier panel.</value>
+  </data>
+  <data name="cmdHomeNewShellBrowserPanel_TooltipTitle" xml:space="preserve">
+    <value>Open new electrifier panel</value>
+  </data>
   <data name="cmdHomeTab_LabelTitle" xml:space="preserve">
     <value>Home</value>
   </data>

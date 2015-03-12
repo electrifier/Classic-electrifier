@@ -22,21 +22,21 @@ using Electrifier.Core.Controls.ToolBars;
 using Electrifier.Core.Forms.DockControls;
 
 namespace Electrifier.Core.Forms {
-    public enum RibbonMarkupCommands : uint {
-        cmdTab = 1012,
-        cmdGroup = 1015,
-        cmdButtonOne = 1008,
-        cmdButtonTwo = 1009,
-        cmdButtonThree = 1010,
-    }
+	public enum RibbonMarkupCommands : uint {
+		cmdTab = 1012,
+		cmdGroup = 1015,
+		cmdButtonOne = 1008,
+		cmdButtonTwo = 1009,
+		cmdButtonThree = 1010,
+	}
 
-    public struct LastKnownFormState {
-        public FormWindowState FormWindowState;
-        public Point Location;
-        public Size Size;        
-    }
+	public struct LastKnownFormState {
+		public FormWindowState FormWindowState;
+		public Point           Location;
+		public Size            Size;
+	}
 
-    /// <summary>
+	/// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
 	public partial class MainWindowForm : Form, IPersistentForm, IDockControlContainer {
@@ -46,10 +46,10 @@ namespace Electrifier.Core.Forms {
 		public    IPersistentFormContainer PersistentFormContainer { get { return persistentFormContainer; } }
 		protected ArrayList                dockControlList         = new ArrayList();
 
-        private RibbonTab _ribbonTab;
-        private RibbonButton _ribbonButton1;
+		private   RibbonTab                _ribbonTab;
+		private   RibbonButton             _ribbonButton1;
 
-        protected LastKnownFormState lastKnownFormState;
+		protected LastKnownFormState       _lastKnownFormState;
 
 
 		public MainWindowForm() {
@@ -57,29 +57,29 @@ namespace Electrifier.Core.Forms {
 
 			this.Icon = AppContext.Icon;
 
-            this._ribbonTab = new RibbonTab(this.ribbon1, (uint)RibbonMarkupCommands.cmdTab);
-            this._ribbonButton1 = new RibbonButton(this.ribbon1, (uint)RibbonMarkupCommands.cmdButtonOne);
-            this._ribbonButton1.ExecuteEvent += new EventHandler<ExecuteEventArgs>(newShellBrowserToolStripMenuItem_Click);
+			this._ribbonTab = new RibbonTab(this.ribbon1, (uint)RibbonMarkupCommands.cmdTab);
+			this._ribbonButton1 = new RibbonButton(this.ribbon1, (uint)RibbonMarkupCommands.cmdButtonOne);
+			this._ribbonButton1.ExecuteEvent += new EventHandler<ExecuteEventArgs>(newShellBrowserToolStripMenuItem_Click);
 
-            // TODO: RELAUNCH: Test-Code...
+			// TODO: RELAUNCH: Test-Code...
 			FolderBarDockControl folderBarDockControl = new FolderBarDockControl();
 			folderBarDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockLeftAutoHide);
 
-            this.Resize += new System.EventHandler(this.MainWindowForm_Resize);
-            this.LocationChanged += new System.EventHandler(this.MainWindowForm_LocationChanged);
+			this.Resize += new System.EventHandler(this.MainWindowForm_Resize);
+			this.LocationChanged += new System.EventHandler(this.MainWindowForm_LocationChanged);
 		}
 
-        public void MainWindowForm_Resize(object sender, EventArgs e) {
-            this.lastKnownFormState.FormWindowState = this.WindowState;
+		public void MainWindowForm_Resize(object sender, EventArgs e) {
+			this._lastKnownFormState.FormWindowState = this.WindowState;
 
-            if (this.lastKnownFormState.FormWindowState == FormWindowState.Normal)
-                this.lastKnownFormState.Size = this.Size;
-        }
+			if (this._lastKnownFormState.FormWindowState == FormWindowState.Normal)
+				this._lastKnownFormState.Size = this.Size;
+		}
 
-        public void MainWindowForm_LocationChanged(object sender, EventArgs e) {
-            if (this.WindowState == FormWindowState.Normal)
-                this.lastKnownFormState.Location = this.Location;
-        }
+		public void MainWindowForm_LocationChanged(object sender, EventArgs e) {
+			if (this.WindowState == FormWindowState.Normal)
+				this._lastKnownFormState.Location = this.Location;
+		}
 
 
 		private void MainWindowForm_Load(object sender, EventArgs e) {
@@ -98,6 +98,7 @@ namespace Electrifier.Core.Forms {
 
 		private void newShellBrowserToolStripMenuItem_Click(object sender, EventArgs e) {
 			ShellBrowserDockControl shellBrowserDockControl = new ShellBrowserDockControl();
+			shellBrowserDockControl.AttachToDockControlContainer(this);
 
 			if (this.dockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi) {
 				shellBrowserDockControl.Show();
@@ -114,25 +115,25 @@ namespace Electrifier.Core.Forms {
 		#region IPersistentForm Member
 		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
 			// Create persistence information for main window Form
-            XmlNode mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
-            XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
-            guidAttr.Value = this.guid.ToString();
-            XmlAttribute leftAttr = targetXmlDocument.CreateAttribute("Left");
-            leftAttr.Value = this.lastKnownFormState.Location.X.ToString();
-            XmlAttribute topAttr = targetXmlDocument.CreateAttribute("Top");
-            topAttr.Value = this.lastKnownFormState.Location.Y.ToString();
-            XmlAttribute widthAttr = targetXmlDocument.CreateAttribute("Width");
-            widthAttr.Value = this.lastKnownFormState.Size.Width.ToString();
-            XmlAttribute heightAttr = targetXmlDocument.CreateAttribute("Height");
-            heightAttr.Value = this.lastKnownFormState.Size.Height.ToString();
-            XmlAttribute windowStateAttr = targetXmlDocument.CreateAttribute("WindowState");
-            windowStateAttr.Value = this.WindowState.ToString();
-            mainWindowNode.Attributes.Append(guidAttr);
-            mainWindowNode.Attributes.Append(leftAttr);
+			XmlNode mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
+			XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
+			guidAttr.Value = this.guid.ToString();
+			XmlAttribute leftAttr = targetXmlDocument.CreateAttribute("Left");
+			leftAttr.Value = this._lastKnownFormState.Location.X.ToString();
+			XmlAttribute topAttr = targetXmlDocument.CreateAttribute("Top");
+			topAttr.Value = this._lastKnownFormState.Location.Y.ToString();
+			XmlAttribute widthAttr = targetXmlDocument.CreateAttribute("Width");
+			widthAttr.Value = this._lastKnownFormState.Size.Width.ToString();
+			XmlAttribute heightAttr = targetXmlDocument.CreateAttribute("Height");
+			heightAttr.Value = this._lastKnownFormState.Size.Height.ToString();
+			XmlAttribute windowStateAttr = targetXmlDocument.CreateAttribute("WindowState");
+			windowStateAttr.Value = this.WindowState.ToString();
+			mainWindowNode.Attributes.Append(guidAttr);
+			mainWindowNode.Attributes.Append(leftAttr);
 			mainWindowNode.Attributes.Append(topAttr);
 			mainWindowNode.Attributes.Append(widthAttr);
 			mainWindowNode.Attributes.Append(heightAttr);
-            mainWindowNode.Attributes.Append(windowStateAttr);
+			mainWindowNode.Attributes.Append(windowStateAttr);
 			
 			// Append persistence information for each hosted DockControl
 			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
@@ -152,17 +153,17 @@ namespace Electrifier.Core.Forms {
 			this.Width = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
 			this.Height = int.Parse(persistenceInfo.Attributes.GetNamedItem("Height").Value);
 
-            switch(persistenceInfo.Attributes.GetNamedItem("WindowState").Value.ToUpper()) {
-                case "MAXIMIZED":
-                    this.WindowState = FormWindowState.Maximized;
-                    break;
-                case "MINIMIZED":
-                    this.WindowState = FormWindowState.Minimized;
-                    break;
-                default:
-                    this.WindowState = FormWindowState.Normal;
-                    break;
-            }
+			switch (persistenceInfo.Attributes.GetNamedItem("WindowState").Value.ToUpper()) {
+				case "MAXIMIZED":
+					this.WindowState = FormWindowState.Maximized;
+					break;
+				case "MINIMIZED":
+					this.WindowState = FormWindowState.Minimized;
+					break;
+				default:
+					this.WindowState = FormWindowState.Normal;
+					break;
+			}
 
 
 			// Apply persistence information for each hosted DockControl
@@ -176,16 +177,19 @@ namespace Electrifier.Core.Forms {
 					dockControl.ApplyPersistenceInfo(dockControlNode);
 					dockControl.AttachToDockControlContainer(this);
 
+					// TODO: decide which container!
 					// TODO: Hard coded shit follows :-)
 					if (dockControlType.Equals(typeof(ShellBrowserDockControl))) {
-						ShellBrowserDockControl shbrwsr = dockControl as ShellBrowserDockControl;
+						ShellBrowserDockControl shellBrowserDockControl = dockControl as ShellBrowserDockControl;
+						shellBrowserDockControl.BrowsingAddressChanged += new BrowsingAddressChangedEventHandler(shbrwsr_BrowsingAddressChanged);
 
-						shbrwsr.BrowsingAddressChanged += new BrowsingAddressChangedEventHandler(shbrwsr_BrowsingAddressChanged);
+						if (this.dockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi) {
+							shellBrowserDockControl.Show();
+							shellBrowserDockControl.MdiParent = this;
+						} else {
+							shellBrowserDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
+						}
 					}
-
-
-					// TODO: decide which container!
-					//					documentContainer.AddDocument(dockControl as DockControl);
 				} else {
 					// TODO: Exception
 					MessageBox.Show("Unknown DockControl type specified in configuration file");

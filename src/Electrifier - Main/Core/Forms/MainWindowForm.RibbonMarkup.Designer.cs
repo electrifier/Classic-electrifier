@@ -70,6 +70,24 @@ namespace Electrifier.Core.Forms {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Opens a new electrifier panel. ähnelt.
+        /// </summary>
+        internal static string cmdHomeNewShellBrowserPanel_TooltipDescription {
+            get {
+                return ResourceManager.GetString("cmdHomeNewShellBrowserPanel_TooltipDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Open new electrifier panel ähnelt.
+        /// </summary>
+        internal static string cmdHomeNewShellBrowserPanel_TooltipTitle {
+            get {
+                return ResourceManager.GetString("cmdHomeNewShellBrowserPanel_TooltipTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Home ähnelt.
         /// </summary>
         internal static string cmdHomeTab_LabelTitle {

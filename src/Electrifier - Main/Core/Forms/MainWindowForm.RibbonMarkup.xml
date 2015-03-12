@@ -15,7 +15,9 @@
 
     <Command Name="cmdButtonOne"
              Id="1008"
-             LabelTitle="{Resource:cmdHomeNewShellBrowserPanel_LabelTitle}">
+             LabelTitle="{Resource:cmdHomeNewShellBrowserPanel_LabelTitle}"
+             TooltipTitle="{Resource:cmdHomeNewShellBrowserPanel_TooltipTitle}"
+             TooltipDescription="{Resource:cmdHomeNewShellBrowserPanel_TooltipDescription}">
       <Command.LargeImages>
         <Image>../Resources/Commands/New_Tab.bmp</Image>
       </Command.LargeImages>
