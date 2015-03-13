@@ -117,4 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="cmdHomeNewShellBrowserPanel_LabelTitle" xml:space="preserve">
+    <value>New Panel</value>
+  </data>
+  <data name="cmdHomeNewShellBrowserPanel_TooltipDescription" xml:space="preserve">
+    <value>Opens a new electrifier panel.</value>
+  </data>
+  <data name="cmdHomeNewShellBrowserPanel_TooltipTitle" xml:space="preserve">
+    <value>Open new electrifier panel</value>
+  </data>
+  <data name="cmdHomeTab_LabelTitle" xml:space="preserve">
+    <value>Home</value>
+  </data>
 </root>

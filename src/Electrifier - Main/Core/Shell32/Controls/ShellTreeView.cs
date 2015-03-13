@@ -20,7 +20,7 @@ namespace Electrifier.Core.Shell32.Controls {
 	/// Zusammenfassung für ShellTreeView.
 	/// </summary>
 	public class ShellTreeView : ExtTreeView {
-		protected static IconManager                 iconManager = (IconManager)ServiceManager.Services.GetService(typeof(IconManager));
+		protected static IconManager                 iconManager = ServiceManager.Services.GetService(typeof(IconManager)) as IconManager;
 		protected        ShellTreeViewNode           rootNode    = null;
 		protected new    ShellTreeViewNodeCollection nodes       = null;
 		public    new    ShellTreeViewNodeCollection Nodes       { get { return nodes; } }
@@ -67,6 +67,8 @@ namespace Electrifier.Core.Shell32.Controls {
 			this.MouseUp += new MouseEventHandler(ShellTreeView_MouseUp);
 
 			this.BorderStyle = BorderStyle.None;
+
+			this.EnableThemeStyles();
 		}
 
 		public ShellTreeViewNode FindNodeByPIDL(IntPtr shellObjectPIDL) {

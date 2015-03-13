@@ -28,7 +28,7 @@ namespace Electrifier.Core.Shell32.Services {
 
 			ShellAPI.SHGetMalloc(out mallocPtr);
 			mallocObject = Marshal.GetTypedObjectForIUnknown(mallocPtr, mallocType);
-			malloc = mallocObject as ShellAPI.IMalloc;
+			this.malloc = mallocObject as ShellAPI.IMalloc;
 		}
 
 		~PIDLManager() {

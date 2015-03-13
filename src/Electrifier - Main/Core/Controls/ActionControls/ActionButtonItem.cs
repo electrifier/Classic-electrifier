@@ -7,7 +7,6 @@
 
 // Foreign uses
 using System;
-using TD.SandBar;
 
 // Electrifier uses
 
@@ -15,7 +14,7 @@ namespace Electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für ExtButtonItem.
 	/// </summary>
-	public class ActionButtonItem : ButtonItem {
+	public class ActionButtonItem {
 		private IAction action = null;
 		public  IAction Action { get { return action; } }
 
@@ -26,7 +25,9 @@ namespace Electrifier.Core.Controls.ActionControls {
 		}
 
 		public void action_EnabledChanged(object sender, EnabledChangedEventArgs e) {
-			Enabled = e.Enabled;
+/* TODO: RELAUNCH
+            Enabled = e.Enabled;
+ */
 		}
 	}
 }

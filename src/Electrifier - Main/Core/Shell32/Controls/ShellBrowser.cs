@@ -15,7 +15,7 @@ namespace Electrifier.Core.Shell32.Controls {
 	/// Zusammenfassung für ShellBrowser.
 	/// </summary>
 	public class ShellBrowser : Panel, ShellAPI.IShellBrowser, WinAPI.IServiceProvider {
-		protected static DesktopFolderInstance  desktopFolder   = (DesktopFolderInstance)ServiceManager.Services.GetService(typeof(DesktopFolderInstance));
+		protected static DesktopFolderInstance  desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
 		protected        IntPtr                 absolutePIDL    = IntPtr.Zero;
 		protected        IntPtr                 relativePIDL    = IntPtr.Zero;
 		protected        ShellAPI.IShellFolder  shellFolder     = null;
@@ -95,8 +95,8 @@ namespace Electrifier.Core.Shell32.Controls {
 			if(this.shellView != null) {
 				lock(this.shellView) {
 					this.shellViewHandle = IntPtr.Zero;
-					this.shellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);
-					this.shellView.DestroyViewWindow();
+//					this.shellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);		// TODO: RELAUNCH: Commented out due exception
+//					this.shellView.DestroyViewWindow();							// TODO: RELAUNCH: Commented out due exception
 					Marshal.ReleaseComObject(this.shellView);
 					this.shellView = null;
 				}

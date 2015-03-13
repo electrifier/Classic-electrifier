@@ -9,8 +9,10 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
-using TD.SandDock;
 
+using WeifenLuo.WinFormsUI.Docking;
+
+using Electrifier.Core.Shell32.Services;
 using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
 
@@ -20,8 +22,10 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>
-	public class ShellBrowserDockControl : DockControl, IDockControl, IPersistent {
-		protected ShellTreeView         shellTreeView        = null;
+	public class ShellBrowserDockControl : DockContent, IDockControl, IPersistent {
+        protected Guid Guid;
+
+        protected ShellTreeView         shellTreeView        = null;
 		protected ShellBrowser          shellBrowser         = null;
 		protected Splitter              splitter             = null;
 		protected IDockControlContainer dockControlContainer = null;
@@ -48,42 +52,42 @@ namespace Electrifier.Core.Forms.DockControls {
 			// Initialize ShellTreeView
 			shellTreeView              = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
 			shellTreeView.Dock         = DockStyle.Left;
-			shellTreeView.Size         = new Size(256, Height);
+			shellTreeView.Size         = new Size(256, this.Size.Height);
 			shellTreeView.AfterSelect +=new TreeViewEventHandler(shellTreeView_AfterSelect);
-			this.Text = (shellTreeView.SelectedNode as ShellTreeViewNode).DisplayName;
 
 			// Initialize ShellBrowser
-			shellBrowser = new ShellBrowser((shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			shellBrowser = new ShellBrowser(shellTreeView.SelectedNode.AbsolutePIDL);
 			shellBrowser.Dock = DockStyle.Fill;
 			shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
 
+			this.UpdateDockCaption();
 
 			// Initialize Splitter
 			splitter      = new Splitter();
 			splitter.Dock = DockStyle.Left;
-			splitter.Size = new Size(4, Height);
-			splitter.BackColor = Color.White;			// TODO: Do as sandbar/sanddock suggests
+			splitter.Size = new Size(6, this.Height);
 
 			// Add the controls from right to left
 			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
-
-
 		}
 
 		// TODO: Dispose when closed!!!
-		// http://www.divil.co.uk/net/forums/thread.aspx?id=386
-		// You can use the DocumentClosing event or the Closing or Closed events of the DockControl in question. When you dispose it, the form within will also be disposed.
 
 		private void shellTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
-			this.Cursor = Cursors.WaitCursor;
+			//this.Cursor = Cursors.WaitCursor;
 			shellBrowser.SetBrowsingFolder(shellTreeView.SelectedNode.AbsolutePIDL);
 //			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
-			this.Text = shellTreeView.SelectedNode.GetDisplayNameOf(false, (ShellAPI.SHGDN.FORPARSING | ShellAPI.SHGDN.FORADDRESSBAR));
+			this.UpdateDockCaption();
 			this.browsingAddress = this.Text;
 			this.OnBrowsingAddressChanged();
-			this.Cursor = Cursors.Default;
+			//this.Cursor = Cursors.Default;
+		}
+
+		protected void UpdateDockCaption() {
+			this.Text = shellTreeView.SelectedNode.Text;
+			this.Icon = IconManager.GetIconFromPIDL(shellTreeView.SelectedNode.AbsolutePIDL, false);
 		}
 
 		#region IDockControl Member
@@ -101,10 +105,16 @@ namespace Electrifier.Core.Forms.DockControls {
 		#region IPersistent Member
 
 		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument targetXmlDocument) {
-			XmlNode      dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);
-			XmlAttribute guidAttr        = targetXmlDocument.CreateAttribute("Guid");
-			guidAttr.Value               = Guid.ToString();
+			XmlNode dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);
+			XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
+			XmlNode browsingAddressNode = targetXmlDocument.CreateElement("BrowsingAddress");
+
+
+			guidAttr.Value = Guid.ToString();
+			// TODO: RELAUNCH: Set browsingadress in browsingAddressNode
+
 			dockControlNode.Attributes.Append(guidAttr);
+			dockControlNode.AppendChild(browsingAddressNode);
 
 			return dockControlNode;
 		}

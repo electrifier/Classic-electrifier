@@ -1,380 +1,324 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "Electrifier.Core"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "Electrifier.Core"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "Win32API"
-                    Project = "{6832AFCE-173D-4F30-862F-E066990C95B8}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
-                    Name = "SandBar"
-                    AssemblyName = "SandBar"
-                    HintPath = "..\..\Third Party Components\SandBar.dll"
-                />
-                <Reference
-                    Name = "SandDock"
-                    AssemblyName = "SandDock"
-                    HintPath = "..\..\Third Party Components\SandDock.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "AppContext.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IPersistent.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IPersistentForm.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "IPersistentFormContainer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtListView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtListViewItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtListViewItemCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtTreeView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtTreeViewNode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ExtTreeViewNodeCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\IExtListView.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\IExtListViewItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\IExtTreeViewNode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\IExtTreeViewNodeCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\ActionButtonItem.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\ActionMenuButtonItem.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\ActionsDropDownMenuItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\ActionsMenuBar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\ActionsMenuBarItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\ActionsToolBar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\BasicAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\IAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\IActions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ActionControls\IViewableAction.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Controls\ToolBars\AddressToolBar.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\IDockControl.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\IDockControlContainer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\MainWindowForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\MainWindowForm.resx"
-                    DependentUpon = "MainWindowForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Forms\DockControls\FolderBarDockControl.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Forms\DockControls\ShellBrowserDockControl.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Services\AbstractService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Services\IService.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Services\ServiceManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\BasicShellObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\BasicShellObjectCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\IShellObject.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\IShellObjectCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\ShellDragDropHelper.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\ShellObjectPIDLComparer.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellBrowser.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellBrowser.resx"
-                    DependentUpon = "ShellBrowser.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellListView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellListViewItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellListViewItemCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellTreeView.cs"
-                    SubType = "Component"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellTreeViewNode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Controls\ShellTreeViewNodeCollection.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Services\DesktopFolderInstance.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Services\IconManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Services\IFileInfoThread.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "Shell32\Services\PIDLManager.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>7.10.3077</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ApplicationIcon />
+    <AssemblyKeyContainerName />
+    <AssemblyName>Electrifier.Core</AssemblyName>
+    <AssemblyOriginatorKeyFile />
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Electrifier.Core</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <StartupObject />
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>0.0</OldToolsVersion>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile />
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn />
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <BaseAddress>285212672</BaseAddress>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <ConfigurationOverrideFile />
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile />
+    <DebugSymbols>false</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoStdLib>false</NoStdLib>
+    <NoWarn />
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>none</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Win32API\Win32API.csproj">
+      <Name>Win32API</Name>
+      <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
+      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
+    </ProjectReference>
+    <Reference Include="Ribbon, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\Ribbon.dll</HintPath>
+    </Reference>
+    <Reference Include="System">
+      <Name>System</Name>
+    </Reference>
+    <Reference Include="System.Data">
+      <Name>System.Data</Name>
+    </Reference>
+    <Reference Include="System.Drawing">
+      <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Windows.Forms">
+      <Name>System.Windows.Forms</Name>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Name>System.XML</Name>
+    </Reference>
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>..\packages\DockPanelSuite.3.0.0-alpha8\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppContext.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\ActionButtonItem.cs" />
+    <Compile Include="Controls\ActionControls\ActionMenuButtonItem.cs" />
+    <Compile Include="Controls\ActionControls\ActionsDropDownMenuItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\ActionsMenuBar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\ActionsMenuBarItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\ActionsToolBar.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\BasicAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\IAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\IActions.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ActionControls\IViewableAction.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtListViewItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtTreeViewNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ExtTreeViewNodeCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\IExtListView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\IExtListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\IExtTreeViewNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\IExtTreeViewNodeCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Controls\ToolBars\AddressToolBar.cs" />
+    <Compile Include="Forms\DockControls\FolderBarDockControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\IDockControl.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Forms\IDockControlContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Forms\MainWindowForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\MainWindowForm.Designer.cs">
+      <DependentUpon>MainWindowForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\MainWindowForm.RibbonMarkup.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MainWindowForm.RibbonMarkup.resx</DependentUpon>
+    </Compile>
+    <Compile Include="IPersistent.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPersistentForm.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="IPersistentFormContainer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Services\AbstractService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Services\IService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Services\ServiceManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\BasicShellObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\BasicShellObjectCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellListView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellListViewItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellListViewItemCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellTreeViewNode.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Controls\ShellTreeViewNodeCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\IShellObject.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\IShellObjectCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Services\DesktopFolderInstance.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Services\IconManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Services\IFileInfoThread.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\Services\PIDLManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\ShellDragDropHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Shell32\ShellObjectPIDLComparer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.de.resx" />
+    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MainWindowForm.RibbonMarkup.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.ribbon">
+      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.de.ribbon">
+      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Forms\MainWindowForm.RibbonMarkup.log">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
+    </None>
+    <None Include="Forms\MainWindowForm.RibbonMarkup.shortcuts" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\MainWindowForm.resx">
+      <DependentUpon>MainWindowForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Forms\MainWindowForm.RibbonMarkup.xml">
+      <Generator>RibbonGenerator</Generator>
+      <LastGenOutput>MainWindowForm.RibbonMarkup.log</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Resources\Commands\New_tab.bmp" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent />
+    <PostBuildEvent />
+  </PropertyGroup>
+</Project>

@@ -36,6 +36,8 @@ namespace Electrifier.Win32API {
 		TVM_SETIMAGELIST		= TV_FIRST +  9,
 		TVM_GETNEXTITEM			= TV_FIRST + 10,
 		TVM_CREATEDRAGIMAGE	= TV_FIRST + 18,
+		TVM_SETEXTENDEDSTYLE = TV_FIRST + 44,
+		TVM_GETEXTENDEDSTYLE = TV_FIRST + 45,
 		TVM_INSERTITEMW     = TV_FIRST + 50,
 		TVM_SETITEM         = TV_FIRST + 63,
 	}
@@ -684,6 +686,8 @@ namespace Electrifier.Win32API {
 		[DllImport("user32.dll")]
 		public static extern uint   TrackPopupMenu(IntPtr hMenu, TPM uFlags, int x, int y, int nReserved, IntPtr hWnd, IntPtr prcRect);
 
+		[DllImport("User32.dll")]
+		public static extern int	DestroyIcon(IntPtr hIcon);
 
 		[DllImport("gdi32.dll")]
 		public static extern IntPtr CreateCompatibleDC(IntPtr hDC);
@@ -862,13 +866,13 @@ namespace Electrifier.Win32API {
 
 
 
-		[DllImport("ole32.dll")]
-		public static extern int OleLoadFromStream(UCOMIStream pStm,ref Guid
-			iidInterface,[MarshalAs(UnmanagedType.Interface)] out object ppvObj);
+        //[DllImport("ole32.dll")]              // TODO: RELAUNCH: Commented out due compatibility
+        //public static extern int OleLoadFromStream(UCOMIStream pStm,ref Guid
+        //    iidInterface,[MarshalAs(UnmanagedType.Interface)] out object ppvObj);
 
-		[DllImport("OLE32.DLL", EntryPoint="CreateStreamOnHGlobal")]
-		public static extern int CreateStreamOnHGlobal(int hGlobalMemHandle, bool
-			fDeleteOnRelease, out UCOMIStream pOutStm);
+        //[DllImport("OLE32.DLL", EntryPoint="CreateStreamOnHGlobal")]
+        //public static extern int CreateStreamOnHGlobal(int hGlobalMemHandle, bool
+        //    fDeleteOnRelease, out UCOMIStream pOutStm);
 
 		[DllImport("ole32.dll")]
 			// TODO: What does HandleRef do?!? How benefit from? Exchange all Win32API-Handles with it?
@@ -881,7 +885,8 @@ namespace Electrifier.Win32API {
 			 EntryPoint = "RegisterClipboardFormatA")]
 		public static extern int RegisterClipboardFormat( string lpszFormat );
 
-
+		[DllImport("uxtheme.dll", CharSet = CharSet.Auto)]
+		public extern static int SetWindowTheme(IntPtr hWnd, string subAppName, string subIdList);
 
 		private WinAPI() {
 			// No instantion allowed.

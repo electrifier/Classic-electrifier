@@ -1,0 +1,100 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
+  <Application.Commands>
+
+    <Command Name="cmdTab"
+         Id="1012"
+         LabelTitle="{Resource:cmdHomeTab_LabelTitle}">
+    </Command>
+
+    <Command Name="cmdGroup"
+             Id="1015"
+             LabelTitle="{Resource:cmdGroup_LabelTitle}">
+    </Command>
+
+
+    <Command Name="cmdButtonOne"
+             Id="1008"
+             LabelTitle="{Resource:cmdHomeNewShellBrowserPanel_LabelTitle}"
+             TooltipTitle="{Resource:cmdHomeNewShellBrowserPanel_TooltipTitle}"
+             TooltipDescription="{Resource:cmdHomeNewShellBrowserPanel_TooltipDescription}">
+      <Command.LargeImages>
+        <Image>../Resources/Commands/New_Tab.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="cmdButtonNew"
+             Id="1001"
+             LabelTitle="&amp;New"
+             LabelDescription="New Description"
+             TooltipTitle="New"
+             TooltipDescription="Create a new image.">
+    </Command>
+
+    <Command Name="cmdButtonOpen"
+             Id="1002"
+             LabelTitle="Open"
+             LabelDescription="Open Description"
+             TooltipTitle="Open"
+             TooltipDescription="Open an existing image.">
+    </Command>
+
+    <Command Name="cmdButtonSave"
+             Id="1003"
+             LabelTitle="Save"
+             LabelDescription="Save Description"
+             TooltipTitle="Save"
+             TooltipDescription="Save the current image.">
+    </Command>
+
+    <Command Name="cmdButtonExit"
+             Id="1004"
+             LabelTitle="Exit"
+             LabelDescription="Exit Description"
+             TooltipTitle="Exit"
+             TooltipDescription="Exit application.">
+    </Command>
+  </Application.Commands>
+
+  <Application.Views>
+    <Ribbon>
+      <Ribbon.ApplicationMenu>
+        <ApplicationMenu>
+          <MenuGroup>
+            <Button CommandName='cmdButtonNew' />
+            <Button CommandName='cmdButtonOpen' />
+            <Button CommandName='cmdButtonSave' />
+            <Button CommandName='cmdButtonOne' />
+          </MenuGroup>
+          <MenuGroup>
+            <Button CommandName='cmdButtonExit' />
+          </MenuGroup>
+        </ApplicationMenu>
+      </Ribbon.ApplicationMenu>
+
+      <Ribbon.QuickAccessToolbar>
+        <QuickAccessToolbar CommandName="cmdQAT"
+                            CustomizeCommandName="cmdCustomizeQAT">
+          <QuickAccessToolbar.ApplicationDefaults>
+            <Button CommandName="cmdButton1"/>
+            <ToggleButton CommandName="cmdMinimize"
+                          ApplicationDefaults.IsChecked="false"/>
+          </QuickAccessToolbar.ApplicationDefaults>
+        </QuickAccessToolbar>
+      </Ribbon.QuickAccessToolbar>
+
+      <Ribbon.Tabs>
+        <Tab CommandName ="cmdTab">
+          <Group CommandName="cmdGroup" SizeDefinition="ThreeButtons">
+            <Button CommandName="cmdButtonOne" />
+            <Button CommandName="cmdButtonTwo" />
+            <Button CommandName="cmdButtonThree" />
+          </Group>
+        </Tab>
+      </Ribbon.Tabs>
+
+
+
+    </Ribbon>
+  </Application.Views>
+</Application>

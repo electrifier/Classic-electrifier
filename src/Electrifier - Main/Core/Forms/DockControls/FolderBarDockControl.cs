@@ -8,7 +8,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using TD.SandDock;
+
+using WeifenLuo.WinFormsUI.Docking;
 
 using Electrifier.Core.Shell32.Controls;
 using Electrifier.Win32API;
@@ -18,27 +19,26 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für ShellTreeViewDockControl.
 	/// </summary>
-	public class FolderBarDockControl : DockControl {
+	public class FolderBarDockControl : DockContent {
 		protected ShellTreeView shellTreeView = null;
+        protected Guid Guid;
 
-		public FolderBarDockControl() : base(){
+		public FolderBarDockControl() : base() {
 			// Initialize the underlying DockControl
-			Guid = new Guid("{2B552F10-0847-44b2-A244-D595B7DDD1AE}");
-			Name = "FolderBarDockControl." + Guid.ToString();
-			Text = "FolderBar";
+			this.Guid = new Guid("{2B552F10-0847-44b2-A244-D595B7DDD1AE}");
+			this.Name = "FolderBarDockControl." + Guid.ToString();
+			this.Text = "FolderBar";
 
 			// Initialize ShellTreeView
-			shellTreeView               = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-			shellTreeView.Dock          = DockStyle.Fill;
-			shellTreeView.BorderStyle   = System.Windows.Forms.BorderStyle.None;
-			shellTreeView.ShowRootLines = false;
+			this.shellTreeView               = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
+			this.shellTreeView.Dock          = DockStyle.Fill;
+			this.shellTreeView.BorderStyle   = System.Windows.Forms.BorderStyle.None;
+			this.shellTreeView.ShowRootLines = false;
 
 			// Add the controls
-			Controls.Add(shellTreeView);
+			this.Controls.Add(shellTreeView);
 		}
 
 		// TODO: Dispose when closed!!!
-		// http://www.divil.co.uk/net/forums/thread.aspx?id=386
-		// You can use the DocumentClosing event or the Closing or Closed events of the DockControl in question. When you dispose it, the form within will also be disposed.
 	}
 }
