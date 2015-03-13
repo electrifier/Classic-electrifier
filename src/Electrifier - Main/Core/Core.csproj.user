@@ -4,7 +4,7 @@
     <LastOpenVersion>7.10.3077</LastOpenVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ReferencePath>M:\Meine eigenen Sourcen\electrifier\.workarea\trunk\src\Third Party Components\</ReferencePath>
+    <ReferencePath>D:\src\trunk\src\Third Party Components\</ReferencePath>
     <CopyProjectDestinationFolder />
     <CopyProjectUncPath />
     <CopyProjectOption>0</CopyProjectOption>
