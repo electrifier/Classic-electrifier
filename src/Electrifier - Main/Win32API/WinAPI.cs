@@ -1,10 +1,3 @@
-//	<file>
-//		<copyright see="www.electrifier.org"/>
-//		<license   see="www.electrifier.org"/>
-//		<owner     name="Thorsten Jung" email="taj@electrifier.org"/>
-//		<version   value="$Id: WinAPI.cs,v 1.9 2004/09/11 23:02:07 taj bender Exp $"/>
-//	</file>
-
 using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;

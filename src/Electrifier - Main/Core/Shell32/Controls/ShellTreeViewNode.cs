@@ -1,10 +1,3 @@
-//	<file>
-//		<copyright see="www.electrifier.org"/>
-//		<license   see="www.electrifier.org"/>
-//		<owner     name="Thorsten Jung" email="taj@electrifier.org"/>
-//		<version   value="$Id: ShellTreeViewNode.cs,v 1.20 2004/09/10 21:48:34 taj bender Exp $"/>
-//	</file>
-
 using System;
 using System.Windows.Forms;
 

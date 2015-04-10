@@ -1,10 +1,3 @@
-//	<file>
-//		<copyright see="www.electrifier.org"/>
-//		<license   see="www.electrifier.org"/>
-//		<owner     name="Thorsten Jung" email="taj@electrifier.org"/>
-//		<version   value="$Id: ServiceManager.cs,v 1.3 2004/08/11 20:47:20 jung2t Exp $"/>
-//	</file>
-
 using System;
 using System.Collections;
 

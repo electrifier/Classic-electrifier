@@ -1,10 +1,3 @@
-//	<file>
-//		<copyright see="www.electrifier.org"/>
-//		<license   see="www.electrifier.org"/>
-//		<owner     name="Thorsten Jung" email="taj@electrifier.org"/>
-//		<version   value="$Id: AbstractService.cs,v 1.1 2004/08/10 16:46:24 jung2t Exp $"/>
-//	</file>
-
 using System;
 
 namespace Electrifier.Core.Services {
