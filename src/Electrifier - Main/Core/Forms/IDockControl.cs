@@ -6,5 +6,6 @@ namespace Electrifier.Core.Forms.DockControls {
 	/// </summary>
 	public interface IDockControl : IPersistent {
 		void AttachToDockControlContainer(IDockControlContainer dockControlContainer);
+		void DetachFromDockControlContainer();
 	}
 }

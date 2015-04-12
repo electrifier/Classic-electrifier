@@ -38,30 +38,35 @@ namespace Electrifier.Core.Forms.DockControls {
 
 		public ShellBrowserDockControl(Guid guid) : base() {
 			// Initialize the underlying DockControl
-			Guid = guid;
-			Name = "ShellBrowserDockControl." + Guid.ToString();
-			Text = Name;
+			this.Guid = guid;
+			this.Name = "ShellBrowserDockControl." + Guid.ToString();
 
 			// Initialize ShellTreeView
-			shellTreeView              = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-			shellTreeView.Dock         = DockStyle.Left;
-			shellTreeView.Size         = new Size(256, this.Size.Height);
-			shellTreeView.AfterSelect +=new TreeViewEventHandler(shellTreeView_AfterSelect);
+			this.shellTreeView = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
+			this.shellTreeView.Dock = DockStyle.Left;
+			this.shellTreeView.Size = new Size(256, this.Size.Height);
+			this.shellTreeView.AfterSelect += new TreeViewEventHandler(shellTreeView_AfterSelect);
 
 			// Initialize ShellBrowser
-			shellBrowser = new ShellBrowser(shellTreeView.SelectedNode.AbsolutePIDL);
-			shellBrowser.Dock = DockStyle.Fill;
-			shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
+			this.shellBrowser = new ShellBrowser(shellTreeView.SelectedNode.AbsolutePIDL);
+			this.shellBrowser.Dock = DockStyle.Fill;
+			this.shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
 
 			this.UpdateDockCaption();
 
 			// Initialize Splitter
-			splitter      = new Splitter();
-			splitter.Dock = DockStyle.Left;
-			splitter.Size = new Size(6, this.Height);
+			this.splitter = new Splitter();
+			this.splitter.Dock = DockStyle.Left;
+			this.splitter.Size = new Size(6, this.Height);
 
 			// Add the controls from right to left
-			Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
+			this.Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
+
+			this.FormClosed += ShellBrowserDockControl_FormClosed;
+		}
+
+		void ShellBrowserDockControl_FormClosed(object sender, FormClosedEventArgs e) {
+			this.DetachFromDockControlContainer();
 		}
 
 		// TODO: Dispose when closed!!!
@@ -70,7 +75,7 @@ namespace Electrifier.Core.Forms.DockControls {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
 			//this.Cursor = Cursors.WaitCursor;
-			shellBrowser.SetBrowsingFolder(shellTreeView.SelectedNode.AbsolutePIDL);
+			this.shellBrowser.SetBrowsingFolder(shellTreeView.SelectedNode.AbsolutePIDL);
 //			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			this.UpdateDockCaption();
 			this.browsingAddress = this.Text;
@@ -79,17 +84,34 @@ namespace Electrifier.Core.Forms.DockControls {
 		}
 
 		protected void UpdateDockCaption() {
-			this.Text = shellTreeView.SelectedNode.Text;
-			this.Icon = IconManager.GetIconFromPIDL(shellTreeView.SelectedNode.AbsolutePIDL, false);
+			if (this.IsHandleCreated) {
+				this.BeginInvoke((Action)(() => {
+					this.Text = this.shellTreeView.SelectedNode.Text;
+					this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
+				}));
+			} else {
+				this.Text = this.shellTreeView.SelectedNode.Text;
+				this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
+			}
 		}
 
 		#region IDockControl Member
+
 		public void AttachToDockControlContainer(IDockControlContainer dockControlContainer) {
 			if(this.dockControlContainer == null) {
 				this.dockControlContainer = dockControlContainer;
 				dockControlContainer.AttachDockControl(this);
 			} else {
 				throw new InvalidOperationException("IDockControlContainer already set!");
+			}
+		}
+
+		public void DetachFromDockControlContainer() {
+			if (this.dockControlContainer != null) {
+				this.dockControlContainer.DetachDockControl(this);
+				this.dockControlContainer = null;
+			} else {
+				throw new InvalidOperationException("Cannot detach from IDockControlContainer, it is not set!");
 			}
 		}
 
