@@ -49,7 +49,7 @@ namespace Electrifier.Core.Shell32.Controls {
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
 			if (this.ImageIndex != e.ShFileInfo.iIcon) {
 				// See http://stackoverflow.com/questions/14388136/how-to-use-begininvoke-c-sharp
-				base.TreeView.BeginInvoke((Action)(() => {
+				base.TreeView.BeginInvoke((Action)(() => {		// TODO: InvokeRequired
 					this.ImageIndex = e.ShFileInfo.iIcon;
 					this.SelectedImageIndex = e.ShFileInfo.iIcon;		// TODO: RELAUNCH: Request real openedfolderindex, see below
 					// TODO: RELAUNCH: Get IconOverlay!

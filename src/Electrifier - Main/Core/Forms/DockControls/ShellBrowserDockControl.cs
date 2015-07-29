@@ -75,7 +75,7 @@ namespace Electrifier.Core.Forms.DockControls {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
 			//this.Cursor = Cursors.WaitCursor;
-			this.shellBrowser.SetBrowsingFolder(shellTreeView.SelectedNode.AbsolutePIDL);
+			this.shellBrowser.NavigateTo(shellTreeView.SelectedNode.AbsolutePIDL);
 //			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			this.UpdateDockCaption();
 			this.browsingAddress = this.Text;
@@ -85,7 +85,7 @@ namespace Electrifier.Core.Forms.DockControls {
 
 		protected void UpdateDockCaption() {
 			if (this.IsHandleCreated) {
-				this.BeginInvoke((Action)(() => {
+				this.BeginInvoke((Action)(() => {		// TODO: InvokeRequired
 					this.Text = this.shellTreeView.SelectedNode.Text;
 					this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
 				}));
@@ -143,6 +143,7 @@ namespace Electrifier.Core.Forms.DockControls {
 		#endregion
 
 		private void shellBrowser_BrowseShellObject(object source, BrowseShellObjectEventArgs e) {
+			this.shellTreeView.BeginUpdate();
 			// Currently, the IShellView seems to know that a new folder was browsed to,
 			// and updates itself accordingly
 //			this.shellBrowser.SetBrowsingFolder(e.ShellObjectPIDL);
@@ -153,6 +154,8 @@ namespace Electrifier.Core.Forms.DockControls {
 			// TODO: Hehe, i like this feature; however, put something into our configuration dialog
 			// to turn this off; also, do this when navigating with the help of the TreeView itself
 			this.shellTreeView.SelectedNode.Expand();
+			//this.shellTreeView.SelectedNode.EnsureVisible();
+			this.shellTreeView.EndUpdate();
 
 		}
 	}

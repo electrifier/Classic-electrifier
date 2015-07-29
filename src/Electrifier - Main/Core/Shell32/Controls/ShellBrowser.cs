@@ -14,6 +14,7 @@ namespace Electrifier.Core.Shell32.Controls {
 	/// <summary>
 	/// Zusammenfassung für ShellBrowser.
 	/// </summary>
+
 	public class ShellBrowser : Panel, ShellAPI.IShellBrowser, WinAPI.IServiceProvider {
 		protected static DesktopFolderInstance  desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
 		protected        IntPtr                 absolutePIDL    = IntPtr.Zero;
@@ -57,7 +58,7 @@ namespace Electrifier.Core.Shell32.Controls {
 			InitializeComponent();
 
 			// Default constructing code...
-			this.SetBrowsingFolder(shellObjectPIDL, pidlSelfCreated);
+			this.NavigateTo(shellObjectPIDL, pidlSelfCreated);
 
 		}
 
@@ -117,11 +118,7 @@ namespace Electrifier.Core.Shell32.Controls {
 			}
 		}
 
-		public void SetBrowsingFolder(IntPtr folderPIDL) {
-			this.SetBrowsingFolder(folderPIDL, false);
-		}
-
-		protected void SetBrowsingFolder(IntPtr folderPIDL, bool pidlSelfCreated) {
+		public void NavigateTo(IntPtr folderPIDL, bool pidlSelfCreated = false) {
 			ShellAPI.FOLDERSETTINGS folderSettings;
 
 			if(this.shellView != null)
@@ -196,8 +193,19 @@ namespace Electrifier.Core.Shell32.Controls {
 		}
 
 		public uint BrowseObject(System.IntPtr pidl, ShellAPI.SBSP Flags) {
-			if(this.BrowseShellObject != null)
-				this.BrowseShellObject(this, new BrowseShellObjectEventArgs(pidl, Flags));
+			if (Flags.HasFlag(ShellAPI.SBSP.SameBrowser)){
+				this.Invoke((Action)(() => {				// TODO: InvokeRequired
+					this.NavigateTo(pidl, false);
+					
+					if (this.BrowseShellObject != null)
+						this.BrowseShellObject(this, new BrowseShellObjectEventArgs(pidl, Flags));
+				}));
+			} else {
+				// TODO: Check all the other possible flags!
+
+				MessageBox.Show("ShellBrowser.cs: BrowseObject:\nFlag is unknown!");
+			}
+
 
 			return 0x0; // S_OK
 		}
@@ -209,6 +217,7 @@ namespace Electrifier.Core.Shell32.Controls {
 
 		public uint SetStatusTextSB(string pszStatusText) {
 			// TODO:  Implementierung von ShellBrowser.SetStatusTextSB hinzufügen
+			MessageBox.Show("ShellBrowser.cs: SetStatusTextSB:\n... has been called!");
 			return 0x80004001;
 		}
 
@@ -267,13 +276,11 @@ namespace Electrifier.Core.Shell32.Controls {
 		
 		#region IServiceProvider Member
 
-		public uint QueryService(ref Guid guidService, ref Guid riid, out System.IntPtr ppv) {
-			// TODO: Very important: Check which Service/Interface-combinations are requested!
-			// One combination: SID_STopWindow / IID_IShellBrowser
-			if((guidService.CompareTo(ShellAPI.IID_IShellBrowser) == 0) ||
-				(guidService.CompareTo(ShellAPI.IID_IShellBrowser) == 0)) {
-			
+		public uint QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppv) {
+			// TODO: Check for and handle IOleCommandTarget
+			if (riid.CompareTo(ShellAPI.IID_IShellBrowser) == 0) {
 				ppv = Marshal.GetComInterfaceForObject(this, typeof(ShellAPI.IShellBrowser));
+
 				return 0x0; // S_OK
 			} else
 				ppv = IntPtr.Zero;
