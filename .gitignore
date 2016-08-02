@@ -1,0 +1,5 @@
+*.csproj.user
+*.RibbonMarkup.log
+*.suo
+src/Electrifier - Main/*/bin/
+src/Electrifier - Main/*/obj/
