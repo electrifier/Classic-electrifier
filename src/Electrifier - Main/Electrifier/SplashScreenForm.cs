@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-using Electrifier.Win32API;
+using Electrifier.Win32API;				// TODO: Remove dependency for dynamic binding
 
 namespace Electrifier {
 	/// <summary>
