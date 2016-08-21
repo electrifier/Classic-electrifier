@@ -7,7 +7,7 @@
     <ProjectGuid>{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}</ProjectGuid>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>Electrifier.ico</ApplicationIcon>
+    <ApplicationIcon>electrifier.ico</ApplicationIcon>
     <AssemblyKeyContainerName />
     <AssemblyName>Electrifier</AssemblyName>
     <AssemblyOriginatorKeyFile />
@@ -116,13 +116,13 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Electrifier.cs">
+    <Compile Include="electrifier.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="SplashScreenForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <EmbeddedResource Include="Electrifier.ico" />
+    <EmbeddedResource Include="electrifier.ico" />
     <EmbeddedResource Include="SplashScreenForm.png" />
   </ItemGroup>
   <ItemGroup>
