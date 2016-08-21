@@ -62,7 +62,7 @@ namespace Electrifier {
 			try {
 				// Get the application icon
 				applicationIcon = new Icon(Assembly.GetEntryAssembly().
-					GetManifestResourceStream("Electrifier.Electrifier.ico"));
+					GetManifestResourceStream("Electrifier.electrifier.ico"));
 
 				// Create the splash-screen
 				splashScreen = new SplashScreenForm(splashIsShown, splashIsFadedOut);
@@ -90,8 +90,10 @@ namespace Electrifier {
 			}
 
 			// Free used resources
-			splashScreen.Dispose();
-			applicationIcon.Dispose();
+			if (null != splashScreen)
+				splashScreen.Dispose();
+			if (null != applicationIcon)
+				applicationIcon.Dispose();
 		}
 	}
 }
