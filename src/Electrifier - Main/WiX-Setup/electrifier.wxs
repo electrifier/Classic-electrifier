@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:ui="http://schemas.microsoft.com/wix/UIExtension">
 	<Product Name="electrifier" Manufacturer="electrifier.org"
 					 Id="FEFDADB6-9D7F-45E2-9A0D-21C9F911C1B6"
 					 Language="1033" Version="0.1.0"
@@ -12,6 +13,11 @@
 		<MajorUpgrade DowngradeErrorMessage="A newer version of electrifier is already installed." />
 
 		<Media Id='1' Cabinet='electrifier.cab' EmbedCab='yes'/>
+
+		<!-- Properties controlling the installer GUI including the license agreement -->
+		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+		<UIRef Id="WixUI_InstallDir" />
+		<WixVariable Id="WixUILicenseRtf" Value="..\..\..\assets\License.rtf" />
 
 		<Feature Id="ProductFeature" Title="electrifier" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
