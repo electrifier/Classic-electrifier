@@ -5,11 +5,11 @@ using System.Xml;
 
 using WeifenLuo.WinFormsUI.Docking;
 
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Core.Shell32.Controls;
-using Electrifier.Win32API;
+using electrifier.Core.Shell32.Services;
+using electrifier.Core.Shell32.Controls;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Forms.DockControls {
+namespace electrifier.Core.Forms.DockControls {
 	public delegate void BrowsingAddressChangedEventHandler(object source, EventArgs e);
 
 	/// <summary>

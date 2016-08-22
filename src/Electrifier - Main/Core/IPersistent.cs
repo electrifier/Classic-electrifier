@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
 
-namespace Electrifier.Core
+namespace electrifier.Core
 {
 	/// <summary>
 	/// Zusammenfassung für IPersistent.

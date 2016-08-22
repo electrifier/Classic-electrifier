@@ -1,4 +1,4 @@
-﻿namespace Electrifier.Core.Forms {
+﻿namespace electrifier.Core.Forms {
     partial class MainWindowForm {
         /// <summary>
         /// Required designer variable.
@@ -49,7 +49,7 @@
             this.ribbon1.Location = new System.Drawing.Point(0, 0);
             this.ribbon1.Minimized = false;
             this.ribbon1.Name = "ribbon1";
-            this.ribbon1.ResourceName = "Electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
+            this.ribbon1.ResourceName = "electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
             this.ribbon1.ShortcutTableResourceName = null;
             this.ribbon1.Size = new System.Drawing.Size(624, 141);
             this.ribbon1.TabIndex = 0;

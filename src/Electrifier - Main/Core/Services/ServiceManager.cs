@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 
-namespace Electrifier.Core.Services {
+namespace electrifier.Core.Services {
 	/// <summary>
 	/// Zusammenfassung für ServiceManager.
 	/// </summary>

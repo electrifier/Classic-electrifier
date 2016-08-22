@@ -3,13 +3,13 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using Electrifier.Core.Services;
-using Electrifier.Core.Shell32;
-using Electrifier.Core.Shell32.Controls;
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Services;
+using electrifier.Core.Shell32;
+using electrifier.Core.Shell32.Controls;
+using electrifier.Core.Shell32.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// ExtTreeView is based on System.Windows.Forms.TreeView but provides additional functionality
 	/// like enhanced Drag and Drop support and the use of the globally unique system imagelist

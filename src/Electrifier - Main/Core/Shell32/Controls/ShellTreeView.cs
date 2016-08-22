@@ -3,12 +3,12 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using Electrifier.Core.Controls;
-using Electrifier.Core.Services;
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Controls;
+using electrifier.Core.Services;
+using electrifier.Core.Shell32.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32.Controls {
+namespace electrifier.Core.Shell32.Controls {
 	/// <summary>
 	/// Zusammenfassung für ShellTreeView.
 	/// </summary>

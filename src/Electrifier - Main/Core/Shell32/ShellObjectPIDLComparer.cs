@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
 
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Shell32.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32 {
+namespace electrifier.Core.Shell32 {
 	/// <summary>
 	/// Zusammenfassung für ShellObjectPIDLComparer.
 	/// </summary>
@@ -20,7 +20,7 @@ namespace Electrifier.Core.Shell32 {
 
 		public ShellObjectPIDLComparer(SortMode sortMode, ShellAPI.IShellFolder parentFolder) {
 			if(!Enum.IsDefined(typeof(SortMode), sortMode))
-				throw new ArgumentException("The given sortMode is not defined in Electrifier.Core.Shell32.ShellObjectPIDLComparer.SortMode", "sortMode");
+				throw new ArgumentException("The given sortMode is not defined in electrifier.Core.Shell32.ShellObjectPIDLComparer.SortMode", "sortMode");
 
 			this.sortMode     = sortMode;
 			this.parentFolder = parentFolder;

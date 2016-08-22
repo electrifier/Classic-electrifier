@@ -10,11 +10,11 @@ using RibbonLib.Controls;
 using RibbonLib.Controls.Events;
 //using RibbonLib.Interop;
 
-using Electrifier.Core;
-using Electrifier.Core.Controls.ToolBars;
-using Electrifier.Core.Forms.DockControls;
+using electrifier.Core;
+using electrifier.Core.Controls.ToolBars;
+using electrifier.Core.Forms.DockControls;
 
-namespace Electrifier.Core.Forms {
+namespace electrifier.Core.Forms {
 	public enum RibbonMarkupCommands : uint {
 		cmdTab = 1012,
 		cmdGroup = 1015,

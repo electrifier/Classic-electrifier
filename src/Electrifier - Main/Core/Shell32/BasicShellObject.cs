@@ -1,11 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Electrifier.Core.Services;
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Services;
+using electrifier.Core.Shell32.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32 {
+namespace electrifier.Core.Shell32 {
 	/// <summary>
 	/// Zusammenfassung für ShellObject.
 	/// </summary>
@@ -175,7 +175,7 @@ namespace Electrifier.Core.Shell32 {
 
 		public void DetachFileInfoThread(IFileInfoThread fileInfoThread) {
 			if(this.fileInfoThread != fileInfoThread) {
-				throw new ArgumentException("Electrifier.Core.Shell32.BasicShellObject.DetachFileInfoThread " +
+				throw new ArgumentException("electrifier.Core.Shell32.BasicShellObject.DetachFileInfoThread " +
 					"was called with invalid IFileInfoThread instance");
 			} else {
 				this.fileInfoThread = null;
@@ -184,7 +184,7 @@ namespace Electrifier.Core.Shell32 {
 
 		public void UpdateFileInfo(IFileInfoThread fileInfoThread, IconManager.FileInfoThreadResults fileInfoThreadResults) {
 			if(this.fileInfoThread != fileInfoThread) {
-				throw new ArgumentException("Electrifier.Core.Shell32.BasicShellObject.UpdateFileInfo " +
+				throw new ArgumentException("electrifier.Core.Shell32.BasicShellObject.UpdateFileInfo " +
 					"was called with invalid IFileInfoThread instance");
 			} else {
 				if(FileInfoUpdated != null) {

@@ -1,9 +1,9 @@
 using System;
 
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Shell32.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32 {
+namespace electrifier.Core.Shell32 {
 	/// <summary>
 	/// 
 	/// </summary>

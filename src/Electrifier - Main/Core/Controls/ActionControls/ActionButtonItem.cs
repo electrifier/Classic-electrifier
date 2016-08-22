@@ -1,8 +1,8 @@
 using System;
 
-// Electrifier uses
+// electrifier uses
 
-namespace Electrifier.Core.Controls.ActionControls {
+namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für ExtButtonItem.
 	/// </summary>

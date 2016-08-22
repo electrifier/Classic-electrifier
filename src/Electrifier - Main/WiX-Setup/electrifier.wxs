@@ -45,19 +45,19 @@
 			</Component>
 			<Component Id="electrifier.Core.dll" Guid="C2E08C77-6624-4D12-A1B5-983547AC017C">
 				<File Id="electrifier.Core.dll"
-							Source="$(var.Core.TargetPath)" KeyPath="yes" Checksum="yes"/>
+							Source="$(var.electrifier.Core.TargetPath)" KeyPath="yes" Checksum="yes"/>
 			</Component>
 			<Component Id="electrifier.Win32API.dll" Guid="51B7BE3A-A2C1-4331-87AC-0F0F766AB3ED">
 				<File Id="electrifier.Win32API.dll"
-							Source="$(var.Win32API.TargetPath)" KeyPath="yes" Checksum="yes"/>
+							Source="$(var.electrifier.Win32API.TargetPath)" KeyPath="yes" Checksum="yes"/>
 			</Component>
 			<Component Id="Ribbon.dll" Guid="E0585B1A-F371-47BB-B2BD-7A9686BB79B0">
 				<File Id="Ribbon.dll"
-							Source="$(var.Core.TargetDir)\Ribbon.dll" KeyPath="yes" Checksum="yes"/>
+							Source="$(var.electrifier.Core.TargetDir)\Ribbon.dll" KeyPath="yes" Checksum="yes"/>
 			</Component>
 			<Component Id="WeifenLuo.WinFormsUI.Docking.dll" Guid="D1CE63A5-AD52-457C-B296-D8319ADB0907">
 				<File Id="WeifenLuo.WinFormsUI.Docking.dll"
-							Source="$(var.Core.TargetDir)\WeifenLuo.WinFormsUI.Docking.dll" KeyPath="yes" Checksum="yes"/>
+							Source="$(var.electrifier.Core.TargetDir)\WeifenLuo.WinFormsUI.Docking.dll" KeyPath="yes" Checksum="yes"/>
 			</Component>
 		</ComponentGroup>
 	</Fragment>

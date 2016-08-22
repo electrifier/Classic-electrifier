@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Electrifier.Core.Shell32.Controls {
+namespace electrifier.Core.Shell32.Controls {
 	/// <summary>
 	/// Zusammenfassung für ShellListViewItemCollection.
 	/// </summary>

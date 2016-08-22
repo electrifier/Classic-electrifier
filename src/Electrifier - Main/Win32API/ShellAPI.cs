@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Electrifier.Win32API {
+namespace electrifier.Win32API {
 
 	public class ShellAPI {
 

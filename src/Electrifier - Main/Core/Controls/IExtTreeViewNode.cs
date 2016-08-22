@@ -1,8 +1,8 @@
 using System;
 
-using Electrifier.Win32API;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für IExtTreeViewNode.
 	/// </summary>

@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Services {
+namespace electrifier.Core.Services {
 	/// <summary>
 	/// Zusammenfassung für AbstraceService.
 	/// </summary>

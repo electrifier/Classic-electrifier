@@ -2,9 +2,9 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-using Electrifier.Win32API;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtTreeViewNode.
 	/// </summary>
@@ -214,7 +214,7 @@ namespace Electrifier.Core.Controls {
 				// Update properties already set but still not updated
 				this.UpdateIsShownExpandable(true);
 			} else {
-				throw new InvalidOperationException("Electrifier.Core.Controls.ExtTreeViewNode.HasBeenAddedToTreeViewBy: TreeView-property not yet initialized!");
+				throw new InvalidOperationException("electrifier.Core.Controls.ExtTreeViewNode.HasBeenAddedToTreeViewBy: TreeView-property not yet initialized!");
 			}
 		}
 		#endregion

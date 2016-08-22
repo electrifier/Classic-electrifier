@@ -3,10 +3,10 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using Electrifier.Core.Shell32;
-using Electrifier.Win32API;
+using electrifier.Core.Shell32;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtListView.
 	/// </summary>

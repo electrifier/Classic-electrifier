@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtTreeViewNodeCollection.
 	/// </summary>

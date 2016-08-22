@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Services {
+namespace electrifier.Core.Services {
 	/// <summary>
 	/// This interface must be implemented by all services.
 	/// </summary>

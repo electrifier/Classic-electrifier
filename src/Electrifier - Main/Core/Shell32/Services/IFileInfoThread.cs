@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Shell32.Services {
+namespace electrifier.Core.Shell32.Services {
 	/// <summary>
 	/// Zusammenfassung für IFileInfoThread.
 	/// </summary>

@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Electrifier {
+namespace electrifier {
 	/// <summary>
 	/// The class <c>ElectrifierMainEntryPoint</c> acts, as suggested, as the main entry point.
 	/// The given arguments are evaluated, the core services started and the main configuration
@@ -62,14 +62,14 @@ namespace Electrifier {
 			try {
 				// Get the application icon
 				applicationIcon = new Icon(Assembly.GetEntryAssembly().
-					GetManifestResourceStream("Electrifier.electrifier.ico"));
+					GetManifestResourceStream("electrifier.electrifier.ico"));
 
 				// Create the splash-screen
 				splashScreen = new SplashScreenForm(splashIsShown, splashIsFadedOut);
 
 				// Create an instance of the application context
 				appContext = Activator.CreateInstance(
-					Assembly.LoadFile(electrifierCoreDLLFullPath).GetType(@"Electrifier.Core.AppContext"),
+					Assembly.LoadFile(electrifierCoreDLLFullPath).GetType(@"electrifier.Core.AppContext"),
 					new Object[] { args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen }) as ApplicationContext;
 
 				// Run electrifier applicaton context

@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 
-using Electrifier.Core.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32.Services {
+namespace electrifier.Core.Shell32.Services {
 	/// <summary>
 	/// Service class, acts as helper class for dealing with shell identifier lists (<c>PIDLs</c>).
 	/// </summary>

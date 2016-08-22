@@ -2,11 +2,11 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 
-using Electrifier.Core.Services;
-using Electrifier.Core.Shell32.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Services;
+using electrifier.Core.Shell32.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32 {
+namespace electrifier.Core.Shell32 {
 	/// <summary>
 	/// Zusammenfassung für BasicShellObjectCollection.
 	/// </summary>

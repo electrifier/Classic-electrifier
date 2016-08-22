@@ -1,6 +1,6 @@
 
 
-namespace Electrifier.Win32API {
+namespace electrifier.Win32API {
 	/// <summary>
 	/// Classes, interfaces, types and enums derived from include file wtypes.h
 	/// </summary>

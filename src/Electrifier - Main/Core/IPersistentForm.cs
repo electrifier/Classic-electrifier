@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core
+namespace electrifier.Core
 {
 	/// <summary>
 	/// Zusammenfassung für IPersistentForm.

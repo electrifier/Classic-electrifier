@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-using Electrifier.Core.Services;
-using Electrifier.Win32API;
+using electrifier.Core.Services;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32.Services {
+namespace electrifier.Core.Shell32.Services {
 	/// <summary>
 	/// Service class, helps dealing with system icon image lists and default icons for file classes.
 	/// </summary>

@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Controls.ActionControls {
+namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für IViewableAction.
 	/// </summary>

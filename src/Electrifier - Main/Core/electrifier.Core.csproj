@@ -9,14 +9,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ApplicationIcon />
     <AssemblyKeyContainerName />
-    <AssemblyName>Electrifier.Core</AssemblyName>
+    <AssemblyName>electrifier.Core</AssemblyName>
     <AssemblyOriginatorKeyFile />
     <DefaultClientScript>JScript</DefaultClientScript>
     <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
     <DefaultTargetSchema>IE50</DefaultTargetSchema>
     <DelaySign>false</DelaySign>
     <OutputType>Library</OutputType>
-    <RootNamespace>Electrifier.Core</RootNamespace>
+    <RootNamespace>electrifier.Core</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <StartupObject />
     <FileUpgradeFlags>
@@ -85,8 +85,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Win32API\Win32API.csproj">
-      <Name>Win32API</Name>
+    <ProjectReference Include="..\Win32API\electrifier.Win32API.csproj">
+      <Name>electrifier.Win32API</Name>
       <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
@@ -294,11 +294,6 @@
     <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.de.ribbon">
       <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
     </EmbeddedResource>
-    <None Include="Forms\MainWindowForm.RibbonMarkup.log">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
-    </None>
     <None Include="Forms\MainWindowForm.RibbonMarkup.shortcuts" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -310,7 +305,6 @@
   <ItemGroup>
     <Content Include="Forms\MainWindowForm.RibbonMarkup.xml">
       <Generator>RibbonGenerator</Generator>
-      <LastGenOutput>MainWindowForm.RibbonMarkup.log</LastGenOutput>
       <SubType>Designer</SubType>
     </Content>
     <Content Include="Resources\Commands\New_tab.bmp" />

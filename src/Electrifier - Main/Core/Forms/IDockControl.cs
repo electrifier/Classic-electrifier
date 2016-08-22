@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Forms.DockControls {
+namespace electrifier.Core.Forms.DockControls {
 	/// <summary>
 	/// Zusammenfassung für IDockControl.
 	/// </summary>

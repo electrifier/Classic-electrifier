@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Shell32 {
+namespace electrifier.Core.Shell32 {
 	/// <summary>
 	/// Zusammenfassung für IShellObjectCollection.
 	/// </summary>

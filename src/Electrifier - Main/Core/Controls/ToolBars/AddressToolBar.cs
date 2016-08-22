@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Controls.ToolBars
+namespace electrifier.Core.Controls.ToolBars
 {
 	/// <summary>
 	/// Zusammenfassung für AddressToolBar.

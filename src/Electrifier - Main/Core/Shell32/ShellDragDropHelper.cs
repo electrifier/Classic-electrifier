@@ -2,9 +2,9 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using Electrifier.Win32API;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Shell32 {
+namespace electrifier.Core.Shell32 {
 	public delegate DragDropEffects DropTargetEnterEventHandler(object source, DropTargetEventArgs e);
 	public delegate DragDropEffects DropTargetOverEventHandler (object source, DropTargetEventArgs e);
 	public delegate void DropTargetLeaveEventHandler(object source, EventArgs e);

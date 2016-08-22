@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 
-using Electrifier.Win32API;
+using electrifier.Win32API;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für ExtListViewItemCollection.
 	/// </summary>

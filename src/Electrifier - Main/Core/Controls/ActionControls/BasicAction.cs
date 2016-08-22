@@ -1,7 +1,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Electrifier.Core.Controls.ActionControls {
+namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
 	/// Zusammenfassung für BasicGUIAction.
 	/// </summary>

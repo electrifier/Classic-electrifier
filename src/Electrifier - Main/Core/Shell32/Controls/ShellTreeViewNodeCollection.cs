@@ -1,9 +1,9 @@
 using System;
 using System.Windows.Forms;
 
-using Electrifier.Core.Controls;
+using electrifier.Core.Controls;
 
-namespace Electrifier.Core.Shell32.Controls {
+namespace electrifier.Core.Shell32.Controls {
 	/// <summary>
 	/// Zusammenfassung für ShellTreeViewNodeCollection.
 	/// </summary>

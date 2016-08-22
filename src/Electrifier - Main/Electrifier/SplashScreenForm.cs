@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
-using Electrifier.Win32API;				// TODO: Remove dependency for dynamic binding
+using electrifier.Win32API;				// TODO: Remove dependency for dynamic binding
 
-namespace Electrifier {
+namespace electrifier {
 	/// <summary>
 	/// Zusammenfassung für SplashScreenForm.
 	/// </summary>
@@ -33,7 +33,7 @@ namespace Electrifier {
 
 			if(splashIsShown) {
 				splashScreenBitmap = new Bitmap(Assembly.GetEntryAssembly().
-					GetManifestResourceStream("Electrifier.SplashScreenForm.png"));
+					GetManifestResourceStream("electrifier.SplashScreenForm.png"));
 				Size               = splashScreenBitmap.Size;
 
 				// Change window mode to layered window

@@ -6,11 +6,11 @@ using System.Runtime.CompilerServices;
 // gesteuert. Ändern Sie diese Attributswerte, um die Informationen zu modifizieren,
 // die mit einer Assembly verknüpft sind.
 //
-[assembly: AssemblyTitle("Electrifier Desktop Enhancement Suite")]		// Eigenschaften/Version/Beschreibung
-[assembly: AssemblyDescription("Electrifier Application Launcher")]		// Eigenschaften/Version/Kommentare
+[assembly: AssemblyTitle("electrifier Desktop Enhancement Suite")]		// Eigenschaften/Version/Beschreibung
+[assembly: AssemblyDescription("electrifier Application Launcher")]		// Eigenschaften/Version/Kommentare
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Electrifier.org")]									// Eigenschaften/Version/Firma
-[assembly: AssemblyProduct("Electrifier")]										// Eigenschaften/Version/Produktname
+[assembly: AssemblyCompany("electrifier.org")]									// Eigenschaften/Version/Firma
+[assembly: AssemblyProduct("electrifier")]										// Eigenschaften/Version/Produktname
 [assembly: AssemblyCopyright("(c) 2004 Thorsten Jung")]						// Eigenschaften/Version/Copyright
 [assembly: AssemblyTrademark("")]													// Eigenschaften/Version/Marken
 [assembly: AssemblyCulture("")]

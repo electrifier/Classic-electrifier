@@ -1,6 +1,6 @@
 using System;
 
-namespace Electrifier.Core.Controls {
+namespace electrifier.Core.Controls {
 	/// <summary>
 	/// Zusammenfassung für IExtTreeViewNodeCollection.
 	/// </summary>
