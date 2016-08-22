@@ -82,11 +82,41 @@ namespace Electrifier.Core.Shell32.Services {
 			return iconFromPIDL;
 		}
 
+		public static /*inline*/ uint ExtractOverlayImageIndex(int iIconIndex) {
+			return (uint)iIconIndex >> 24;
+		}
+
 		#region Sub-Class FileInfoThread
+
+		[Flags]
+		public enum FileInfoThreadParams {
+			NONE = 0x0,
+			ImageIndex = 0x1,
+			SelectedImageIndex = 0x2,
+			OverlayIndex = 0x4,
+			IsHidden = 0x8,
+			IsCompressed = 0x10,
+			HasSubfolder = 0x20,
+			ALL = (ImageIndex | SelectedImageIndex | OverlayIndex | IsHidden | IsCompressed | HasSubfolder),
+		}
+
+		public struct FileInfoThreadResults {
+			public FileInfoThreadParams ValidValues;
+			public int ImageIndex;
+			public int SelectedImageIndex;
+			public uint OverlayIndex;
+			public bool IsHidden;
+			public bool IsCompressed;
+			public bool HasSubfolder;
+
+			//public FileInfoThreadResults() { this.ValidValues = FileInfoThreadParams.NONE; }
+		}
+
 		public class FileInfoThread : IFileInfoThread {
 			protected SequenceStack sequence = null;
 			protected Stack         excluded = new Stack();
 			protected Thread        thread   = null;
+			protected FileInfoThreadParams fileInfoThreadParams;
 
 			#region IFileInfoThread Member
 			public void Prioritize(IShellObject sender) {
@@ -104,31 +134,36 @@ namespace Electrifier.Core.Shell32.Services {
 			/// in which they are ordered in the collection.
 			/// </summary>
 			/// <param name="collection">The collection of ShellObjects to get info for</param>
-			public FileInfoThread(IShellObjectCollection collection)
-				: this(new SequenceStack(collection)) { }
+			/// <param name="fileInfoThreadParams">The informations that should be gathered</param>
+			public FileInfoThread(IShellObjectCollection collection, FileInfoThreadParams fileInfoThreadParams = FileInfoThreadParams.ALL)
+				: this(new SequenceStack(collection), fileInfoThreadParams) { }
 
 			/// <summary>
-			/// Overloaded constructor. Creates a FileInfoThread which will process the item given.
+			/// Overloaded constructor. Creates a FileInfoThread which will process the given item.
 			/// </summary>
 			/// <param name="shellObject">The ShellObject</param>
-			public FileInfoThread(IShellObject shellObject)
-				: this(new SequenceStack(shellObject)) { }
+			/// <param name="fileInfoThreadParams">The informations that should be gathered</param>
+			public FileInfoThread(IShellObject shellObject, FileInfoThreadParams fileInfoThreadParams = FileInfoThreadParams.ALL)
+				: this(new SequenceStack(shellObject), fileInfoThreadParams) { }
 
 			/// <summary>
 			/// The real constructor. Creates the FileInfoThread and starts execution.
 			/// </summary>
 			/// <param name="sequence">The Stack containing the objects to be processed</param>
-			protected FileInfoThread(SequenceStack sequenceStack) {
-				sequence            = sequenceStack;
-				thread              = new Thread(new ThreadStart(Process));
-				thread.IsBackground = true;
+			/// <param name="fileInfoThreadParams">The informations that should be gathered</param>
+			protected FileInfoThread(SequenceStack sequenceStack, FileInfoThreadParams fileInfoThreadParams) {
+				this.sequence = sequenceStack;
+				this.fileInfoThreadParams = fileInfoThreadParams;
 
-				thread.Start();
+				this.thread = new Thread(new ThreadStart(Process));
+				this.thread.IsBackground = true;
+				this.thread.Start();
 			}
 
 			protected void Process() {
+				FileInfoThreadResults fileInfoThreadResults = new FileInfoThreadResults();
 				ShellAPI.SHFILEINFO shFileInfo;
-				UInt32              cbFileInfo = (UInt32)Marshal.SizeOf(typeof(ShellAPI.SHFILEINFO));
+				UInt32 cbFileInfo = (UInt32)Marshal.SizeOf(typeof(ShellAPI.SHFILEINFO));
 
 				// Attach to every IShellObject item
 				foreach(IShellObject shellObject in sequence) {
@@ -139,12 +174,50 @@ namespace Electrifier.Core.Shell32.Services {
 				while(sequence.Count > 0) {
 					IShellObject shellObject = sequence.Pop();
 
+					fileInfoThreadResults.ValidValues = FileInfoThreadParams.NONE;
+
 					if(!excluded.Contains(shellObject)){
 						try {
-							ShellAPI.SHGetFileInfo(shellObject.AbsolutePIDL, 0, out shFileInfo, cbFileInfo,
-								(ShellAPI.SHGFI.PIDL | ShellAPI.SHGFI.SysIconIndex));
+							/*
+							 * TODO: Setting the OverlayIndex-Flag will result in getting the correct overlay values
+							 *       for e.g. OneDrive, but the ListView won't show them anymore...
+							 *       Very strange indeed...
+							 */
+							if (this.fileInfoThreadParams.HasFlag(FileInfoThreadParams.ImageIndex)) {
+								ShellAPI.SHGetFileInfo(shellObject.AbsolutePIDL, 0, out shFileInfo, cbFileInfo,
+									(ShellAPI.SHGFI.Icon | ShellAPI.SHGFI.SmallIcon | ShellAPI.SHGFI.PIDL |
+									 ShellAPI.SHGFI.SysIconIndex | ShellAPI.SHGFI.Attributes /*| ShellAPI.SHGFI.OverlayIndex */));
 
-							shellObject.UpdateFileInfo(this, shFileInfo);
+								fileInfoThreadResults.ValidValues ^= FileInfoThreadParams.ImageIndex | FileInfoThreadParams.OverlayIndex;
+								fileInfoThreadResults.ImageIndex = shFileInfo.iIcon /*& 0xFFFFFF*/;
+								fileInfoThreadResults.OverlayIndex = IconManager.ExtractOverlayImageIndex(shFileInfo.iIcon);
+
+								if(shFileInfo.hIcon != null)
+									WinAPI.DestroyIcon(shFileInfo.hIcon);
+
+								fileInfoThreadResults.ValidValues ^= FileInfoThreadParams.IsHidden;
+								fileInfoThreadResults.IsHidden = ((shFileInfo.dwAttributes & ShellAPI.SFGAO.Hidden) != 0);
+
+								fileInfoThreadResults.ValidValues ^= FileInfoThreadParams.IsCompressed;
+								fileInfoThreadResults.IsCompressed = ((shFileInfo.dwAttributes & ShellAPI.SFGAO.Compressed) != 0);
+
+								fileInfoThreadResults.ValidValues ^= FileInfoThreadParams.HasSubfolder;
+								fileInfoThreadResults.HasSubfolder = ((shFileInfo.dwAttributes & ShellAPI.SFGAO.HasSubfolder) != 0);
+
+								// TODO: TODO: ShellAPI.SHGFI.Attributes komplett als solches im basicshellobject speichern,
+								// dann per "macros" auf die attribute ishidden, iscompressed, hassubfolder etc. zugreifen
+							}
+
+							if (this.fileInfoThreadParams.HasFlag(FileInfoThreadParams.SelectedImageIndex)) {
+								ShellAPI.SHGetFileInfo(shellObject.AbsolutePIDL, 0, out shFileInfo, cbFileInfo,
+									(ShellAPI.SHGFI.Icon | ShellAPI.SHGFI.SmallIcon | ShellAPI.SHGFI.PIDL |
+									 ShellAPI.SHGFI.SysIconIndex | ShellAPI.SHGFI.OpenIcon));
+
+								fileInfoThreadResults.ValidValues ^= FileInfoThreadParams.SelectedImageIndex;
+								fileInfoThreadResults.SelectedImageIndex = shFileInfo.iIcon;
+							}
+
+							shellObject.UpdateFileInfo(this, fileInfoThreadResults);
 						} finally {
 							excluded.Push(shellObject);
 						}

@@ -62,7 +62,7 @@ namespace Electrifier.Core.Controls {
 		/// Tree-View Control Window Styles
 		/// <br/>See <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb760013%28v=vs.85%29.aspx"/>
 		/// </summary>
-		[FlagsAttribute]
+		[Flags]
 		protected enum TVS : uint {
 			None = 0,
 			HASBUTTONS = 0x0001,
@@ -100,7 +100,7 @@ namespace Electrifier.Core.Controls {
 		[DllImport("user32.dll")]
 		protected static extern TVS_EX SendMessage(IntPtr hWnd, Win32API.WMSG wMsg, TVS_EX wParam, TVS_EX lParam);
 
-		[FlagsAttribute]
+		[Flags]
 		protected enum TVS_EX : uint {
 			None = 0,
 			MULTISELECT = 0x0002,
@@ -117,7 +117,7 @@ namespace Electrifier.Core.Controls {
 
 		protected TVS_EX ExtendedStyle {
 			get { return ExtTreeView.SendMessage(this.Handle, WMSG.TVM_GETEXTENDEDSTYLE, TVS_EX.None, TVS_EX.None); }
-			set { ExtTreeView.SendMessage(this.Handle, WMSG.TVM_SETEXTENDEDSTYLE, value, TVS_EX.None); }		// Don't know why only mask (wParam) is set, not (lParam) value, but works...
+			set { ExtTreeView.SendMessage(this.Handle, WMSG.TVM_SETEXTENDEDSTYLE, value, value); }
 		}
 
 		/// <summary>
@@ -129,10 +129,11 @@ namespace Electrifier.Core.Controls {
 			this.FullRowSelect = true;
 			this.HotTracking = true;
 			this.ShowLines = false;
-			this.ItemHeight = this.ItemHeight + 4;			// TODO: +4 works, +5 not (and it should be 5)... Perhaps we have to use the large image list?!?
-
+			this.ItemHeight = this.ItemHeight + 4;			// TODO: +4 works, +3 not (and it should be 3)... Perhaps we have to use the large image list?!?
+			// TODO: See NONEVENHEIGHT for uneven heights...
 			WinAPI.SetWindowTheme(this.Handle, @"Explorer", null);
- 
+
+			// TODO: DoubleBuffer causes small visual problems when dragging an shell item while vertical autoscroll
 			this.ExtendedStyle |= TVS_EX.DOUBLEBUFFER | TVS_EX.FADEINOUTEXPANDOS;
 		}
 		#endregion

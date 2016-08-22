@@ -85,7 +85,12 @@ namespace Electrifier.Core.Forms.DockControls {
 
 		protected void UpdateDockCaption() {
 			if (this.IsHandleCreated) {
-				this.BeginInvoke((Action)(() => {		// TODO: InvokeRequired
+				/*
+				 * See http://stackoverflow.com/questions/1167771/methodinvoker-vs-action-for-control-begininvoke
+				 * why BeginInvoke((MethodInvoker)...) should be faster than this.BeginInvoke((Action)...)
+				 */
+
+				this.BeginInvoke((MethodInvoker)(() => {		// TODO: InvokeRequired
 					this.Text = this.shellTreeView.SelectedNode.Text;
 					this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
 				}));

@@ -53,7 +53,7 @@ namespace Electrifier.Core.Shell32.Controls {
 			Items.AddRange(items);
 
 			// Create a file info thread to gather visual info for all items
-			IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(collection);
+			//IconManager.FileInfoThread fileInfoThread = new IconManager.FileInfoThread(collection);
 		}
 
 		private void ShellListView_ItemDrag(object sender, ItemDragEventArgs e) {

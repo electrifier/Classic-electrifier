@@ -59,6 +59,8 @@ namespace Electrifier.Core.Shell32.Controls {
 
 			this.MouseUp += new MouseEventHandler(ShellTreeView_MouseUp);
 
+			this.Font = System.Drawing.SystemFonts.IconTitleFont;
+
 			this.BorderStyle = BorderStyle.None;
 
 			this.EnableThemeStyles();
@@ -67,30 +69,34 @@ namespace Electrifier.Core.Shell32.Controls {
 		public ShellTreeViewNode FindNodeByPIDL(IntPtr shellObjectPIDL) {
 			this.BeginUpdate();
 
+			// Check if the root node is requested
+			if (PIDLManager.IsEqual(this.rootNode.AbsolutePIDL, shellObjectPIDL))
+				return this.rootNode;
+
 			try {
+				// Then test whether the given PIDL anyhow derives from root node
+				if (PIDLManager.IsParent(this.rootNode.AbsolutePIDL, shellObjectPIDL, false)) {
 
-				// First of all, test whether the given PIDL anyhow derives from our root node
-				if(PIDLManager.IsParent(this.rootNode.AbsolutePIDL, shellObjectPIDL, false)) {
-					// If we have luck, just the root node itself is requested
-					if(PIDLManager.IsEqual(this.rootNode.AbsolutePIDL, shellObjectPIDL))
-						return this.rootNode;
-
+					// Now walk through the tree recursively and find the requested node
 					ShellTreeViewNode actNode = this.rootNode.FirstNode;
+					
 					do {
-						if(PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
+						if (PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
 							return actNode;
-						if(PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
-							if(actNode.Nodes.Count == 0)
+						
+						if (PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
+							if (actNode.Nodes.Count == 0)
 								actNode.Expand();
 
 							return actNode.FindChildNodeByPIDL(shellObjectPIDL);
 						}
-					} while((actNode = actNode.NextNode) != null);
+					} while ((actNode = actNode.NextNode) != null);
 				}
-			} finally {
+			}
+			finally {
 				this.EndUpdate();
 			}
-			
+
 			return null;
 		}
 

@@ -182,13 +182,14 @@ namespace Electrifier.Core.Shell32 {
 			}
 		}
 
-		public void UpdateFileInfo(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo) {
+		public void UpdateFileInfo(IFileInfoThread fileInfoThread, IconManager.FileInfoThreadResults fileInfoThreadResults) {
 			if(this.fileInfoThread != fileInfoThread) {
 				throw new ArgumentException("Electrifier.Core.Shell32.BasicShellObject.UpdateFileInfo " +
 					"was called with invalid IFileInfoThread instance");
 			} else {
 				if(FileInfoUpdated != null) {
-					FileInfoUpdatedEventArgs args = new FileInfoUpdatedEventArgs(fileInfoThread, shFileInfo);
+					FileInfoUpdatedEventArgs args = new FileInfoUpdatedEventArgs(fileInfoThread,
+						fileInfoThreadResults);
 
 					FileInfoUpdated(this, args);
 				}

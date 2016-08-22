@@ -148,7 +148,7 @@ namespace Electrifier.Win32API {
 			public struct SHFILEINFO {
 			public IntPtr hIcon;
 			public int iIcon;
-			public uint dwAttributes;
+			public SFGAO dwAttributes;
 			[MarshalAs(UnmanagedType.LPStr, SizeConst = 260)]
 			public string szDisplayName;
 			[MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
@@ -228,17 +228,88 @@ namespace Electrifier.Win32API {
 			INPLACEACTIVATE	  = 3,
 		};
 
+		/// <summary>
+		/// Flags for SHGetFileInfo function
+		/// 
+		/// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762179(v=vs.85).aspx
+		/// 
+		/// The flags that specify the file information to retrieve. This parameter can be a combination of the following values.
+		///
+		/// SHGFI_ADDOVERLAYS (0x000000020)
+		/// 	Version 5.0. Apply the appropriate overlays to the file's icon. The SHGFI_ICON flag must also be set.
+		///
+		/// SHGFI_ATTR_SPECIFIED (0x000020000)
+		/// 	Modify SHGFI_ATTRIBUTES to indicate that the dwAttributes member of the SHFILEINFO structure at psfi contains the specific attributes that are desired. These attributes are passed to IShellFolder::GetAttributesOf. If this flag is not specified, 0xFFFFFFFF is passed to IShellFolder::GetAttributesOf, requesting all attributes. This flag cannot be specified with the SHGFI_ICON flag.
+		///
+		/// SHGFI_ATTRIBUTES (0x000000800)
+		/// 	Retrieve the item attributes. The attributes are copied to the dwAttributes member of the structure specified in the psfi parameter. These are the same attributes that are obtained from IShellFolder::GetAttributesOf.
+		///
+		/// SHGFI_DISPLAYNAME (0x000000200)
+		/// 	Retrieve the display name for the file, which is the name as it appears in Windows Explorer. The name is copied to the szDisplayName member of the structure specified in psfi. The returned display name uses the long file name, if there is one, rather than the 8.3 form of the file name. Note that the display name can be affected by settings such as whether extensions are shown.
+		///
+		/// SHGFI_EXETYPE (0x000002000)
+		/// 	Retrieve the type of the executable file if pszPath identifies an executable file. The information is packed into the return value. This flag cannot be specified with any other flags.
+		///
+		/// SHGFI_ICON (0x000000100)
+		/// 	Retrieve the handle to the icon that represents the file and the index of the icon within the system image list. The handle is copied to the hIcon member of the structure specified by psfi, and the index is copied to the iIcon member.
+		///
+		/// SHGFI_ICONLOCATION (0x000001000)
+		/// 	Retrieve the name of the file that contains the icon representing the file specified by pszPath, as returned by the IExtractIcon::GetIconLocation method of the file's icon handler. Also retrieve the icon index within that file. The name of the file containing the icon is copied to the szDisplayName member of the structure specified by psfi. The icon's index is copied to that structure's iIcon member.
+		///
+		/// SHGFI_LARGEICON (0x000000000)
+		/// 	Modify SHGFI_ICON, causing the function to retrieve the file's large icon. The SHGFI_ICON flag must also be set.
+		///
+		/// SHGFI_LINKOVERLAY (0x000008000)
+		/// 	Modify SHGFI_ICON, causing the function to add the link overlay to the file's icon. The SHGFI_ICON flag must also be set.
+		///
+		/// SHGFI_OPENICON (0x000000002)
+		/// 	Modify SHGFI_ICON, causing the function to retrieve the file's open icon. Also used to modify SHGFI_SYSICONINDEX, causing the function to return the handle to the system image list that contains the file's small open icon. A container object displays an open icon to indicate that the container is open. The SHGFI_ICON and/or SHGFI_SYSICONINDEX flag must also be set.
+		///
+		/// SHGFI_OVERLAYINDEX (0x000000040)
+		/// 	Version 5.0. Return the index of the overlay icon. The value of the overlay index is returned in the upper eight bits of the iIcon member of the structure specified by psfi. This flag requires that the SHGFI_ICON be set as well.
+		///
+		/// SHGFI_PIDL (0x000000008)
+		/// 	Indicate that pszPath is the address of an ITEMIDLIST structure rather than a path name.
+		///
+		/// SHGFI_SELECTED (0x000010000)
+		/// 	Modify SHGFI_ICON, causing the function to blend the file's icon with the system highlight color. The SHGFI_ICON flag must also be set.
+		///
+		/// SHGFI_SHELLICONSIZE (0x000000004)
+		/// 	Modify SHGFI_ICON, causing the function to retrieve a Shell-sized icon. If this flag is not specified the function sizes the icon according to the system metric values. The SHGFI_ICON flag must also be set.
+		///
+		/// SHGFI_SMALLICON (0x000000001)
+		/// 	Modify SHGFI_ICON, causing the function to retrieve the file's small icon. Also used to modify SHGFI_SYSICONINDEX, causing the function to return the handle to the system image list that contains small icon images. The SHGFI_ICON and/or SHGFI_SYSICONINDEX flag must also be set.
+		///
+		/// SHGFI_SYSICONINDEX (0x000004000)
+		/// 	Retrieve the index of a system image list icon. If successful, the index is copied to the iIcon member of psfi. The return value is a handle to the system image list. Only those images whose indices are successfully copied to iIcon are valid. Attempting to access other images in the system image list will result in undefined behavior.
+		///
+		/// SHGFI_TYPENAME (0x000000400)
+		/// 	Retrieve the string that describes the file's type. The string is copied to the szTypeName member of the structure specified in psfi.
+		///
+		/// SHGFI_USEFILEATTRIBUTES (0x000000010)
+		/// 	Indicates that the function should not attempt to access the file specified by pszPath. Rather, it should act as if the file specified by pszPath exists with the file attributes passed in dwFileAttributes. This flag cannot be combined with the SHGFI_ATTRIBUTES, SHGFI_EXETYPE, or SHGFI_PIDL flags.
+		/// </summary>
+
 		[Flags]
 		public enum SHGFI : uint {
-			LargeIcon         = 0x00000000,
-			SmallIcon         = 0x00000001,
-			OpenIcon          = 0x00000002,
-			PIDL              = 0x00000008,
-			Icon              = 0x00000100,
-			DisplayName       = 0x00000200,
-			Typename          = 0x00000400,
-			SysIconIndex      = 0x00004000,
-			UseFileAttributes = 0x00000010,
+			Icon = 0x100,
+			DisplayName = 0x200,
+			TypeName = 0x400,
+			Attributes = 0x800,
+			IconLocation = 0x1000,
+			ExeType = 0x2000,
+			SysIconIndex = 0x4000,
+			LinkOverlay = 0x8000,
+			Selected = 0x10000,
+			Attr_Specified = 0x20000,
+			LargeIcon = 0x0,
+			SmallIcon = 0x1,
+			OpenIcon = 0x2,
+			ShellIconSize = 0x4,
+			PIDL = 0x8,
+			UseFileAttributes = 0x10,
+			AddOverlays = 0x20,
+			OverlayIndex = 0x40,
 		}
 
 		/// <summary>
@@ -340,6 +411,49 @@ namespace Electrifier.Win32API {
 			WriteNoHistory = 0x8000000,
 			Redirect = 0x40000000,
 			InitiatedByHLinkFrame = 0x80000000,
+		}
+
+		/// <summary>
+		/// Attributes that can be retrieved on an item (file or folder) or set of items.
+		/// 
+		/// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762589(v=vs.85).aspx
+		/// 
+		/// 
+		/// </summary> 
+
+		[Flags]
+		public enum SFGAO : uint {
+			CanCopy = 0x1,
+			CanMove = 0x2,
+			CanLink = 0x4,
+			Storage = 0x8,
+			CanRename = 0x10,
+			CanDelete = 0x20,
+			HasPropSheet = 0x40,
+			DropTarget = 0x100,
+			CAPABILITYMASK = 0x177,
+			Encrypted = 0x2000,
+			IsSlow = 0x4000,
+			Ghosted = 0x8000,
+			Link = 0x10000,
+			Share = 0x20000,
+			ReadOnly = 0x40000,
+			Hidden = 0x80000,
+			DISPLAYATTRMASK = 0xFC000,
+			FileSysAncestor = 0x10000000,
+			Folder = 0x20000000,
+			FileSystem = 0x40000000,
+			HasSubfolder = 0x80000000,
+			CONTENTSMASK = 0x80000000,
+			Validate = 0x1000000,
+			Removable = 0x2000000,
+			Compressed = 0x4000000,
+			Browsable = 0x8000000,
+			Nonenumerated = 0x100000,
+			NewContent = 0x200000,
+			Stream = 0x400000,
+			StorageAncestor = 0x800000,
+			STORAGECAPMASK = 0x70C50008,
 		}
 
 		[DllImport("shell32.dll")]

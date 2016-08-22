@@ -11,7 +11,7 @@ namespace Electrifier.Core.Shell32.Controls {
 	/// Zusammenfassung für ShellTreeViewNode.
 	/// </summary>
 	public class ShellTreeViewNode : ExtTreeViewNode, IShellObject {
-		protected static IconManager                 iconManager      = (IconManager)ServiceManager.Services.GetService(typeof(IconManager));
+		protected static IconManager                 iconManager      = ServiceManager.Services.GetService(typeof(IconManager)) as IconManager;
 		protected        BasicShellObject            basicShellObject = null;
 		protected new    ShellTreeViewNodeCollection nodes            = null;
 
@@ -35,38 +35,52 @@ namespace Electrifier.Core.Shell32.Controls {
 		public ShellTreeViewNode(IntPtr shellObjectPIDL, bool pidlSelfCreated)
 			: this(new BasicShellObject(shellObjectPIDL, pidlSelfCreated)) { }
 
-		public ShellTreeViewNode(BasicShellObject shellObject) : base() {
-			basicShellObject = shellObject;
-			nodes            = new ShellTreeViewNodeCollection(base.Nodes);
+		public ShellTreeViewNode(BasicShellObject basicShellObject)
+			: base() {
+			this.basicShellObject = basicShellObject;
+			this.nodes = new ShellTreeViewNodeCollection(base.Nodes);
 
-			IsShownExpandable  = true;
-			Text               = DisplayName;
-			ImageIndex         = iconManager.ClosedFolderIndex;
+			this.Text = DisplayName;
+			this.IsShownExpandable = true;
+			this.ImageIndex = iconManager.ClosedFolderIndex;
+			this.SelectedImageIndex = iconManager.OpenedFolderIndex;
 
 			FileInfoUpdated += new FileInfoUpdatedHandler(IShellObject_FileInfoUpdated);
 		}
 
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
-			if (this.ImageIndex != e.ShFileInfo.iIcon) {
-				// See http://stackoverflow.com/questions/14388136/how-to-use-begininvoke-c-sharp
-				base.TreeView.BeginInvoke((Action)(() => {		// TODO: InvokeRequired
-					this.ImageIndex = e.ShFileInfo.iIcon;
-					this.SelectedImageIndex = e.ShFileInfo.iIcon;		// TODO: RELAUNCH: Request real openedfolderindex, see below
-					// TODO: RELAUNCH: Get IconOverlay!
-				}));
-			}
+			if (e.FileInfoThreadResults.ValidValues == IconManager.FileInfoThreadParams.NONE)
+				return;
 
-/* TODO: RELAUNCH: Commented out due incompatibility
-            if (this.imageindex != e.shfileinfo.iicon) {
-                this.imageindex = e.shfileinfo.iicon;
-            }
-            // todo: request real openfolderindex
-            // todo: only if tvif_selectedimage is set, an open image is available
-            if (e.shfileinfo.iicon == iconmanager.closedfolderindex)
-                this.selectedimageindex = iconmanager.openedfolderindex;
-            else
-                this.selectedimageindex = e.shfileinfo.iicon;
- */
+			base.TreeView.BeginInvoke((MethodInvoker)(() => {		// TODO: InvokeRequired
+				if (e.FileInfoThreadResults.ValidValues.HasFlag(IconManager.FileInfoThreadParams.ImageIndex))
+					this.ImageIndex = e.FileInfoThreadResults.ImageIndex;
+
+				if (e.FileInfoThreadResults.ValidValues.HasFlag(IconManager.FileInfoThreadParams.SelectedImageIndex))
+					this.SelectedImageIndex = e.FileInfoThreadResults.SelectedImageIndex;
+
+				if (e.FileInfoThreadResults.ValidValues.HasFlag(IconManager.FileInfoThreadParams.OverlayIndex)) {
+					this.OverlayIndex = e.FileInfoThreadResults.OverlayIndex;
+
+					uint x;
+					if (this.OverlayIndex != 0)
+						x = this.OverlayIndex;
+
+					//if (this.OverlayIndex == 0)
+					//	this.OverlayIndex = (uint)this.ImageIndex & 0xF;
+
+				}
+
+				if (e.FileInfoThreadResults.ValidValues.HasFlag(IconManager.FileInfoThreadParams.HasSubfolder)) {
+					this.IsShownExpandable = e.FileInfoThreadResults.HasSubfolder;
+					// TODO: Namen in FileInfoThreadParams und FileInfoThreadResults angleichen!
+				}
+
+				if (e.FileInfoThreadResults.ValidValues.HasFlag(IconManager.FileInfoThreadParams.IsHidden)) {
+					//this.IsVisible = e.FileInfoThreadResults.IsHidden;
+					//this.
+				}
+			}));
 		}
 
 		public new ShellTreeViewNodeCollection Nodes {
@@ -139,26 +153,30 @@ namespace Electrifier.Core.Shell32.Controls {
 		}
 
 		public ShellTreeViewNode FindChildNodeByPIDL(IntPtr shellObjectPIDL) {
-			// First of all, test whether the given PIDL anyhow derives from this node
-			if(PIDLManager.IsParent(this.AbsolutePIDL, shellObjectPIDL, false)) {
-				// If we have luck, just the this node itself is requested
-				if(PIDLManager.IsEqual(this.AbsolutePIDL, shellObjectPIDL))
-					return this;
+			// Check if this node itself is requested
+			if (PIDLManager.IsEqual(this.AbsolutePIDL, shellObjectPIDL))
+				return this;
 
+			// Then test whether the given PIDL anyhow derives from this node
+			if (PIDLManager.IsParent(this.AbsolutePIDL, shellObjectPIDL, false)) {
+
+				// Now walk through the tree recursively and find the requested node
 				ShellTreeViewNode actNode = this.FirstNode;
+				
 				do {
-					if(PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
+					if (PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
 						return actNode;
-					if(PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
-						if(actNode.Nodes.Count == 0)
+
+					if (PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
+						if (actNode.Nodes.Count == 0)
 							actNode.Expand();
 
 						return actNode.FindChildNodeByPIDL(shellObjectPIDL);
 					}
-				} while((actNode = actNode.NextNode) != null);
+				} while ((actNode = actNode.NextNode) != null);
 
 			}
-			
+
 			return null;
 		}
 
@@ -201,8 +219,8 @@ namespace Electrifier.Core.Shell32.Controls {
 			basicShellObject.DetachFileInfoThread(fileInfoThread);
 		}
 
-		public void UpdateFileInfo(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo) {
-			basicShellObject.UpdateFileInfo(fileInfoThread, shFileInfo);
+		public void UpdateFileInfo(IFileInfoThread fileInfoThread, IconManager.FileInfoThreadResults fileInfoThreadResults) {
+			basicShellObject.UpdateFileInfo(fileInfoThread, fileInfoThreadResults);
 		}
 
 		public event FileInfoUpdatedHandler FileInfoUpdated {

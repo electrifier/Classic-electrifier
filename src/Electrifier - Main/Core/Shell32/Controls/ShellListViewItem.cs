@@ -34,8 +34,8 @@ namespace Electrifier.Core.Shell32.Controls {
 		}
 
 		protected void IShellObject_FileInfoUpdated(object source, FileInfoUpdatedEventArgs e) {
-			if(ImageIndex != e.ShFileInfo.iIcon) {
-				ImageIndex = e.ShFileInfo.iIcon;
+			if (this.ImageIndex != e.FileInfoThreadResults.ImageIndex) {
+				this.ImageIndex = e.FileInfoThreadResults.ImageIndex;
 			}
 		}
 
@@ -60,8 +60,8 @@ namespace Electrifier.Core.Shell32.Controls {
 			basicShellObject.DetachFileInfoThread(fileInfoThread);
 		}
 
-		public void UpdateFileInfo(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo) {
-			basicShellObject.UpdateFileInfo(fileInfoThread, shFileInfo);
+		public void UpdateFileInfo(IFileInfoThread fileInfoThread, IconManager.FileInfoThreadResults fileInfoThreadResults) {
+			basicShellObject.UpdateFileInfo(fileInfoThread, fileInfoThreadResults);
 		}
 
 		public BasicShellObjectCollection GetFolderItemCollection() {

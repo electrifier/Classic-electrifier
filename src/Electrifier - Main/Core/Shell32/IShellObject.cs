@@ -9,13 +9,18 @@ namespace Electrifier.Core.Shell32 {
 	/// </summary>
 	public class FileInfoUpdatedEventArgs : EventArgs {
 		private IFileInfoThread     fileInfoThread = null;
-		public  IFileInfoThread     FileInfoThread { get {	return fileInfoThread; } }
-		private ShellAPI.SHFILEINFO shFileInfo;
-		public  ShellAPI.SHFILEINFO ShFileInfo { get { return shFileInfo; } }
+		public  IFileInfoThread     FileInfoThread { get {	return this.fileInfoThread; } }
+		private IconManager.FileInfoThreadResults fileInfoThreadResults;
+		public IconManager.FileInfoThreadResults FileInfoThreadResults { get { return this.fileInfoThreadResults; } }
+		//private ShellAPI.SHFILEINFO shFileInfo;
+		//public  ShellAPI.SHFILEINFO ShFileInfo { get { return this.shFileInfo; } }
 
-		public FileInfoUpdatedEventArgs(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo) {
+		//private IconManager.FileInfoThreadResults fileInfoThreadResults;
+		//public IconManager.FileInfoThreadResults FileInfoThreadResults { get { return this.fileInfoThreadResults; } }
+
+		public FileInfoUpdatedEventArgs(IFileInfoThread fileInfoThread, IconManager.FileInfoThreadResults fileInfoThreadResults) {
 			this.fileInfoThread = fileInfoThread;
-			this.shFileInfo     = shFileInfo;
+			this.fileInfoThreadResults = fileInfoThreadResults;
 		}
 	}
 
@@ -35,7 +40,7 @@ namespace Electrifier.Core.Shell32 {
 
 		bool AttachFileInfoThread(IFileInfoThread fileInfoThread);
 		void DetachFileInfoThread(IFileInfoThread fileInfoThread);
-		void UpdateFileInfo(IFileInfoThread fileInfoThread, ShellAPI.SHFILEINFO shFileInfo);
+		void UpdateFileInfo(IFileInfoThread fileInfoThread, IconManager.FileInfoThreadResults fileInfoThreadResults);
 
 		BasicShellObjectCollection GetFolderItemCollection();
 
