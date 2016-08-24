@@ -162,8 +162,8 @@ namespace electrifier.Core.Shell32.Controls {
 
 				// Now walk through the tree recursively and find the requested node
 				ShellTreeViewNode actNode = this.FirstNode;
-				
-				do {
+
+				while (null != actNode) {
 					if (PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
 						return actNode;
 
@@ -173,8 +173,9 @@ namespace electrifier.Core.Shell32.Controls {
 
 						return actNode.FindChildNodeByPIDL(shellObjectPIDL);
 					}
-				} while ((actNode = actNode.NextNode) != null);
 
+					actNode = actNode.NextNode;
+				}
 			}
 
 			return null;

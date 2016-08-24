@@ -1,7 +1,4 @@
 using System;
-using System.ComponentModel;
-using System.Collections;
-using System.Diagnostics;
 using System.Windows.Forms;
 
 using System.Runtime.InteropServices;
@@ -119,42 +116,56 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		public void NavigateTo(IntPtr folderPIDL, bool pidlSelfCreated = false) {
-			ShellAPI.FOLDERSETTINGS folderSettings;
+			try {
+				ShellAPI.FOLDERSETTINGS folderSettings;
 
-			if(this.shellView != null)
-				this.shellView.GetCurrentInfo(out folderSettings);
-			else {
-				folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.DETAILS;
-				folderSettings.Flags    = ShellAPI.FOLDERFLAGS.SNAPTOGRID;
-			}
+				if (this.shellView != null)
+					this.shellView.GetCurrentInfo(out folderSettings);
+				else {
+					folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.DETAILS;
+					folderSettings.Flags = ShellAPI.FOLDERFLAGS.SNAPTOGRID;
+				}
 
-			this.DisposePIDLs();
-			this.DisposeIShellFolder();
-			this.DisposeIShellView();
+				this.DisposePIDLs();
+				this.DisposeIShellFolder();
+				this.DisposeIShellView();
 
-			this.absolutePIDL = (pidlSelfCreated ? folderPIDL : PIDLManager.Clone(folderPIDL));
-			this.relativePIDL = PIDLManager.FindLastID(this.absolutePIDL);
-			this.shellFolder  = desktopFolder.GetIShellFolder(folderPIDL);
+				this.absolutePIDL = (pidlSelfCreated ? folderPIDL : PIDLManager.Clone(folderPIDL));
+				this.relativePIDL = PIDLManager.FindLastID(this.absolutePIDL);
+				this.shellFolder = desktopFolder.GetIShellFolder(folderPIDL);
 
-			if(this.shellFolder != null) {
-				IntPtr pShellView;
+				if (this.shellFolder != null) {
+					IntPtr pShellView;
 
-				this.shellFolder.CreateViewObject(this.Handle, ref ShellAPI.IID_IShellView, out pShellView);
+					int hResultVO = this.shellFolder.CreateViewObject(this.Handle, ref ShellAPI.IID_IShellView, out pShellView);
 
-				if(pShellView != IntPtr.Zero) {
-					this.shellView = Marshal.GetTypedObjectForIUnknown(pShellView, typeof(ShellAPI.IShellView)) as ShellAPI.IShellView;
-					// TODO: Refactor the code above...
+					if (pShellView != IntPtr.Zero) {
+						this.shellView = Marshal.GetTypedObjectForIUnknown(pShellView, typeof(ShellAPI.IShellView)) as ShellAPI.IShellView;
+						// TODO: Refactor the code above...
 
-					if(this.shellView != null) {
-						Win32API.RECT viewDimensions = new Win32API.RECT(this.ClientRectangle);
+						if (this.shellView != null) {
+							Win32API.RECT viewDimensions = new Win32API.RECT(this.ClientRectangle);
 
-						this.shellView.CreateViewWindow(null, ref folderSettings, this, ref viewDimensions, out this.shellViewHandle);
-						this.shellView.UIActivate(ShellAPI.SVUIA.ACTIVATE_NOFOCUS);
+							// TODO: Issue #1, CreateViewWindow fails for e.g. Control Panel (ReturnCode = 1),
+							// so check ReturnCode (OLELastError or something like that) and check why it fails!
+
+							// TODO: CreateViewWindow returns HRESULT
+							// TODO: Set previous (First parameter)
+							uint hResult = this.shellView.CreateViewWindow(null, ref folderSettings, this, ref viewDimensions, out this.shellViewHandle);
+							if(hResult != 0) {
+								MessageBox.Show("ShellBrowser.NavigateTo: CreateViewWindow failed!\n" +
+									"HRESULT = " + hResult, "electrifier: Unhandled Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							}
+
+							this.shellView.UIActivate(ShellAPI.SVUIA.ACTIVATE_NOFOCUS);
+						}
 					}
 				}
-			}
+			} catch(Exception e) {
+				// TODO: Error-handling?!?
 
-			// TODO: Error-handling?!?
+				MessageBox.Show("ShellBrowser.cs: ShellBrowser.NavigateTo:\nUnknown exception!\n" + e.Message);
+			}
 		}
 
 		#region Vom Komponenten-Designer generierter Code

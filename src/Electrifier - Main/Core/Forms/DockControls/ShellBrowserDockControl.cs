@@ -84,19 +84,24 @@ namespace electrifier.Core.Forms.DockControls {
 		}
 
 		protected void UpdateDockCaption() {
-			if (this.IsHandleCreated) {
-				/*
-				 * See http://stackoverflow.com/questions/1167771/methodinvoker-vs-action-for-control-begininvoke
-				 * why BeginInvoke((MethodInvoker)...) should be faster than this.BeginInvoke((Action)...)
-				 */
+			if (null != this.shellTreeView.SelectedNode) {
+				if (this.IsHandleCreated) {
+					/*
+					 * See http://stackoverflow.com/questions/1167771/methodinvoker-vs-action-for-control-begininvoke
+					 * why BeginInvoke((MethodInvoker)...) should be faster than this.BeginInvoke((Action)...)
+					 */
 
-				this.BeginInvoke((MethodInvoker)(() => {		// TODO: InvokeRequired
+					this.BeginInvoke((MethodInvoker)(() => {    // TODO: InvokeRequired
+						this.Text = this.shellTreeView.SelectedNode.Text;
+						this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
+					}));
+				} else {
 					this.Text = this.shellTreeView.SelectedNode.Text;
 					this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
-				}));
+				}
 			} else {
-				this.Text = this.shellTreeView.SelectedNode.Text;
-				this.Icon = IconManager.GetIconFromPIDL(this.shellTreeView.SelectedNode.AbsolutePIDL, false);
+				// TODO: Error-Handling
+				MessageBox.Show("ShellBrowserDockControl:UpdateDockCaption\n\n'this.shellTreeView.SelectedNode is null'");
 			}
 		}
 
@@ -149,19 +154,23 @@ namespace electrifier.Core.Forms.DockControls {
 
 		private void shellBrowser_BrowseShellObject(object source, BrowseShellObjectEventArgs e) {
 			this.shellTreeView.BeginUpdate();
-			// Currently, the IShellView seems to know that a new folder was browsed to,
-			// and updates itself accordingly
-//			this.shellBrowser.SetBrowsingFolder(e.ShellObjectPIDL);
-			// TODO: The following statements should be ran in another thread
-			this.shellTreeView.SelectedNode = this.shellTreeView.FindNodeByPIDL(e.ShellObjectPIDL);
+
+			try {
+				// Currently, the IShellView seems to know that a new folder was browsed to,
+				// and updates itself accordingly
+				//			this.shellBrowser.SetBrowsingFolder(e.ShellObjectPIDL);
+				// TODO: The following statements should be ran in another thread
+				this.shellTreeView.SelectedNode = this.shellTreeView.FindNodeByPIDL(e.ShellObjectPIDL);
 
 
-			// TODO: Hehe, i like this feature; however, put something into our configuration dialog
-			// to turn this off; also, do this when navigating with the help of the TreeView itself
-			this.shellTreeView.SelectedNode.Expand();
-			//this.shellTreeView.SelectedNode.EnsureVisible();
-			this.shellTreeView.EndUpdate();
-
+				// TODO: Hehe, i like this feature; however, put something into our configuration dialog
+				// to turn this off; also, do this when navigating with the help of the TreeView itself
+				if (null != this.shellTreeView.SelectedNode)
+					this.shellTreeView.SelectedNode.Expand();
+				//this.shellTreeView.SelectedNode.EnsureVisible();
+			} finally {
+				this.shellTreeView.EndUpdate();
+			}
 		}
 	}
 }

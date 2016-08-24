@@ -69,31 +69,32 @@ namespace electrifier.Core.Shell32.Controls {
 		public ShellTreeViewNode FindNodeByPIDL(IntPtr shellObjectPIDL) {
 			this.BeginUpdate();
 
-			// Check if the root node is requested
-			if (PIDLManager.IsEqual(this.rootNode.AbsolutePIDL, shellObjectPIDL))
-				return this.rootNode;
-
 			try {
+				// Check if the root node is requested
+				if (PIDLManager.IsEqual(this.rootNode.AbsolutePIDL, shellObjectPIDL))
+					return this.rootNode;
+
 				// Then test whether the given PIDL anyhow derives from root node
 				if (PIDLManager.IsParent(this.rootNode.AbsolutePIDL, shellObjectPIDL, false)) {
 
 					// Now walk through the tree recursively and find the requested node
 					ShellTreeViewNode actNode = this.rootNode.FirstNode;
-					
-					do {
+
+					while (null != actNode) {
 						if (PIDLManager.IsEqual(actNode.AbsolutePIDL, shellObjectPIDL))
 							return actNode;
-						
+
 						if (PIDLManager.IsParent(actNode.AbsolutePIDL, shellObjectPIDL, false)) {
 							if (actNode.Nodes.Count == 0)
 								actNode.Expand();
 
 							return actNode.FindChildNodeByPIDL(shellObjectPIDL);
 						}
-					} while ((actNode = actNode.NextNode) != null);
+
+						actNode = actNode.NextNode;
+					}
 				}
-			}
-			finally {
+			} finally {
 				this.EndUpdate();
 			}
 
@@ -131,7 +132,7 @@ namespace electrifier.Core.Shell32.Controls {
 						}
 					}
 				}
-				// else do treeview-contextmenu
+				// TODO: else do treeview-contextmenu
 			}
 		}
 	}
