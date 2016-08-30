@@ -1,58 +1,15 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-//
-// Allgemeine Informationen über eine Assembly werden über folgende Attribute 
-// gesteuert. Ändern Sie diese Attributswerte, um die Informationen zu modifizieren,
-// die mit einer Assembly verknüpft sind.
-//
-[assembly: AssemblyTitle("electrifier Desktop Enhancement Suite")]		// Eigenschaften/Version/Beschreibung
-[assembly: AssemblyDescription("electrifier Application Launcher")]		// Eigenschaften/Version/Kommentare
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("electrifier.org")]									// Eigenschaften/Version/Firma
-[assembly: AssemblyProduct("electrifier")]										// Eigenschaften/Version/Produktname
-[assembly: AssemblyCopyright("(c) 2004 Thorsten Jung")]						// Eigenschaften/Version/Copyright
-[assembly: AssemblyTrademark("")]													// Eigenschaften/Version/Marken
-[assembly: AssemblyCulture("")]
+///
+// electrifier.exe - AssemblyInfo.cs
+///
 
-//
-// Versionsinformationen für eine Assembly bestehen aus folgenden vier Werten:
-//
-//      Hauptversion
-//      Nebenversion 
-//      Buildnummer
-//      Revision
-//
-// Sie können alle Werte oder die standardmäßige Revision und Buildnummer 
-// mit '*' angeben:
-
-[assembly: AssemblyVersion("0.0.1")]
-
-//
-// Um die Assembly zu signieren, müssen Sie einen Schlüssel angeben. Weitere Informationen 
-// über die Assemblysignierung finden Sie in der Microsoft .NET Framework-Dokumentation.
-//
-// Mit den folgenden Attributen können Sie festlegen, welcher Schlüssel für die Signierung verwendet wird. 
-//
-// Hinweise: 
-//   (*) Wenn kein Schlüssel angegeben ist, wird die Assembly nicht signiert.
-//   (*) KeyName verweist auf einen Schlüssel, der im CSP (Crypto Service
-//       Provider) auf Ihrem Computer installiert wurde. KeyFile verweist auf eine Datei, die einen
-//       Schlüssel enthält.
-//   (*) Wenn die Werte für KeyFile und KeyName angegeben werden, 
-//       werden folgende Vorgänge ausgeführt:
-//       (1) Wenn KeyName im CSP gefunden wird, wird dieser Schlüssel verwendet.
-//       (2) Wenn KeyName nicht vorhanden ist und KeyFile vorhanden ist, 
-//           wird der Schlüssel in KeyFile im CSP installiert und verwendet.
-//   (*) Um eine KeyFile zu erstellen, können Sie das Programm sn.exe (Strong Name) verwenden.
-//       Wenn KeyFile angegeben wird, muss der Pfad von KeyFile
-//       relativ zum Projektausgabeverzeichnis sein:
-//       %Project Directory%\obj\<configuration>. Wenn sich KeyFile z.B.
-//       im Projektverzeichnis befindet, geben Sie das AssemblyKeyFile-Attribut 
-//       wie folgt an: [assembly: AssemblyKeyFile("..\\..\\mykey.snk")]
-//   (*) Das verzögern der Signierung ist eine erweiterte Option. Weitere Informationen finden Sie in der
-//       Microsoft .NET Framework-Dokumentation.
-//
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
-[assembly: AssemblyKeyName("")]
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("electrifier.exe - Application Launcher")]
+[assembly: AssemblyDescription("Launches electrifier application")]
+//[assembly: AssemblyCulture("")]
+[assembly: Guid("D68BA01B-276A-4B43-86AC-A88DDF09A50C")]
