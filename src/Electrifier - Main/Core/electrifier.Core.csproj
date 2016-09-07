@@ -297,6 +297,11 @@
     <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.de.ribbon">
       <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
     </EmbeddedResource>
+    <None Include="Forms\MainWindowForm.RibbonMarkup.log">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
+    </None>
     <None Include="Forms\MainWindowForm.RibbonMarkup.shortcuts" />
     <None Include="packages.config" />
   </ItemGroup>
@@ -309,8 +314,22 @@
     <Content Include="Forms\MainWindowForm.RibbonMarkup.xml">
       <Generator>RibbonGenerator</Generator>
       <SubType>Designer</SubType>
+      <LastGenOutput>MainWindowForm.RibbonMarkup.log</LastGenOutput>
     </Content>
-    <Content Include="Resources\Commands\New_tab.bmp" />
+    <Content Include="Resources\Commands\app_close.bmp" />
+    <Content Include="Resources\Commands\app_commandprompt.bmp" />
+    <Content Include="Resources\Commands\app_electrifieroptions.bmp" />
+    <Content Include="Resources\Commands\app_folderoptions.bmp" />
+    <Content Include="Resources\Commands\app_help.bmp" />
+    <Content Include="Resources\Commands\app_newelectrifierwindow.bmp" />
+    <Content Include="Resources\Commands\app_newtab.bmp" />
+    <Content Include="Resources\Commands\app_windowspowershell.bmp" />
+    <Content Include="Resources\Commands\clipboard_copy.bmp" />
+    <Content Include="Resources\Commands\clipboard_cut.bmp" />
+    <Content Include="Resources\Commands\clipboard_paste.bmp" />
+    <Content Include="Resources\Commands\organize_delete.bmp" />
+    <Content Include="Resources\Commands\organize_moveto.bmp" />
+    <Content Include="Resources\Commands\organize_rename.bmp" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

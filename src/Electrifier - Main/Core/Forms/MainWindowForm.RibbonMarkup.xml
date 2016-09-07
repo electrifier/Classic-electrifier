@@ -1,100 +1,261 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
 <Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
-  <Application.Commands>
+	<Application.Commands>
 
-    <Command Name="cmdTab"
-         Id="1012"
-         LabelTitle="{Resource:cmdHomeTab_LabelTitle}">
-    </Command>
+		<Command Name="cmdBtnHelp"
+		         Id="19999">
+		</Command>
 
-    <Command Name="cmdGroup"
-             Id="1015"
-             LabelTitle="{Resource:cmdGroup_LabelTitle}">
-    </Command>
+		<!--
+		//// Backstage View respectively Application Menu Items //////////////////////////////////////////////////////////////////
+		-->
 
+		<Command Name="cmdBtnApp_OpenNewWindow"
+		         Id="10000"
+		         LabelTitle="Open &amp;new electrifier Window"
+		         LabelDescription="Open new window"
+		         TooltipTitle="New window"
+		         TooltipDescription="Opens a new window.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_newelectrifierwindow.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-    <Command Name="cmdButtonOne"
-             Id="1008"
-             LabelTitle="{Resource:cmdHomeNewShellBrowserPanel_LabelTitle}"
-             TooltipTitle="{Resource:cmdHomeNewShellBrowserPanel_TooltipTitle}"
-             TooltipDescription="{Resource:cmdHomeNewShellBrowserPanel_TooltipDescription}">
-      <Command.LargeImages>
-        <Image>../Resources/Commands/New_Tab.bmp</Image>
-      </Command.LargeImages>
-    </Command>
+		<Command Name="cmdBtnApp_OpenNewShellBrowserPanel"
+		         Id="10001"
+		         LabelTitle="{Resource:cmdHomeNewShellBrowserPanel_LabelTitle}"
+		         LabelDescription="New Description"
+		         TooltipTitle="{Resource:cmdHomeNewShellBrowserPanel_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdHomeNewShellBrowserPanel_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_newtab.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-    <Command Name="cmdButtonNew"
-             Id="1001"
-             LabelTitle="&amp;New"
-             LabelDescription="New Description"
-             TooltipTitle="New"
-             TooltipDescription="Create a new image.">
-    </Command>
+		<Command Name="cmdBtnApp_OpenCommandPrompt"
+		         Id="10002"
+		         LabelTitle="Open command &amp;prompt"
+		         LabelDescription="Open Description"
+		         TooltipTitle="Open"
+		         TooltipDescription="Open an existing image.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_commandprompt.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-    <Command Name="cmdButtonOpen"
-             Id="1002"
-             LabelTitle="Open"
-             LabelDescription="Open Description"
-             TooltipTitle="Open"
-             TooltipDescription="Open an existing image.">
-    </Command>
+		<Command Name="cmdBtnApp_OpenWindowsPowerShell"
+		         Id="10003"
+		         LabelTitle="Open Windows Powe&amp;rShell"
+		         LabelDescription="Save Description"
+		         TooltipTitle="Save"
+		         TooltipDescription="Save the current image.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_windowspowershell.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-    <Command Name="cmdButtonSave"
-             Id="1003"
-             LabelTitle="Save"
-             LabelDescription="Save Description"
-             TooltipTitle="Save"
-             TooltipDescription="Save the current image.">
-    </Command>
+		<Command Name="cmdBtnApp_ChangeElectrifierOptions"
+		         Id="10010"
+		         LabelTitle="Change electrifier options"
+		         LabelDescription="Change electrifier Description"
+		         TooltipTitle="Change electrifier options"
+		         TooltipDescription="Change electrifier options.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_electrifieroptions.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-    <Command Name="cmdButtonExit"
-             Id="1004"
-             LabelTitle="Exit"
-             LabelDescription="Exit Description"
-             TooltipTitle="Exit"
-             TooltipDescription="Exit application.">
-    </Command>
-  </Application.Commands>
+		<Command Name="cmdBtnApp_ChangeFolderAndSearchOptions"
+		         Id="10011"
+		         LabelTitle="Change folder and search options"
+		         LabelDescription="Change folder and search options Description"
+		         TooltipTitle="Change folder and search options"
+		         TooltipDescription="Change folder and search options.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_folderoptions.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-  <Application.Views>
-    <Ribbon>
-      <Ribbon.ApplicationMenu>
-        <ApplicationMenu>
-          <MenuGroup>
-            <Button CommandName='cmdButtonNew' />
-            <Button CommandName='cmdButtonOpen' />
-            <Button CommandName='cmdButtonSave' />
-            <Button CommandName='cmdButtonOne' />
-          </MenuGroup>
-          <MenuGroup>
-            <Button CommandName='cmdButtonExit' />
-          </MenuGroup>
-        </ApplicationMenu>
-      </Ribbon.ApplicationMenu>
+		<Command Name="cmdBtnApp_Help"
+		         Id="10020"
+		         LabelTitle="Help"
+		         LabelDescription="Help Description"
+		         TooltipTitle="Help"
+		         TooltipDescription="Open help.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_help.bmp</Image>
+			</Command.LargeImages>
+		</Command>
 
-      <Ribbon.QuickAccessToolbar>
-        <QuickAccessToolbar CommandName="cmdQAT"
+		<Command Name="cmdBtnApp_Close"
+		         Id="10030"
+		         LabelTitle="Close"
+		         LabelDescription="Close Description"
+		         TooltipTitle="Close"
+		         TooltipDescription="Close application.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_close.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<!--
+		//// Ribbon tabs /////////////////////////////////////////////////////////////////////////////////////////////////////////
+		-->
+
+		<Command Name="cmdTabHome"
+		         Id="20000"
+		         LabelTitle="{Resource:cmdTabHome_LabelTitle}">
+		</Command>
+
+		<Command Name="cmdTabShare"
+		         Id="30000"
+		         LabelTitle="{Resource:cmdTabShare_LabelTitle}">
+		</Command>
+
+		<Command Name="cmdTabView"
+		         Id="40000"
+		         LabelTitle="{Resource:cmdTabView_LabelTitle}">
+		</Command>
+
+		<!--
+		//// Command Group One: Clipboard ////////////////////////////////////////////////////////////////////////////////////////
+		-->
+
+		<Command Name="cmdGrpHomeClipboard"
+		         Id="20100"
+		         LabelTitle="{Resource:cmdGrpHomeClipboard_LabelTitle}">
+		</Command>
+
+		<Command Name="cmdBtnClipboardCut"
+		         Id="20101"
+		         LabelTitle="{Resource:cmdBtnClipboardCut_LabelTitle}"
+		         TooltipTitle="{Resource:cmdBtnClipboardCut_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdBtnClipboardCut_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/clipboard_cut.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<Command Name="cmdBtnClipboardCopy"
+		         Id="20102"
+		         LabelTitle="{Resource:cmdBtnClipboardCopy_LabelTitle}"
+		         TooltipTitle="{Resource:cmdBtnClipboardCopy_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdBtnClipboardCopy_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/clipboard_copy.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<Command Name="cmdBtnClipboardPaste"
+		         Id="20103"
+		         LabelTitle="{Resource:cmdBtnClipboardPaste_LabelTitle}"
+		         TooltipTitle="{Resource:cmdBtnClipboardPaste_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdBtnClipboardPaste_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/clipboard_paste.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<!--
+		//// Command Group Two: Organize /////////////////////////////////////////////////////////////////////////////////////////
+		-->
+
+		<Command Name="cmdGrpHomeOrganize"
+		         Id="20200"
+		         LabelTitle="{Resource:cmdGrpHomeOrganize_LabelTitle}">
+		</Command>
+
+		<Command Name="cmdBtnOrganizeMoveTo"
+		         Id="20201"
+		         LabelTitle="{Resource:cmdBtnOrganizeMoveTo_LabelTitle}"
+		         TooltipTitle="{Resource:cmdBtnOrganizeMoveTo_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdBtnOrganizeMoveTo_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/organize_moveto.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<Command Name="cmdBtnOrganizeDelete"
+		         Id="20202"
+		         LabelTitle="{Resource:cmdBtnOrganizeDelete_LabelTitle}"
+		         TooltipTitle="{Resource:cmdBtnOrganizeDelete_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdBtnOrganizeDelete_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/organize_delete.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<Command Name="cmdBtnOrganizeRename"
+		         Id="20203"
+		         LabelTitle="{Resource:cmdBtnOrganizeRename_LabelTitle}"
+		         TooltipTitle="{Resource:cmdBtnOrganizeRename_TooltipTitle}"
+		         TooltipDescription="{Resource:cmdBtnOrganizeRename_TooltipDescription}">
+			<Command.LargeImages>
+				<Image>../resources/commands/organize_rename.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+	</Application.Commands>
+
+	<!--
+	//// Applications views ////////////////////////////////////////////////////////////////////////////////////////////////////
+	-->
+
+	<Application.Views>
+		<Ribbon>
+
+			<Ribbon.QuickAccessToolbar>
+				<QuickAccessToolbar CommandName="cmdQAT"
                             CustomizeCommandName="cmdCustomizeQAT">
-          <QuickAccessToolbar.ApplicationDefaults>
-            <Button CommandName="cmdButton1"/>
-            <ToggleButton CommandName="cmdMinimize"
+					<QuickAccessToolbar.ApplicationDefaults>
+						<!--						<Button CommandName="cmdButton1"/> -->
+						<ToggleButton CommandName="cmdMinimize"
                           ApplicationDefaults.IsChecked="false"/>
-          </QuickAccessToolbar.ApplicationDefaults>
-        </QuickAccessToolbar>
-      </Ribbon.QuickAccessToolbar>
+					</QuickAccessToolbar.ApplicationDefaults>
+				</QuickAccessToolbar>
+			</Ribbon.QuickAccessToolbar>
 
-      <Ribbon.Tabs>
-        <Tab CommandName ="cmdTab">
-          <Group CommandName="cmdGroup" SizeDefinition="ThreeButtons">
-            <Button CommandName="cmdButtonOne" />
-            <Button CommandName="cmdButtonTwo" />
-            <Button CommandName="cmdButtonThree" />
-          </Group>
-        </Tab>
-      </Ribbon.Tabs>
+			<Ribbon.HelpButton>
+				<HelpButton CommandName="cmdBtnHelp" />
+			</Ribbon.HelpButton>
 
+			<Ribbon.ApplicationMenu>
+				<ApplicationMenu>
+					<MenuGroup>
+						<Button CommandName="cmdBtnApp_OpenNewWindow" />
+						<Button CommandName="cmdBtnApp_OpenNewShellBrowserPanel" />
+						<Button CommandName="cmdBtnApp_OpenCommandPrompt" />
+						<Button CommandName="cmdBtnApp_OpenWindowsPowerShell" />
+					</MenuGroup>
+					<MenuGroup>
+						<Button CommandName="cmdBtnApp_ChangeElectrifierOptions" />
+						<Button CommandName="cmdBtnApp_ChangeFolderAndSearchOptions" />
+						<Button CommandName="cmdBtnApp_Help" />
+						<Button CommandName="cmdBtnApp_Close" />
+					</MenuGroup>
+				</ApplicationMenu>
+			</Ribbon.ApplicationMenu>
 
+			<Ribbon.Tabs>
+				<Tab CommandName ="cmdTabHome">
+					<Group CommandName="cmdGrpHomeClipboard" SizeDefinition="ThreeButtons">
+						<Button CommandName="cmdBtnClipboardCut" />
+						<Button CommandName="cmdBtnClipboardCopy" />
+						<Button CommandName="cmdBtnClipboardPaste" />
+					</Group>
+					<Group CommandName="cmdGrpHomeOrganize" SizeDefinition="ThreeButtons">
+						<Button CommandName="cmdBtnOrganizeMoveTo" />
+						<Button CommandName="cmdBtnOrganizeDelete" />
+						<Button CommandName="cmdBtnOrganizeRename" />
+					</Group>
+				</Tab>
 
-    </Ribbon>
-  </Application.Views>
+				<Tab CommandName ="cmdTabShare">
+				</Tab>
+
+				<Tab CommandName ="cmdTabView">
+				</Tab>
+			</Ribbon.Tabs>
+
+		</Ribbon>
+	</Application.Views>
 </Application>

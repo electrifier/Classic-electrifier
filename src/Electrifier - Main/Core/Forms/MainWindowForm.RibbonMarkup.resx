@@ -117,6 +117,30 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="cmdBtnClipboardCopy_LabelTitle" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="cmdBtnClipboardCut_LabelTitle" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="cmdBtnClipboardPaste_LabelTitle" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="cmdBtnOrganizeDelete_LabelTitle" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="cmdBtnOrganizeMoveTo_LabelTitle" xml:space="preserve">
+    <value>Move to</value>
+  </data>
+  <data name="cmdBtnOrganizeRename_LabelTitle" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="cmdGrpHomeClipboard_LabelTitle" xml:space="preserve">
+    <value>Clipboard</value>
+  </data>
+  <data name="cmdGrpHomeOrganize_LabelTitle" xml:space="preserve">
+    <value>Organize</value>
+  </data>
   <data name="cmdHomeNewShellBrowserPanel_LabelTitle" xml:space="preserve">
     <value>New Panel</value>
   </data>
@@ -126,7 +150,13 @@
   <data name="cmdHomeNewShellBrowserPanel_TooltipTitle" xml:space="preserve">
     <value>Open new electrifier panel</value>
   </data>
-  <data name="cmdHomeTab_LabelTitle" xml:space="preserve">
+  <data name="cmdTabHome_LabelTitle" xml:space="preserve">
     <value>Home</value>
+  </data>
+  <data name="cmdTabShare_LabelTitle" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="cmdTabView_LabelTitle" xml:space="preserve">
+    <value>View</value>
   </data>
 </root>
