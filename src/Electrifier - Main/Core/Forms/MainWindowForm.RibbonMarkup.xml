@@ -1,5 +1,5 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<Application xmlns='http://schemas.microsoft.com/windows/2009/Ribbon'>
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://schemas.microsoft.com/windows/2009/Ribbon">
 	<Application.Commands>
 
 		<Command Name="cmdBtnHelp"
@@ -58,7 +58,7 @@
 		         Id="10010"
 		         LabelTitle="Change electrifier options"
 		         LabelDescription="Change electrifier Description"
-		         TooltipTitle="Change electrifier options"
+		         TooltipTitle="electrifier options"
 		         TooltipDescription="Change electrifier options.">
 			<Command.LargeImages>
 				<Image>../resources/commands/app_electrifieroptions.bmp</Image>
@@ -69,7 +69,7 @@
 		         Id="10011"
 		         LabelTitle="Change folder and search options"
 		         LabelDescription="Change folder and search options Description"
-		         TooltipTitle="Change folder and search options"
+		         TooltipTitle="Folder and search options"
 		         TooltipDescription="Change folder and search options.">
 			<Command.LargeImages>
 				<Image>../resources/commands/app_folderoptions.bmp</Image>
@@ -82,6 +82,28 @@
 		         LabelDescription="Help Description"
 		         TooltipTitle="Help"
 		         TooltipDescription="Open help.">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_help.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<Command Name="cmdBtnApp_Help_AboutElectrifier"
+		         Id="10021"
+		         LabelTitle="About"
+		         LabelDescription="About electrifier"
+		         TooltipTitle="About"
+		         TooltipDescription="Show information about electrifier">
+			<Command.LargeImages>
+				<Image>../resources/commands/app_help.bmp</Image>
+			</Command.LargeImages>
+		</Command>
+
+		<Command Name="cmdBtnApp_Help_AboutWindows"
+		         Id="10025"
+		         LabelTitle="Windows info"
+		         LabelDescription="Show information about Windows"
+		         TooltipTitle="About"
+		         TooltipDescription="Show information about Windows">
 			<Command.LargeImages>
 				<Image>../resources/commands/app_help.bmp</Image>
 			</Command.LargeImages>
@@ -229,14 +251,27 @@
 					<MenuGroup>
 						<Button CommandName="cmdBtnApp_ChangeElectrifierOptions" />
 						<Button CommandName="cmdBtnApp_ChangeFolderAndSearchOptions" />
-						<Button CommandName="cmdBtnApp_Help" />
+						<SplitButton>
+							<SplitButton.ButtonItem>
+								<Button CommandName="cmdBtnApp_Help" />
+							</SplitButton.ButtonItem>
+							<SplitButton.MenuGroups>
+								<MenuGroup Class="MajorItems">
+									<Button CommandName="cmdBtnApp_Help" />
+									<Button CommandName="cmdBtnApp_Help_AboutElectrifier" />
+								</MenuGroup>
+								<MenuGroup Class="MajorItems">
+									<Button CommandName="cmdBtnApp_Help_AboutWindows" />
+								</MenuGroup>
+							</SplitButton.MenuGroups>
+						</SplitButton>
 						<Button CommandName="cmdBtnApp_Close" />
 					</MenuGroup>
 				</ApplicationMenu>
 			</Ribbon.ApplicationMenu>
 
 			<Ribbon.Tabs>
-				<Tab CommandName ="cmdTabHome">
+				<Tab CommandName="cmdTabHome">
 					<Group CommandName="cmdGrpHomeClipboard" SizeDefinition="ThreeButtons">
 						<Button CommandName="cmdBtnClipboardCut" />
 						<Button CommandName="cmdBtnClipboardCopy" />
@@ -249,10 +284,10 @@
 					</Group>
 				</Tab>
 
-				<Tab CommandName ="cmdTabShare">
+				<Tab CommandName="cmdTabShare">
 				</Tab>
 
-				<Tab CommandName ="cmdTabView">
+				<Tab CommandName="cmdTabView">
 				</Tab>
 			</Ribbon.Tabs>
 

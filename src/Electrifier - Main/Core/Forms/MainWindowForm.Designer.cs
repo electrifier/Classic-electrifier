@@ -38,21 +38,21 @@
             WeifenLuo.WinFormsUI.Docking.DockPanelGradient dockPanelGradient3 = new WeifenLuo.WinFormsUI.Docking.DockPanelGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient6 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
             WeifenLuo.WinFormsUI.Docking.TabGradient tabGradient7 = new WeifenLuo.WinFormsUI.Docking.TabGradient();
-            this.ribbon1 = new RibbonLib.Ribbon();
+            this._mainRibbon = new RibbonLib.Ribbon();
             this.panel1 = new System.Windows.Forms.Panel();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // ribbon1
+            // _mainRibbon
             // 
-            this.ribbon1.Location = new System.Drawing.Point(0, 0);
-            this.ribbon1.Minimized = false;
-            this.ribbon1.Name = "ribbon1";
-            this.ribbon1.ResourceName = "electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
-            this.ribbon1.ShortcutTableResourceName = null;
-            this.ribbon1.Size = new System.Drawing.Size(624, 141);
-            this.ribbon1.TabIndex = 0;
+            this._mainRibbon.Location = new System.Drawing.Point(0, 0);
+            this._mainRibbon.Minimized = false;
+            this._mainRibbon.Name = "_mainRibbon";
+            this._mainRibbon.ResourceName = "electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
+            this._mainRibbon.ShortcutTableResourceName = null;
+            this._mainRibbon.Size = new System.Drawing.Size(624, 141);
+            this._mainRibbon.TabIndex = 0;
             // 
             // panel1
             // 
@@ -125,7 +125,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 442);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.ribbon1);
+            this.Controls.Add(this._mainRibbon);
             this.Name = "MainWindowForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "MainWindowForm";
@@ -137,7 +137,7 @@
 
         #endregion
 
-        private RibbonLib.Ribbon ribbon1;
+        private RibbonLib.Ribbon _mainRibbon;
         private System.Windows.Forms.Panel panel1;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
     }

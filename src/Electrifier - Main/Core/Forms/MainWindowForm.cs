@@ -16,43 +16,68 @@ using electrifier.Core.Forms.DockControls;
 
 namespace electrifier.Core.Forms {
 	public enum RibbonMarkupCommands : uint {
-		cmdTab = 1012,
-		cmdGroup = 1015,
-		cmdButtonOne = 1008,
-		cmdButtonTwo = 1009,
-		cmdButtonThree = 1010,
+		//// Backstage View respectively Application Menu Items //////////////////////////////////////////////////////////////////
+		cmdBtnApp_OpenNewWindow = 10000,
+		cmdBtnApp_OpenNewShellBrowserPanel = 10001,
+		cmdBtnApp_OpenCommandPrompt = 10002,
+		cmdBtnApp_OpenWindowsPowerShell = 10003,
+		cmdBtnApp_ChangeElectrifierOptions = 10010,
+		cmdBtnApp_ChangeFolderAndSearchOptions = 10011,
+		cmdBtnApp_Help = 10020,
+		cmdBtnApp_Help_AboutElectrifier = 10021,
+		cmdBtnApp_Help_AboutWindows = 10025,
+		cmdBtnApp_Close = 10030,
+		//// Ribbon tabs /////////////////////////////////////////////////////////////////////////////////////////////////////////
+		cmdTabHome = 20000,
+		cmdTabShare = 30000,
+		cmdTabView = 40000,
+		//// Command Group One: Clipboard ////////////////////////////////////////////////////////////////////////////////////////
+		cmdGrpHomeClipboard = 20100,
+		cmdBtnClipboardCut = 20101,
+		cmdBtnClipboardCopy = 20102,
+		cmdBtnClipboardPaste = 20103,
+		//// Command Group Two: Organize /////////////////////////////////////////////////////////////////////////////////////////
+		cmdGrpHomeOrganize = 20200,
+		cmdBtnOrganizeMoveTo = 20201,
+		cmdBtnOrganizeDelete = 20202,
+		cmdBtnOrganizeRename = 20203,
 	}
 
 	public struct LastKnownFormState {
 		public FormWindowState FormWindowState;
-		public Point           Location;
-		public Size            Size;
+		public Point Location;
+		public Size Size;
 	}
 
 	/// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
 	public partial class MainWindowForm : Form, IPersistentForm, IDockControlContainer {
-		protected Guid                     guid                    = Guid.NewGuid();
-		public    Guid                     Guid                    { get { return guid; } }
+		protected Guid guid = Guid.NewGuid();
+		public Guid Guid { get { return guid; } }
 		protected IPersistentFormContainer persistentFormContainer = null;
-		public    IPersistentFormContainer PersistentFormContainer { get { return persistentFormContainer; } }
-		protected ArrayList                dockControlList         = new ArrayList();
+		public IPersistentFormContainer PersistentFormContainer { get { return persistentFormContainer; } }
+		protected ArrayList dockControlList = new ArrayList();
 
-		private   RibbonTab                _ribbonTab;
-		private   RibbonButton             _ribbonButton1;
+		private RibbonButton _cmdBtnApp_OpenNewShellBrowserPanel;
+		private RibbonButton _cmdBtnApp_Close;
+		private RibbonTab _cmdTabHome;
 
-		protected LastKnownFormState       _lastKnownFormState;
-
+		protected LastKnownFormState _lastKnownFormState;
 
 		public MainWindowForm() {
 			InitializeComponent();
 
 			this.Icon = AppContext.Icon;
 
-			this._ribbonTab = new RibbonTab(this.ribbon1, (uint)RibbonMarkupCommands.cmdTab);
-			this._ribbonButton1 = new RibbonButton(this.ribbon1, (uint)RibbonMarkupCommands.cmdButtonOne);
-			this._ribbonButton1.ExecuteEvent += new EventHandler<ExecuteEventArgs>(newShellBrowserToolStripMenuItem_Click);
+			this._cmdBtnApp_OpenNewShellBrowserPanel = new RibbonButton(this._mainRibbon, (uint)RibbonMarkupCommands.cmdBtnApp_OpenNewShellBrowserPanel);
+			this._cmdBtnApp_OpenNewShellBrowserPanel.ExecuteEvent += new EventHandler<ExecuteEventArgs>(cmdBtnApp_OpenNewShellBrowserPanel_ExecuteEvent);
+			this._cmdBtnApp_Close = new RibbonButton(this._mainRibbon, (uint)RibbonMarkupCommands.cmdBtnApp_Close);
+			this._cmdBtnApp_Close.ExecuteEvent += new EventHandler<ExecuteEventArgs>(cmdBtnApp_Close_ExecuteEvent);
+			this._cmdTabHome = new RibbonTab(this._mainRibbon, (uint)RibbonMarkupCommands.cmdTabHome);
+
+
+
 
 			// TODO: RELAUNCH: Test-Code...
 			FolderBarDockControl folderBarDockControl = new FolderBarDockControl();
@@ -89,7 +114,7 @@ namespace electrifier.Core.Forms {
 			*/
 		}
 
-		private void newShellBrowserToolStripMenuItem_Click(object sender, EventArgs e) {
+		private void cmdBtnApp_OpenNewShellBrowserPanel_ExecuteEvent(object sender, EventArgs e) {
 			ShellBrowserDockControl shellBrowserDockControl = new ShellBrowserDockControl();
 			shellBrowserDockControl.AttachToDockControlContainer(this);
 
@@ -101,8 +126,12 @@ namespace electrifier.Core.Forms {
 			}
 		}
 
-		private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
-			this.Close();
+		private void cmdBtnApp_Close_ExecuteEvent(object sender, EventArgs e) {
+			// Close form asynchronously since we are in a ribbon event 
+			// handler, so the ribbon is still in use, and calling Close 
+			// will eventually call _ribbon.DestroyFramework(), which is 
+			// a big no-no, if you still use the ribbon.
+			this.BeginInvoke(new MethodInvoker(this.Close));
 		}
 
 		#region IPersistentForm Member
@@ -127,7 +156,7 @@ namespace electrifier.Core.Forms {
 			mainWindowNode.Attributes.Append(widthAttr);
 			mainWindowNode.Attributes.Append(heightAttr);
 			mainWindowNode.Attributes.Append(windowStateAttr);
-			
+
 			// Append persistence information for each hosted DockControl
 			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
 			foreach (IDockControl dockControl in dockControlList) {
