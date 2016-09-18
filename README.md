@@ -1,4 +1,5 @@
 # electrifier
+Desktop enhancement suite
 
 electrifier is an open-source project. It aims to be a replacement for standard Windows Explorer.
 electrifier features a ribbon as a replacement for its menu-bar (which can be used alternatively), full internationalization (currently English and German are supported), full drag and drop-support, allowing you to drag and drop shell objects from and to electrifier windows as also to windows explorer or your desktop, and a full-featured multi-tab experience.
