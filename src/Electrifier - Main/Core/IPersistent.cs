@@ -1,14 +1,11 @@
-using System;
 using System.Xml;
 
-namespace electrifier.Core
-{
+namespace electrifier.Core {
 	/// <summary>
-	/// Zusammenfassung für IPersistent.
+	/// Summary of IPersistent.
 	/// </summary>
-	public interface IPersistent
-	{
-		XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument);
-		void    ApplyPersistenceInfo(XmlNode persistenceInfo);
+	public interface IPersistent {
+		void CreatePersistenceInfo(XmlWriter xmlWriter);
+		void ApplyPersistenceInfo(XmlNode persistenceInfo);
 	}
 }

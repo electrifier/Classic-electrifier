@@ -1,4 +1,5 @@
 *.csproj.user
+*.ribbon
 *.RibbonMarkup.log
 *.suo
 src/Electrifier - Main/*/bin/

@@ -1,12 +1,10 @@
 using System;
 
-namespace electrifier.Core
-{
+namespace electrifier.Core {
 	/// <summary>
-	/// Zusammenfassung für IPersistentForm.
+	/// Summary of IPersistentForm.
 	/// </summary>
-	public interface IPersistentForm : IPersistent
-	{
+	public interface IPersistentForm : IPersistent {
 		void Show();
 		void AttachToFormContainer(IPersistentFormContainer persistentFormContainer);
 	}

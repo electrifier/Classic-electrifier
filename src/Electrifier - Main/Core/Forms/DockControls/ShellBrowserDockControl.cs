@@ -16,14 +16,14 @@ namespace electrifier.Core.Forms.DockControls {
 	/// Zusammenfassung für ShellBrowserDockControl.
 	/// </summary>
 	public class ShellBrowserDockControl : DockContent, IDockControl, IPersistent {
-        protected Guid Guid;
+		protected Guid Guid;
 
-        protected ShellTreeView         shellTreeView        = null;
-		protected ShellBrowser          shellBrowser         = null;
-		protected Splitter              splitter             = null;
+		protected ShellTreeView shellTreeView = null;
+		protected ShellBrowser shellBrowser = null;
+		protected Splitter splitter = null;
 		protected IDockControlContainer dockControlContainer = null;
-		protected string                browsingAddress      = null;
-		public    string                BrowsingAddress {
+		protected string browsingAddress = null;
+		public string BrowsingAddress {
 			get { return this.browsingAddress; }
 		}
 
@@ -128,6 +128,15 @@ namespace electrifier.Core.Forms.DockControls {
 		#endregion
 
 		#region IPersistent Member
+
+		public void CreatePersistenceInfo(XmlWriter xmlWriter) {
+			xmlWriter.WriteStartElement(this.GetType().Name);
+			xmlWriter.WriteStartElement(@"BrowsingAddress");
+			xmlWriter.WriteValue(this.BrowsingAddress);
+			xmlWriter.WriteEndElement(); // BrowsingAddress
+			xmlWriter.WriteEndElement(); // this.GetType().Name
+		}
+
 
 		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument targetXmlDocument) {
 			XmlNode dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);

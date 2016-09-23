@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -11,8 +10,11 @@ using electrifier.Core.Services;
 using electrifier.Core.Shell32.Services;
 
 namespace electrifier.Core {
+
 	/// <summary>
 	/// AppContext acts as a singleton which instantiates all the basic services and gets the user interface started up
+	/// 
+	/// See https://msdn.microsoft.com/en-us/library/ff650316.aspx for details on implementation of the singleton
 	/// </summary>
 	public sealed class AppContext : ApplicationContext, IPersistentFormContainer {
 		// Static member variables and properties
@@ -39,6 +41,11 @@ namespace electrifier.Core {
 					return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"electrifier", AppContext.configFileName);
 			}
 		}
+
+		public const string configFileVersion = "0.1";
+		public static string[] CompatibleFileVersions = {
+				AppContext.configFileVersion,
+			};
 
 		/// <summary>
 		/// The default constructor of the AppContext.
@@ -87,15 +94,16 @@ namespace electrifier.Core {
 			//       application am leben erhalten (Dialog "You closed all electrifier windows.
 			//       do you want to stay electrifier active in tray" blablablubb)
 
-			// Try to load and apply the configuration used for this session
-            if (RestoreConfiguration() == false) {
-                // Start a new session since restoring configuration failed
-                MainWindowForm mainWindowForm = new MainWindowForm();
-                mainWindowForm.Show();
+			// Try to load and apply the configuration used for last session
+			if ((false == this.RestoreConfiguration()) || (0 == AppContext.openWindowList.Count)) {
+				// Start a new session since restoring configuration failed
+				MainWindowForm mainWindowForm = new MainWindowForm();
+				AppContext.openWindowList.Add(mainWindowForm);
+				this.MainForm = mainWindowForm;
+			}
 
-                openWindowList.Add(mainWindowForm);
-                this.MainForm = mainWindowForm;
-            }
+			if (false == noMainWindow)
+				(AppContext.openWindowList[0] as Form).Show();
 
 			if(noMainWindow == false) {
 				// TODO: Wenn alle minimiert waren werden sie es auch diesmal sein!
@@ -111,12 +119,13 @@ namespace electrifier.Core {
 
 			// Finally close splash screen
 			splashScreenForm.Close();
+			// TODO: splashScreenForm.Dispose();
 		}
 
 		private void AppContext_ThreadExit(object sender, EventArgs e) {
 			// Save configuration file
 			if (AppContext.IsIncognito == false)
-				SaveConfiguration();
+				this.SaveConfiguration();
 
 			// Destroy NotifyIcon
 			AppContext.NotifyIcon.Visible = false;
@@ -140,72 +149,146 @@ namespace electrifier.Core {
 		}
 
 		public bool RestoreConfiguration(string configFileName) {
-			try {
-                if (File.Exists(configFileName)) {
-                    XmlDocument configXml = new XmlDocument();
-                    configXml.Load(configFileName);
+			// Open existing configuration file
+			using (var configFileStream = new FileStream(configFileName, FileMode.Open)) {
+				using (var xmlReader = new XmlTextReader(configFileStream) { WhitespaceHandling = WhitespaceHandling.None }) {
+					xmlReader.MoveToContent();
 
-                    XmlNode node = configXml.DocumentElement;
-                    string text = node.LocalName;
-                    ApplyPersistenceInfo(node);
+					//xmlWriter.WriteStartElement("electrifier");
+					//xmlWriter.WriteAttributeString("Content", "Configuration");
+					//xmlWriter.WriteAttributeString("Version", "0.1");
+					//xmlWriter.WriteAttributeString("Created", String.Format("{0:s}", DateTime.UtcNow));
 
-                    return true;
-                }
-			} catch(Exception e) {
-				// TODO: Add error-handling here...
+					if (!xmlReader.Name.Equals("electrifier"))
+						throw new Exception("XML-Format!");
 
-				MessageBox.Show("AppContext.RestoreConfiguration: Error while restoring configuration file: \n\n" + e.Message,
-					"electrifier: We're sorry, but a runtime error occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					if (!xmlReader.GetAttribute("Content").Equals("Configuration"))
+						throw new Exception("XML-Content!");
+
+					var version = xmlReader.GetAttribute("FormatVersion");
+					if ((null == version) || (!version.Equals(configFileVersion)))
+						throw new Exception("XML-Content!");
+
+
+					// Create persistence information
+					//this.CreatePersistenceInfo(xmlWriter);
+
+
+
+					//				private static bool IsFormatVersionValid(string formatVersion) {
+					//	if (formatVersion == ConfigFileVersion)
+					//		return true;
+
+					//	foreach (string s in CompatibleConfigFileVersions)
+					//		if (s == formatVersion)
+					//			return true;
+
+					//	return false;
+					//}
+
+					//string formatVersion = xmlIn.GetAttribute("FormatVersion");
+					//if (!IsFormatVersionValid(formatVersion))
+					//	throw new ArgumentException(Strings.DockPanel_LoadFromXml_InvalidFormatVersion);
+
+
+					//if (!xmlReader.GetAttribute(0).Equals("Content")) {
+					//	throw new Exception("XML-Format!");
+					//}
+
+
+
+
+				}
+
+				////using (var xmlIn = new XmlTextReader(stream) { WhitespaceHandling = WhitespaceHandling.None })
+				//using (XmlWriter xmlWriter = XmlWriter.Create(configFileStream, new XmlWriterSettings() {
+				//	Encoding = System.Text.Encoding.Unicode,
+				//	Indent = true,
+				//	IndentChars = "  "
+				//})) {
+				//}
 			}
 
-            return false;
+			return true;
+			//try {
+			//	if (File.Exists(configFileName)) {
+			//		XmlDocument configXml = new XmlDocument();
+			//		configXml.Load(configFileName);
+
+			//		XmlNode node = configXml.DocumentElement;
+			//		string text = node.LocalName;
+			//		ApplyPersistenceInfo(node);
+
+			//		return true;
+			//	}
+			//} catch (Exception e) {
+			//	// TODO: Add error-handling here...
+
+			//	MessageBox.Show("AppContext.RestoreConfiguration:\nError while restoring configuration file: \n\n" + e.Message,
+			//		"electrifier: We're sorry, but a runtime error occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			//}
+
+			//return false;
 		}
 
 		public void SaveConfiguration() {
 			SaveConfiguration(AppContext.configFullPathFileName);
 		}
 
-		public void SaveConfiguration(string configFullPathFileName) {
+		public void SaveConfiguration(string configFileName) {
+			string newConfigFullPathFileName = configFileName + ".new";
+
 			try {
-				// Create XmlDocument to store all the configuration parameters
-				XmlDocument configXml = new XmlDocument();
-				configXml.AppendChild(configXml.CreateComment("\n\n" +
-					"electrifier configuration file\n\n" +
-					"This is a machine generated file, created by electrifier application\n" +
-					"For more information about electrifier visit http://www.electrifier.org\n\n" +
-					"DO NOT EDIT THIS FILE MANUALLY, CHANGES MAY CAUSE THE\n" +
-					"CONTAINED CONFIGURATION INFORMATION BECOME CORRUPTED!\n\n" +
-					"Copyright (c) 2015 by electrifier.org and its owners\n\n"));
-
-				// Create the root xml node
-				XmlNode configNode = configXml.CreateElement("electrifier");
-				XmlAttribute fileTypeAttr = configXml.CreateAttribute("ContentDescription");
-				fileTypeAttr.Value = "Configuration";
-				XmlAttribute versionAttr = configXml.CreateAttribute("FileVersion");
-				versionAttr.Value = "0.1";
-				XmlAttribute creationAttr = configXml.CreateAttribute("CreationDateTime");
-				creationAttr.Value = String.Format("{0:s}", DateTime.UtcNow);
-				configNode.Attributes.Append(fileTypeAttr);
-				configNode.Attributes.Append(versionAttr);
-				configNode.Attributes.Append(creationAttr);
-
-				// Append all xml node elements describing the actual configuration
-				configNode.AppendChild(CreatePersistenceInfo(configXml));
-				configXml.AppendChild(configNode);
+				var newConfigFullPathFileInfo = new FileInfo(newConfigFullPathFileName);
 
 				// Ensure the directory exists
-				FileInfo configFullPathFileInfo = new FileInfo(configFullPathFileName);
+				if (!newConfigFullPathFileInfo.Directory.Exists)
+					newConfigFullPathFileInfo.Directory.Create();
 
-				if(!configFullPathFileInfo.Directory.Exists)
-					configFullPathFileInfo.Directory.Create();
+				// Create new configuration file
+				using (var configFileStream = new FileStream(newConfigFullPathFileName, FileMode.Create)) {
+					using (var xmlWriter = XmlWriter.Create(configFileStream, new XmlWriterSettings() {
+						Encoding = System.Text.Encoding.Unicode,
+						Indent = true,
+						IndentChars = "  "
+					})) {
+						xmlWriter.WriteStartDocument();
+						xmlWriter.WriteComment("\n\n" +
+							"\telectrifier configuration file\n\n" +
+							"\tThis is a machine generated file, created by electrifier application.\n" +
+							"\tFor more information about electrifier visit http://www.electrifier.org\n\n" +
+							"\tDO NOT EDIT THIS FILE MANUALLY, CHANGES MAY CAUSE THE\n" +
+							"\tCONTAINED CONFIGURATION INFORMATION BECOME CORRUPTED!\n\n" +
+							"\tCopyright (c) 2016 Thorsten Jung @ electrifier.org and contributors.\n\n");
 
-				// Write the XmlDocument to file
-				XmlTextWriter xmlWriter = new System.Xml.XmlTextWriter(configFullPathFileName, new UnicodeEncoding());
-				xmlWriter.Formatting = Formatting.Indented;
+						// Create root xml node
+						xmlWriter.WriteStartElement("electrifier");
+						xmlWriter.WriteAttributeString("Content", "Configuration");
+						xmlWriter.WriteAttributeString("FormatVersion", "0.1");
+						xmlWriter.WriteAttributeString("Created", String.Format("{0:s}", DateTime.UtcNow));
 
-				configXml.Save(xmlWriter);
-			}
-			catch (Exception e) {
+						// Create persistence information
+						this.CreatePersistenceInfo(xmlWriter);
+
+						xmlWriter.WriteEndElement(); // electrifier
+						xmlWriter.WriteEndDocument();
+
+						xmlWriter.Close();
+						configFileStream.Close();
+					}
+				}
+
+				// If an old version of configuration file exists create backup and replace it by the new one
+				try {
+					if (File.Exists(configFileName))
+						newConfigFullPathFileInfo.Replace(configFileName, (configFileName + ".bak"));
+					else
+						File.Move(newConfigFullPathFileName, configFileName);
+				} catch (Exception e) {
+					MessageBox.Show("AppContext.SaveConfiguration: Error while replacing configuration file: \n\n" + e.Message,
+						"electrifier: We're sorry, but a runtime error occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			} catch (Exception e) {
 				MessageBox.Show("AppContext.SaveConfiguration: Error while writing configuration file: \n\n" + e.Message,
 					"electrifier: We're sorry, but a runtime error occurred!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
@@ -253,22 +336,20 @@ namespace electrifier.Core {
 			return stringWriter.ToString();
 		}
 
-		#region IPersistentFormContainer Member
-		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
-			// Create persistence information for the application context
-			XmlNode appContextNode  = targetXmlDocument.CreateElement("AppContext");
-			XmlNode openWindowsNode = targetXmlDocument.CreateElement("OpenWindows");
 
-			// TODO: add global settings to appcontextnode
+		#region IPersistentFormContainer Member
+		public void CreatePersistenceInfo(System.Xml.XmlWriter xmlWriter) {
+			xmlWriter.WriteStartElement("AppContext");
+			xmlWriter.WriteStartElement("OpenedWindows");
+
+			//// TODO: add global settings to appcontextnode
 
 			// Append persistence informtion for every open window
-			foreach(IPersistentForm window in openWindowList) {
-				openWindowsNode.AppendChild(window.CreatePersistenceInfo(targetXmlDocument));
-			}
+			foreach (IPersistentForm persistentForm in AppContext.openWindowList)
+				persistentForm.CreatePersistenceInfo(xmlWriter);
 
-			appContextNode.AppendChild(openWindowsNode);
-
-			return appContextNode;
+			xmlWriter.WriteEndElement(); // OpenedWindows
+			xmlWriter.WriteEndElement(); // AppContext
 		}
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
@@ -292,21 +373,21 @@ namespace electrifier.Core {
 		}
 
 		public void AttachPersistentForm(IPersistentForm persistentForm) {
-			if(!openWindowList.Contains(persistentForm)) {
-				openWindowList.Add(persistentForm);
+			if(!AppContext.openWindowList.Contains(persistentForm)) {
+				AppContext.openWindowList.Add(persistentForm);
 			} else {
 				throw new ArgumentException("Given Form instance already in list of hosted Forms", "persistentForm");
 			}
 		}
 
 		public void DetachPersistentForm(IPersistentForm persistentForm) {
-			if(openWindowList.Contains(persistentForm)) {
-				openWindowList.Remove(persistentForm);
+			if(AppContext.openWindowList.Contains(persistentForm)) {
+				AppContext.openWindowList.Remove(persistentForm);
 			} else {
 				throw new ArgumentException("Given Form instance not in list of hosted Forms", "persistentForm");
 			}
 		}
-		#endregion
+		#endregion IPersistentFormContainer Member
 
 	}
 }

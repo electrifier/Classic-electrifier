@@ -135,36 +135,20 @@ namespace electrifier.Core.Forms {
 		}
 
 		#region IPersistentForm Member
-		public XmlNode CreatePersistenceInfo(XmlDocument targetXmlDocument) {
-			// Create persistence information for main window Form
-			XmlNode mainWindowNode = targetXmlDocument.CreateElement(this.GetType().FullName);
-			XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
-			guidAttr.Value = this.guid.ToString();
-			XmlAttribute leftAttr = targetXmlDocument.CreateAttribute("Left");
-			leftAttr.Value = this._lastKnownFormState.Location.X.ToString();
-			XmlAttribute topAttr = targetXmlDocument.CreateAttribute("Top");
-			topAttr.Value = this._lastKnownFormState.Location.Y.ToString();
-			XmlAttribute widthAttr = targetXmlDocument.CreateAttribute("Width");
-			widthAttr.Value = this._lastKnownFormState.Size.Width.ToString();
-			XmlAttribute heightAttr = targetXmlDocument.CreateAttribute("Height");
-			heightAttr.Value = this._lastKnownFormState.Size.Height.ToString();
-			XmlAttribute windowStateAttr = targetXmlDocument.CreateAttribute("WindowState");
-			windowStateAttr.Value = this.WindowState.ToString();
-			mainWindowNode.Attributes.Append(guidAttr);
-			mainWindowNode.Attributes.Append(leftAttr);
-			mainWindowNode.Attributes.Append(topAttr);
-			mainWindowNode.Attributes.Append(widthAttr);
-			mainWindowNode.Attributes.Append(heightAttr);
-			mainWindowNode.Attributes.Append(windowStateAttr);
 
-			// Append persistence information for each hosted DockControl
-			XmlNode dockControlsNode = targetXmlDocument.CreateElement("DockedControls");
-			foreach (IDockControl dockControl in dockControlList) {
-				dockControlsNode.AppendChild(dockControl.CreatePersistenceInfo(targetXmlDocument));
-			}
-			mainWindowNode.AppendChild(dockControlsNode);
+		public void CreatePersistenceInfo(XmlWriter xmlWriter) {
+			xmlWriter.WriteStartElement(this.GetType().Name);
+			xmlWriter.WriteAttributeString(@"Left", this._lastKnownFormState.Location.X.ToString());
+			xmlWriter.WriteAttributeString(@"Top", this._lastKnownFormState.Location.Y.ToString());
+			xmlWriter.WriteAttributeString(@"Width", this._lastKnownFormState.Size.Width.ToString());
+			xmlWriter.WriteAttributeString(@"Height", this._lastKnownFormState.Size.Height.ToString());
+			xmlWriter.WriteAttributeString(@"WindowState", this.WindowState.ToString());
 
-			return mainWindowNode;
+			xmlWriter.WriteStartElement(@"DockedControls");
+			this.dockPanel.SaveAsXml(xmlWriter);
+			xmlWriter.WriteEndElement(); // DockedControls
+
+			xmlWriter.WriteEndElement(); // this.GetType().Name
 		}
 
 		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
