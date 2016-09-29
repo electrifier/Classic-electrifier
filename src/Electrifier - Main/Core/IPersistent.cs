@@ -6,6 +6,6 @@ namespace electrifier.Core {
 	/// </summary>
 	public interface IPersistent {
 		void CreatePersistenceInfo(XmlWriter xmlWriter);
-		void ApplyPersistenceInfo(XmlNode persistenceInfo);
+		void ApplyPersistenceInfo(XmlTextReader xmlReader);
 	}
 }

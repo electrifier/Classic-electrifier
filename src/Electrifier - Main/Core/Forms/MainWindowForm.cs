@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
-using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 using System.Xml;
 
@@ -9,9 +9,8 @@ using System.Xml;
 using RibbonLib.Controls;
 using RibbonLib.Controls.Events;
 //using RibbonLib.Interop;
+using WeifenLuo.WinFormsUI.Docking;
 
-using electrifier.Core;
-using electrifier.Core.Controls.ToolBars;
 using electrifier.Core.Forms.DockControls;
 
 namespace electrifier.Core.Forms {
@@ -65,7 +64,7 @@ namespace electrifier.Core.Forms {
 
 		protected LastKnownFormState _lastKnownFormState;
 
-		public MainWindowForm() {
+		public MainWindowForm() : base() {
 			InitializeComponent();
 
 			this.Icon = AppContext.Icon;
@@ -76,15 +75,12 @@ namespace electrifier.Core.Forms {
 			this._cmdBtnApp_Close.ExecuteEvent += new EventHandler<ExecuteEventArgs>(cmdBtnApp_Close_ExecuteEvent);
 			this._cmdTabHome = new RibbonTab(this._mainRibbon, (uint)RibbonMarkupCommands.cmdTabHome);
 
-
-
-
-			// TODO: RELAUNCH: Test-Code...
-			FolderBarDockControl folderBarDockControl = new FolderBarDockControl();
-			folderBarDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.DockLeftAutoHide);
-
 			this.Resize += new System.EventHandler(this.MainWindowForm_Resize);
 			this.LocationChanged += new System.EventHandler(this.MainWindowForm_LocationChanged);
+		}
+
+		public MainWindowForm(XmlTextReader xmlReader) : this() {
+			this.ApplyPersistenceInfo(xmlReader);
 		}
 
 		public void MainWindowForm_Resize(object sender, EventArgs e) {
@@ -144,22 +140,18 @@ namespace electrifier.Core.Forms {
 			xmlWriter.WriteAttributeString(@"Height", this._lastKnownFormState.Size.Height.ToString());
 			xmlWriter.WriteAttributeString(@"WindowState", this.WindowState.ToString());
 
-			xmlWriter.WriteStartElement(@"DockedControls");
 			this.dockPanel.SaveAsXml(xmlWriter);
-			xmlWriter.WriteEndElement(); // DockedControls
 
 			xmlWriter.WriteEndElement(); // this.GetType().Name
 		}
 
-		public void ApplyPersistenceInfo(XmlNode persistenceInfo) {
-			// Apply persistence information to main window Form
-			this.guid = new Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
-			this.Left = int.Parse(persistenceInfo.Attributes.GetNamedItem("Left").Value);
-			this.Top = int.Parse(persistenceInfo.Attributes.GetNamedItem("Top").Value);
-			this.Width = int.Parse(persistenceInfo.Attributes.GetNamedItem("Width").Value);
-			this.Height = int.Parse(persistenceInfo.Attributes.GetNamedItem("Height").Value);
+		public void ApplyPersistenceInfo(XmlTextReader xmlReader) {
+			this.Left = Convert.ToInt32(xmlReader.GetAttribute(@"Left"), CultureInfo.InvariantCulture);
+			this.Top = Convert.ToInt32(xmlReader.GetAttribute(@"Top"), CultureInfo.InvariantCulture);
+			this.Width = Convert.ToInt32(xmlReader.GetAttribute(@"Width"), CultureInfo.InvariantCulture);
+			this.Height = Convert.ToInt32(xmlReader.GetAttribute(@"Height"), CultureInfo.InvariantCulture);
 
-			switch (persistenceInfo.Attributes.GetNamedItem("WindowState").Value.ToUpper()) {
+			switch (xmlReader.GetAttribute(@"WindowState").ToUpper()) {
 				case "MAXIMIZED":
 					this.WindowState = FormWindowState.Maximized;
 					break;
@@ -171,36 +163,16 @@ namespace electrifier.Core.Forms {
 					break;
 			}
 
+			this.dockPanel.LoadFromXml(xmlReader, new DeserializeDockContent(GetContentFromPersistString));
+		}
 
-			// Apply persistence information for each hosted DockControl
-			XmlNode dockControlsNode = persistenceInfo.SelectSingleNode("DockedControls");
-			foreach (XmlNode dockControlNode in dockControlsNode.ChildNodes) {
-				Type dockControlType = Type.GetType(dockControlNode.LocalName);
+		private IDockContent GetContentFromPersistString(string persistString) {
+			if (persistString == typeof(ShellBrowserDockControl).ToString())
+				return new ShellBrowserDockControl();
+			if (persistString == typeof(FolderBarDockControl).ToString())
+				return new FolderBarDockControl();
 
-				if ((dockControlType != null) && (dockControlType.GetInterface("IDockControl") != null)) {
-					IDockControl dockControl = Activator.CreateInstance(dockControlType) as IDockControl;
-
-					dockControl.ApplyPersistenceInfo(dockControlNode);
-					dockControl.AttachToDockControlContainer(this);
-
-					// TODO: decide which container!
-					// TODO: Hard coded shit follows :-)
-					if (dockControlType.Equals(typeof(ShellBrowserDockControl))) {
-						ShellBrowserDockControl shellBrowserDockControl = dockControl as ShellBrowserDockControl;
-						shellBrowserDockControl.BrowsingAddressChanged += new BrowsingAddressChangedEventHandler(shbrwsr_BrowsingAddressChanged);
-
-						if (this.dockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi) {
-							shellBrowserDockControl.Show();
-							shellBrowserDockControl.MdiParent = this;
-						} else {
-							shellBrowserDockControl.Show(this.dockPanel, WeifenLuo.WinFormsUI.Docking.DockState.Document);
-						}
-					}
-				} else {
-					// TODO: Exception
-					MessageBox.Show("Unknown DockControl type specified in configuration file");
-				}
-			}
+			return null;
 		}
 
 		public void AttachToFormContainer(IPersistentFormContainer persistentFormContainer) {
@@ -230,8 +202,5 @@ namespace electrifier.Core.Forms {
 			}
 		}
 		#endregion
-
-
-
 	}
 }

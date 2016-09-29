@@ -137,26 +137,8 @@ namespace electrifier.Core.Forms.DockControls {
 			xmlWriter.WriteEndElement(); // this.GetType().Name
 		}
 
+		public void ApplyPersistenceInfo(XmlTextReader xmlReader) {
 
-		public System.Xml.XmlNode CreatePersistenceInfo(System.Xml.XmlDocument targetXmlDocument) {
-			XmlNode dockControlNode = targetXmlDocument.CreateElement(this.GetType().FullName);
-			XmlAttribute guidAttr = targetXmlDocument.CreateAttribute("Guid");
-			XmlNode browsingAddressNode = targetXmlDocument.CreateElement("BrowsingAddress");
-
-
-			guidAttr.Value = Guid.ToString();
-			// TODO: RELAUNCH: Set browsingadress in browsingAddressNode
-
-			dockControlNode.Attributes.Append(guidAttr);
-			dockControlNode.AppendChild(browsingAddressNode);
-
-			return dockControlNode;
-		}
-
-		public void ApplyPersistenceInfo(System.Xml.XmlNode persistenceInfo) {
-			Guid = new Guid(persistenceInfo.Attributes.GetNamedItem("Guid").Value);
-
-			Name = "ShellBrowserDockControl." + Guid.ToString();		// TODO: TestCode
 		}
 
 		#endregion

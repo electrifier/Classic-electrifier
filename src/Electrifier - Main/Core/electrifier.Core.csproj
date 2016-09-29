@@ -121,6 +121,7 @@
     <Compile Include="AppContext.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AppContext.Persistor.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
