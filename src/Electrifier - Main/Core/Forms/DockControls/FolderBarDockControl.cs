@@ -10,16 +10,16 @@ using electrifier.Win32API;
 
 namespace electrifier.Core.Forms.DockControls {
 	/// <summary>
-	/// Zusammenfassung für ShellTreeViewDockControl.
+	/// Summary of ShellTreeViewDockControl.
 	/// </summary>
-	public class FolderBarDockControl : DockContent {
+	public class FolderBarDockContent : WeifenLuo.WinFormsUI.Docking.DockContent {
 		protected ShellTreeView shellTreeView = null;
         protected Guid Guid;
 
-		public FolderBarDockControl() : base() {
+		public FolderBarDockContent() : base() {
 			// Initialize the underlying DockControl
 			this.Guid = new Guid("{2B552F10-0847-44b2-A244-D595B7DDD1AE}");
-			this.Name = "FolderBarDockControl." + Guid.ToString();
+			this.Name = "FolderBarDockContent." + Guid.ToString();
 			this.Text = "FolderBar";
 
 			// Initialize ShellTreeView

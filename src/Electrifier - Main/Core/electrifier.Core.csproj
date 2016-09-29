@@ -188,12 +188,6 @@
     <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\IDockControl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Forms\IDockControlContainer.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Forms\MainWindowForm.cs">
       <SubType>Form</SubType>
     </Compile>

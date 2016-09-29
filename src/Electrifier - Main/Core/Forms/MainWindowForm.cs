@@ -51,7 +51,7 @@ namespace electrifier.Core.Forms {
 	/// <summary>
 	/// Zusammenfassung für MainWindowForm.
 	/// </summary>
-	public partial class MainWindowForm : Form, IPersistentForm, IDockControlContainer {
+	public partial class MainWindowForm : Form, IPersistentForm {
 		protected Guid guid = Guid.NewGuid();
 		public Guid Guid { get { return guid; } }
 		protected IPersistentFormContainer persistentFormContainer = null;
@@ -101,7 +101,7 @@ namespace electrifier.Core.Forms {
 		}
 
 		private void shbrwsr_BrowsingAddressChanged(object source, EventArgs e) {
-			ShellBrowserDockControl shbrwsr = source as ShellBrowserDockControl;
+			ShellBrowserDockContent shbrwsr = source as ShellBrowserDockContent;
 
 			/* TODO: RELAUNCH: Commented out
 			if(shbrwsr != null) {
@@ -111,8 +111,8 @@ namespace electrifier.Core.Forms {
 		}
 
 		private void cmdBtnApp_OpenNewShellBrowserPanel_ExecuteEvent(object sender, EventArgs e) {
-			ShellBrowserDockControl shellBrowserDockControl = new ShellBrowserDockControl();
-			shellBrowserDockControl.AttachToDockControlContainer(this);
+			ShellBrowserDockContent shellBrowserDockControl = new ShellBrowserDockContent();
+//			shellBrowserDockControl.AttachToDockControlContainer(this);
 
 			if (this.dockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi) {
 				shellBrowserDockControl.Show();
@@ -167,10 +167,10 @@ namespace electrifier.Core.Forms {
 		}
 
 		private IDockContent GetContentFromPersistString(string persistString) {
-			if (persistString == typeof(ShellBrowserDockControl).ToString())
-				return new ShellBrowserDockControl();
-			if (persistString == typeof(FolderBarDockControl).ToString())
-				return new FolderBarDockControl();
+			if (persistString == typeof(ShellBrowserDockContent).ToString())
+				return new ShellBrowserDockContent();
+			if (persistString == typeof(FolderBarDockContent).ToString())
+				return new FolderBarDockContent();
 
 			return null;
 		}
@@ -185,22 +185,5 @@ namespace electrifier.Core.Forms {
 		}
 		#endregion
 
-		#region IDockControlContainer Member
-		public void AttachDockControl(IDockControl dockControl) {
-			if (!dockControlList.Contains(dockControl)) {
-				dockControlList.Add(dockControl);
-			} else {
-				throw new ArgumentException("Given DockControl instance already in list of hosted DockControls", "dockControl");
-			}
-		}
-
-		public void DetachDockControl(IDockControl dockControl) {
-			if (dockControlList.Contains(dockControl)) {
-				dockControlList.Remove(dockControl);
-			} else {
-				throw new ArgumentException("Given DockControl instance not in list of hosted DockControls", "dockControl");
-			}
-		}
-		#endregion
 	}
 }

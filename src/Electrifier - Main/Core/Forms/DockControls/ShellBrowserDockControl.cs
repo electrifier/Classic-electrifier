@@ -13,15 +13,14 @@ namespace electrifier.Core.Forms.DockControls {
 	public delegate void BrowsingAddressChangedEventHandler(object source, EventArgs e);
 
 	/// <summary>
-	/// Zusammenfassung für ShellBrowserDockControl.
+	/// Summary of ShellBrowserDockContent.
 	/// </summary>
-	public class ShellBrowserDockControl : DockContent, IDockControl, IPersistent {
+	public class ShellBrowserDockContent : WeifenLuo.WinFormsUI.Docking.DockContent, IPersistent {
 		protected Guid Guid;
 
 		protected ShellTreeView shellTreeView = null;
 		protected ShellBrowser shellBrowser = null;
 		protected Splitter splitter = null;
-		protected IDockControlContainer dockControlContainer = null;
 		protected string browsingAddress = null;
 		public string BrowsingAddress {
 			get { return this.browsingAddress; }
@@ -34,12 +33,12 @@ namespace electrifier.Core.Forms.DockControls {
 		}
 
 
-		public ShellBrowserDockControl() : this(Guid.NewGuid()) { }
+		public ShellBrowserDockContent() : this(Guid.NewGuid()) { }
 
-		public ShellBrowserDockControl(Guid guid) : base() {
+		public ShellBrowserDockContent(Guid guid) : base() {
 			// Initialize the underlying DockControl
 			this.Guid = guid;
-			this.Name = "ShellBrowserDockControl." + Guid.ToString();
+			this.Name = "ShellBrowserDockContent." + Guid.ToString();
 
 			// Initialize ShellTreeView
 			this.shellTreeView = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
@@ -66,7 +65,7 @@ namespace electrifier.Core.Forms.DockControls {
 		}
 
 		void ShellBrowserDockControl_FormClosed(object sender, FormClosedEventArgs e) {
-			this.DetachFromDockControlContainer();
+//			this.DetachFromDockControlContainer();
 		}
 
 		// TODO: Dispose when closed!!!
@@ -101,31 +100,9 @@ namespace electrifier.Core.Forms.DockControls {
 				}
 			} else {
 				// TODO: Error-Handling
-				MessageBox.Show("ShellBrowserDockControl:UpdateDockCaption\n\n'this.shellTreeView.SelectedNode is null'");
+				MessageBox.Show("ShellBrowserDockContent:UpdateDockCaption\n\n'this.shellTreeView.SelectedNode is null'");
 			}
 		}
-
-		#region IDockControl Member
-
-		public void AttachToDockControlContainer(IDockControlContainer dockControlContainer) {
-			if(this.dockControlContainer == null) {
-				this.dockControlContainer = dockControlContainer;
-				dockControlContainer.AttachDockControl(this);
-			} else {
-				throw new InvalidOperationException("IDockControlContainer already set!");
-			}
-		}
-
-		public void DetachFromDockControlContainer() {
-			if (this.dockControlContainer != null) {
-				this.dockControlContainer.DetachDockControl(this);
-				this.dockControlContainer = null;
-			} else {
-				throw new InvalidOperationException("Cannot detach from IDockControlContainer, it is not set!");
-			}
-		}
-
-		#endregion
 
 		#region IPersistent Member
 
