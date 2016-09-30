@@ -3,13 +3,11 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 
-using WeifenLuo.WinFormsUI.Docking;
-
 using electrifier.Core.Shell32.Services;
 using electrifier.Core.Shell32.Controls;
 using electrifier.Win32API;
 
-namespace electrifier.Core.Forms.DockControls {
+namespace electrifier.Core.Controls.DockContents {
 	public delegate void BrowsingAddressChangedEventHandler(object source, EventArgs e);
 
 	/// <summary>
@@ -28,7 +26,7 @@ namespace electrifier.Core.Forms.DockControls {
 
 		public event BrowsingAddressChangedEventHandler BrowsingAddressChanged = null;
 		protected void OnBrowsingAddressChanged() {
-			if(this.BrowsingAddressChanged != null)
+			if (this.BrowsingAddressChanged != null)
 				this.BrowsingAddressChanged(this, EventArgs.Empty);
 		}
 
@@ -65,7 +63,7 @@ namespace electrifier.Core.Forms.DockControls {
 		}
 
 		void ShellBrowserDockControl_FormClosed(object sender, FormClosedEventArgs e) {
-//			this.DetachFromDockControlContainer();
+			//			this.DetachFromDockControlContainer();
 		}
 
 		// TODO: Dispose when closed!!!
@@ -75,7 +73,7 @@ namespace electrifier.Core.Forms.DockControls {
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
 			//this.Cursor = Cursors.WaitCursor;
 			this.shellBrowser.NavigateTo(shellTreeView.SelectedNode.AbsolutePIDL);
-//			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
+			//			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			this.UpdateDockCaption();
 			this.browsingAddress = this.Text;
 			this.OnBrowsingAddressChanged();

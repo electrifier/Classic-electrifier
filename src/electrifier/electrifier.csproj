@@ -86,12 +86,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\electrifier.Core.csproj">
+    <ProjectReference Include="..\electrifier.Core\electrifier.Core.csproj">
       <Name>electrifier.Core</Name>
       <Project>{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
     </ProjectReference>
-    <ProjectReference Include="..\Win32API\electrifier.Win32API.csproj">
+    <ProjectReference Include="..\electrifier.Win32API\electrifier.Win32API.csproj">
       <Name>electrifier.Win32API</Name>
       <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>

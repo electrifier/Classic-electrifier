@@ -1,20 +1,17 @@
 using System;
-using System.Drawing;
 using System.Windows.Forms;
-
-using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Core.Shell32.Controls;
 using electrifier.Win32API;
 
 
-namespace electrifier.Core.Forms.DockControls {
+namespace electrifier.Core.Controls.DockContents {
 	/// <summary>
 	/// Summary of ShellTreeViewDockControl.
 	/// </summary>
 	public class FolderBarDockContent : WeifenLuo.WinFormsUI.Docking.DockContent {
 		protected ShellTreeView shellTreeView = null;
-        protected Guid Guid;
+		protected Guid Guid;
 
 		public FolderBarDockContent() : base() {
 			// Initialize the underlying DockControl
@@ -23,9 +20,9 @@ namespace electrifier.Core.Forms.DockControls {
 			this.Text = "FolderBar";
 
 			// Initialize ShellTreeView
-			this.shellTreeView               = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-			this.shellTreeView.Dock          = DockStyle.Fill;
-			this.shellTreeView.BorderStyle   = System.Windows.Forms.BorderStyle.None;
+			this.shellTreeView = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
+			this.shellTreeView.Dock = DockStyle.Fill;
+			this.shellTreeView.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this.shellTreeView.ShowRootLines = false;
 
 			// Add the controls

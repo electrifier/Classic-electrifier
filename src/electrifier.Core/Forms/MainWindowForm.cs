@@ -11,7 +11,7 @@ using RibbonLib.Controls.Events;
 //using RibbonLib.Interop;
 using WeifenLuo.WinFormsUI.Docking;
 
-using electrifier.Core.Forms.DockControls;
+using electrifier.Core.Controls.DockContents;
 
 namespace electrifier.Core.Forms {
 	public enum RibbonMarkupCommands : uint {

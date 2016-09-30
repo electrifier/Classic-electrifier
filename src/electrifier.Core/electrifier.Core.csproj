@@ -85,7 +85,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Win32API\electrifier.Win32API.csproj">
+    <ProjectReference Include="..\electrifier.Win32API\electrifier.Win32API.csproj">
       <Name>electrifier.Win32API</Name>
       <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
       <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
@@ -151,6 +151,12 @@
     <Compile Include="Controls\ActionControls\IViewableAction.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Controls\DockContents\FolderBarDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Controls\DockContents\ShellBrowserDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Controls\ExtListView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -182,12 +188,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controls\ToolBars\AddressToolBar.cs" />
-    <Compile Include="Forms\DockControls\FolderBarDockControl.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DockControls\ShellBrowserDockControl.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Forms\MainWindowForm.cs">
       <SubType>Form</SubType>
     </Compile>

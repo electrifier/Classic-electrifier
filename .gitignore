@@ -2,5 +2,5 @@
 *.ribbon
 *.RibbonMarkup.log
 *.suo
-src/Electrifier - Main/*/bin/
-src/Electrifier - Main/*/obj/
+src/*/bin/
+src/*/obj/

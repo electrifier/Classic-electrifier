@@ -2,17 +2,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier.Core", "Core\electrifier.Core.csproj", "{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier.Core", "electrifier.Core\electrifier.Core.csproj", "{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6832AFCE-173D-4F30-862F-E066990C95B8} = {6832AFCE-173D-4F30-862F-E066990C95B8}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier", "Electrifier\electrifier.csproj", "{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier", "electrifier\electrifier.csproj", "{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}"
 	ProjectSection(ProjectDependencies) = postProject
 		{6832AFCE-173D-4F30-862F-E066990C95B8} = {6832AFCE-173D-4F30-862F-E066990C95B8}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier.Win32API", "Win32API\electrifier.Win32API.csproj", "{6832AFCE-173D-4F30-862F-E066990C95B8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier.Win32API", "electrifier.Win32API\electrifier.Win32API.csproj", "{6832AFCE-173D-4F30-862F-E066990C95B8}"
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup", "WiX-Setup\Setup.wixproj", "{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}"
 EndProject
