@@ -3,6 +3,59 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace electrifier.Win32API {
+
+	/// <summary>
+	/// See https://msdn.microsoft.com/en-us/library/windows/desktop/aa378137(v=vs.85).aspx
+	/// </summary>
+	[StructLayout(LayoutKind.Sequential)]
+	public struct HResult {
+
+		#region The following HRESULT values are the most common. More values are contained in the header file Winerror.h.
+
+		/// See https://msdn.microsoft.com/en-us/library/windows/desktop/aa378137(v=vs.85).aspx
+		public static readonly HResult S_OK = new HResult(0x00000000);              // Operation successful
+		public static readonly HResult E_NotImpl = new HResult(0x80004001);         // Not implemented
+		public static readonly HResult E_NoInterface = new HResult(0x80004002);     // No such interface supported
+		public static readonly HResult E_Pointer = new HResult(0x80004003);         // Pointer that is not valid
+		public static readonly HResult E_Abort = new HResult(0x80004004);           // Operation aborted
+		public static readonly HResult E_Fail = new HResult(0x80004005);            // Unspecified failure
+		public static readonly HResult E_Unexpected = new HResult(0x8000FFFF);      // Unexpected failure
+		public static readonly HResult E_AccessDenied = new HResult(0x80070005);    // General access denied error
+		public static readonly HResult E_Handle = new HResult(0x80070006);          // Handle that is not valid
+		public static readonly HResult E_OutOfMemory = new HResult(0x8007000E);     // Failed to allocate necessary memory
+		public static readonly HResult E_InvalidArg = new HResult(0x80070057);      // One or more arguments are not valid
+
+		#endregion
+
+		private int value;
+		public int Value { get { return this.value; } }
+
+		public HResult(int value) { this.value = value; }
+		public HResult(uint value) { this.value = unchecked((int)value); }
+
+		public static implicit operator HResult(int value) { return (new Win32API.HResult(value)); }
+		public static implicit operator HResult(uint value) { return (new Win32API.HResult(value)); }
+
+		public bool Failed() { return (this == HResult.S_OK); }
+		public bool Succeeded() { return (this != HResult.S_OK); }
+
+		public static bool operator ==(HResult hResultA, HResult hResultB) { return (hResultA.Value == hResultB.Value); }
+		public static bool operator !=(HResult hResultA, HResult hResultB) { return (hResultA.Value != hResultB.Value); }
+
+		public override int GetHashCode() { return this.Value; }
+
+		public override bool Equals(object obj) {
+			if (null == obj)
+				return false;
+
+			HResult HResultObj = (HResult)obj;
+			if((object)HResultObj == null)
+				return false;
+
+			return (this.Value == HResultObj.Value);
+		}
+	}
+
 	public enum WMSG : uint {
 		/**
 		 * ListView-Control Messages
@@ -513,7 +566,7 @@ namespace electrifier.Win32API {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-			public struct POINT {
+		public struct POINT {
 			public Int32 X;
 			public Int32 Horizontal {
 				get { return this.X; }
@@ -790,16 +843,20 @@ namespace electrifier.Win32API {
 		public const string GuidStr_SID_STopWindow = "49E1B500-4636-11D3-97F7-00C04F45D0B3";
 		public static Guid SID_STopWindow = new Guid(GuidStr_SID_STopWindow);
 
+		#region IServiceProvider
 
-		public const string GuidStr_IID_IServiceProvider = "6D5140C1-7436-11CE-8034-00AA006009FA";
-		public static Guid IID_IServiceProvider = new Guid(GuidStr_IID_IServiceProvider);
+		public const string IIDS_IServiceProvider = "6D5140C1-7436-11CE-8034-00AA006009FA";
+		public static Guid IID_IServiceProvider = new Guid(IIDS_IServiceProvider);
 
 		[ComImport(),
 			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-			GuidAttribute(GuidStr_IID_IServiceProvider)]
-			public interface IServiceProvider  {
-			[PreserveSig] uint QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppv);
+			GuidAttribute(IIDS_IServiceProvider)]
+		public interface IServiceProvider {
+			[PreserveSig]
+			HResult QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject);
 		}
+
+		#endregion
 
 
 		[ComImport(),

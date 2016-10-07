@@ -503,41 +503,68 @@ namespace electrifier.Win32API {
 				[MarshalAs(UnmanagedType.LPStr)] string pszName, uint cchMax);
 		}
 
-
+		#region IOleWindow
 
 		public const string IIDS_IOleWindow = "00000114-0000-0000-C000-000000000046";
 		public static Guid IID_IOleWindow = new Guid(IIDS_IOleWindow);
 
-		[ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid(IIDS_IOleWindow)]
-			public interface IOleWindow {
-			[PreserveSig] uint GetWindow(out IntPtr HWND);
-			[PreserveSig] uint ContextSensitiveHelp(bool EnterMode);
+		[ComImport,
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+			Guid(IIDS_IOleWindow)]
+		public interface IOleWindow {
+			[PreserveSig]
+			HResult GetWindow(out IntPtr HWND);
+			[PreserveSig]
+			HResult ContextSensitiveHelp(bool fEnterMode);
 		}
-                                              
+
+		#endregion
+
+		#region IShellBrowser (See ShObjIdl.h)
+
 		public const string IIDS_IShellBrowser = "000214E2-0000-0000-C000-000000000046";
 		public static Guid IID_IShellBrowser = new Guid(IIDS_IShellBrowser);
 
-		[ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid(IIDS_IShellBrowser)]
-			public interface IShellBrowser : IOleWindow {
+		[ComImport,
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
+			Guid(IIDS_IShellBrowser)]
+		public interface IShellBrowser {
 			// IOleWindow-Member
-			[PreserveSig] new uint GetWindow(out IntPtr HWND);
-			[PreserveSig] new uint ContextSensitiveHelp(bool EnterMode);
+			[PreserveSig]
+			HResult GetWindow(out IntPtr HWND);
+			[PreserveSig]
+			HResult ContextSensitiveHelp(bool fEnterMode);
 			// End of IOleWindow-Member
 
-			[PreserveSig] uint InsertMenusSB(IntPtr hmenuShared, ref IntPtr /* LPOLEMENUGROUPWIDTHS */ lpMenuWidths);
-			[PreserveSig] uint SetMenuSB(IntPtr hmenuShared, IntPtr /* HOLEMENU */ holemenuRes, IntPtr hwndActiveObject);
-			[PreserveSig] uint RemoveMenusSB(IntPtr hmenuShared);
-			[PreserveSig] uint SetStatusTextSB([MarshalAs(UnmanagedType.LPWStr)] String pszStatusText);
-			[PreserveSig] uint EnableModelessSB(bool fEnable);
-			[PreserveSig] uint TranslateAcceleratorSB(uint pmsg, UInt16 wID);
-			[PreserveSig] uint BrowseObject(IntPtr pidl, SBSP Flags);
-			[PreserveSig] uint GetViewStateStream(uint /* DWORD */ grfMode, out IntPtr ppStrm);
-			[PreserveSig] uint GetControlWindow(uint id, out IntPtr phwnd);
-			[PreserveSig] uint SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, uint pret);
-			[PreserveSig] uint QueryActiveShellView(out IntPtr ppshv);
-			[PreserveSig] uint OnViewWindowActive(IntPtr pshv);
-			[PreserveSig] uint SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags);
+			[PreserveSig]
+			HResult InsertMenusSB(IntPtr hmenuShared, ref IntPtr /* LPOLEMENUGROUPWIDTHS */ lpMenuWidths);
+			[PreserveSig]
+			HResult SetMenuSB(IntPtr hmenuShared, IntPtr /* HOLEMENU */ holemenuRes, IntPtr hwndActiveObject);
+			[PreserveSig]
+			HResult RemoveMenusSB(IntPtr hmenuShared);
+			[PreserveSig]
+			HResult SetStatusTextSB([MarshalAs(UnmanagedType.LPWStr)] String pszStatusText);
+			[PreserveSig]
+			HResult EnableModelessSB(bool fEnable);
+			[PreserveSig]
+			HResult TranslateAcceleratorSB(IntPtr pmsg, UInt16 wID);
+			[PreserveSig]
+			HResult BrowseObject(IntPtr pidl, SBSP wFlags);
+			[PreserveSig]
+			HResult GetViewStateStream(uint /* DWORD */ grfMode, IntPtr /*IStream */ ppStrm);
+			[PreserveSig]
+			HResult GetControlWindow(uint id, out IntPtr phwnd);
+			[PreserveSig]
+			HResult SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, IntPtr pret);
+			[PreserveSig]
+			HResult QueryActiveShellView([MarshalAs(UnmanagedType.Interface)] ref ShellAPI.IShellView ppshv);
+			[PreserveSig]
+			HResult OnViewWindowActive([MarshalAs(UnmanagedType.Interface)] ShellAPI.IShellView pshv);
+			[PreserveSig]
+			HResult SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags);
 		}
+
+		#endregion
 
 		public const string IIDS_IShellView = "000214E3-0000-0000-C000-000000000046";
 		public static Guid IID_IShellView = new Guid(IIDS_IShellView);

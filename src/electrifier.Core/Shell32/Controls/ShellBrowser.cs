@@ -13,12 +13,12 @@ namespace electrifier.Core.Shell32.Controls {
 	/// </summary>
 
 	public class ShellBrowser : Panel, ShellAPI.IShellBrowser, WinAPI.IServiceProvider {
-		protected static DesktopFolderInstance  desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
-		protected        IntPtr                 absolutePIDL    = IntPtr.Zero;
-		protected        IntPtr                 relativePIDL    = IntPtr.Zero;
-		protected        ShellAPI.IShellFolder  shellFolder     = null;
-		protected        ShellAPI.IShellView    shellView       = null;
-		protected        IntPtr                 shellViewHandle = IntPtr.Zero;
+		protected static DesktopFolderInstance desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
+		protected IntPtr absolutePIDL = IntPtr.Zero;
+		protected IntPtr relativePIDL = IntPtr.Zero;
+		protected ShellAPI.IShellFolder shellFolder = null;
+		protected ShellAPI.IShellView shellView = null;
+		protected IntPtr shellViewHandle = IntPtr.Zero;
 
 		public event BrowseShellObjectEventHandler BrowseShellObject = null;
 
@@ -40,13 +40,13 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		public ShellBrowser(ShellAPI.CSIDL shellObjectCSIDL)
-			: this(PIDLManager.CreateFromCSIDL(shellObjectCSIDL), true) {}
-		
+			: this(PIDLManager.CreateFromCSIDL(shellObjectCSIDL), true) { }
+
 		public ShellBrowser(string shellObjectFullPath)
-			: this(PIDLManager.CreateFromPathW(shellObjectFullPath), true) {}
-		
+			: this(PIDLManager.CreateFromPathW(shellObjectFullPath), true) { }
+
 		public ShellBrowser(IntPtr shellObjectPIDL)
-			: this(shellObjectPIDL, false) {}
+			: this(shellObjectPIDL, false) { }
 
 		private ShellBrowser(IntPtr shellObjectPIDL, bool pidlSelfCreated) : base() {
 			///
@@ -62,27 +62,27 @@ namespace electrifier.Core.Shell32.Controls {
 		/// <summary> 
 		/// Verwendete Ressourcen bereinigen.
 		/// </summary>
-		protected override void Dispose( bool disposing ) {
+		protected override void Dispose(bool disposing) {
 			this.DisposeIShellView();
 			this.DisposeIShellFolder();
 			this.DisposePIDLs();
 
-			if(disposing)
-				if(this.components != null)
+			if (disposing)
+				if (this.components != null)
 					this.components.Dispose();
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		protected void DisposePIDLs() {
-			if(this.absolutePIDL != IntPtr.Zero) {
-					PIDLManager.Free(this.absolutePIDL);
-					this.absolutePIDL = this.relativePIDL = IntPtr.Zero;
+			if (this.absolutePIDL != IntPtr.Zero) {
+				PIDLManager.Free(this.absolutePIDL);
+				this.absolutePIDL = this.relativePIDL = IntPtr.Zero;
 			}
 		}
 
 		protected void DisposeIShellFolder() {
-			if(this.shellFolder != null) {
-				lock(this.shellFolder) {
+			if (this.shellFolder != null) {
+				lock (this.shellFolder) {
 					Marshal.ReleaseComObject(this.shellFolder);
 					this.shellFolder = null;
 				}
@@ -90,11 +90,11 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		protected void DisposeIShellView() {
-			if(this.shellView != null) {
-				lock(this.shellView) {
+			if (this.shellView != null) {
+				lock (this.shellView) {
 					this.shellViewHandle = IntPtr.Zero;
-//					this.shellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);		// TODO: RELAUNCH: Commented out due exception
-//					this.shellView.DestroyViewWindow();							// TODO: RELAUNCH: Commented out due exception
+					//					this.shellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);		// TODO: RELAUNCH: Commented out due exception
+					//					this.shellView.DestroyViewWindow();							// TODO: RELAUNCH: Commented out due exception
 					Marshal.ReleaseComObject(this.shellView);
 					this.shellView = null;
 				}
@@ -104,7 +104,7 @@ namespace electrifier.Core.Shell32.Controls {
 
 
 		protected override void WndProc(ref Message m) {
-			switch((WinAPI.WM)m.Msg) {
+			switch ((WinAPI.WM)m.Msg) {
 				case WinAPI.WM.GETISHELLBROWSER:
 					// See Knowledge Base article 157247 for more details on this message
 					m.Result = Marshal.GetComInterfaceForObject(this, typeof(ShellAPI.IShellBrowser));
@@ -152,7 +152,7 @@ namespace electrifier.Core.Shell32.Controls {
 							// TODO: CreateViewWindow returns HRESULT
 							// TODO: Set previous (First parameter)
 							uint hResult = this.shellView.CreateViewWindow(null, ref folderSettings, this, ref viewDimensions, out this.shellViewHandle);
-							if(hResult != 0) {
+							if (hResult != 0) {
 								MessageBox.Show("ShellBrowser.NavigateTo: CreateViewWindow failed!\n" +
 									"HRESULT = " + hResult, "electrifier: Unhandled Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 							}
@@ -161,7 +161,7 @@ namespace electrifier.Core.Shell32.Controls {
 						}
 					}
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				// TODO: Error-handling?!?
 
 				MessageBox.Show("ShellBrowser.cs: ShellBrowser.NavigateTo:\nUnknown exception!\n" + e.Message);
@@ -183,33 +183,48 @@ namespace electrifier.Core.Shell32.Controls {
 		#endregion
 
 		#region IShellBrowser Member
-		public uint GetWindow(out IntPtr HWND) {
+
+		HResult ShellAPI.IShellBrowser.GetWindow(out IntPtr HWND) {
 			HWND = this.Handle;
 
-			return 0x0; // S_OK
+			return HResult.S_OK;
 		}
 
-		public uint ContextSensitiveHelp(bool fEnterMode) {
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.ContextSensitiveHelp(bool fEnterMode) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint SetToolbarItems(System.IntPtr lpButtons, uint nButtons, uint uFlags) {
-			// TODO:  Implementierung von ShellBrowser.SetToolbarItems hinzufügen
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.InsertMenusSB(System.IntPtr hmenuShared, ref System.IntPtr lpMenuWidths) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint SetMenuSB(System.IntPtr hmenuShared, System.IntPtr holemenuRes, System.IntPtr hwndActiveObject) {
-			// TODO:  Implementierung von ShellBrowser.SetMenuSB hinzufügen
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.SetMenuSB(System.IntPtr hmenuShared, System.IntPtr holemenuRes, System.IntPtr hwndActiveObject) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint BrowseObject(System.IntPtr pidl, ShellAPI.SBSP Flags) {
-			if (Flags.HasFlag(ShellAPI.SBSP.SameBrowser)){
-				this.Invoke((Action)(() => {				// TODO: InvokeRequired
+		HResult ShellAPI.IShellBrowser.RemoveMenusSB(System.IntPtr hmenuShared) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.IShellBrowser.SetStatusTextSB(string pszStatusText) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.IShellBrowser.EnableModelessSB(bool fEnable) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.IShellBrowser.TranslateAcceleratorSB(IntPtr pmsg, UInt16 wID) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.IShellBrowser.BrowseObject(IntPtr pidl, ShellAPI.SBSP wFlags) {
+			if (wFlags.HasFlag(ShellAPI.SBSP.SameBrowser)) {
+				this.Invoke((Action)(() => {        // TODO: InvokeRequired
 					this.NavigateTo(pidl, false);
-					
+
 					if (this.BrowseShellObject != null)
-						this.BrowseShellObject(this, new BrowseShellObjectEventArgs(pidl, Flags));
+						this.BrowseShellObject(this, new BrowseShellObjectEventArgs(pidl, wFlags));
 				}));
 			} else {
 				// TODO: Check all the other possible flags!
@@ -217,93 +232,64 @@ namespace electrifier.Core.Shell32.Controls {
 				MessageBox.Show("ShellBrowser.cs: BrowseObject:\nFlag is unknown!");
 			}
 
-
-			return 0x0; // S_OK
+			return HResult.S_OK;
 		}
 
-		public uint TranslateAcceleratorSB(uint pmsg, ushort wID) {
-			// TODO:  Implementierung von ShellBrowser.TranslateAcceleratorSB hinzufügen
-			return 0x00000000;
+		HResult ShellAPI.IShellBrowser.GetViewStateStream(uint /* DWORD */ grfMode, IntPtr /*IStream */ ppStrm) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint SetStatusTextSB(string pszStatusText) {
-			// TODO:  Implementierung von ShellBrowser.SetStatusTextSB hinzufügen
-			MessageBox.Show("ShellBrowser.cs: SetStatusTextSB:\n... has been called!");
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.GetControlWindow(uint id, out IntPtr phwnd) {
+			phwnd = IntPtr.Zero;
+			return HResult.E_NotImpl;
 		}
 
-		public uint SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, uint pret) {
-			// TODO:  Implementierung von ShellBrowser.SendControlMsg hinzufügen
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, IntPtr pret) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint GetViewStateStream(uint grfMode, out System.IntPtr ppStrm) {
-			// TODO:  Implementierung von ShellBrowser.GetViewStateStream hinzufügen
-			ppStrm = new System.IntPtr ();
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.QueryActiveShellView([MarshalAs(UnmanagedType.Interface)] ref ShellAPI.IShellView ppshv) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint OnViewWindowActive(System.IntPtr pshv) {
-//			if(this.CanSelect) {
-//				this.Select();
-//			}
-//			if(this.shellViewHandle != IntPtr.Zero) {
-//				IntPtr x = WinAPI.SetFocus(this.shellViewHandle);
-//				return 0x0;
-//			}
-			// TODO:  Implementierung von ShellBrowser.OnViewWindowActive hinzufügen
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.OnViewWindowActive([MarshalAs(UnmanagedType.Interface)] ShellAPI.IShellView pshv) {
+			//			if(this.CanSelect) {
+			//				this.Select();
+			//			}
+			//			if(this.shellViewHandle != IntPtr.Zero) {
+			//				IntPtr x = WinAPI.SetFocus(this.shellViewHandle);
+			//				return 0x0;
+			//			}
+			return HResult.E_NotImpl;
 		}
 
-		public uint GetControlWindow(uint id, out System.IntPtr phwnd) {
-			// TODO:  Implementierung von ShellBrowser.GetControlWindow hinzufügen
-			phwnd = new System.IntPtr ();
-			return 0x80004001;
+		HResult ShellAPI.IShellBrowser.SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags) {
+			return HResult.E_NotImpl;
 		}
 
-		public uint InsertMenusSB(System.IntPtr hmenuShared, ref System.IntPtr lpMenuWidths) {
-			// TODO:  Implementierung von ShellBrowser.InsertMenusSB hinzufügen
-			return 0x80004001;
-		}
+		#endregion IShellBrowser Member
 
-		public uint RemoveMenusSB(System.IntPtr hmenuShared) {
-			// TODO:  Implementierung von ShellBrowser.RemoveMenusSB hinzufügen
-			return 0x80004001;
-		}
-
-		public uint EnableModelessSB(bool fEnable) {
-			// TODO:  Implementierung von ShellBrowser.EnableModelessSB hinzufügen
-			return 0x80004001;
-		}
-
-		public uint QueryActiveShellView(out System.IntPtr ppshv) {
-			// TODO:  Implementierung von ShellBrowser.QueryActiveShellView hinzufügen
-			ppshv = new System.IntPtr ();
-			return 0x80004001;
-		}
-
-		#endregion
-
-		
 		#region IServiceProvider Member
 
-		public uint QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppv) {
-			// TODO: Check for and handle IOleCommandTarget
-			if (riid.CompareTo(ShellAPI.IID_IShellBrowser) == 0) {
-				ppv = Marshal.GetComInterfaceForObject(this, typeof(ShellAPI.IShellBrowser));
+		HResult WinAPI.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject) {
 
-				return 0x0; // S_OK
-			} else
-				ppv = IntPtr.Zero;
-			
-			// TODO: return SVC_E_UNKNOWNSERVICE instead?!? when service not recognized
-			return 0x80004002;		// E_NOINTERFACE
+			// TODO: Check for and handle IOleCommandTarget?!?
+
+			if (riid.Equals(ShellAPI.IID_IShellBrowser)) {
+				ppvObject = Marshal.GetComInterfaceForObject(this, typeof(ShellAPI.IShellBrowser));
+
+				return HResult.S_OK;
+			} else {
+				ppvObject = IntPtr.Zero;
+
+				return HResult.E_NoInterface;   // TODO: return SVC_E_UNKNOWNSERVICE instead?!? when service not recognized
+			}
 		}
 
-		#endregion
+		#endregion IServiceProvider Member
 
 		private void ShellBrowser_Resize(object sender, System.EventArgs e) {
-			if(this.shellViewHandle != IntPtr.Zero) {
+			if (this.shellViewHandle != IntPtr.Zero) {
 				WinAPI.MoveWindow(this.shellViewHandle, 0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, true);
 			}
 		}
@@ -314,11 +300,11 @@ namespace electrifier.Core.Shell32.Controls {
 	public class BrowseShellObjectEventArgs : EventArgs {
 		public BrowseShellObjectEventArgs(IntPtr shellObjectPIDL, ShellAPI.SBSP Flags) {
 			this.ShellObjectPIDL = shellObjectPIDL;
-			this.Flags           = Flags;
+			this.Flags = Flags;
 		}
 
-		public IntPtr        ShellObjectPIDL = IntPtr.Zero;
-		public ShellAPI.SBSP Flags           = ShellAPI.SBSP.None;
+		public IntPtr ShellObjectPIDL = IntPtr.Zero;
+		public ShellAPI.SBSP Flags = ShellAPI.SBSP.None;
 	}
 
 }
