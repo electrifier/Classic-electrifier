@@ -4,6 +4,8 @@ using System.Windows.Forms;
 
 namespace electrifier.Win32API {
 
+	#region HResult-Implementation (Helper struct)
+
 	/// <summary>
 	/// See https://msdn.microsoft.com/en-us/library/windows/desktop/aa378137(v=vs.85).aspx
 	/// </summary>
@@ -36,13 +38,15 @@ namespace electrifier.Win32API {
 		public static implicit operator HResult(int value) { return (new Win32API.HResult(value)); }
 		public static implicit operator HResult(uint value) { return (new Win32API.HResult(value)); }
 
-		public bool Failed() { return (this == HResult.S_OK); }
-		public bool Succeeded() { return (this != HResult.S_OK); }
+		public bool Succeeded { get { return (HResult.S_OK == this.Value); } }
+		public bool Failed { get { return (HResult.S_OK != this.Value); } }
 
 		public static bool operator ==(HResult hResultA, HResult hResultB) { return (hResultA.Value == hResultB.Value); }
 		public static bool operator !=(HResult hResultA, HResult hResultB) { return (hResultA.Value != hResultB.Value); }
 
+		public void ThrowException() { Marshal.ThrowExceptionForHR(this.Value); }
 		public override int GetHashCode() { return this.Value; }
+		public override string ToString() { return this.Value.ToString("X8"); }
 
 		public override bool Equals(object obj) {
 			if (null == obj)
@@ -55,6 +59,8 @@ namespace electrifier.Win32API {
 			return (this.Value == HResultObj.Value);
 		}
 	}
+
+	#endregion
 
 	public enum WMSG : uint {
 		/**

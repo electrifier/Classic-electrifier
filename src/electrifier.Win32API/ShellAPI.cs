@@ -187,16 +187,21 @@ namespace electrifier.Win32API {
 			public IntPtr hIcon;
 		}
 
-		public enum FOLDERVIEWMODE : uint {
-			FIRST      = 1,
-			ICON       = 1,
-			SMALLICON  = 2,
-			LIST       = 3,
-			DETAILS    = 4,
-			THUMBNAIL  = 5,
-			TILE       = 6,
+		/// <summary>
+		/// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762510(v=vs.85).aspx
+		/// </summary>
+		public enum FOLDERVIEWMODE : int {
+			AUTO = -1,
+			FIRST = 1,
+			ICON = 1,
+			SMALLICON = 2,
+			LIST = 3,
+			DETAILS = 4,
+			THUMBNAIL = 5,
+			TILE = 6,
 			THUMBSTRIP = 7,
-			LAST       = 7,
+			CONTENT = 8,
+			LAST = 8
 		};
 
 		public enum FOLDERFLAGS : uint {
@@ -669,8 +674,20 @@ namespace electrifier.Win32API {
 			int InitializeFromWindow(IntPtr hwnd, ref WinAPI.POINT ppt,	WinAPI.IDataObject pDataObject);
 		}
 
+		/// <summary>
+		/// See: https://msdn.microsoft.com/en-us/library/windows/desktop/bb773399(v=vs.85).aspx
+		/// </summary>
+		[StructLayout(LayoutKind.Sequential)]
+		public struct SFV_CREATE {
+			public int cbSize;                          // The size of the SFV_CREATE structure, in bytes.
+			public ShellAPI.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
+			public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
+			public IntPtr psfvcb;                       // IShellFolderViewCB *psfvcb;   A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
+		}
 
-
+		// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762141(v=vs.85).aspx
+		[DllImport("shell32.dll")]
+		public static extern HResult SHCreateShellFolderView(SFV_CREATE pcsfv, out ShellAPI.IShellView ppsv);
 
 		/// <summary>
 		/// System interface id for IShellFolder interface
