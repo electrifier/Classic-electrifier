@@ -8,11 +8,12 @@ using electrifier.Core.Shell32.Services;
 using electrifier.Win32API;
 
 namespace electrifier.Core.Shell32.Controls {
+
 	/// <summary>
-	/// Zusammenfassung für ShellBrowser.
+	/// Summary for ShellBrowser
 	/// </summary>
 
-	public class ShellBrowser : Panel, ShellAPI.IShellBrowser, WinAPI.IServiceProvider {
+	public class ShellBrowser : System.Windows.Forms.Panel, ShellAPI.IShellBrowser, WinAPI.IServiceProvider {
 		protected static DesktopFolderInstance desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
 		protected IntPtr absolutePIDL = IntPtr.Zero;
 		protected IntPtr relativePIDL = IntPtr.Zero;
@@ -23,20 +24,13 @@ namespace electrifier.Core.Shell32.Controls {
 		public event BrowseShellObjectEventHandler BrowseShellObject = null;
 
 		/// <summary>
-		/// Erforderliche Designervariable.
+		/// Required designer variable.
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 
 		public ShellBrowser(System.ComponentModel.IContainer container) {
-			///
-			/// Erforderlich für Windows.Forms Klassenkompositions-Designerunterstützung
-			///
 			container.Add(this);
 			InitializeComponent();
-
-			//
-			// TODO: Fügen Sie den Konstruktorcode nach dem Aufruf von InitializeComponent hinzu
-			//
 		}
 
 		public ShellBrowser(ShellAPI.CSIDL shellObjectCSIDL)
@@ -49,9 +43,6 @@ namespace electrifier.Core.Shell32.Controls {
 			: this(shellObjectPIDL, false) { }
 
 		private ShellBrowser(IntPtr shellObjectPIDL, bool pidlSelfCreated) : base() {
-			///
-			/// Erforderlich für Windows.Forms Klassenkompositions-Designerunterstützung
-			///
 			InitializeComponent();
 
 			// Default constructing code...
@@ -59,9 +50,10 @@ namespace electrifier.Core.Shell32.Controls {
 
 		}
 
-		/// <summary> 
-		/// Verwendete Ressourcen bereinigen.
+		/// <summary>
+		/// Clean up any resources being used.
 		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose(bool disposing) {
 			this.DisposeIShellView();
 			this.DisposeIShellFolder();
@@ -89,19 +81,31 @@ namespace electrifier.Core.Shell32.Controls {
 			}
 		}
 
+		protected void DisposeIShellView(ShellAPI.IShellView disposingShellView) {
+			if (null != disposingShellView) {
+				disposingShellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);
+				disposingShellView.DestroyViewWindow();
+				Marshal.ReleaseComObject(disposingShellView);
+			}
+		}
+
 		protected void DisposeIShellView() {
 			if (this.shellView != null) {
 				lock (this.shellView) {
 					this.shellViewHandle = IntPtr.Zero;
-					//					this.shellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);		// TODO: RELAUNCH: Commented out due exception
-					//					this.shellView.DestroyViewWindow();							// TODO: RELAUNCH: Commented out due exception
+					this.shellView.UIActivate(ShellAPI.SVUIA.DEACTIVATE);
+					this.shellView.DestroyViewWindow();
 					Marshal.ReleaseComObject(this.shellView);
 					this.shellView = null;
 				}
 			}
 		}
 
-
+		private void ShellBrowser_Resize(object sender, System.EventArgs e) {
+			if (this.shellViewHandle != IntPtr.Zero) {
+				WinAPI.MoveWindow(this.shellViewHandle, 0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
+			}
+		}
 
 		protected override void WndProc(ref Message m) {
 			switch ((WinAPI.WM)m.Msg) {
@@ -116,62 +120,78 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		public void NavigateTo(IntPtr folderPIDL, bool pidlSelfCreated = false) {
-			try {
-				ShellAPI.FOLDERSETTINGS folderSettings;
+			HResult result = ((ShellAPI.IShellBrowser)this).BrowseObject(folderPIDL, (ShellAPI.SBSP.SameBrowser | ShellAPI.SBSP.Absolute));
 
-				if (this.shellView != null)
-					this.shellView.GetCurrentInfo(out folderSettings);
-				else {
-					folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.DETAILS;
-					folderSettings.Flags = ShellAPI.FOLDERFLAGS.SNAPTOGRID;
-				}
-
-				this.DisposePIDLs();
-				this.DisposeIShellFolder();
-				this.DisposeIShellView();
-
-				this.absolutePIDL = (pidlSelfCreated ? folderPIDL : PIDLManager.Clone(folderPIDL));
-				this.relativePIDL = PIDLManager.FindLastID(this.absolutePIDL);
-				this.shellFolder = desktopFolder.GetIShellFolder(folderPIDL);
-
-				if (this.shellFolder != null) {
-					IntPtr pShellView;
-
-					int hResultVO = this.shellFolder.CreateViewObject(this.Handle, ref ShellAPI.IID_IShellView, out pShellView);
-
-					if (pShellView != IntPtr.Zero) {
-						this.shellView = Marshal.GetTypedObjectForIUnknown(pShellView, typeof(ShellAPI.IShellView)) as ShellAPI.IShellView;
-						// TODO: Refactor the code above...
-
-						if (this.shellView != null) {
-							Win32API.RECT viewDimensions = new Win32API.RECT(this.ClientRectangle);
-
-							// TODO: Issue #1, CreateViewWindow fails for e.g. Control Panel (ReturnCode = 1),
-							// so check ReturnCode (OLELastError or something like that) and check why it fails!
-
-							// TODO: CreateViewWindow returns HRESULT
-							// TODO: Set previous (First parameter)
-							uint hResult = this.shellView.CreateViewWindow(null, ref folderSettings, this, ref viewDimensions, out this.shellViewHandle);
-							if (hResult != 0) {
-								MessageBox.Show("ShellBrowser.NavigateTo: CreateViewWindow failed!\n" +
-									"HRESULT = " + hResult, "electrifier: Unhandled Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-							}
-
-							this.shellView.UIActivate(ShellAPI.SVUIA.ACTIVATE_NOFOCUS);
-						}
-					}
-				}
-			} catch (Exception e) {
-				// TODO: Error-handling?!?
-
-				MessageBox.Show("ShellBrowser.cs: ShellBrowser.NavigateTo:\nUnknown exception!\n" + e.Message);
-			}
+			if (result.Failed)
+				result.ThrowException();
 		}
 
-		#region Vom Komponenten-Designer generierter Code
+		private HResult BrowseObjectInternal(IntPtr pidl, ShellAPI.SBSP wFlags) {
+			if (wFlags.HasFlag(ShellAPI.SBSP.SameBrowser)) {
+				ShellAPI.IShellView oldShellView = this.shellView;
+
+				// TODO: Check for ShellAPI.SBSP.Relative and ShellAPI.SBSP.Parent
+
+				try {
+					ShellAPI.FOLDERSETTINGS folderSettings;
+
+					if (null != this.shellView)
+						this.shellView.GetCurrentInfo(out folderSettings);
+					else
+						ShellAPI.FOLDERSETTINGS.LoadDefaults(out folderSettings);
+
+					this.DisposePIDLs();
+					this.DisposeIShellFolder();
+
+					this.absolutePIDL = PIDLManager.Clone(pidl);
+					this.relativePIDL = PIDLManager.FindLastID(this.absolutePIDL);
+					this.shellFolder = desktopFolder.GetIShellFolder(pidl);
+
+					if (null == this.shellFolder)
+						throw new Exception("ShellBrowser:BrowseObjectInternal: 'GetIShellFolder' failed!");
+
+					HResult hResult = ShellAPI.SHCreateShellFolderView(new ShellAPI.SFV_CREATE(this.shellFolder), out this.shellView);
+
+					if (hResult.Succeeded) {
+						Win32API.RECT viewDimensions = new Win32API.RECT(this.ClientRectangle);
+
+						hResult = this.shellView.CreateViewWindow(oldShellView, ref folderSettings, this, ref viewDimensions, out this.shellViewHandle);
+
+						if (hResult.Failed) {
+							MessageBox.Show("ShellBrowser.BrowseObjectInternal: CreateViewWindow failed!\n" +
+								"HRESULT = " + hResult.ToString(), "electrifier: Unhandled Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						}
+
+						this.shellView.UIActivate(ShellAPI.SVUIA.ACTIVATE_NOFOCUS);
+					} else {
+						MessageBox.Show("ShellBrowser.BrowseObjectInternal: SHCreateShellFolderView failed!\n" +
+							"HRESULT = " + hResult.ToString(), "electrifier: Unhandled Exception!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				} catch (Exception e) {
+					// TODO: Error-handling?!?
+
+					MessageBox.Show("ShellBrowser.cs: ShellBrowser.BrowseObjectInternal:\nUnknown exception!\n" + e.Message);
+				} finally {
+					this.DisposeIShellView(oldShellView);
+				}
+
+			} else if (wFlags.HasFlag(ShellAPI.SBSP.NewBrowser)) {
+
+				MessageBox.Show("ShellBrowser.NavigateTo: Open in new Browser!\n",
+					"electrifier: Invalid Argument", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+			}
+
+			if (this.BrowseShellObject != null)
+				this.BrowseShellObject(this, new BrowseShellObjectEventArgs(pidl, wFlags));
+
+			return HResult.S_OK;
+		}
+
+		#region Windows Form Designer generated code
 		/// <summary>
-		/// Erforderliche Methode für die Designerunterstützung. 
-		/// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
 			// 
@@ -180,10 +200,9 @@ namespace electrifier.Core.Shell32.Controls {
 			this.Resize += new System.EventHandler(this.ShellBrowser_Resize);
 
 		}
-		#endregion
+		#endregion Windows Form Designer generated code
 
 		#region IShellBrowser Member
-
 		HResult ShellAPI.IShellBrowser.GetWindow(out IntPtr HWND) {
 			HWND = this.Handle;
 
@@ -219,17 +238,12 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		HResult ShellAPI.IShellBrowser.BrowseObject(IntPtr pidl, ShellAPI.SBSP wFlags) {
-			if (wFlags.HasFlag(ShellAPI.SBSP.SameBrowser)) {
-				this.Invoke((Action)(() => {        // TODO: InvokeRequired
-					this.NavigateTo(pidl, false);
-
-					if (this.BrowseShellObject != null)
-						this.BrowseShellObject(this, new BrowseShellObjectEventArgs(pidl, wFlags));
+			if(this.InvokeRequired) {
+				this.Invoke((Action)(() => {
+					this.BrowseObjectInternal(pidl, wFlags);
 				}));
 			} else {
-				// TODO: Check all the other possible flags!
-
-				MessageBox.Show("ShellBrowser.cs: BrowseObject:\nFlag is unknown!");
+				this.BrowseObjectInternal(pidl, wFlags);
 			}
 
 			return HResult.S_OK;
@@ -249,10 +263,13 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		HResult ShellAPI.IShellBrowser.QueryActiveShellView([MarshalAs(UnmanagedType.Interface)] ref ShellAPI.IShellView ppshv) {
-			return HResult.E_NotImpl;
+			Marshal.AddRef(Marshal.GetIUnknownForObject(ppshv = this.shellView));
+
+			return HResult.S_OK;
 		}
 
 		HResult ShellAPI.IShellBrowser.OnViewWindowActive([MarshalAs(UnmanagedType.Interface)] ShellAPI.IShellView pshv) {
+			// TODO: Now the shellview gets the focus
 			//			if(this.CanSelect) {
 			//				this.Select();
 			//			}
@@ -260,19 +277,16 @@ namespace electrifier.Core.Shell32.Controls {
 			//				IntPtr x = WinAPI.SetFocus(this.shellViewHandle);
 			//				return 0x0;
 			//			}
-			return HResult.E_NotImpl;
+			return HResult.S_OK;
 		}
 
 		HResult ShellAPI.IShellBrowser.SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags) {
 			return HResult.E_NotImpl;
 		}
-
 		#endregion IShellBrowser Member
 
 		#region IServiceProvider Member
-
 		HResult WinAPI.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject) {
-
 			// TODO: Check for and handle IOleCommandTarget?!?
 
 			if (riid.Equals(ShellAPI.IID_IShellBrowser)) {
@@ -282,17 +296,11 @@ namespace electrifier.Core.Shell32.Controls {
 			} else {
 				ppvObject = IntPtr.Zero;
 
-				return HResult.E_NoInterface;   // TODO: return SVC_E_UNKNOWNSERVICE instead?!? when service not recognized
+				return HResult.E_NoInterface;
 			}
 		}
 
 		#endregion IServiceProvider Member
-
-		private void ShellBrowser_Resize(object sender, System.EventArgs e) {
-			if (this.shellViewHandle != IntPtr.Zero) {
-				WinAPI.MoveWindow(this.shellViewHandle, 0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, true);
-			}
-		}
 	}
 
 	public delegate void BrowseShellObjectEventHandler(object source, BrowseShellObjectEventArgs e);

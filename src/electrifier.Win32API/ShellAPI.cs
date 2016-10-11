@@ -164,13 +164,19 @@ namespace electrifier.Win32API {
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
-			public struct FOLDERSETTINGS {
+		public struct FOLDERSETTINGS {
 			public ShellAPI.FOLDERVIEWMODE ViewMode;
-			public ShellAPI.FOLDERFLAGS    Flags;
+			public ShellAPI.FOLDERFLAGS Flags;
 
 			public FOLDERSETTINGS(FOLDERVIEWMODE ViewMode, FOLDERFLAGS Flags) {
 				this.ViewMode = ViewMode;
-				this.Flags    = Flags;
+				this.Flags = Flags;
+			}
+
+			[System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+			public static void LoadDefaults(out FOLDERSETTINGS folderSettings) {
+				folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.AUTO;
+				folderSettings.Flags = ShellAPI.FOLDERFLAGS.SNAPTOGRID;
 			}
 		};
 
@@ -683,6 +689,13 @@ namespace electrifier.Win32API {
 			public ShellAPI.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
 			public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
 			public IntPtr psfvcb;                       // IShellFolderViewCB *psfvcb;   A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
+
+			public SFV_CREATE(ShellAPI.IShellFolder pshf = null, ShellAPI.IShellView psvOuter = null, IntPtr psfvcb = default(IntPtr)) {
+				this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
+				this.pshf = pshf;
+				this.psvOuter = psvOuter;
+				this.psfvcb = psfvcb;
+			}
 		}
 
 		// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762141(v=vs.85).aspx
