@@ -13,7 +13,7 @@ namespace electrifier.Core.Shell32.Controls {
 	/// Summary for ShellBrowser
 	/// </summary>
 
-	public class ShellBrowser : System.Windows.Forms.Panel, ShellAPI.IShellBrowser, WinAPI.IServiceProvider {
+	public class ShellBrowser : System.Windows.Forms.Panel, ShellAPI.IShellBrowser, ShellAPI.ICommDlgBrowser3, WinAPI.IServiceProvider {
 		protected static DesktopFolderInstance desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
 		protected IntPtr absolutePIDL = IntPtr.Zero;
 		protected IntPtr relativePIDL = IntPtr.Zero;
@@ -203,6 +203,7 @@ namespace electrifier.Core.Shell32.Controls {
 		#endregion Windows Form Designer generated code
 
 		#region IShellBrowser Member
+
 		HResult ShellAPI.IShellBrowser.GetWindow(out IntPtr HWND) {
 			HWND = this.Handle;
 
@@ -285,7 +286,49 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 		#endregion IShellBrowser Member
 
+		#region ICommDlgBrowser3 Member
+
+		HResult ShellAPI.ICommDlgBrowser3.OnDefaultCommand(ShellAPI.IShellView ppshv) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.OnStateChange(ShellAPI.IShellView ppshv, ShellAPI.CommDlgBrowserStateChange uChange) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.IncludeObject(ShellAPI.IShellView ppshv, IntPtr pidl) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.GetDefaultMenuText(ShellAPI.IShellView shellView, IntPtr buffer, int bufferMaxLength) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.GetViewFlags(out ShellAPI.CommDlgBrowser2ViewFlags pdwFlags) {
+			pdwFlags = ShellAPI.CommDlgBrowser2ViewFlags.ShowAllFiles;
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.Notify(ShellAPI.IShellView pshv, ShellAPI.CommDlgBrowserNotifyType notifyType) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.GetCurrentFilter(System.Text.StringBuilder pszFileSpec, int cchFileSpec) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.OnColumnClicked(ShellAPI.IShellView ppshv, int iColumn) {
+			return HResult.E_NotImpl;
+		}
+
+		HResult ShellAPI.ICommDlgBrowser3.OnPreViewCreated(ShellAPI.IShellView ppshv) {
+			return HResult.S_OK;
+		}
+
+		#endregion ICommDlgBrowser3 Member
+
 		#region IServiceProvider Member
+
 		HResult WinAPI.IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject) {
 			// TODO: Check for and handle IOleCommandTarget?!?
 
@@ -293,11 +336,25 @@ namespace electrifier.Core.Shell32.Controls {
 				ppvObject = Marshal.GetComInterfaceForObject(this, typeof(ShellAPI.IShellBrowser));
 
 				return HResult.S_OK;
-			} else {
-				ppvObject = IntPtr.Zero;
-
-				return HResult.E_NoInterface;
 			}
+
+			if (guidService.Equals(ShellAPI.IID_ICommDlgBrowser)) {
+				// TODO: Comment taken from ExplorerBrowser.cs:
+				//
+				// The below lines are commented out to decline requests for the ICommDlgBrowser2 interface.
+				// This interface is incorrectly marshaled back to unmanaged, and causes an exception.
+				// There is a bug for this, I have not figured the underlying cause.
+				// Remove this comment and uncomment the following code to enable the ICommDlgBrowser2 interface
+				if (riid.Equals(ShellAPI.IIDS_ICommDlgBrowser) || riid.Equals(ShellAPI.IIDS_ICommDlgBrowser3)) {
+					ppvObject = Marshal.GetComInterfaceForObject(this, typeof(ShellAPI.ICommDlgBrowser3));
+
+					return HResult.S_OK;
+				}
+			}
+
+			ppvObject = IntPtr.Zero;
+
+			return HResult.E_NoInterface;
 		}
 
 		#endregion IServiceProvider Member

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+
 namespace electrifier.Win32API {
 
 	public class ShellAPI {
@@ -787,16 +788,22 @@ namespace electrifier.Win32API {
 				out IntPtr ppidlOut);
 		}
 
-		// TODO: Warning! the following will NOT work using w2k
-		// Accepts a STRRET structure returned by
-		// ShellFolder::GetDisplayNameOf that contains or points to a string, and then
-		// returns that string as a BSTR.
+		/// <summary>
+		/// Accepts a STRRET structure returned by IShellFolder::GetDisplayNameOf that contains or points to a string, and returns that string as a BSTR.
+		/// </summary>
+		/// <see cref="https://msdn.microsoft.com/en-us/library/windows/desktop/bb773423(v=vs.85).aspx"/>
+		/// <remarks>
+		/// If the uType member of the STRRET structure pointed to by pstr is set to STRRET_WSTR, the pOleStr member of that structure is freed on return.
+		/// </remarks>
+		/// <param name="pstr">A pointer to a STRRET structure. When the function returns, this pointer is longer valid.</param>
+		/// <param name="pidl">A pointer to an ITEMIDLIST that uniquely identifies a file object or subfolder relative to the parent folder. This value can be NULL.</param>
+		/// <param name="pbstr">A pointer to a variable of type BSTR that receives the converted string.</param>
+		/// <returns>If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.</returns>
 		[DllImport("shlwapi.dll")]
 		public static extern Int32 StrRetToBSTR(
 			ref STRRET pstr,
 			IntPtr pidl,
-			[MarshalAs(UnmanagedType.BStr)]
-			out String pbstr);
+			[MarshalAs(UnmanagedType.BStr)] out String pbstr);
 
 		public enum SHCONTF : uint {
 			FOLDERS             = 0x0020,   // only want folders enumerated (SFGAO_FOLDER)
@@ -810,8 +817,90 @@ namespace electrifier.Win32API {
 			DefaultForListView  = ShellAPI.SHCONTF.FOLDERS | ShellAPI.SHCONTF.NONFOLDERS | ShellAPI.SHCONTF.INCLUDEHIDDEN,
 		}
 
+		#region ICommDlgBrowser3
+
+		[DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+		public static extern HResult IUnknown_SetSite(
+				[In, MarshalAs(UnmanagedType.IUnknown)] object punk,
+				[In, MarshalAs(UnmanagedType.IUnknown)] object punkSite);
+
+
+		/// <summary>
+		/// System interface id for ICommDlgBrowser3 interface
+		/// </summary>
+		/// 
+		public const string IIDS_ICommDlgBrowser = "000214F1-0000-0000-C000-000000000046";
+		public static Guid IID_ICommDlgBrowser = new Guid(IIDS_ICommDlgBrowser);
+
+		public const string IIDS_ICommDlgBrowser2 = "10339516-2894-11D2-9039-00C04F8EEB3E";
+		public static Guid IID_ICommDlgBrowser2 = new Guid(IIDS_ICommDlgBrowser2);
+
+		public const string IIDS_ICommDlgBrowser3 = "C8AD25A1-3294-41EE-8165-71174BD01C57";
+		public static Guid IID_ICommDlgBrowser3 = new Guid(IIDS_ICommDlgBrowser3);
+
+		public enum CommDlgBrowserStateChange {
+			SetFocus = 0,
+			KillFocus = 1,
+			SelectionChange = 2,
+			Rename = 3,
+			StateChange = 4,
+		}
+
+		public enum CommDlgBrowserNotifyType {
+			Done = 1,
+			Start = 2,
+		}
+
+		public enum CommDlgBrowser2ViewFlags {
+			ShowAllFiles = 0x00000001,
+			IsFileSave = 0x00000002,
+			AllowPreviewPane = 0x00000004,
+			NoSelectVerb = 0x00000008,
+			NoIncludeItem = 0x00000010,
+			IsFolderPicker = 0x00000020,
+		}
+
+		[ComImport,
+			Guid(IIDS_ICommDlgBrowser3),
+			InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+		public interface ICommDlgBrowser3 {
+			// ICommDlgBrowser1
+			[PreserveSig]
+			HResult OnDefaultCommand(ShellAPI.IShellView /* IntPtr */ ppshv);
+
+			[PreserveSig]
+			HResult OnStateChange(ShellAPI.IShellView /* IntPtr */ ppshv, ShellAPI.CommDlgBrowserStateChange uChange);
+
+			[PreserveSig]
+			HResult IncludeObject(ShellAPI.IShellView /* IntPtr */ ppshv, IntPtr pidl);
+
+			// ICommDlgBrowser2
+			[PreserveSig]
+			HResult GetDefaultMenuText(ShellAPI.IShellView shellView, /* WCHAR* */IntPtr buffer, int bufferMaxLength);   // 'buffer' should be at least MAX_CHAR in size...
+
+			[PreserveSig]
+			HResult GetViewFlags([Out] out ShellAPI.CommDlgBrowser2ViewFlags pdwFlags);
+
+			[PreserveSig]
+			HResult Notify(ShellAPI.IShellView /* IntPtr */ pshv, ShellAPI.CommDlgBrowserNotifyType notifyType);
+
+			// ICommDlgBrowser3
+			[PreserveSig]
+			HResult GetCurrentFilter(System.Text.StringBuilder pszFileSpec, int cchFileSpec);
+
+			[PreserveSig]
+			HResult OnColumnClicked(ShellAPI.IShellView ppshv, int iColumn);
+
+			[PreserveSig]
+			HResult OnPreViewCreated(ShellAPI.IShellView ppshv);
+		}
+
+		#endregion ICommDlgBrowser3
+
+		/// <summary>
+		/// No instancing allowed
+		/// </summary>
 		private ShellAPI() {
-			// No instantion allowed.
 		}
 	}
 }
