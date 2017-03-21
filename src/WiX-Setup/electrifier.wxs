@@ -17,7 +17,7 @@
 		<!-- Properties controlling the installer GUI including the license agreement -->
 		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 		<UIRef Id="WixUI_InstallDir" />
-		<WixVariable Id="WixUILicenseRtf" Value="..\..\..\assets\License.rtf" />
+		<WixVariable Id="WixUILicenseRtf" Value="..\..\assets\License.rtf" />
 
 		<Feature Id="ProductFeature" Title="electrifier" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
