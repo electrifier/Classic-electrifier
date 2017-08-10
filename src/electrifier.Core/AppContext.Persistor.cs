@@ -12,7 +12,7 @@ namespace electrifier.Core {
 	/// See https://msdn.microsoft.com/en-us/library/ff650316.aspx for details on implementation of the singleton
 	/// </summary>
 
-	public sealed partial class AppContext : ApplicationContext, IPersistentFormContainer {
+	public sealed partial class AppContext : System.Windows.Forms.ApplicationContext, IPersistentFormContainer {
 
 		//
 		// Static member variables and properties

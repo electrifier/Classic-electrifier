@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -46,6 +47,14 @@ namespace electrifier.Core {
 		public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) {
 			bool noMainWindow = false;
 
+			// Initialize debug listener
+			Debug.Listeners.Add(new TextWriterTraceListener(new FileStream((AppContext.IsPortable ?
+				(Path.Combine(Application.StartupPath, @"electrifier.debug.log")) :
+				(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"electrifier", @"electrifier.debug.log"))),
+				FileMode.Append, FileAccess.Write)));
+			Debug.AutoFlush = true;
+			Debug.WriteLine("electrifier.Core.AppContext: New AppContext created. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")");
+
 			// Initialize application context
 			AppContext.instance = RegisterAppContextInstance(this);
 			AppContext.icon = appIcon;
@@ -72,7 +81,7 @@ namespace electrifier.Core {
 			}
 
 			// Create NotifyIcon
-			notifyIcon.Icon = new Icon(appIcon, 16, 16);	// TODO: width & height from regisry?!?
+			notifyIcon.Icon = new Icon(appIcon, 16, 16);	// TODO: width & height from registry?!?
 			notifyIcon.Visible = true;
 
 			// TODO: Action definieren, die neuen electrifier aufmacht...
@@ -108,6 +117,8 @@ namespace electrifier.Core {
 			// Finally close splash screen
 			splashScreenForm.Close();
 			splashScreenForm.Dispose();
+
+			Debug.WriteLine("electrifier.Core.AppContext: AppContext is shutting down. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")\n");
 		}
 
 		private void AppContext_ThreadExit(object sender, EventArgs e) {
