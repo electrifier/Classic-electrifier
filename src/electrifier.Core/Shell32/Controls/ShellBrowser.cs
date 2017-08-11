@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 using System.Runtime.InteropServices;
@@ -6,6 +7,7 @@ using System.Runtime.InteropServices;
 using electrifier.Core.Services;
 using electrifier.Core.Shell32.Services;
 using electrifier.Win32API;
+using electrifier.Win32API.Shell32;
 
 namespace electrifier.Core.Shell32.Controls {
 
@@ -13,7 +15,7 @@ namespace electrifier.Core.Shell32.Controls {
 	/// Summary for ShellBrowser
 	/// </summary>
 
-	public class ShellBrowser : System.Windows.Forms.Panel, ShellAPI.IShellBrowser, ShellAPI.ICommDlgBrowser3, WinAPI.IServiceProvider {
+	public class ShellBrowser : System.Windows.Forms.Panel, ShellAPI.IShellBrowser, ShellAPI.ICommDlgBrowser3, WinAPI.IServiceProvider, Win32API.Shell32.IShellFolderViewCB {
 		protected static DesktopFolderInstance desktopFolder = ServiceManager.Services.GetService(typeof(DesktopFolderInstance)) as DesktopFolderInstance;
 		protected IntPtr absolutePIDL = IntPtr.Zero;
 		protected IntPtr relativePIDL = IntPtr.Zero;
@@ -150,7 +152,7 @@ namespace electrifier.Core.Shell32.Controls {
 					if (null == this.shellFolder)
 						throw new Exception("ShellBrowser:BrowseObjectInternal: 'GetIShellFolder' failed!");
 
-					HResult hResult = ShellAPI.SHCreateShellFolderView(new ShellAPI.SFV_CREATE(this.shellFolder), out this.shellView);
+					HResult hResult = ShellAPI.SHCreateShellFolderView(new ShellAPI.SFV_CREATE(this.shellFolder, null, this), out this.shellView);
 
 					if (hResult.Succeeded) {
 						Win32API.RECT viewDimensions = new Win32API.RECT(this.ClientRectangle);
@@ -338,6 +340,13 @@ namespace electrifier.Core.Shell32.Controls {
 				return HResult.S_OK;
 			}
 
+			// "2047E320-F2A9-11CE-AE65-08002B2E1262"
+			if (riid.Equals(typeof(Win32API.Shell32.IShellFolderViewCB).GUID)) {
+				ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Win32API.Shell32.IShellFolderViewCB));
+
+				return HResult.S_OK;
+			}
+
 			if (guidService.Equals(ShellAPI.IID_ICommDlgBrowser)) {
 				// TODO: Comment taken from ExplorerBrowser.cs:
 				//
@@ -358,7 +367,29 @@ namespace electrifier.Core.Shell32.Controls {
 		}
 
 		#endregion IServiceProvider Member
+
+		HResult IShellFolderViewCB.MessageSFVCB(SFVM uMsg, IntPtr wParam, IntPtr lParam)
+		{
+			this.VerifyMessageSFVCB(uMsg, wParam, lParam);
+
+			return HResult.S_OK;
+		}
+
+		[Conditional("DEBUG")]
+		[DebuggerStepThrough]
+		protected void VerifyMessageSFVCB(SFVM uMsg, IntPtr wParam, IntPtr lParam)
+		{
+			switch (uMsg)
+			{
+				case SFVM.SELECTIONCHANGED:
+					Debug.WriteLine("ShellBrowser.cs - SFVM_SELECTIONCHANGED: wParam: 0x{0:X} - lParam: 0x{1:X}", wParam, lParam);
+					break;
+				default:
+					break;
+			}
+		}
 	}
+
 
 	public delegate void BrowseShellObjectEventHandler(object source, BrowseShellObjectEventArgs e);
 
@@ -371,5 +402,4 @@ namespace electrifier.Core.Shell32.Controls {
 		public IntPtr ShellObjectPIDL = IntPtr.Zero;
 		public ShellAPI.SBSP Flags = ShellAPI.SBSP.None;
 	}
-
 }

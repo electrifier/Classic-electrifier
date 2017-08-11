@@ -90,6 +90,8 @@ namespace electrifier.Core {
 			//       do you want to stay electrifier active in tray" blablablubb)
 
 			// Try to load and apply the configuration used for last session
+
+			// TODO: 11.08.2017 -> Wrong XML-Format: Crash!
 			if ((false == this.RestoreConfiguration()) || (0 == AppContext.openWindowList.Count)) {
 				// Start a new session since restoring configuration failed
 				MainWindowForm mainWindowForm = new MainWindowForm();
@@ -117,8 +119,6 @@ namespace electrifier.Core {
 			// Finally close splash screen
 			splashScreenForm.Close();
 			splashScreenForm.Dispose();
-
-			Debug.WriteLine("electrifier.Core.AppContext: AppContext is shutting down. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")\n");
 		}
 
 		private void AppContext_ThreadExit(object sender, EventArgs e) {
@@ -129,6 +129,8 @@ namespace electrifier.Core {
 			// Destroy NotifyIcon
 			AppContext.NotifyIcon.Visible = false;
 			AppContext.NotifyIcon.Dispose();
+
+			Debug.WriteLine("electrifier.Core.AppContext: AppContext is shutting down. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")\n");
 		}
 
 		private AppContext RegisterAppContextInstance(AppContext appContextInstance) 

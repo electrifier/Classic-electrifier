@@ -681,26 +681,31 @@ namespace electrifier.Win32API {
 			int InitializeFromWindow(IntPtr hwnd, ref WinAPI.POINT ppt,	WinAPI.IDataObject pDataObject);
 		}
 
-		/// <summary>
-		/// See: https://msdn.microsoft.com/en-us/library/windows/desktop/bb773399(v=vs.85).aspx
-		/// </summary>
-		[StructLayout(LayoutKind.Sequential)]
-		public struct SFV_CREATE {
-			public int cbSize;                          // The size of the SFV_CREATE structure, in bytes.
-			public ShellAPI.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
-			public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
-			public IntPtr psfvcb;                       // IShellFolderViewCB *psfvcb;   A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
+        /// <summary>
+        /// See: https://msdn.microsoft.com/en-us/library/windows/desktop/bb773399(v=vs.85).aspx
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SFV_CREATE
+        {
+            public int cbSize;                          // The size of the SFV_CREATE structure, in bytes.
+            public ShellAPI.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
+            public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
+            public Shell32.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
 
-			public SFV_CREATE(ShellAPI.IShellFolder pshf = null, ShellAPI.IShellView psvOuter = null, IntPtr psfvcb = default(IntPtr)) {
-				this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
-				this.pshf = pshf;
-				this.psvOuter = psvOuter;
-				this.psfvcb = psfvcb;
-			}
-		}
+            public SFV_CREATE(
+                ShellAPI.IShellFolder pshf = default(ShellAPI.IShellFolder),
+                ShellAPI.IShellView psvOuter = default(ShellAPI.IShellView),
+                Shell32.IShellFolderViewCB psfvcb = default(Shell32.IShellFolderViewCB))
+            {
+                this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
+                this.pshf = pshf;
+                this.psvOuter = psvOuter;
+                this.psfvcb = psfvcb;
+            }
+        }
 
-		// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762141(v=vs.85).aspx
-		[DllImport("shell32.dll")]
+        // See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762141(v=vs.85).aspx
+        [DllImport("shell32.dll")]
 		public static extern HResult SHCreateShellFolderView(SFV_CREATE pcsfv, out ShellAPI.IShellView ppsv);
 
 		/// <summary>
