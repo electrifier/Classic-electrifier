@@ -110,11 +110,11 @@ namespace electrifier.Core {
 
 				// TODO: Das aktive dokument wird das mainform...
 				form.Show();
-				MainForm = form;
+				this.MainForm = form;
 			}
 
 			// Add ThreadExit-handler to save configuration and dispose NotifyIcon when closing
-			ThreadExit += new EventHandler(AppContext_ThreadExit);
+			ThreadExit += new EventHandler(this.AppContext_ThreadExit);
 
 			// Finally close splash screen
 			splashScreenForm.Close();
