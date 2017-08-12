@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
@@ -39,9 +40,13 @@ namespace electrifier {
 			SplashScreenForm splashScreen = null;
 			ApplicationContext appContext = null;
 
-			// TODO: Check if first instance
-			// Enable application to use Visual Styles
-			Application.EnableVisualStyles();
+            // Never show the splash-screen while debugging
+            if (Debugger.IsAttached)
+                splashIsShown = false;
+
+            // TODO: Check if first instance
+            // Enable application to use Visual Styles
+            Application.EnableVisualStyles();
 			Application.DoEvents();
 
 			string electrifierCoreDLLFullPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) +
