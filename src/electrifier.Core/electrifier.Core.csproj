@@ -217,55 +217,55 @@
     <Compile Include="Services\ServiceManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\BasicShellObject.cs">
+    <Compile Include="WindowsShell\BasicShellObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\BasicShellObjectCollection.cs">
+    <Compile Include="WindowsShell\BasicShellObjectCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellBrowser.cs">
+    <Compile Include="WindowsShell\Controls\ShellBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellListView.cs">
+    <Compile Include="WindowsShell\Controls\ShellListView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellListViewItem.cs">
+    <Compile Include="WindowsShell\Controls\ShellListViewItem.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellListViewItemCollection.cs">
+    <Compile Include="WindowsShell\Controls\ShellListViewItemCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellTreeView.cs">
+    <Compile Include="WindowsShell\Controls\ShellTreeView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellTreeViewNode.cs">
+    <Compile Include="WindowsShell\Controls\ShellTreeViewNode.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Controls\ShellTreeViewNodeCollection.cs">
+    <Compile Include="WindowsShell\Controls\ShellTreeViewNodeCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\IShellObject.cs">
+    <Compile Include="WindowsShell\IShellObject.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\IShellObjectCollection.cs">
+    <Compile Include="WindowsShell\IShellObjectCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Services\DesktopFolderInstance.cs">
+    <Compile Include="WindowsShell\Services\DesktopFolderInstance.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Services\IconManager.cs">
+    <Compile Include="WindowsShell\Services\IconManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Services\IFileInfoThread.cs">
+    <Compile Include="WindowsShell\Services\IFileInfoThread.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\Services\PIDLManager.cs">
+    <Compile Include="WindowsShell\Services\PIDLManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\ShellDragDropHelper.cs">
+    <Compile Include="WindowsShell\ShellDragDropHelper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Shell32\ShellObjectPIDLComparer.cs">
+    <Compile Include="WindowsShell\ShellObjectPIDLComparer.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
