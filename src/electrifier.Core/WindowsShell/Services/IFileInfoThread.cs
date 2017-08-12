@@ -1,11 +1,19 @@
-using System;
+/*
+** 
+** electrifier
+** 
+** Copyright (c) 2017 Thorsten Jung @ electrifier.org and contributors
+** 
+*/
 
-namespace electrifier.Core.Shell32.Services {
-	/// <summary>
-	/// Zusammenfassung für IFileInfoThread.
-	/// </summary>
-	public interface IFileInfoThread {
-		void Prioritize(IShellObject sender);
-		void Remove(IShellObject sender);
-	}
+namespace electrifier.Core.WindowsShell.Services
+{
+    /// <summary>
+    /// Summary for IFileInfoThread.
+    /// </summary>
+    public interface IFileInfoThread
+    {
+        void Prioritize(IShellObject sender);
+        void Remove(IShellObject sender);
+    }
 }

@@ -3,10 +3,12 @@ using System;
 using electrifier.Win32API;
 
 namespace electrifier.Core.Controls {
-	/// <summary>
-	/// Zusammenfassung für ExtListViewItem.
-	/// </summary>
-	public class ExtListViewItem : IExtListViewItem {
+    /// <summary>
+    /// Summary for ExtListViewItem.
+    /// </summary>
+
+    [Obsolete]
+    public class ExtListViewItem : IExtListViewItem {
 		private char[]       text       = null;
 		public  char[]       Text       { get { return text; } }
 		private int          imageIndex = -1;
@@ -19,9 +21,6 @@ namespace electrifier.Core.Controls {
 		public  int          Index      { get { return index; } }
 
 		public ExtListViewItem() {
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
 		}
 
 		public virtual WinAPI.IDataObject GetIDataObject() {

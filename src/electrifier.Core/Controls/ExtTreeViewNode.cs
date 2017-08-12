@@ -6,7 +6,7 @@ using electrifier.Win32API;
 
 namespace electrifier.Core.Controls {
 	/// <summary>
-	/// Zusammenfassung für ExtTreeViewNode.
+	/// Summary for ExtTreeViewNode.
 	/// </summary>
 	public class ExtTreeViewNode : TreeNode, IExtTreeViewNode {
 		protected      ExtTreeViewNodeCollection nodes         = null;

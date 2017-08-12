@@ -5,11 +5,11 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 using electrifier.Core.Services;
-using electrifier.Core.Shell32.Services;
+using electrifier.Core.WindowsShell.Services;
 using electrifier.Win32API;
 using electrifier.Win32API.Shell32;
 
-namespace electrifier.Core.Shell32.Controls
+namespace electrifier.Core.WindowsShell.Controls
 {
     /// <summary>
     /// Summary for ShellBrowser.

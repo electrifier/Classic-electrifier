@@ -3,10 +3,10 @@ using System.Windows.Forms;
 
 using electrifier.Core.Controls;
 using electrifier.Core.Services;
-using electrifier.Core.Shell32.Services;
+using electrifier.Core.WindowsShell.Services;
 using electrifier.Win32API;
 
-namespace electrifier.Core.Shell32.Controls
+namespace electrifier.Core.WindowsShell.Controls
 {
     /// <summary>
     /// Summary for ShellListView.
@@ -14,7 +14,7 @@ namespace electrifier.Core.Shell32.Controls
 
     [Obsolete("Use ExplorerBrowser instead.")]
     public class ShellListView : electrifier.Core.Controls.ExtListView,
-        electrifier.Core.Shell32.IShellObjectCollection
+        electrifier.Core.WindowsShell.IShellObjectCollection
     {
         protected static IconManager iconManager = (IconManager)ServiceManager.Services.GetService(typeof(IconManager));
         protected IntPtr browsingFolder = IntPtr.Zero;

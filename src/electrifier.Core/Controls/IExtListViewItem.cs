@@ -3,7 +3,7 @@ using electrifier.Win32API;
 
 namespace electrifier.Core.Controls {
 	/// <summary>
-	/// Zusammenfassung für IExtListviewItem.
+	/// Summary for IExtListviewItem.
 	/// </summary>
 	public interface IExtListViewItem {
 		char[]       Text       { get; }

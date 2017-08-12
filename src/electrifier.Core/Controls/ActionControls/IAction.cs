@@ -31,7 +31,7 @@ namespace electrifier.Core.Controls.ActionControls {
 	public delegate void EnabledChangedEventHandler(object source, EnabledChangedEventArgs e);
 
 	/// <summary>
-	/// Zusammenfassung für IGUIAction.
+	/// Summary for IGUIAction.
 	/// </summary>
 	public interface IAction {
 		// Properties

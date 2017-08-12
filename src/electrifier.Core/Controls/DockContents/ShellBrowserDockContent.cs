@@ -3,8 +3,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 
-using electrifier.Core.Shell32.Services;
-using electrifier.Core.Shell32.Controls;
+using electrifier.Core.WindowsShell.Services;
+using electrifier.Core.WindowsShell.Controls;
 using electrifier.Win32API;
 
 namespace electrifier.Core.Controls.DockContents {
@@ -26,9 +26,8 @@ namespace electrifier.Core.Controls.DockContents {
 
 		public event BrowsingAddressChangedEventHandler BrowsingAddressChanged = null;
 		protected void OnBrowsingAddressChanged() {
-			if (this.BrowsingAddressChanged != null)
-				this.BrowsingAddressChanged(this, EventArgs.Empty);
-		}
+            this.BrowsingAddressChanged?.Invoke(this, EventArgs.Empty);
+        }
 
 
 		public ShellBrowserDockContent() : this(Guid.NewGuid()) { }
@@ -36,30 +35,36 @@ namespace electrifier.Core.Controls.DockContents {
 		public ShellBrowserDockContent(Guid guid) : base() {
 			// Initialize the underlying DockControl
 			this.Guid = guid;
-			this.Name = "ShellBrowserDockContent." + Guid.ToString();
+			this.Name = "ShellBrowserDockContent." + this.Guid.ToString();
 
-			// Initialize ShellTreeView
-			this.shellTreeView = new ShellTreeView(ShellAPI.CSIDL.DESKTOP);
-			this.shellTreeView.Dock = DockStyle.Left;
-			this.shellTreeView.Size = new Size(256, this.Size.Height);
-			this.shellTreeView.AfterSelect += new TreeViewEventHandler(shellTreeView_AfterSelect);
+            // Initialize ShellTreeView
+            this.shellTreeView = new ShellTreeView(ShellAPI.CSIDL.DESKTOP)
+            {
+                Dock = DockStyle.Left,
+                Size = new Size(256, this.Size.Height)
+            };
+            this.shellTreeView.AfterSelect += new TreeViewEventHandler(this.ShellTreeView_AfterSelect);
 
-			// Initialize ShellBrowser
-			this.shellBrowser = new ShellBrowser(shellTreeView.SelectedNode.AbsolutePIDL);
-			this.shellBrowser.Dock = DockStyle.Fill;
-			this.shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(shellBrowser_BrowseShellObject);
+            // Initialize ShellBrowser
+            this.shellBrowser = new ShellBrowser(this.shellTreeView.SelectedNode.AbsolutePIDL)
+            {
+                Dock = DockStyle.Fill
+            };
+            this.shellBrowser.BrowseShellObject += new BrowseShellObjectEventHandler(this.ShellBrowser_BrowseShellObject);
 
 			this.UpdateDockCaption();
 
-			// Initialize Splitter
-			this.splitter = new Splitter();
-			this.splitter.Dock = DockStyle.Left;
-			this.splitter.Size = new Size(6, this.Height);
+            // Initialize Splitter
+            this.splitter = new Splitter()
+            {
+                Dock = DockStyle.Left,
+                Size = new Size(6, this.Height)
+            };
 
-			// Add the controls from right to left
-			this.Controls.AddRange(new Control[] { shellBrowser, splitter, shellTreeView });
+            // Add the controls from right to left
+            this.Controls.AddRange(new Control[] { this.shellBrowser, this.splitter, this.shellTreeView });
 
-			this.FormClosed += ShellBrowserDockControl_FormClosed;
+			this.FormClosed += this.ShellBrowserDockControl_FormClosed;
 		}
 
 		void ShellBrowserDockControl_FormClosed(object sender, FormClosedEventArgs e) {
@@ -68,11 +73,11 @@ namespace electrifier.Core.Controls.DockContents {
 
 		// TODO: Dispose when closed!!!
 
-		private void shellTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
+		private void ShellTreeView_AfterSelect(object sender, TreeViewEventArgs e) {
 			// TODO: TreeViewEventArgs.Node => shellTreeViewNode
 			// TODO: ShellTreeView.SelectedNode => shellTreeViewNode
 			//this.Cursor = Cursors.WaitCursor;
-			this.shellBrowser.NavigateTo(shellTreeView.SelectedNode.AbsolutePIDL);
+			this.shellBrowser.NavigateTo(this.shellTreeView.SelectedNode.AbsolutePIDL);
 			//			shellListView.SetBrowsingFolder(sender, (shellTreeView.SelectedNode as ShellTreeViewNode).AbsolutePIDL);
 			this.UpdateDockCaption();
 			this.browsingAddress = this.Text;
@@ -118,7 +123,7 @@ namespace electrifier.Core.Controls.DockContents {
 
 		#endregion
 
-		private void shellBrowser_BrowseShellObject(object source, BrowseShellObjectEventArgs e) {
+		private void ShellBrowser_BrowseShellObject(object source, BrowseShellObjectEventArgs e) {
 			this.shellTreeView.BeginUpdate();
 
 			try {

@@ -1,14 +1,13 @@
 using System;
 
 namespace electrifier.Core.Controls.ActionControls {
-	/// <summary>
-	/// Zusammenfassung für ActionContainerMenuBarItem.
-	/// </summary>
-	public class ActionsMenuBarItem {
+    /// <summary>
+    /// Summary for ActionContainerMenuBarItem.
+    /// </summary>
+
+    [Obsolete]
+    public class ActionsMenuBarItem {
 		public ActionsMenuBarItem() {
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
 		}
 	}
 }

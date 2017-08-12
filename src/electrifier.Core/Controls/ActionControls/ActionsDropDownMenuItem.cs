@@ -1,14 +1,13 @@
 using System;
 
 namespace electrifier.Core.Controls.ActionControls {
-	/// <summary>
-	/// Zusammenfassung für ActionContainerDropDownMenuItem.
-	/// </summary>
+    /// <summary>
+    /// Summary for ActionContainerDropDownMenuItem.
+    /// </summary>
+
+    [Obsolete]
 	public class ActionsDropDownMenuItem {
 		public ActionsDropDownMenuItem() {
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
 		}
 	}
 }

@@ -3,24 +3,28 @@ using System.Windows.Forms;
 
 using electrifier.Core.Controls;
 
-namespace electrifier.Core.Shell32.Controls {
-	/// <summary>
-	/// Zusammenfassung für ShellTreeViewNodeCollection.
-	/// </summary>
-	public sealed class ShellTreeViewNodeCollection : ExtTreeViewNodeCollection {
+namespace electrifier.Core.WindowsShell.Controls
+{
+    /// <summary>
+    /// Summary for ShellTreeViewNodeCollection.
+    /// </summary>
+    public sealed class ShellTreeViewNodeCollection : ExtTreeViewNodeCollection
+    {
 
-		public ShellTreeViewNodeCollection(ExtTreeViewNodeCollection collection)
-			: base(collection) { }
+        public ShellTreeViewNodeCollection(ExtTreeViewNodeCollection collection)
+            : base(collection) { }
 
-		public void AddCollection(BasicShellObjectCollection collection) {
-			ShellTreeViewNode[] nodes = new ShellTreeViewNode[collection.Count];
-			int                 index = 0;
+        public void AddCollection(BasicShellObjectCollection collection)
+        {
+            ShellTreeViewNode[] nodes = new ShellTreeViewNode[collection.Count];
+            int index = 0;
 
-			foreach(BasicShellObject shellObject in collection) {
-				nodes[index++] = new ShellTreeViewNode(shellObject);
-			}
+            foreach (BasicShellObject shellObject in collection)
+            {
+                nodes[index++] = new ShellTreeViewNode(shellObject);
+            }
 
-			AddRange(nodes);
-		}
-	}
+            AddRange(nodes);
+        }
+    }
 }

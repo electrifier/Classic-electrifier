@@ -3,7 +3,7 @@ using System;
 namespace electrifier.Core.Controls.ToolBars
 {
 	/// <summary>
-	/// Zusammenfassung für AddressToolBar.
+	/// Summary for AddressToolBar.
 	/// </summary>
 	public class AddressToolBar
 	{
