@@ -4,7 +4,7 @@ using electrifier.Win32API;
 
 namespace electrifier.Core.Controls {
 	/// <summary>
-	/// Zusammenfassung für IExtTreeViewNode.
+	/// Summary for IExtTreeViewNode.
 	/// </summary>
 	public interface IExtTreeViewNode {
 		void HasBeenAddedToTreeViewBy(IExtTreeViewNodeCollection sender);

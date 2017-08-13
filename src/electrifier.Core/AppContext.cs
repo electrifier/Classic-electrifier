@@ -1,3 +1,11 @@
+/*
+** 
+** electrifier
+** 
+** Copyright (c) 2017 Thorsten Jung @ electrifier.org and contributors
+** 
+*/
+
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -8,7 +16,7 @@ using System.Xml;
 
 using electrifier.Core.Forms;
 using electrifier.Core.Services;
-using electrifier.Core.Shell32.Services;
+using electrifier.Core.WindowsShell.Services;
 
 namespace electrifier.Core {
 

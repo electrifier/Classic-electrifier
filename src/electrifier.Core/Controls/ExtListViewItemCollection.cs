@@ -5,7 +5,7 @@ using electrifier.Win32API;
 
 namespace electrifier.Core.Controls {
 	/// <summary>
-	/// Zusammenfassung für ExtListViewItemCollection.
+	/// Summary for ExtListViewItemCollection.
 	/// </summary>
 	public class ExtListViewItemCollection : ArrayList, ICollection, IList, IEnumerable {
 		protected IExtListView owner = null;

@@ -16,7 +16,7 @@ using electrifier.Win32API;				// TODO: Remove dependency for dynamic binding
 namespace electrifier
 {
     /// <summary>
-    /// Zusammenfassung für SplashScreenForm.
+    /// Summary for SplashScreenForm.
     /// </summary>
     public class SplashScreenForm : Form
     {

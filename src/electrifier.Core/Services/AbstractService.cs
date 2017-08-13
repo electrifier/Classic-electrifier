@@ -2,7 +2,7 @@ using System;
 
 namespace electrifier.Core.Services {
 	/// <summary>
-	/// Zusammenfassung für AbstraceService.
+	/// Summary for AbstraceService.
 	/// </summary>
 	public class AbstractService : IService {
 		public virtual void InitializeService() {

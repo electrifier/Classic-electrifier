@@ -49,7 +49,7 @@ namespace electrifier.Core.Forms {
 	}
 
 	/// <summary>
-	/// Zusammenfassung für MainWindowForm.
+	/// Summary for MainWindowForm.
 	/// </summary>
 	public partial class MainWindowForm : Form, IPersistentForm {
 		protected Guid guid = Guid.NewGuid();

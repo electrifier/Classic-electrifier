@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
-	/// Zusammenfassung für BasicGUIAction.
+	/// Summary for BasicGUIAction.
 	/// </summary>
 	public class BasicAction : IViewableAction {
 		protected string   id;

@@ -2,7 +2,7 @@ using System;
 
 namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
-	/// Zusammenfassung für IViewableAction.
+	/// Summary for IViewableAction.
 	/// </summary>
 	public interface IViewableAction : IAction {
 		// Properties

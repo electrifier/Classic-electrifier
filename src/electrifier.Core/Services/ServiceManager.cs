@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace electrifier.Core.Services {
 	/// <summary>
-	/// Zusammenfassung für ServiceManager.
+	/// Summary for ServiceManager.
 	/// </summary>
 	public class ServiceManager {
 		protected        ArrayList      servicesList           = new ArrayList();
@@ -51,9 +51,6 @@ namespace electrifier.Core.Services {
 		}
 
 		private ServiceManager() {
-			//
-			// TODO: Fügen Sie hier die Konstruktorlogik hinzu
-			//
 		}
 	}
 }

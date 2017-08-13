@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace electrifier.Core.Controls {
 	/// <summary>
-	/// Zusammenfassung für ExtTreeViewNodeCollection.
+	/// Summary for ExtTreeViewNodeCollection.
 	/// </summary>
 	public class ExtTreeViewNodeCollection : IExtTreeViewNodeCollection {
 		protected TreeNodeCollection collection;

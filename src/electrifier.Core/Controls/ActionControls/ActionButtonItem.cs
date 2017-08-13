@@ -4,7 +4,7 @@ using System;
 
 namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
-	/// Zusammenfassung für ExtButtonItem.
+	/// Summary for ExtButtonItem.
 	/// </summary>
 	public class ActionButtonItem {
 		private IAction action = null;

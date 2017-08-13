@@ -4,7 +4,7 @@ using System;
 
 namespace electrifier.Core.Controls.ActionControls {
 	/// <summary>
-	/// Zusammenfassung für ExtMenuBarItem.
+	/// Summary for ExtMenuBarItem.
 	/// </summary>
 	public class ActionMenuButtonItem {
 		private IAction action = null;

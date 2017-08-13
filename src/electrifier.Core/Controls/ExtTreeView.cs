@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using electrifier.Core.Services;
-using electrifier.Core.Shell32;
-using electrifier.Core.Shell32.Controls;
-using electrifier.Core.Shell32.Services;
+using electrifier.Core.WindowsShell;
+using electrifier.Core.WindowsShell.Controls;
+using electrifier.Core.WindowsShell.Services;
 using electrifier.Win32API;
 
 namespace electrifier.Core.Controls {
@@ -158,15 +158,15 @@ namespace electrifier.Core.Controls {
 			this.shellDragDropHelper = new ShellDragDropHelper(this.Handle);
 
 			// 
-			this.BeforeExpand += new TreeViewCancelEventHandler(ExtTreeView_BeforeExpand);
+			this.BeforeExpand += new TreeViewCancelEventHandler(this.ExtTreeView_BeforeExpand);
 
 			// Initialize drag and drop auto-scroll
 			this.dragAutoScrollTimer.Enabled  = false;
-			this.dragAutoScrollTimer.Tick    += new EventHandler(dragAutoScrollTimer_Tick);
+			this.dragAutoScrollTimer.Tick    += new EventHandler(this.DragAutoScrollTimer_Tick);
 
 			// Initialize drag and drop auto-expand
 			this.dragAutoExpandTimer.Enabled  = false;
-			this.dragAutoExpandTimer.Tick    +=new EventHandler(dragAutoExpandTimer_Tick);
+			this.dragAutoExpandTimer.Tick    +=new EventHandler(this.DragAutoExpandTimer_Tick);
 
 			// Initialize drag and drop-event handlers
 			this.ItemDrag +=
@@ -182,31 +182,30 @@ namespace electrifier.Core.Controls {
 		}
 
 		private void ExtTreeView_BeforeExpand(object sender, TreeViewCancelEventArgs e) {
-			// TODO: Event ueberschreiben und casting vermeiden!
-			ExtTreeViewNode node = e.Node as ExtTreeViewNode;
+            // TODO: Event ueberschreiben und casting vermeiden!
 
-			if(node != null)
-				e.Cancel = !node.IsExpandable;
-		}
+            if (e.Node is ExtTreeViewNode node)
+                e.Cancel = !node.IsExpandable;
+        }
 
-		/// <summary>
-		/// ItemDrag-event-handler initiates an drag and drop operation
-		/// </summary>
-		/// <param name="sender">Sender's reference</param>
-		/// <param name="e">ItemDragEventArgs information</param>
-		private void ExtTreeView_ItemDrag(object sender, ItemDragEventArgs e) {
-			ExtTreeViewNode dragNode = e.Item as ExtTreeViewNode;
+        /// <summary>
+        /// ItemDrag-event-handler initiates an drag and drop operation
+        /// </summary>
+        /// <param name="sender">Sender's reference</param>
+        /// <param name="e">ItemDragEventArgs information</param>
+        private void ExtTreeView_ItemDrag(object sender, ItemDragEventArgs e)
+        {
+            if (e.Item is ExtTreeViewNode dragNode)
+            {
+                WinAPI.IDataObject dataObject = dragNode.GetIDataObject();
 
-			if(dragNode != null) {
-				WinAPI.IDataObject dataObject = dragNode.GetIDataObject();
+                this.shellDragDropHelper.PrepareDragImage(dataObject);
 
-				this.shellDragDropHelper.PrepareDragImage(dataObject);
+                this.DoDragDrop(dataObject, (DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link));
+            }
+        }
 
-				this.DoDragDrop(dataObject, (DragDropEffects.Copy | DragDropEffects.Move | DragDropEffects.Link));
-			}
-		}
-
-		private DragDropEffects ShellDragDropHelper_DropTargetEnter(object source, DropTargetEventArgs e) {
+        private DragDropEffects ShellDragDropHelper_DropTargetEnter(object source, DropTargetEventArgs e) {
 			DragDropEffects effects = e.Effects;
 
 			// TODO: Override WinAPI.POINT to get Point(.NET)-instance
@@ -338,7 +337,7 @@ namespace electrifier.Core.Controls {
 		/// </summary>
 		/// <param name="sender">Senders reference</param>
 		/// <param name="e">Event arguments</param>
-		private void dragAutoScrollTimer_Tick(object sender, EventArgs e) {
+		private void DragAutoScrollTimer_Tick(object sender, EventArgs e) {
 			Point           mousePos   = this.PointToClient(Control.MousePosition);
 			ExtTreeViewNode node       = this.GetNodeAt(mousePos);
 			bool            scrollFast = false;
@@ -376,7 +375,7 @@ namespace electrifier.Core.Controls {
 				(scrollFast ? this.DragAutoScrollFastInterval : this.DragAutoScrollSlowInterval);
 		}
 
-		private void dragAutoExpandTimer_Tick(object sender, EventArgs e) {
+		private void DragAutoExpandTimer_Tick(object sender, EventArgs e) {
 			ExtTreeViewNode node = this.GetNodeAt(this.PointToClient(Control.MousePosition));
 
 			if((this.dragAutoExpandNode != null) && (this.dragAutoExpandNode.Equals(node))) {
