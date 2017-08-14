@@ -18,8 +18,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>electrifier</RootNamespace>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
+    <StartupObject>electrifier.ElectrifierMainEntryPoint</StartupObject>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
@@ -86,16 +85,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\electrifier.Core\electrifier.Core.csproj">
-      <Name>electrifier.Core</Name>
-      <Project>{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
-    <ProjectReference Include="..\electrifier.Win32API\electrifier.Win32API.csproj">
-      <Name>electrifier.Win32API</Name>
-      <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -141,6 +130,13 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\electrifier.Core\electrifier.Core.csproj">
+      <Project>{e566845e-e6fb-4db7-8ca7-5e26acdc50f3}</Project>
+      <Name>electrifier.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="..\common.Interop\common.Interop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />

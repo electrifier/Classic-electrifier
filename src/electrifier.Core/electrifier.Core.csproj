@@ -85,11 +85,6 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\electrifier.Win32API\electrifier.Win32API.csproj">
-      <Name>electrifier.Win32API</Name>
-      <Project>{6832AFCE-173D-4F30-862F-E066990C95B8}</Project>
-      <Package>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</Package>
-    </ProjectReference>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Core.1.1.1\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
     </Reference>
@@ -305,7 +300,9 @@
       <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
     </None>
     <None Include="Forms\MainWindowForm.RibbonMarkup.shortcuts" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\MainWindowForm.resx">
@@ -334,6 +331,7 @@
     <Content Include="Resources\Commands\organize_rename.bmp" />
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\common.Interop\common.Interop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
