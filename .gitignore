@@ -2,5 +2,6 @@
 *.ribbon
 *.RibbonMarkup.log
 *.suo
-src/*/bin/
-src/*/obj/
+/src/*/bin/
+/src/*/obj/
+/src/packages/*/lib
