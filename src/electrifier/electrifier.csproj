@@ -130,12 +130,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\electrifier.Core\electrifier.Core.csproj">
-      <Project>{e566845e-e6fb-4db7-8ca7-5e26acdc50f3}</Project>
-      <Name>electrifier.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="..\common.Interop\common.Interop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
