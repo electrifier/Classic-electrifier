@@ -10,9 +10,8 @@ namespace electrifier.Core.Controls.DockContents
     /// <summary>
     /// Summary of ShellBrowserDockContent.
     /// </summary>
-    public class ShellBrowserDockContent :
-        WeifenLuo.WinFormsUI.Docking.DockContent,
-        IPersistent
+    public class ShellBrowserDockContent
+        : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         protected Guid Guid;
         protected ExplorerBrowser explorerBrowser;
@@ -23,7 +22,7 @@ namespace electrifier.Core.Controls.DockContents
         {
             // Initialize the underlying DockControl
             this.Guid = guid;
-			this.Name = "ShellBrowserDockContent." + this.Guid.ToString();
+            this.Name = "ShellBrowserDockContent." + this.Guid.ToString();
             this.Text = "ExplorerBrowser";
             this.explorerBrowser = new ExplorerBrowser()
             {
@@ -33,22 +32,5 @@ namespace electrifier.Core.Controls.DockContents
             this.explorerBrowser.Navigate(KnownFolders.Documents as ShellObject);
             this.Controls.Add(this.explorerBrowser);
         }
-
-        #region IPersistent Member
-
-        public void CreatePersistenceInfo(XmlWriter xmlWriter)
-        {
-            xmlWriter.WriteStartElement(this.GetType().Name);
-            xmlWriter.WriteStartElement(@"BrowsingAddress");
-            xmlWriter.WriteEndElement(); // BrowsingAddress
-            xmlWriter.WriteEndElement(); // this.GetType().Name
-        }
-
-        public void ApplyPersistenceInfo(XmlTextReader xmlReader)
-        {
-
-        }
-
-        #endregion
     }
 }
