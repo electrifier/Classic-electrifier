@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Xml;
 
 using electrifier.Core.Forms;
-using electrifier.Core.Services;
 
 namespace electrifier.Core
 {
