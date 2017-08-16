@@ -125,32 +125,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ActionControls\ActionButtonItem.cs" />
-    <Compile Include="Controls\ActionControls\ActionMenuButtonItem.cs" />
-    <Compile Include="Controls\ActionControls\ActionsDropDownMenuItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\ActionsMenuBar.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\ActionsMenuBarItem.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\ActionsToolBar.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\BasicAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\IAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\IActions.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Controls\ActionControls\IViewableAction.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Controls\DockContents\FolderBarDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
