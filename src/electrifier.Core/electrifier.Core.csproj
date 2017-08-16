@@ -148,39 +148,6 @@
     <Compile Include="Services\ServiceManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="WindowsShell\BasicShellObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\BasicShellObjectCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\Controls\ShellBrowser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\IShellObject.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\IShellObjectCollection.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\Services\DesktopFolderInstance.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\Services\IconManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\Services\IFileInfoThread.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\Services\PIDLManager.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\ShellDragDropHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="WindowsShell\ShellObjectPIDLComparer.cs">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -246,7 +213,9 @@
     <Content Include="Resources\Commands\organize_moveto.bmp" />
     <Content Include="Resources\Commands\organize_rename.bmp" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="WindowsShell\" />
+  </ItemGroup>
   <Import Project="..\common.Interop\common.Interop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

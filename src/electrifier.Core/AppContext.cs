@@ -16,7 +16,6 @@ using System.Xml;
 
 using electrifier.Core.Forms;
 using electrifier.Core.Services;
-using electrifier.Core.WindowsShell.Services;
 
 namespace electrifier.Core
 {
@@ -30,8 +29,6 @@ namespace electrifier.Core
         : System.Windows.Forms.ApplicationContext
     {
         // Static member variables and properties
-        private static AppContext instance = null;
-        public static AppContext Instance { get { return AppContext.instance; } }
         private static Icon icon = null;
         public static Icon Icon { get { return AppContext.icon; } }
         private static Bitmap logo = null;
@@ -68,14 +65,8 @@ namespace electrifier.Core
             Debug.WriteLine("electrifier.Core.AppContext: New AppContext created. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")");
 
             // Initialize application context
-            AppContext.instance = RegisterAppContextInstance(this);
             AppContext.icon = appIcon;
             AppContext.logo = appLogo;
-
-            // Initialize basic services
-            ServiceManager.Services.AddService(new DesktopFolderInstance());
-            ServiceManager.Services.AddService(new IconManager());
-            ServiceManager.Services.AddService(new PIDLManager());
 
             // Search argument list for AppContext-related arguments
             foreach (string arg in args)
@@ -150,21 +141,6 @@ namespace electrifier.Core
             AppContext.NotifyIcon.Dispose();
 
             Debug.WriteLine("electrifier.Core.AppContext: AppContext is shutting down. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")\n");
-        }
-
-        private AppContext RegisterAppContextInstance(AppContext appContextInstance)
-        {
-            // Check if another instance was already instantiated
-            if (AppContext.instance != null)
-            {
-                throw new InvalidOperationException("electrifier.Core.AppContext.RegisterInstance: " +
-                    "Tried to register a new instance although there is already one!");
-            }
-            else
-            {
-                // Everything fine, return the given instance
-                return appContextInstance;
-            }
         }
     }
 }
