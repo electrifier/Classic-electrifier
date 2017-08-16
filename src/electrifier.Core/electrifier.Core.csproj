@@ -161,7 +161,6 @@
     <Compile Include="Controls\IExtTreeViewNodeCollection.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ToolBars\AddressToolBar.cs" />
     <Compile Include="Forms\MainWindowForm.cs">
       <SubType>Form</SubType>
     </Compile>
