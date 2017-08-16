@@ -2,10 +2,11 @@ using System;
 using System.Collections;
 
 namespace electrifier.Core.Services {
-	/// <summary>
-	/// Summary for ServiceManager.
-	/// </summary>
-	public class ServiceManager {
+    /// <summary>
+    /// Summary for ServiceManager.
+    /// </summary>
+    [Obsolete]
+    public class ServiceManager {
 		protected        ArrayList      servicesList           = new ArrayList();
 		protected        Hashtable      servicesHashtable      = new Hashtable();
 		protected static ServiceManager serviceManagerInstance = new ServiceManager();
