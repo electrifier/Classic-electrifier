@@ -1,88 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:ui="http://schemas.microsoft.com/wix/UIExtension">
-	<Product Name="electrifier" Manufacturer="electrifier.org"
+  <Product Name="electrifier" Manufacturer="electrifier.org"
 					 Id="FEFDADB6-9D7F-45E2-9A0D-21C9F911C1B6"
 					 Language="1033" Version="0.1.0"
 					 UpgradeCode="5EF00F55-738A-44D1-86A8-470AD761B125">
-		<Package Id="*" Keywords="Installer" Description="electrifier 0.1.0 Setup"
+    <Package Id="*" Keywords="Installer" Description="electrifier 0.1.0 Setup"
 						 Comments="For more information consult electrifier.org"
 						 Manufacturer="electrifier.org"
 						 Compressed="yes" InstallerVersion="200" InstallScope="perMachine"/>
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of electrifier is already installed." />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of electrifier is already installed." />
 
-		<Media Id='1' Cabinet='electrifier.cab' EmbedCab='yes'/>
+    <Media Id='1' Cabinet='electrifier.cab' EmbedCab='yes'/>
 
-		<!-- Properties controlling the installer GUI including the license agreement -->
-		<Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-		<UIRef Id="WixUI_InstallDir" />
-		<WixVariable Id="WixUILicenseRtf" Value="..\..\assets\License.rtf" />
+    <!-- Properties controlling the installer GUI including the license agreement -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
+    <WixVariable Id="WixUILicenseRtf" Value="..\..\assets\License.rtf" />
 
-		<Feature Id="ProductFeature" Title="electrifier" Level="1">
-			<ComponentGroupRef Id="ProductComponents" />
-			<ComponentGroupRef Id="StartMenuShortcuts" />
-		</Feature>
-	</Product>
+    <Feature Id="ProductFeature" Title="electrifier" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="StartMenuShortcuts" />
+    </Feature>
+  </Product>
 
-	<Fragment>
-		<Directory Id="TARGETDIR" Name="SourceDir">
-			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="electrifier"/>
-			</Directory>
-			<Directory Id="ProgramMenuFolder">
-				<Directory Id="ApplicationProgramsFolder" Name="electrifier"/>
-			</Directory>
-		</Directory>
-	</Fragment>
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="electrifier"/>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="electrifier"/>
+      </Directory>
+    </Directory>
+  </Fragment>
 
-	<!-- Main product components -->
-	<Fragment>
-		<ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-			<Component Id="electrifier.exe" Guid="95DCC755-0591-4D0C-8417-89323377F58A">
-				<File Id="electrifier.exe"
+  <!-- Main product components -->
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="electrifier.exe" Guid="95DCC755-0591-4D0C-8417-89323377F58A">
+        <File Id="electrifier.exe"
 							Source="$(var.electrifier.TargetPath)" KeyPath="yes" Checksum="yes"/>
-			</Component>
-			<Component Id="electrifier.Core.dll" Guid="C2E08C77-6624-4D12-A1B5-983547AC017C">
-				<File Id="electrifier.Core.dll"
+      </Component>
+      <Component Id="electrifier.Core.dll" Guid="C2E08C77-6624-4D12-A1B5-983547AC017C">
+        <File Id="electrifier.Core.dll"
 							Source="$(var.electrifier.Core.TargetPath)" KeyPath="yes" Checksum="yes"/>
-			</Component>
-			<Component Id="electrifier.Win32API.dll" Guid="51B7BE3A-A2C1-4331-87AC-0F0F766AB3ED">
-				<File Id="electrifier.Win32API.dll"
-							Source="$(var.electrifier.Win32API.TargetPath)" KeyPath="yes" Checksum="yes"/>
-			</Component>
-			<Component Id="Ribbon.dll" Guid="E0585B1A-F371-47BB-B2BD-7A9686BB79B0">
-				<File Id="Ribbon.dll"
+      </Component>
+      <Component Id="Ribbon.dll" Guid="E0585B1A-F371-47BB-B2BD-7A9686BB79B0">
+        <File Id="Ribbon.dll"
 							Source="$(var.electrifier.Core.TargetDir)\Ribbon.dll" KeyPath="yes" Checksum="yes"/>
-			</Component>
-			<Component Id="WeifenLuo.WinFormsUI.Docking.dll" Guid="D1CE63A5-AD52-457C-B296-D8319ADB0907">
-				<File Id="WeifenLuo.WinFormsUI.Docking.dll"
+      </Component>
+      <Component Id="Microsoft.WindowsAPICodePack.dll" Guid="EFC2DC76-8D9D-4121-B75C-77560D54A58D">
+        <File Id="Microsoft.WindowsAPICodePack.dll"
+							Source="$(var.electrifier.Core.TargetDir)\Microsoft.WindowsAPICodePack.dll" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component Id="Microsoft.WindowsAPICodePack.Shell.dll" Guid="126DE769-B7FC-41CB-B3BB-9C262F9FE8D1">
+        <File Id="Microsoft.WindowsAPICodePack.Shell.dll"
+							Source="$(var.electrifier.Core.TargetDir)\Microsoft.WindowsAPICodePack.Shell.dll" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component Id="WeifenLuo.WinFormsUI.Docking.dll" Guid="D1CE63A5-AD52-457C-B296-D8319ADB0907">
+        <File Id="WeifenLuo.WinFormsUI.Docking.dll"
 							Source="$(var.electrifier.Core.TargetDir)\WeifenLuo.WinFormsUI.Docking.dll" KeyPath="yes" Checksum="yes"/>
-			</Component>
-		</ComponentGroup>
-	</Fragment>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 
-	<!-- Start menu shortcuts -->
-	<Fragment>
-		<ComponentGroup Id="StartMenuShortcuts" Directory="ApplicationProgramsFolder">
-			<Component Id="ApplicationShortcuts" Guid="C7390F72-C8AE-4817-B237-F0A9C61E038A">
-				<Shortcut Id="Launch_electrifier"
+  <!-- Start menu shortcuts -->
+  <Fragment>
+    <ComponentGroup Id="StartMenuShortcuts" Directory="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcuts" Guid="C7390F72-C8AE-4817-B237-F0A9C61E038A">
+        <Shortcut Id="Launch_electrifier"
 									Name="electrifier"
-									Description="electrifier desktop enhancement suite"
+									Description="Launches electrifier"
 									Target="[#electrifier.exe]"
 									WorkingDirectory="ApplicationRootDirectory"/>
 
-				<Shortcut Id="Uninstall_Product"
+        <Shortcut Id="Uninstall_Product"
 									Name="Uninstall electrifier"
 									Description="Uninstalls electrifier"
 									Target="[System64Folder]msiexec.exe"
 									Arguments="/x [ProductCode]"/>
 
-				<RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-				<RegistryValue Root="HKCU"
+        <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU"
 											 Key="Software\electrifier.org\electrifier"
 											 Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
-			</Component>
-		</ComponentGroup>
-	</Fragment>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
 </Wix>
