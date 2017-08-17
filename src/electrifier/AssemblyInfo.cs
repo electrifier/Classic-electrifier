@@ -24,6 +24,6 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("electrifier")]
+[assembly: AssemblyTitle("electrifier.exe")]
 [assembly: Guid("D68BA01B-276A-4B43-86AC-A88DDF09A50C")]
 [assembly: ComVisible(false)]

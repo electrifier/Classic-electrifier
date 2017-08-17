@@ -128,7 +128,7 @@
             this.Controls.Add(this._mainRibbon);
             this.Name = "MainWindowForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "electrifier";
+            this.Text = MainWindowForm.formTitleAppendix;
             this.Load += new System.EventHandler(this.MainWindowForm_Load);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);

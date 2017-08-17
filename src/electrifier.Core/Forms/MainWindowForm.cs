@@ -73,6 +73,12 @@ namespace electrifier.Core.Forms
         protected Guid guid = Guid.NewGuid();
         public Guid Guid { get { return this.guid; } }
 
+        private const string formTitleAppendix = "electrifier"
+#if (DEBUG)
+            + " [debug build]"
+#endif
+        ;
+
         private RibbonButton _cmdBtnApp_OpenNewShellBrowserPanel;
         private RibbonButton _cmdBtnApp_Close;
         private RibbonTab _cmdTabHome;
