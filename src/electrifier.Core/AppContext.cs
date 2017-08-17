@@ -68,11 +68,7 @@ namespace electrifier.Core
             bool noMainWindow = false;
 
             // Initialize debug listener
-            Debug.Listeners.Add(new TextWriterTraceListener(new FileStream((AppContext.IsPortable ?
-                (Path.Combine(Application.StartupPath, @"electrifier.debug.log")) :
-                (Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"electrifier", @"electrifier.debug.log"))),
-                FileMode.Append, FileAccess.Write)));
-            Debug.AutoFlush = true;
+            this.InitializeDebugListener();
             Debug.WriteLine("electrifier.Core.AppContext: New AppContext created. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")");
 
             // Initialize application context
@@ -139,6 +135,23 @@ namespace electrifier.Core
             // Finally close splash screen
             splashScreenForm.Close();
             splashScreenForm.Dispose();
+        }
+
+        /// <summary>
+        /// InitializeDebugListener
+        /// 
+        /// Initializes the debug listener.
+        /// Output will be written into 'C:\Users\[USER]\AppData\Local\electrifier\electrifier.debug.log'
+        /// 
+        /// WARNING: TODO: Currently will fail when mutltiple instances are running in debug mode!
+        /// </summary>
+        [Conditional("DEBUG")]
+        private void InitializeDebugListener()
+        {
+            Debug.Listeners.Add(new TextWriterTraceListener(new FileStream((AppContext.IsPortable ?
+                (Path.Combine(Application.StartupPath, @"electrifier.debug.log")) :
+                (Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"electrifier", @"electrifier.debug.log"))),
+                FileMode.Append, FileAccess.Write)));
         }
 
         private void AppContext_ThreadExit(object sender, EventArgs e)
