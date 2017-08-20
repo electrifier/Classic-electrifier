@@ -44,14 +44,11 @@ namespace electrifier.Core
         public static Icon Icon { get { return AppContext.icon; } }
         private static Bitmap logo = null;
         public static Bitmap Logo { get { return AppContext.logo; } }
-        private static ArrayList openWindowList = new ArrayList();
-        public static ArrayList OpenWindowList { get { return AppContext.openWindowList; } }
-        private static NotifyIcon notifyIcon = new NotifyIcon();
-        public static NotifyIcon NotifyIcon { get { return AppContext.notifyIcon; } }
         private static bool isPortable = false;
         public static bool IsPortable { get { return AppContext.isPortable; } }
         private static bool isIncognito = false;
         public static bool IsIncognito { get { return AppContext.isIncognito; } }
+        internal AppContextSession Session { get; }
 
         /// <summary>
         /// The default constructor of the AppContext.
@@ -65,8 +62,6 @@ namespace electrifier.Core
         /// <param name="splashScreenForm">The form representing the logo as splash screen</param>
         public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm)
         {
-            bool noMainWindow = false;
-
             // Initialize debug listener
             this.InitializeDebugListener();
             Debug.WriteLine("electrifier.Core.AppContext: New AppContext created. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")");
@@ -78,10 +73,6 @@ namespace electrifier.Core
             // Search argument list for AppContext-related arguments
             foreach (string arg in args)
             {
-                // NoMainWindow: Don't show main window, just reside in notify tray
-                if (arg.ToLower().Equals("/nomainwindow"))
-                    noMainWindow = true;
-
                 // Portable: Issue #5: Add "-portable" command switch, storing configuration in application directory instead of "LocalApplicationData"
                 if (arg.ToLower().Equals("/portable"))
                     AppContext.isPortable = true;
@@ -91,45 +82,11 @@ namespace electrifier.Core
                     AppContext.isIncognito = true;
             }
 
-            // Create NotifyIcon
-            notifyIcon.Icon = new Icon(appIcon, 16, 16);    // TODO: width & height from registry?!?
-            notifyIcon.Visible = true;
+            // Create session object
+            this.Session = new AppContextSession();
+            this.MainForm = this.Session.MainWindowForm;
 
-            //// TODO: Action definieren, die neuen electrifier aufmacht...
-            //// TODO: Config auslesen, wenn gewuenscht this.OnMainFormClosed checken und
-            ////       application am leben erhalten (Dialog "You closed all electrifier windows.
-            ////       do you want to stay electrifier active in tray" blablablubb)
-
-            //// Try to load and apply the configuration used for last session
-
-            //// TODO: 11.08.2017 -> Wrong XML-Format: Crash!
-            //if ((false == this.RestoreConfiguration()) || (0 == AppContext.openWindowList.Count))
-            {
-                // Start a new session since restoring configuration failed
-                MainWindowForm mainWindowForm = new MainWindowForm();
-                AppContext.openWindowList.Add(mainWindowForm);
-                this.MainForm = mainWindowForm;
-
-
-
-
-                // TODO: cmdBtnApp_OpenNewShellBrowserPanel_ExecuteEvent
-            }
-
-            //if (false == noMainWindow)
-            //	(AppContext.openWindowList[0] as Form).Show();
-
-            if (noMainWindow == false)
-            {
-                // TODO: Wenn alle minimiert waren werden sie es auch diesmal sein!
-                Form form = openWindowList[0] as Form;
-
-                // TODO: Das aktive dokument wird das mainform...
-                form.Show();
-                this.MainForm = form;
-            }
-
-            // Add ThreadExit-handler to save configuration and dispose NotifyIcon when closing
+            // Add ThreadExit-handler to save configuration when closing
             ThreadExit += new EventHandler(this.AppContext_ThreadExit);
 
             // Finally close splash screen
@@ -159,10 +116,6 @@ namespace electrifier.Core
             //// Save configuration file
             //if (AppContext.IsIncognito == false)
             //	this.SaveConfiguration();
-
-            // Destroy NotifyIcon
-            AppContext.NotifyIcon.Visible = false;
-            AppContext.NotifyIcon.Dispose();
 
             Debug.WriteLine("electrifier.Core.AppContext: AppContext is shutting down. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")\n");
         }
