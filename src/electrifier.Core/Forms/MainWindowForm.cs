@@ -85,11 +85,11 @@ namespace electrifier.Core.Forms
 
         protected LastKnownFormState _lastKnownFormState;
 
-        public MainWindowForm() : base()
+        public MainWindowForm(Icon icon) : base()
         {
             InitializeComponent();
 
-            this.Icon = AppContext.Icon;
+            this.Icon = icon;
 
             this._cmdBtnApp_OpenNewShellBrowserPanel = new RibbonButton(this._mainRibbon, (uint)RibbonMarkupCommands.cmdBtnApp_OpenNewShellBrowserPanel);
             this._cmdBtnApp_OpenNewShellBrowserPanel.ExecuteEvent += new EventHandler<ExecuteEventArgs>(CmdBtnApp_OpenNewShellBrowserPanel_ExecuteEvent);
