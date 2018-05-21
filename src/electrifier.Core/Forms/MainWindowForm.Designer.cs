@@ -32,20 +32,22 @@
             // _mainRibbon
             // 
             this._mainRibbon.Location = new System.Drawing.Point(0, 0);
+            this._mainRibbon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._mainRibbon.Minimized = false;
             this._mainRibbon.Name = "_mainRibbon";
             this._mainRibbon.ResourceName = "electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
             this._mainRibbon.ShortcutTableResourceName = null;
-            this._mainRibbon.Size = new System.Drawing.Size(784, 141);
+            this._mainRibbon.Size = new System.Drawing.Size(1045, 174);
             this._mainRibbon.TabIndex = 0;
             // 
             // panel1
             // 
             this.panel1.Controls.Add(this.dockPanel);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 141);
+            this.panel1.Location = new System.Drawing.Point(0, 174);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(784, 420);
+            this.panel1.Size = new System.Drawing.Size(1045, 516);
             this.panel1.TabIndex = 1;
             // 
             // dockPanel
@@ -53,18 +55,19 @@
             this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.dockPanel.Location = new System.Drawing.Point(0, 0);
+            this.dockPanel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.dockPanel.Name = "dockPanel";
             this.dockPanel.ShowDocumentIcon = true;
-            this.dockPanel.Size = new System.Drawing.Size(784, 420);
+            this.dockPanel.Size = new System.Drawing.Size(1045, 516);
             this.dockPanel.TabIndex = 0;
             // 
             // MainWindowForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 561);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.ClientSize = new System.Drawing.Size(1045, 690);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this._mainRibbon);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "MainWindowForm";
             this.Load += new System.EventHandler(this.MainWindowForm_Load);
             this.panel1.ResumeLayout(false);

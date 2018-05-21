@@ -63,9 +63,9 @@ namespace electrifier.Core
             this.Session = new AppContextSession(this.IsPortable);
             this.MainForm = this.Session.PrepareForm(this.Icon);
 
-            // Initialize debug listener
-            this.InitializeDebugListener();
-            Debug.WriteLine("electrifier.Core.AppContext: New AppContext created. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")");
+            // Initialize trace listener
+            this.InitializeTraceListener();
+            AppContext.TraceScope();
 
             // Add ThreadExit-handler to save configuration when closing
             ThreadExit += new EventHandler(this.AppContext_ThreadExit);
@@ -75,35 +75,97 @@ namespace electrifier.Core
             splashScreenForm.Dispose();
         }
 
-        /// <summary>
-        /// InitializeDebugListener
-        /// 
-        /// Initializes the debug listener.
-        /// Output will be written into 'C:\Users\[USER]\AppData\Local\electrifier\electrifier.debug.log'
-        /// 
-        /// WARNING: TODO: Currently will fail when mutltiple instances are running in debug mode!
-        /// </summary>
-        [Conditional("DEBUG")]
-        private void InitializeDebugListener()
-        {
-            string fileFullName = System.IO.Path.Combine(this.Session.ApplicationDataPath, @"electrifier.debug.log");
-
-            // Ensure directory exists before attempting to create the file
-            System.IO.FileInfo fileInfo = new System.IO.FileInfo(fileFullName);
-            fileInfo.Directory.Create();
-
-            System.IO.FileStream fileStream = new System.IO.FileStream(fileFullName, System.IO.FileMode.Append, System.IO.FileAccess.Write);
-
-            Debug.Listeners.Add(new TextWriterTraceListener(fileStream));
-        }
-
         private void AppContext_ThreadExit(object sender, EventArgs e)
         {
             //// Save configuration file
             //if (AppContext.IsIncognito == false)
             //	this.SaveConfiguration();
 
-            Debug.WriteLine("electrifier.Core.AppContext: AppContext is shutting down. (" + DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss") + ")\n");
+            AppContext.TraceScope();
         }
+
+        #region Debug helper members
+
+        /// <summary>
+        /// InitializeTraceListener
+        /// 
+        /// Initializes the trace listener.
+        /// By default, output will be written into '[System.Windows.Forms.Application.StartupPath]\electrifier\electrifier.debug.log'
+        /// </summary>
+        [Conditional("DEBUG")]
+        private void InitializeTraceListener()
+        {
+            string filePath = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, @"electrifier.debug.log");
+
+            // Ensure directory exists before attempting to create the file
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(filePath);
+            fileInfo.Directory.Create();
+
+            DefaultTraceListener defaultTraceListener = new DefaultTraceListener
+            {
+                LogFileName = filePath
+            };
+
+            Trace.Listeners.Clear();
+            Trace.Listeners.Add(defaultTraceListener);
+        }
+
+        [Conditional("DEBUG")]
+        internal static void TraceScope(
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+        {
+            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
+            fullMessage += " Enter Scope of Member " + memberName;
+            fullMessage += " @ '" + filePath;
+
+            Trace.WriteLine(fullMessage);
+        }
+
+        [Conditional("DEBUG")]
+        internal static void TraceDebug(string message,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+        {
+            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
+            fullMessage += " " + message;
+            fullMessage += " @ '" + filePath;
+            fullMessage += "' in " + memberName;
+
+            Trace.WriteLine(fullMessage);
+        }
+
+        [Conditional("DEBUG")]
+        internal static void TraceWarning(string message,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+        {
+            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
+            fullMessage += " [-!-]: " + message;
+            fullMessage += " @ '" + filePath;
+            fullMessage += "' in " + memberName;
+
+            Trace.WriteLine(fullMessage);
+        }
+
+        [Conditional("DEBUG")]
+        internal static void TraceError(string message,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
+            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
+            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
+        {
+            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
+            fullMessage += " ERROR: " + message;
+            fullMessage += " @ '" + filePath;
+            fullMessage += "', in " + memberName;
+            fullMessage += "#" + lineNumber;
+
+            Trace.WriteLine(fullMessage);
+        }
+
+        #endregion
     }
 }
