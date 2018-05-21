@@ -19,14 +19,9 @@
 */
 
 using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
-using System.Xml;
-
-using electrifier.Core.Forms;
 
 namespace electrifier.Core
 {
@@ -40,7 +35,7 @@ namespace electrifier.Core
 
         /// <summary>
         /// 
-        /// AppContext is the main entry point of electrifier Application.
+        /// <see cref="AppContext"/> is the main entry point of electrifier Application.
         /// 
         /// </summary>
         /// <param name="args">The argument list given when starting the application</param>
@@ -91,7 +86,13 @@ namespace electrifier.Core
         [Conditional("DEBUG")]
         private void InitializeDebugListener()
         {
-            FileStream fileStream = new FileStream(Path.Combine(this.Session.ApplicationDataPath, @"electrifier.debug.log"), FileMode.Append, FileAccess.Write);
+            string fileFullName = System.IO.Path.Combine(this.Session.ApplicationDataPath, @"electrifier.debug.log");
+
+            // Ensure directory exists before attempting to create the file
+            System.IO.FileInfo fileInfo = new System.IO.FileInfo(fileFullName);
+            fileInfo.Directory.Create();
+
+            System.IO.FileStream fileStream = new System.IO.FileStream(fileFullName, System.IO.FileMode.Append, System.IO.FileAccess.Write);
 
             Debug.Listeners.Add(new TextWriterTraceListener(fileStream));
         }
