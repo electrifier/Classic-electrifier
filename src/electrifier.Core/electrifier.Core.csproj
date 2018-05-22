@@ -130,11 +130,6 @@
     <Compile Include="Forms\MainWindowForm.Designer.cs">
       <DependentUpon>MainWindowForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\MainWindowForm.RibbonMarkup.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MainWindowForm.RibbonMarkup.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -149,26 +144,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.de.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MainWindowForm.RibbonMarkup.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.ribbon">
-      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\MainWindowForm.RibbonMarkup.de.ribbon">
-      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
-    </EmbeddedResource>
-    <None Include="Forms\MainWindowForm.RibbonMarkup.log">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MainWindowForm.RibbonMarkup.xml</DependentUpon>
-    </None>
-    <None Include="Forms\MainWindowForm.RibbonMarkup.shortcuts" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -180,11 +155,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Forms\MainWindowForm.RibbonMarkup.xml">
-      <Generator>RibbonGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>MainWindowForm.RibbonMarkup.log</LastGenOutput>
-    </Content>
     <Content Include="Resources\Commands\app_close.bmp" />
     <Content Include="Resources\Commands\app_commandprompt.bmp" />
     <Content Include="Resources\Commands\app_electrifieroptions.bmp" />

@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<RibbonShortcutTable>
-  <RibbonShortcutArray>
-    <RibbonShortcut CommandId="1001" Shortcut="Ctrl+N"/>
-  </RibbonShortcutArray>
-</RibbonShortcutTable>

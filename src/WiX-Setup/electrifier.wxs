@@ -47,10 +47,10 @@
         <File Id="electrifier.Core.dll"
 							Source="$(var.electrifier.Core.TargetPath)" KeyPath="yes" Checksum="yes"/>
       </Component>
-      <Component Id="Ribbon.dll" Guid="E0585B1A-F371-47BB-B2BD-7A9686BB79B0">
+      <!--<Component Id="Ribbon.dll" Guid="E0585B1A-F371-47BB-B2BD-7A9686BB79B0">
         <File Id="Ribbon.dll"
 							Source="$(var.electrifier.Core.TargetDir)\Ribbon.dll" KeyPath="yes" Checksum="yes"/>
-      </Component>
+      </Component>-->
       <Component Id="Microsoft.WindowsAPICodePack.dll" Guid="EFC2DC76-8D9D-4121-B75C-77560D54A58D">
         <File Id="Microsoft.WindowsAPICodePack.dll"
 							Source="$(var.electrifier.Core.TargetDir)\Microsoft.WindowsAPICodePack.dll" KeyPath="yes" Checksum="yes"/>
