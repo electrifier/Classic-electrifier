@@ -23,7 +23,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this._mainRibbon = new RibbonLib.Ribbon();
+            //this._mainRibbon = new RibbonLib.Ribbon();
             this.panel1 = new System.Windows.Forms.Panel();
             this.dockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.panel1.SuspendLayout();
@@ -31,14 +31,14 @@
             // 
             // _mainRibbon
             // 
-            this._mainRibbon.Location = new System.Drawing.Point(0, 0);
-            this._mainRibbon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this._mainRibbon.Minimized = false;
-            this._mainRibbon.Name = "_mainRibbon";
-            this._mainRibbon.ResourceName = "electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
-            this._mainRibbon.ShortcutTableResourceName = null;
-            this._mainRibbon.Size = new System.Drawing.Size(1045, 174);
-            this._mainRibbon.TabIndex = 0;
+            //this._mainRibbon.Location = new System.Drawing.Point(0, 0);
+            //this._mainRibbon.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            //this._mainRibbon.Minimized = false;
+            //this._mainRibbon.Name = "_mainRibbon";
+            //this._mainRibbon.ResourceName = "electrifier.Core.Forms.MainWindowForm.RibbonMarkup.ribbon";
+            //this._mainRibbon.ShortcutTableResourceName = null;
+            //this._mainRibbon.Size = new System.Drawing.Size(1045, 174);
+            //this._mainRibbon.TabIndex = 0;
             // 
             // panel1
             // 
@@ -66,7 +66,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
             this.ClientSize = new System.Drawing.Size(1045, 690);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this._mainRibbon);
+            //this.Controls.Add(this._mainRibbon);
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "MainWindowForm";
             this.Load += new System.EventHandler(this.MainWindowForm_Load);
@@ -77,7 +77,7 @@
 
         #endregion
 
-        private RibbonLib.Ribbon _mainRibbon;
+        //private RibbonLib.Ribbon _mainRibbon;
         private System.Windows.Forms.Panel panel1;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dockPanel;
     }
