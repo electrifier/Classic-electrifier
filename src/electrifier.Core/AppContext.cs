@@ -32,6 +32,7 @@ namespace electrifier.Core
         public bool IsPortable { get; private set; }
         public bool IsIncognito { get; private set; }
         internal AppContextSession Session { get; }
+        public bool IsBetaVersion() { return true; }
 
         /// <summary>
         /// 
@@ -59,16 +60,29 @@ namespace electrifier.Core
                     this.IsIncognito = true;
             }
 
-            // Initialize session object
-            this.Session = new AppContextSession(this.IsPortable);
-            this.MainForm = this.Session.PrepareForm(this.Icon);
-
             // Initialize trace listener
             this.InitializeTraceListener();
             AppContext.TraceScope();
 
+            // Initialize session object
+            this.Session = new AppContextSession(this.IsPortable);
+            this.MainForm = this.Session.CreateElectrifierForm(this.Icon);
+
             // Add ThreadExit-handler to save configuration when closing
             ThreadExit += new EventHandler(this.AppContext_ThreadExit);
+
+            if (this.IsBetaVersion())
+            {
+                string msgText = "Hello and welcome to electrifier!\n\n" +
+                    "Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested " +
+                    "there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!\n\n" +
+                    "No one can be held responsible for any damage that is caused by using this software!\n\n" +
+                    "Use at your own risk.\n\nBy clicking OK you show you understand and agree to this conditions.";
+
+                // TODO: In Registry schreiben dass gelesen...
+
+                System.Windows.Forms.MessageBox.Show(msgText, "electrifier - Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             // Finally close splash screen
             splashScreenForm.Close();
@@ -84,7 +98,7 @@ namespace electrifier.Core
             AppContext.TraceScope();
         }
 
-        #region Debug helper members
+        #region TraceListener helper members for debugging and logging purposes ===============================================
 
         /// <summary>
         /// InitializeTraceListener

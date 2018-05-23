@@ -21,8 +21,6 @@
 using System;
 using System.IO;
 
-using electrifier.Core.Forms;
-
 namespace electrifier.Core
 {
     public sealed partial class AppContext
@@ -30,7 +28,7 @@ namespace electrifier.Core
         internal class AppContextSession
         {
             public readonly string ApplicationDataPath;
-            public MainWindowForm MainWindowForm { get; private set; }
+            public electrifier.Core.Forms.Electrifier ElectrifierForm { get; private set; }
 
             public AppContextSession(bool isPortable)
             {
@@ -39,11 +37,11 @@ namespace electrifier.Core
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"electrifier"));
             }
 
-            public MainWindowForm PrepareForm(System.Drawing.Icon icon)
+            public electrifier.Core.Forms.Electrifier CreateElectrifierForm(System.Drawing.Icon icon)
             {
-                this.MainWindowForm = new MainWindowForm(icon);
+                this.ElectrifierForm = new electrifier.Core.Forms.Electrifier(icon);
 
-                return this.MainWindowForm;
+                return this.ElectrifierForm;
             }
         }
     }
