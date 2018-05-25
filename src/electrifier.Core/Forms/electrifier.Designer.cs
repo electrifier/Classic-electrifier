@@ -48,6 +48,7 @@
             this.sendBugReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mniHelpAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
+            this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tstFileToolStrip = new System.Windows.Forms.ToolStrip();
             this.tdbNewFileBrowser = new System.Windows.Forms.ToolStripDropDownButton();
             this.tmiNewPanelFloating = new System.Windows.Forms.ToolStripMenuItem();
@@ -58,7 +59,6 @@
             this.tmiDockToTop = new System.Windows.Forms.ToolStripMenuItem();
             this.tmiDockToBottom = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.mnuMenuStrip.SuspendLayout();
             this.tscToolStripContainer.ContentPanel.SuspendLayout();
             this.tscToolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -106,7 +106,7 @@
             this.mniFileExit.Image = ((System.Drawing.Image)(resources.GetObject("mniFileExit.Image")));
             this.mniFileExit.Name = "mniFileExit";
             this.mniFileExit.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.mniFileExit.Size = new System.Drawing.Size(216, 26);
+            this.mniFileExit.Size = new System.Drawing.Size(161, 26);
             this.mniFileExit.Text = "&Exit";
             this.mniFileExit.Click += new System.EventHandler(this.mniFileExit_Click);
             // 
@@ -208,6 +208,7 @@
             this.mniHelpAbout.Name = "mniHelpAbout";
             this.mniHelpAbout.Size = new System.Drawing.Size(222, 26);
             this.mniHelpAbout.Text = "&About...";
+            this.mniHelpAbout.Click += new System.EventHandler(this.mniHelpAbout_Click);
             // 
             // tscToolStripContainer
             // 
@@ -226,6 +227,15 @@
             // tscToolStripContainer.TopToolStripPanel
             // 
             this.tscToolStripContainer.TopToolStripPanel.Controls.Add(this.tstFileToolStrip);
+            // 
+            // dpnDockPanel
+            // 
+            this.dpnDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
+            this.dpnDockPanel.Location = new System.Drawing.Point(0, 0);
+            this.dpnDockPanel.Name = "dpnDockPanel";
+            this.dpnDockPanel.Size = new System.Drawing.Size(782, 464);
+            this.dpnDockPanel.TabIndex = 0;
             // 
             // tstFileToolStrip
             // 
@@ -259,57 +269,48 @@
             // tmiNewPanelFloating
             // 
             this.tmiNewPanelFloating.Name = "tmiNewPanelFloating";
-            this.tmiNewPanelFloating.Size = new System.Drawing.Size(216, 26);
+            this.tmiNewPanelFloating.Size = new System.Drawing.Size(201, 26);
             this.tmiNewPanelFloating.Text = "&Floating";
             this.tmiNewPanelFloating.Click += new System.EventHandler(this.tmiNewPanelFloating_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(213, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(198, 6);
             // 
             // tmiDockToLeft
             // 
             this.tmiDockToLeft.Name = "tmiDockToLeft";
-            this.tmiDockToLeft.Size = new System.Drawing.Size(216, 26);
+            this.tmiDockToLeft.Size = new System.Drawing.Size(201, 26);
             this.tmiDockToLeft.Text = "Dock &Left-sided";
             // 
             // tmiDockToRight
             // 
             this.tmiDockToRight.Name = "tmiDockToRight";
-            this.tmiDockToRight.Size = new System.Drawing.Size(216, 26);
+            this.tmiDockToRight.Size = new System.Drawing.Size(201, 26);
             this.tmiDockToRight.Text = "Dock &Right-Sided";
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(213, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(198, 6);
             // 
             // tmiDockToTop
             // 
             this.tmiDockToTop.Name = "tmiDockToTop";
-            this.tmiDockToTop.Size = new System.Drawing.Size(216, 26);
+            this.tmiDockToTop.Size = new System.Drawing.Size(201, 26);
             this.tmiDockToTop.Text = "Dock to &Top";
             // 
             // tmiDockToBottom
             // 
             this.tmiDockToBottom.Name = "tmiDockToBottom";
-            this.tmiDockToBottom.Size = new System.Drawing.Size(216, 26);
+            this.tmiDockToBottom.Size = new System.Drawing.Size(201, 26);
             this.tmiDockToBottom.Text = "Dock to &Bottom";
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
-            // 
-            // dpnDockPanel
-            // 
-            this.dpnDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
-            this.dpnDockPanel.Location = new System.Drawing.Point(0, 0);
-            this.dpnDockPanel.Name = "dpnDockPanel";
-            this.dpnDockPanel.Size = new System.Drawing.Size(782, 464);
-            this.dpnDockPanel.TabIndex = 0;
             // 
             // Electrifier
             // 

@@ -98,7 +98,7 @@ namespace electrifier.Core
             AppContext.TraceScope();
         }
 
-        #region TraceListener helper members for debugging and logging purposes ===============================================
+        #region TraceListener helper members for logging and debugging purposes ===============================================
 
         /// <summary>
         /// InitializeTraceListener

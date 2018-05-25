@@ -75,6 +75,13 @@ namespace electrifier.Core.Forms
             }
         }
 
+        private void mniHelpAbout_Click(object sender, EventArgs e)
+        {
+            electrifier.Core.Forms.AboutElectrifier aboutElectrifier = new AboutElectrifier();
+
+            aboutElectrifier.ShowDialog();
+        }
+
         #endregion
 
         #region Event Listeners
@@ -95,5 +102,6 @@ namespace electrifier.Core.Forms
         }
 
         #endregion
+
     }
 }
