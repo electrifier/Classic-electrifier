@@ -16,8 +16,6 @@ namespace electrifier.Core.Forms
             this.labelCopyright.Text = this.AssemblyCopyright;
             this.labelCompanyName.Text = this.AssemblyCompany;
             this.textBoxDescription.Text = this.AssemblyDescription;
-
-            string test = Assembly.GetEntryAssembly().FullName;
         }
 
         #region Assembly Attribute Accessors

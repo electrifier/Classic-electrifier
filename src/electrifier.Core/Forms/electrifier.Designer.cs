@@ -31,16 +31,15 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Electrifier));
             this.stsStatusStrip = new System.Windows.Forms.StatusStrip();
             this.mnuMenuStrip = new System.Windows.Forms.MenuStrip();
-            this.mnuFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniFile = new System.Windows.Forms.ToolStripMenuItem();
             this.mniFileExit = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.favoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniView = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniFavorites = new System.Windows.Forms.ToolStripMenuItem();
             this.addFolderToFavoritesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sessionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.scriptsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniTools = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniWindow = new System.Windows.Forms.ToolStripMenuItem();
+            this.mniHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.visitElectrifierorgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.machineInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -50,15 +49,14 @@
             this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tstFileToolStrip = new System.Windows.Forms.ToolStrip();
-            this.tdbNewFileBrowser = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tmiNewPanelFloating = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.tmiDockToLeft = new System.Windows.Forms.ToolStripMenuItem();
-            this.tmiDockToRight = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.tmiDockToTop = new System.Windows.Forms.ToolStripMenuItem();
-            this.tmiDockToBottom = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbNewFileBrowser = new System.Windows.Forms.ToolStripSplitButton();
+            this.tsbNewFileBrowserLeft = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsbNewFileBrowserRight = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbNewFileBrowserTop = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsbNewFileBrowserBottom = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.tsbNewFileBrowserFloating = new System.Windows.Forms.ToolStripMenuItem();
             this.mnuMenuStrip.SuspendLayout();
             this.tscToolStripContainer.ContentPanel.SuspendLayout();
             this.tscToolStripContainer.TopToolStripPanel.SuspendLayout();
@@ -68,38 +66,37 @@
             // 
             // stsStatusStrip
             // 
+            this.stsStatusStrip.AutoSize = false;
             this.stsStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.stsStatusStrip.Location = new System.Drawing.Point(0, 531);
+            this.stsStatusStrip.Location = new System.Drawing.Point(0, 511);
             this.stsStatusStrip.Name = "stsStatusStrip";
-            this.stsStatusStrip.Size = new System.Drawing.Size(782, 22);
+            this.stsStatusStrip.Size = new System.Drawing.Size(782, 42);
             this.stsStatusStrip.TabIndex = 0;
-            this.stsStatusStrip.Text = "statusStrip1";
             // 
             // mnuMenuStrip
             // 
             this.mnuMenuStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.mnuMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuFileToolStripMenuItem,
-            this.editToolStripMenuItem,
-            this.viewToolStripMenuItem,
-            this.favoritesToolStripMenuItem,
-            this.sessionToolStripMenuItem,
-            this.toolsToolStripMenuItem,
-            this.scriptsToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.mniFile,
+            this.mniEdit,
+            this.mniView,
+            this.mniFavorites,
+            this.mniTools,
+            this.mniWindow,
+            this.mniHelp});
             this.mnuMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mnuMenuStrip.Name = "mnuMenuStrip";
             this.mnuMenuStrip.Size = new System.Drawing.Size(782, 28);
             this.mnuMenuStrip.TabIndex = 1;
             this.mnuMenuStrip.Text = "menuStrip1";
             // 
-            // mnuFileToolStripMenuItem
+            // mniFile
             // 
-            this.mnuFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniFile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.mniFileExit});
-            this.mnuFileToolStripMenuItem.Name = "mnuFileToolStripMenuItem";
-            this.mnuFileToolStripMenuItem.Size = new System.Drawing.Size(44, 24);
-            this.mnuFileToolStripMenuItem.Text = "&File";
+            this.mniFile.Name = "mniFile";
+            this.mniFile.Size = new System.Drawing.Size(44, 24);
+            this.mniFile.Text = "&File";
             // 
             // mniFileExit
             // 
@@ -110,27 +107,27 @@
             this.mniFileExit.Text = "&Exit";
             this.mniFileExit.Click += new System.EventHandler(this.mniFileExit_Click);
             // 
-            // editToolStripMenuItem
+            // mniEdit
             // 
-            this.editToolStripMenuItem.Enabled = false;
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(47, 24);
-            this.editToolStripMenuItem.Text = "&Edit";
+            this.mniEdit.Enabled = false;
+            this.mniEdit.Name = "mniEdit";
+            this.mniEdit.Size = new System.Drawing.Size(47, 24);
+            this.mniEdit.Text = "&Edit";
             // 
-            // viewToolStripMenuItem
+            // mniView
             // 
-            this.viewToolStripMenuItem.Enabled = false;
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
-            this.viewToolStripMenuItem.Text = "&View";
+            this.mniView.Enabled = false;
+            this.mniView.Name = "mniView";
+            this.mniView.Size = new System.Drawing.Size(53, 24);
+            this.mniView.Text = "&View";
             // 
-            // favoritesToolStripMenuItem
+            // mniFavorites
             // 
-            this.favoritesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniFavorites.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addFolderToFavoritesToolStripMenuItem});
-            this.favoritesToolStripMenuItem.Name = "favoritesToolStripMenuItem";
-            this.favoritesToolStripMenuItem.Size = new System.Drawing.Size(79, 24);
-            this.favoritesToolStripMenuItem.Text = "&Favorites";
+            this.mniFavorites.Name = "mniFavorites";
+            this.mniFavorites.Size = new System.Drawing.Size(79, 24);
+            this.mniFavorites.Text = "&Favorites";
             // 
             // addFolderToFavoritesToolStripMenuItem
             // 
@@ -138,39 +135,32 @@
             this.addFolderToFavoritesToolStripMenuItem.Size = new System.Drawing.Size(238, 26);
             this.addFolderToFavoritesToolStripMenuItem.Text = "&Add Folder to Favorites";
             // 
-            // sessionToolStripMenuItem
+            // mniTools
             // 
-            this.sessionToolStripMenuItem.Enabled = false;
-            this.sessionToolStripMenuItem.Name = "sessionToolStripMenuItem";
-            this.sessionToolStripMenuItem.Size = new System.Drawing.Size(70, 24);
-            this.sessionToolStripMenuItem.Text = "&Session";
+            this.mniTools.Enabled = false;
+            this.mniTools.Name = "mniTools";
+            this.mniTools.Size = new System.Drawing.Size(56, 24);
+            this.mniTools.Text = "&Tools";
             // 
-            // toolsToolStripMenuItem
+            // mniWindow
             // 
-            this.toolsToolStripMenuItem.Enabled = false;
-            this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(56, 24);
-            this.toolsToolStripMenuItem.Text = "&Tools";
+            this.mniWindow.Enabled = false;
+            this.mniWindow.Name = "mniWindow";
+            this.mniWindow.Size = new System.Drawing.Size(76, 24);
+            this.mniWindow.Text = "&Window";
             // 
-            // scriptsToolStripMenuItem
+            // mniHelp
             // 
-            this.scriptsToolStripMenuItem.Enabled = false;
-            this.scriptsToolStripMenuItem.Name = "scriptsToolStripMenuItem";
-            this.scriptsToolStripMenuItem.Size = new System.Drawing.Size(65, 24);
-            this.scriptsToolStripMenuItem.Text = "&Scripts";
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mniHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.visitElectrifierorgToolStripMenuItem,
             this.toolStripSeparator4,
             this.machineInformationToolStripMenuItem,
             this.toolStripSeparator5,
             this.sendBugReportToolStripMenuItem,
             this.mniHelpAbout});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(53, 24);
-            this.helpToolStripMenuItem.Text = "&Help";
+            this.mniHelp.Name = "mniHelp";
+            this.mniHelp.Size = new System.Drawing.Size(53, 24);
+            this.mniHelp.Text = "&Help";
             // 
             // visitElectrifierorgToolStripMenuItem
             // 
@@ -216,11 +206,11 @@
             // tscToolStripContainer.ContentPanel
             // 
             this.tscToolStripContainer.ContentPanel.Controls.Add(this.dpnDockPanel);
-            this.tscToolStripContainer.ContentPanel.Size = new System.Drawing.Size(782, 464);
+            this.tscToolStripContainer.ContentPanel.Size = new System.Drawing.Size(782, 444);
             this.tscToolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tscToolStripContainer.Location = new System.Drawing.Point(0, 28);
             this.tscToolStripContainer.Name = "tscToolStripContainer";
-            this.tscToolStripContainer.Size = new System.Drawing.Size(782, 503);
+            this.tscToolStripContainer.Size = new System.Drawing.Size(782, 483);
             this.tscToolStripContainer.TabIndex = 2;
             this.tscToolStripContainer.Text = "toolStripContainer1";
             // 
@@ -234,7 +224,7 @@
             this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.dpnDockPanel.Location = new System.Drawing.Point(0, 0);
             this.dpnDockPanel.Name = "dpnDockPanel";
-            this.dpnDockPanel.Size = new System.Drawing.Size(782, 464);
+            this.dpnDockPanel.Size = new System.Drawing.Size(782, 444);
             this.dpnDockPanel.TabIndex = 0;
             // 
             // tstFileToolStrip
@@ -242,75 +232,73 @@
             this.tstFileToolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.tstFileToolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.tstFileToolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tdbNewFileBrowser,
-            this.toolStripSeparator3});
+            this.tsbNewFileBrowser});
             this.tstFileToolStrip.Location = new System.Drawing.Point(3, 0);
             this.tstFileToolStrip.Name = "tstFileToolStrip";
-            this.tstFileToolStrip.Size = new System.Drawing.Size(187, 39);
+            this.tstFileToolStrip.Size = new System.Drawing.Size(225, 39);
             this.tstFileToolStrip.TabIndex = 0;
             // 
-            // tdbNewFileBrowser
+            // tsbNewFileBrowser
             // 
-            this.tdbNewFileBrowser.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tmiNewPanelFloating,
-            this.toolStripSeparator1,
-            this.tmiDockToLeft,
-            this.tmiDockToRight,
-            this.toolStripSeparator2,
-            this.tmiDockToTop,
-            this.tmiDockToBottom});
-            this.tdbNewFileBrowser.Image = ((System.Drawing.Image)(resources.GetObject("tdbNewFileBrowser.Image")));
-            this.tdbNewFileBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tdbNewFileBrowser.Name = "tdbNewFileBrowser";
-            this.tdbNewFileBrowser.Size = new System.Drawing.Size(169, 36);
-            this.tdbNewFileBrowser.Text = "&New File Browser";
-            this.tdbNewFileBrowser.ToolTipText = "Open &new file browser";
+            this.tsbNewFileBrowser.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tsbNewFileBrowserLeft,
+            this.tsbNewFileBrowserRight,
+            this.toolStripSeparator6,
+            this.tsbNewFileBrowserTop,
+            this.tsbNewFileBrowserBottom,
+            this.toolStripSeparator7,
+            this.tsbNewFileBrowserFloating});
+            this.tsbNewFileBrowser.Image = ((System.Drawing.Image)(resources.GetObject("tsbNewFileBrowser.Image")));
+            this.tsbNewFileBrowser.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsbNewFileBrowser.Name = "tsbNewFileBrowser";
+            this.tsbNewFileBrowser.Size = new System.Drawing.Size(174, 36);
+            this.tsbNewFileBrowser.Text = "&New File Browser";
+            this.tsbNewFileBrowser.ButtonClick += new System.EventHandler(this.tsbNewFileBrowser_ButtonClick);
             // 
-            // tmiNewPanelFloating
+            // tsbNewFileBrowserLeft
             // 
-            this.tmiNewPanelFloating.Name = "tmiNewPanelFloating";
-            this.tmiNewPanelFloating.Size = new System.Drawing.Size(201, 26);
-            this.tmiNewPanelFloating.Text = "&Floating";
-            this.tmiNewPanelFloating.Click += new System.EventHandler(this.tmiNewPanelFloating_Click);
+            this.tsbNewFileBrowserLeft.Name = "tsbNewFileBrowserLeft";
+            this.tsbNewFileBrowserLeft.Size = new System.Drawing.Size(216, 26);
+            this.tsbNewFileBrowserLeft.Text = "Dock &Left-Sieded";
+            this.tsbNewFileBrowserLeft.Click += new System.EventHandler(this.tsbNewFileBrowserLeft_Click);
             // 
-            // toolStripSeparator1
+            // tsbNewFileBrowserRight
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(198, 6);
+            this.tsbNewFileBrowserRight.Name = "tsbNewFileBrowserRight";
+            this.tsbNewFileBrowserRight.Size = new System.Drawing.Size(216, 26);
+            this.tsbNewFileBrowserRight.Text = "Dock &Right-Sided";
+            this.tsbNewFileBrowserRight.Click += new System.EventHandler(this.tsbNewFileBrowserRight_Click);
             // 
-            // tmiDockToLeft
+            // toolStripSeparator6
             // 
-            this.tmiDockToLeft.Name = "tmiDockToLeft";
-            this.tmiDockToLeft.Size = new System.Drawing.Size(201, 26);
-            this.tmiDockToLeft.Text = "Dock &Left-sided";
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            this.toolStripSeparator6.Size = new System.Drawing.Size(213, 6);
             // 
-            // tmiDockToRight
+            // tsbNewFileBrowserTop
             // 
-            this.tmiDockToRight.Name = "tmiDockToRight";
-            this.tmiDockToRight.Size = new System.Drawing.Size(201, 26);
-            this.tmiDockToRight.Text = "Dock &Right-Sided";
+            this.tsbNewFileBrowserTop.Name = "tsbNewFileBrowserTop";
+            this.tsbNewFileBrowserTop.Size = new System.Drawing.Size(216, 26);
+            this.tsbNewFileBrowserTop.Text = "Dock to &Top";
+            this.tsbNewFileBrowserTop.Click += new System.EventHandler(this.tsbNewFileBrowserTop_Click);
             // 
-            // toolStripSeparator2
+            // tsbNewFileBrowserBottom
             // 
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(198, 6);
+            this.tsbNewFileBrowserBottom.Name = "tsbNewFileBrowserBottom";
+            this.tsbNewFileBrowserBottom.Size = new System.Drawing.Size(216, 26);
+            this.tsbNewFileBrowserBottom.Text = "Dock to &Bottom";
+            this.tsbNewFileBrowserBottom.Click += new System.EventHandler(this.tsbNewFileBrowserBottom_Click);
             // 
-            // tmiDockToTop
+            // toolStripSeparator7
             // 
-            this.tmiDockToTop.Name = "tmiDockToTop";
-            this.tmiDockToTop.Size = new System.Drawing.Size(201, 26);
-            this.tmiDockToTop.Text = "Dock to &Top";
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            this.toolStripSeparator7.Size = new System.Drawing.Size(213, 6);
             // 
-            // tmiDockToBottom
+            // tsbNewFileBrowserFloating
             // 
-            this.tmiDockToBottom.Name = "tmiDockToBottom";
-            this.tmiDockToBottom.Size = new System.Drawing.Size(201, 26);
-            this.tmiDockToBottom.Text = "Dock to &Bottom";
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 39);
+            this.tsbNewFileBrowserFloating.Name = "tsbNewFileBrowserFloating";
+            this.tsbNewFileBrowserFloating.Size = new System.Drawing.Size(216, 26);
+            this.tsbNewFileBrowserFloating.Text = "&Floating";
+            this.tsbNewFileBrowserFloating.Click += new System.EventHandler(this.tsbNewFileBrowserFloating_Click);
             // 
             // Electrifier
             // 
@@ -342,26 +330,16 @@
 
         private System.Windows.Forms.StatusStrip stsStatusStrip;
         private System.Windows.Forms.MenuStrip mnuMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem mnuFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mniFile;
         private System.Windows.Forms.ToolStripContainer tscToolStripContainer;
         private System.Windows.Forms.ToolStrip tstFileToolStrip;
-        private System.Windows.Forms.ToolStripDropDownButton tdbNewFileBrowser;
-        private System.Windows.Forms.ToolStripMenuItem tmiNewPanelFloating;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem tmiDockToLeft;
-        private System.Windows.Forms.ToolStripMenuItem tmiDockToRight;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripMenuItem tmiDockToTop;
-        private System.Windows.Forms.ToolStripMenuItem tmiDockToBottom;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem favoritesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem sessionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mniEdit;
+        private System.Windows.Forms.ToolStripMenuItem mniView;
+        private System.Windows.Forms.ToolStripMenuItem mniFavorites;
+        private System.Windows.Forms.ToolStripMenuItem mniHelp;
+        private System.Windows.Forms.ToolStripMenuItem mniTools;
         private System.Windows.Forms.ToolStripMenuItem mniHelpAbout;
-        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem scriptsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mniWindow;
         private System.Windows.Forms.ToolStripMenuItem mniFileExit;
         private System.Windows.Forms.ToolStripMenuItem visitElectrifierorgToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
@@ -370,5 +348,13 @@
         private System.Windows.Forms.ToolStripMenuItem sendBugReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addFolderToFavoritesToolStripMenuItem;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dpnDockPanel;
+        private System.Windows.Forms.ToolStripSplitButton tsbNewFileBrowser;
+        private System.Windows.Forms.ToolStripMenuItem tsbNewFileBrowserLeft;
+        private System.Windows.Forms.ToolStripMenuItem tsbNewFileBrowserRight;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem tsbNewFileBrowserTop;
+        private System.Windows.Forms.ToolStripMenuItem tsbNewFileBrowserBottom;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem tsbNewFileBrowserFloating;
     }
 }
