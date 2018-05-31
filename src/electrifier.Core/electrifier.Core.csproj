@@ -136,16 +136,11 @@
     <Compile Include="Forms\AboutElectrifier.Designer.cs">
       <DependentUpon>AboutElectrifier.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\electrifier.cs">
+    <Compile Include="Forms\Electrifier.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\electrifier.Designer.cs">
-      <DependentUpon>electrifier.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+    <Compile Include="Forms\Electrifier.Designer.cs">
+      <DependentUpon>Electrifier.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -169,12 +164,8 @@
     <EmbeddedResource Include="Forms\AboutElectrifier.resx">
       <DependentUpon>AboutElectrifier.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\electrifier.resx">
-      <DependentUpon>electrifier.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    <EmbeddedResource Include="Forms\Electrifier.resx">
+      <DependentUpon>Electrifier.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
