@@ -22,9 +22,9 @@
 
     <Command Name="cmdBtnQAT_OpenNewShellBrowserPanel"
              Id="19903"
-             LabelTitle="Open new electrifier panel">
+             LabelTitle="New Panel">
       <Command.LargeImages>
-        <Image>Commands/app_newelectrifierwindow.bmp</Image>
+        <Image>Commands/app_newtab.bmp</Image>
       </Command.LargeImages>
 
     </Command>
@@ -265,7 +265,7 @@
               </SplitButton.ButtonItem>
               <SplitButton.MenuGroups>
                 <MenuGroup Class="MajorItems">
-                  <Button CommandName="cmdBtnApp_Help" />
+                  <!--<Button CommandName="cmdBtnApp_Help_Help" />-->
                   <Button CommandName="cmdBtnApp_Help_AboutElectrifier" />
                 </MenuGroup>
                 <MenuGroup Class="MajorItems">

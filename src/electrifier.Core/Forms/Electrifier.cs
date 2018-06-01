@@ -39,7 +39,7 @@ namespace electrifier.Core.Forms
             get { return base.Text; }
             set {
                 base.Text = ((value.Length > 0) ? (value + " - " + Electrifier.formTitle_Appendix) : Electrifier.formTitle_Appendix);
-                this.formTitle_AddDebugRemark();
+                this.FormTitle_AddDebugRemark();
             }
         }
 
@@ -59,12 +59,12 @@ namespace electrifier.Core.Forms
 
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
 
-            this.Resize += new System.EventHandler(this.electrifier_Resize);
-            this.LocationChanged += new System.EventHandler(this.electrifier_LocationChanged);
+            this.Resize += new System.EventHandler(this.Electrifier_Resize);
+            this.LocationChanged += new System.EventHandler(this.Electrifier_LocationChanged);
         }
 
         [Conditional("DEBUG")]
-        private void formTitle_AddDebugRemark()
+        private void FormTitle_AddDebugRemark()
         {
             AppContext.TraceScope();
 
@@ -78,7 +78,8 @@ namespace electrifier.Core.Forms
 
             AppContext.TraceScope();
 
-            // See https://github.com/dockpanelsuite/dockpanelsuite/issues/348: we only take care of DocumentStyle.DockingWindow
+            // See <href="https://github.com/dockpanelsuite/dockpanelsuite/issues/348"/>, we only take care of DocumentStyle.DockingWindow
+            //
             //if (this.dpnDockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi)
             //{
             //    newDockContent.Show();
@@ -105,6 +106,15 @@ namespace electrifier.Core.Forms
             this.CreateNewFileBrowser();
         }
 
+        private void CmdAppHelpAboutElectrifier_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            var aboutElectrifier = new AboutElectrifier();
+
+            aboutElectrifier.ShowDialog();
+        }
+
         private void CmdAppClose_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         {
             AppContext.TraceScope();
@@ -118,51 +128,42 @@ namespace electrifier.Core.Forms
 
         #endregion Ribbon event listeners =====================================================================================
 
-        private void mniHelpAbout_Click(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            var aboutElectrifier = new AboutElectrifier();
-
-            aboutElectrifier.ShowDialog();
-        }
-
-        private void tsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
+        private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
             this.CreateNewFileBrowser();
         }
 
-        private void tsbNewFileBrowserLeft_Click(object sender, EventArgs e)
+        private void TsbNewFileBrowserLeft_Click(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
             this.CreateNewFileBrowser(DockAlignment.Left);
         }
 
-        private void tsbNewFileBrowserRight_Click(object sender, EventArgs e)
+        private void TsbNewFileBrowserRight_Click(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
             this.CreateNewFileBrowser(DockAlignment.Right);
         }
 
-        private void tsbNewFileBrowserTop_Click(object sender, EventArgs e)
+        private void TsbNewFileBrowserTop_Click(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
             this.CreateNewFileBrowser(DockAlignment.Top);
         }
 
-        private void tsbNewFileBrowserBottom_Click(object sender, EventArgs e)
+        private void TsbNewFileBrowserBottom_Click(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
             this.CreateNewFileBrowser(DockAlignment.Bottom);
         }
 
-        private void tsbNewFileBrowserFloating_Click(object sender, EventArgs e)
+        private void TsbNewFileBrowserFloating_Click(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
@@ -174,7 +175,7 @@ namespace electrifier.Core.Forms
             newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
         }
 
-        private void electrifier_Resize(object sender, EventArgs e)
+        private void Electrifier_Resize(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
@@ -184,7 +185,7 @@ namespace electrifier.Core.Forms
                 this.lastKnownFormState.Size = this.Size;
         }
 
-        private void electrifier_LocationChanged(object sender, EventArgs e)
+        private void Electrifier_LocationChanged(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
