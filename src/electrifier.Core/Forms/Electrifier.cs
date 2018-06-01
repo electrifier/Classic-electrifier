@@ -49,7 +49,8 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            InitializeComponent();
+            this.InitializeComponent();
+            this.InitializeRibbon();
 
             this.Icon = icon;
             this.Text = this.Text;  // Add formTitleAppendix
@@ -95,7 +96,16 @@ namespace electrifier.Core.Forms
 
         #region Event Listeners ===============================================================================================
 
-        private void mniFileExit_Click(object sender, EventArgs e)
+        #region Ribbon event listeners ========================================================================================
+
+        private void CmdAppOpenNewShellBrowserPanel_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewFileBrowser();
+        }
+
+        private void CmdAppClose_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         {
             AppContext.TraceScope();
 
@@ -105,6 +115,8 @@ namespace electrifier.Core.Forms
             // a big no-no, if you still use the ribbon.
             this.BeginInvoke(new MethodInvoker(this.Close));
         }
+
+        #endregion Ribbon event listeners =====================================================================================
 
         private void mniHelpAbout_Click(object sender, EventArgs e)
         {

@@ -93,6 +93,9 @@
     <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
+    <Reference Include="Sunburst.WindowsForms.Ribbon, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\lib\net45\Sunburst.WindowsForms.Ribbon.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
@@ -183,6 +186,9 @@
     <Content Include="Resources\Commands\organize_delete.bmp" />
     <Content Include="Resources\Commands\organize_moveto.bmp" />
     <Content Include="Resources\Commands\organize_rename.bmp" />
+    <RibbonDefinition Include="Resources\Electrifier.Ribbon.xml">
+      <SubType>Designer</SubType>
+    </RibbonDefinition>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="WindowsShell\" />
@@ -193,4 +199,11 @@
     <PreBuildEvent />
     <PostBuildEvent />
   </PropertyGroup>
+  <Import Project="..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets" Condition="Exists('..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets'))" />
+  </Target>
 </Project>
