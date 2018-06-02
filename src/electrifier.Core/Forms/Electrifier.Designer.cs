@@ -1,5 +1,6 @@
 ﻿using System;
 using Sunburst.WindowsForms.Ribbon.Controls;
+using Sunburst.WindowsForms.Ribbon.Controls.Events;
 
 namespace electrifier.Core.Forms
 {
@@ -86,6 +87,12 @@ namespace electrifier.Core.Forms
         private void InitializeRibbon()
         {
             //
+            // Quick Access Toolbar Commands ==================================================================================
+            //
+            this.cmdQATOpenNewShellBrowserPanel = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdQATOpenNewShellBrowserPanel);
+            this.cmdQATOpenNewShellBrowserPanel.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPanel_Execute);
+
+            //
             // Application Menu Items =========================================================================================
             //
             this.cmdAppOpenNewWindow = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppOpenNewWindow);
@@ -118,8 +125,7 @@ namespace electrifier.Core.Forms
             this.cmdAppHelpAboutElectrifier.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppHelpAboutElectrifier_Execute);
 
             this.cmdAppHelpAboutWindows = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppHelpAboutWindows);
-            this.cmdAppHelpAboutWindows.Enabled = false;
-            //this.cmdAppHelpAboutWindows.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppHelpAboutWindows_Execute);
+            this.cmdAppHelpAboutWindows.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppHelpAboutWindows_Execute);
 
             this.cmdAppClose = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppClose);
             this.cmdAppClose.ExecuteEvent += new EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppClose_Execute);
@@ -169,6 +175,11 @@ namespace electrifier.Core.Forms
         private enum rbnCommand : uint
         {
             //
+            // Quick Access Toolbar Commands ==================================================================================
+            //
+            cmdQATOpenNewShellBrowserPanel = 19903,
+
+            //
             // Application Menu Items =========================================================================================
             //
             cmdAppOpenNewWindow = 100,
@@ -202,6 +213,9 @@ namespace electrifier.Core.Forms
             cmdBtnOrganizeDelete = 1202,
             cmdBtnOrganizeRename = 1203,
         }
+
+
+        private RibbonButton cmdQATOpenNewShellBrowserPanel;
 
 
         private RibbonTab cmdTabHome;

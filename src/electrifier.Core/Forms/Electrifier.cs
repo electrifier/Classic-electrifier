@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
+using electrifier.Win32API;
+
 namespace electrifier.Core.Forms
 {
     /// <summary>
@@ -114,6 +116,16 @@ namespace electrifier.Core.Forms
 
             aboutElectrifier.ShowDialog();
         }
+
+        private void CmdAppHelpAboutWindows_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            string szOtherStuff = ".NET Framework Version: " + Environment.Version.ToString();
+
+            ShellAPI.ShellAbout(this.Handle, "Microsoft Windows", szOtherStuff, IntPtr.Zero);
+        }
+
 
         private void CmdAppClose_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         {
