@@ -145,6 +145,11 @@
     <Compile Include="Forms\Electrifier.Designer.cs">
       <DependentUpon>Electrifier.cs</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -162,6 +167,7 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Properties\License.rtf" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutElectrifier.resx">
@@ -169,6 +175,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Electrifier.resx">
       <DependentUpon>Electrifier.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

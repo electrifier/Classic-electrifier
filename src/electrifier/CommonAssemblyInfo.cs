@@ -2,7 +2,7 @@
 ** 
 **  electrifier
 ** 
-**  Copyright 2017 Thorsten Jung, www.electrifier.org
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
 **  
 **  Licensed under the Apache License, Version 2.0 (the "License");
 **  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ using System.Reflection;
 // associated with an assembly.
 [assembly: AssemblyProduct("electrifier")]
 [assembly: AssemblyCompany("electrifier.org")]
-[assembly: AssemblyCopyright("Copyright 2017 Thorsten Jung, www.electrifier.org")]
+[assembly: AssemblyCopyright("Copyright (c) 2018 Thorsten Jung, www.electrifier.org")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]
