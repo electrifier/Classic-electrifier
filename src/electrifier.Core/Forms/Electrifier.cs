@@ -1,4 +1,24 @@
-﻿using System;
+﻿/*
+** 
+**  electrifier
+** 
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
+**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**  
+**      http://www.apache.org/licenses/LICENSE-2.0
+**  
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+**
+*/
+
+using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
@@ -9,17 +29,7 @@ using electrifier.Win32API;
 namespace electrifier.Core.Forms
 {
     /// <summary>
-    /// 
-    /// </summary>
-    public struct LastKnownFormState
-    {
-        public FormWindowState FormWindowState;
-        public Point Location;
-        public Size Size;
-    }
-
-    /// <summary>
-    /// 
+    /// The main Window of electrifier application.
     /// </summary>
     public partial class Electrifier : System.Windows.Forms.Form
     {
@@ -27,9 +37,7 @@ namespace electrifier.Core.Forms
 
         protected Guid guid = Guid.NewGuid();
 
-        protected LastKnownFormState lastKnownFormState;
-
-        private static string formTitle_Appendix = String.Format("electrifier v{0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        private static string formTitle_Affix = String.Format("electrifier v{0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
         #endregion ============================================================================================================
 
@@ -40,7 +48,7 @@ namespace electrifier.Core.Forms
         public override string Text {
             get { return base.Text; }
             set {
-                base.Text = ((value.Length > 0) ? (value + " - " + Electrifier.formTitle_Appendix) : Electrifier.formTitle_Appendix);
+                base.Text = ((value.Length > 0) ? (value + " - " + Electrifier.formTitle_Affix) : Electrifier.formTitle_Affix);
                 this.FormTitle_AddDebugRemark();
             }
         }
@@ -55,14 +63,12 @@ namespace electrifier.Core.Forms
             this.InitializeRibbon();
 
             this.Icon = icon;
-            this.Text = this.Text;  // Add formTitleAppendix
+            this.Text = this.Text;  // TODO: Add formTitleAffix
 
 
 
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
 
-            this.Resize += new System.EventHandler(this.Electrifier_Resize);
-            this.LocationChanged += new System.EventHandler(this.Electrifier_LocationChanged);
         }
 
         [Conditional("DEBUG")]
@@ -75,7 +81,7 @@ namespace electrifier.Core.Forms
 
         private void CreateNewFileBrowser(DockAlignment? dockAlignment = null)
         {
-            var newDockContent = new Controls.DockContents.ShellBrowserDockContent();
+            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
             var activeDocumentPane = this.dpnDockPanel.ActiveDocumentPane;
 
             AppContext.TraceScope();
@@ -179,30 +185,12 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            var newDockContent = new Controls.DockContents.ShellBrowserDockContent();
+            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
             var floatWindowBounds = new Rectangle(this.Location, this.Size);
 
             floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
 
             newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
-        }
-
-        private void Electrifier_Resize(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.lastKnownFormState.FormWindowState = this.WindowState;
-
-            if (this.lastKnownFormState.FormWindowState == FormWindowState.Normal)
-                this.lastKnownFormState.Size = this.Size;
-        }
-
-        private void Electrifier_LocationChanged(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            if (this.WindowState == FormWindowState.Normal)
-                this.lastKnownFormState.Location = this.Location;
         }
 
         #endregion

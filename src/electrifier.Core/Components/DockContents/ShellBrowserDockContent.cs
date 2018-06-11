@@ -24,7 +24,7 @@ using System.Windows.Forms;
 using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
 using Microsoft.WindowsAPICodePack.Shell;
 
-namespace electrifier.Core.Controls.DockContents
+namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
     /// Summary of ShellBrowserDockContent.

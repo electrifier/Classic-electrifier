@@ -130,8 +130,14 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\DockContents\ShellBrowserDockContent.cs">
+    <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\FormStatePersistor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\FormStatePersistor.Designer.cs">
+      <DependentUpon>FormStatePersistor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\AboutElectrifier.cs">
       <SubType>Form</SubType>
@@ -150,6 +156,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -164,10 +176,15 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <EmbeddedResource Include="Properties\License.rtf" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\AboutElectrifier.resx">

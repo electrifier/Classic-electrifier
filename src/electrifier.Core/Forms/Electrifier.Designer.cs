@@ -1,4 +1,24 @@
-﻿using System;
+﻿/*
+** 
+**  electrifier
+** 
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
+**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**  
+**      http://www.apache.org/licenses/LICENSE-2.0
+**  
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+**
+*/
+
+using System;
 using Sunburst.WindowsForms.Ribbon.Controls;
 using Sunburst.WindowsForms.Ribbon.Controls.Events;
 
@@ -32,9 +52,11 @@ namespace electrifier.Core.Forms
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.stsStatusStrip = new System.Windows.Forms.StatusStrip();
             this.rbnRibbon = new Sunburst.WindowsForms.Ribbon.Ribbon();
             this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.fspFormStatePersistor = new electrifier.Core.Components.FormStatePersistor(this.components);
             this.SuspendLayout();
             // 
             // stsStatusStrip
@@ -59,11 +81,16 @@ namespace electrifier.Core.Forms
             // dpnDockPanel
             // 
             this.dpnDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow; // See <href="https://github.com/dockpanelsuite/dockpanelsuite/issues/348"/>
+            this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.dpnDockPanel.Location = new System.Drawing.Point(0, 122);
             this.dpnDockPanel.Name = "dpnDockPanel";
             this.dpnDockPanel.Size = new System.Drawing.Size(782, 389);
             this.dpnDockPanel.TabIndex = 4;
+            // 
+            // fspFormStatePersistor
+            // 
+            this.fspFormStatePersistor.ClientForm = this;
+            this.fspFormStatePersistor.PropertyKeyPrefix = "Electrifier";
             // 
             // Electrifier
             // 
@@ -74,8 +101,6 @@ namespace electrifier.Core.Forms
             this.Controls.Add(this.rbnRibbon);
             this.Controls.Add(this.stsStatusStrip);
             this.Name = "Electrifier";
-            this.LocationChanged += new System.EventHandler(this.Electrifier_LocationChanged);
-            this.Resize += new System.EventHandler(this.Electrifier_Resize);
             this.ResumeLayout(false);
 
         }
@@ -248,6 +273,6 @@ namespace electrifier.Core.Forms
         private System.Windows.Forms.StatusStrip stsStatusStrip;
         private Sunburst.WindowsForms.Ribbon.Ribbon rbnRibbon;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dpnDockPanel;
-
+        private Components.FormStatePersistor fspFormStatePersistor;
     }
 }
