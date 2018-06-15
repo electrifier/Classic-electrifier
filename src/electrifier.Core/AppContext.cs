@@ -73,15 +73,20 @@ namespace electrifier.Core
 
             if (this.IsBetaVersion())
             {
-                string msgText = "Hello and welcome to electrifier!\n\n" +
-                    "Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested " +
-                    "there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!\n\n" +
-                    "No one can be held responsible for any damage that is caused by using this software!\n\n" +
-                    "Use at your own risk.\n\nBy clicking OK you show you understand and agree to this conditions.";
+                if (false == Properties.Settings.Default.Disable_BETAVersion_Warning)
+                {
+                    string msgText = "Hello and welcome to electrifier!\n\n" +
+                        "Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested " +
+                        "there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!\n\n" +
+                        "No one can be held responsible for any damage that is caused by using this software!\n\n" +
+                        "Use at your own risk. By continuing using this software you show that you understand the implications.\n\n" +
+                        "Click Yes to see this warning again, or No to disable it forever!";
 
-                // TODO: In Registry schreiben dass gelesen...
-
-                System.Windows.Forms.MessageBox.Show(msgText, "electrifier - Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    if (DialogResult.No == MessageBox.Show(msgText, "electrifier - Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                    {
+                        Properties.Settings.Default.Disable_BETAVersion_Warning = true;
+                    }
+                }
             }
 
             // Finally close splash screen

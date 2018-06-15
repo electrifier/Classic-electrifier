@@ -58,5 +58,17 @@ namespace electrifier.Core.Properties {
                 this["Electrifier_WindowState"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Disable_BETAVersion_Warning {
+            get {
+                return ((bool)(this["Disable_BETAVersion_Warning"]));
+            }
+            set {
+                this["Disable_BETAVersion_Warning"] = value;
+            }
+        }
     }
 }
