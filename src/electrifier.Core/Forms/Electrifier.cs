@@ -25,6 +25,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Win32API;
+using electrifier.Core.Components.DockContents;
 
 namespace electrifier.Core.Forms
 {
@@ -103,11 +104,38 @@ namespace electrifier.Core.Forms
             // TODO: Browse to standard folder...
         }
 
+        public bool LoadConfiguration(string fullFileName)
+        {
+            this.dpnDockPanel.LoadFromXml(fullFileName, new DeserializeDockContent(this.DockContent_Deserialize));
+
+            return true;
+        }
+
+        private IDockContent DockContent_Deserialize(string persistString)
+        {
+
+            if (typeof(ShellBrowserDockContent).ToString() == persistString)
+                return new ShellBrowserDockContent();
+
+
+            return null;
+
+        }
+
+        /// <summary>
+        /// Called by AppContext.Session.SaveConfiguration()
+        /// </summary>
+        /// <param name="fullFileName">The full file name including its path.</param>
+        public void SaveConfiguration(string fullFileName)
+        {
+            this.dpnDockPanel.SaveAsXml(fullFileName);
+        }
+
         #region Event Listeners ===============================================================================================
 
         #region Ribbon event listeners ========================================================================================
 
-        private void CmdAppOpenNewShellBrowserPanel_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        private void CmdAppOpenNewShellBrowserPane_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         {
             AppContext.TraceScope();
 

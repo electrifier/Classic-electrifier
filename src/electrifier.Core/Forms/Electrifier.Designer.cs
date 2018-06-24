@@ -114,18 +114,18 @@ namespace electrifier.Core.Forms
             //
             // Quick Access Toolbar Commands ==================================================================================
             //
-            this.cmdQATOpenNewShellBrowserPanel = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdQATOpenNewShellBrowserPanel);
-            this.cmdQATOpenNewShellBrowserPanel.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPanel_Execute);
+            this.cmdQATOpenNewShellBrowserPane = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdQATOpenNewShellBrowserPane);
+            this.cmdQATOpenNewShellBrowserPane.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPane_Execute);
 
             //
             // Application Menu Items =========================================================================================
             //
             this.cmdAppOpenNewWindow = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppOpenNewWindow);
             this.cmdAppOpenNewWindow.Enabled = false;
-            //this.cmdAppOpenNewShellBrowserPanel.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewWindow_Execute);
+            //this.cmdAppOpenNewShellBrowserPane.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewWindow_Execute);
 
-            this.cmdAppOpenNewShellBrowserPanel = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppOpenNewShellBrowserPanel);
-            this.cmdAppOpenNewShellBrowserPanel.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPanel_Execute);
+            this.cmdAppOpenNewShellBrowserPane = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppOpenNewShellBrowserPane);
+            this.cmdAppOpenNewShellBrowserPane.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPane_Execute);
 
             this.cmdAppOpenCommandPrompt = new RibbonButton(this.rbnRibbon, (uint)rbnCommand.cmdAppOpenCommandPrompt);
             this.cmdAppOpenCommandPrompt.Enabled = false;
@@ -202,13 +202,13 @@ namespace electrifier.Core.Forms
             //
             // Quick Access Toolbar Commands ==================================================================================
             //
-            cmdQATOpenNewShellBrowserPanel = 19903,
+            cmdQATOpenNewShellBrowserPane = 19903,
 
             //
             // Application Menu Items =========================================================================================
             //
             cmdAppOpenNewWindow = 100,
-            cmdAppOpenNewShellBrowserPanel = 101,
+            cmdAppOpenNewShellBrowserPane = 101,
             cmdAppOpenCommandPrompt = 102,
             cmdAppOpenWindowsPowerShell = 103,
             cmdAppChangeElectrifierOptions = 110,
@@ -240,14 +240,14 @@ namespace electrifier.Core.Forms
         }
 
 
-        private RibbonButton cmdQATOpenNewShellBrowserPanel;
+        private RibbonButton cmdQATOpenNewShellBrowserPane;
 
 
         private RibbonTab cmdTabHome;
 
 
         private RibbonButton cmdAppOpenNewWindow;
-        private RibbonButton cmdAppOpenNewShellBrowserPanel;
+        private RibbonButton cmdAppOpenNewShellBrowserPane;
         private RibbonButton cmdAppOpenCommandPrompt;
         private RibbonButton cmdAppOpenWindowsPowerShell;
         private RibbonButton cmdAppChangeElectrifierOptions;

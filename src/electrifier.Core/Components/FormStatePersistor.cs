@@ -102,7 +102,19 @@ namespace electrifier.Core.Components
             }
         }
 
-        public string PropertyKeyPrefix { get; set; }
+
+        /// <summary>
+        /// The PropertyKeyPrefix property represents the Prefix that is used when storing the form's individual values.
+        /// 
+        /// E.g. when set to "Electrifier", the following key names will be used:
+        /// "Electrifier_WindowLocation", "Electrifier_WindowSize", "Electrifier_WindowState".
+        /// </summary>
+        /// <value>The PropertyKeyPrefix property represents the Prefix, that is used when storing the form's individual values.
+        /// By default, this will be the form's Name.</value>
+        public string PropertyKeyPrefix {
+            get;
+            set;
+        }
 
         #endregion ============================================================================================================
 
@@ -137,7 +149,7 @@ namespace electrifier.Core.Components
 
                 if (FormWindowState.Normal != formWindowState)
                 {
-                    //if (this.ClientForm.WindowState == FormWindowState.Minimized)             // TODO: Ask to fix WindowState when hidden
+                    //if (this.ClientForm.WindowState == FormWindowState.Minimized)             // TODO: Ask to fix WindowState when hidden (using an event!)
                     //{
                     //    MessageBox.Show("Window was minimized. Do you want to hide it again?");
                     //}

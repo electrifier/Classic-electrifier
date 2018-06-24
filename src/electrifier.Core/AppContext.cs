@@ -21,18 +21,35 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace electrifier.Core
 {
     public sealed partial class AppContext : System.Windows.Forms.ApplicationContext
     {
-        public Icon Icon { get; private set; }
+        #region Properties ====================================================================================================
+
+        public static Icon Icon { get; private set; }
         public Bitmap Logo { get; private set; }
         public bool IsPortable { get; private set; }
         public bool IsIncognito { get; private set; }
         internal AppContextSession Session { get; }
         public bool IsBetaVersion() { return true; }
+
+        public static string AssemblyCompany {
+            get {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+
+                if (attributes.Length == 0)
+                {
+                    return "";
+                }
+                return ((AssemblyCompanyAttribute)attributes[0]).Company;
+            }
+        }
+
+        #endregion ============================================================================================================
 
         /// <summary>
         /// 
@@ -46,7 +63,7 @@ namespace electrifier.Core
 
         public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) : base()
         {
-            this.Icon = appIcon;
+            AppContext.Icon = appIcon;
             this.Logo = appLogo;
 
             foreach (string arg in args)
@@ -65,11 +82,16 @@ namespace electrifier.Core
             AppContext.TraceScope();
 
             // Initialize session object
+            //
+            // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
+            //
             this.Session = new AppContextSession(this.IsPortable);
-            this.MainForm = this.Session.CreateElectrifierForm(this.Icon);
+//            this.MainForm = this.Session.CreateElectrifierForm();
+            this.Session.LoadConfiguration();
+this.MainForm = this.Session.ElectrifierForm; // TODO: Remove!
 
             // Add ThreadExit-handler to save configuration when closing
-            ThreadExit += new EventHandler(this.AppContext_ThreadExit);
+            this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
 
             if (this.IsBetaVersion())
             {
@@ -96,11 +118,11 @@ namespace electrifier.Core
 
         private void AppContext_ThreadExit(object sender, EventArgs e)
         {
-            //// Save configuration file
-            //if (AppContext.IsIncognito == false)
-            //	this.SaveConfiguration();
-
             AppContext.TraceScope();
+
+            // Save configuration file
+            if (false == this.IsIncognito)
+                this.Session.SaveConfiguration();
         }
 
         #region TraceListener helper members for logging and debugging purposes ===============================================
