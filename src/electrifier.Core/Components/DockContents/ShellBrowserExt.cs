@@ -2,7 +2,7 @@
 ** 
 **  electrifier
 ** 
-**  Copyright 2017 Thorsten Jung, www.electrifier.org
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
 **  
 **  Licensed under the Apache License, Version 2.0 (the "License");
 **  you may not use this file except in compliance with the License.
@@ -27,21 +27,20 @@ using Microsoft.WindowsAPICodePack.Shell;
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
-    /// Summary of ShellBrowserDockContent.
+    /// Summary of ShellBrowserExt.
     /// </summary>
-    public class ShellBrowserDockContent
-        : WeifenLuo.WinFormsUI.Docking.DockContent
+    public class ShellBrowserExt : WeifenLuo.WinFormsUI.Docking.DockContent
     {
         protected Guid Guid;
         protected ExplorerBrowser explorerBrowser;
 
-        public ShellBrowserDockContent() : this(Guid.NewGuid()) { }
+        public ShellBrowserExt() : this(Guid.NewGuid()) { }
 
-        public ShellBrowserDockContent(Guid guid) : base()
+        public ShellBrowserExt(Guid guid) : base()
         {
             // Initialize the underlying DockControl
             this.Guid = guid;
-            this.Name = "ShellBrowserDockContent." + this.Guid.ToString();
+            this.Name = "ShellBrowserExt." + this.Guid.ToString();
             this.Text = "ExplorerBrowser";
             this.explorerBrowser = new ExplorerBrowser()
             {

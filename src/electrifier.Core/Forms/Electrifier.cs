@@ -82,7 +82,7 @@ namespace electrifier.Core.Forms
 
         private void CreateNewFileBrowser(DockAlignment? dockAlignment = null)
         {
-            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
+            var newDockContent = new Components.DockContents.ShellBrowserExt();
             var activeDocumentPane = this.dpnDockPanel.ActiveDocumentPane;
 
             AppContext.TraceScope();
@@ -114,8 +114,8 @@ namespace electrifier.Core.Forms
         private IDockContent DockContent_Deserialize(string persistString)
         {
 
-            if (typeof(ShellBrowserDockContent).ToString() == persistString)
-                return new ShellBrowserDockContent();
+            if (typeof(ShellBrowserExt).ToString() == persistString)
+                return new ShellBrowserExt();
 
 
             return null;
@@ -213,7 +213,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
+            var newDockContent = new Components.DockContents.ShellBrowserExt();
             var floatWindowBounds = new Rectangle(this.Location, this.Size);
 
             floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
