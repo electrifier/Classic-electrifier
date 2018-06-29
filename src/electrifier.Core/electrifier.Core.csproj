@@ -162,6 +162,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="WindowsShell\Tools.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -217,9 +218,7 @@
       <SubType>Designer</SubType>
     </RibbonDefinition>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="WindowsShell\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="..\common.Interop\common.Interop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
