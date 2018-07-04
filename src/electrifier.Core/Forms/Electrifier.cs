@@ -113,13 +113,26 @@ namespace electrifier.Core.Forms
 
         private IDockContent DockContent_Deserialize(string persistString)
         {
+            // e.g. PersistString="ShellBrowserExt URI=file:///S:/%5BGit.Workspace%5D/electrifier"
+            var typeNameSeperatorPos = persistString.IndexOf(" ");
+            string dockContentTypeName, dockContentArguments = null;
 
-            if (typeof(ShellBrowserExt).ToString() == persistString)
-                return new ShellBrowserExt();
+            if (typeNameSeperatorPos < 0)
+                dockContentTypeName = persistString;
+            else
+            {
+                dockContentTypeName = persistString.Substring(0, typeNameSeperatorPos);
+                dockContentArguments = persistString.Substring(typeNameSeperatorPos);
+            }
 
 
-            return null;
 
+            if (nameof(ShellBrowserExt).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return new ShellBrowserExt(dockContentArguments);
+            }
+
+            return null;        // TODO: Throw Exception cause of unkown type in XML?!?
         }
 
         /// <summary>

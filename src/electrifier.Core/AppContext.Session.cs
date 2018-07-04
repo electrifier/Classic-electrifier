@@ -27,45 +27,46 @@ namespace electrifier.Core
     {
         internal class AppContextSession
         {
+            #region Fields ========================================================================================================
+
+            public readonly bool IsPortable;
             public readonly string ApplicationDataPath;
-            public readonly string SessionName = "Default";
-            public readonly string ConfigurationFileName = "Session.Default.xml";
+            public readonly string SessionName;
+
+            #endregion Fields =====================================================================================================
+
+            #region Properties ====================================================================================================
+
+            public string ConfigurationFileName { get { return "Session." + this.SessionName + ".xml"; } }
             public electrifier.Core.Forms.Electrifier ElectrifierForm { get; private set; }
 
-            public AppContextSession(bool isPortable)
+            #endregion Properties =================================================================================================
+
+            public AppContextSession(bool isPortable, string sessionName = "Default")
             {
+                this.IsPortable = isPortable;
+                this.SessionName = sessionName;
+
                 this.ApplicationDataPath = (isPortable ?
                     System.Windows.Forms.Application.StartupPath :
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppContext.AssemblyCompany));
-            }
 
-            public electrifier.Core.Forms.Electrifier CreateElectrifierForm()
-            {
+                // Create Electrifier Form
+                var configFullFileName = Path.Combine(this.ApplicationDataPath, this.ConfigurationFileName);
+
                 this.ElectrifierForm = new electrifier.Core.Forms.Electrifier(AppContext.Icon);
 
-                return this.ElectrifierForm;
+                // TODO: If file exists, but is invalid (e.g. empty), this will crash...
+                if (File.Exists(configFullFileName))
+                    this.ElectrifierForm.LoadConfiguration(configFullFileName);
+
+
+
             }
 
             /// <summary>
-            /// Called by AppContext.AppContext()
-            /// </summary>
-            /// <returns>True if configuration file found and successfully loaded, False otherwise.</returns>
-            public bool LoadConfiguration()
-            {
-                var fullFileName = Path.Combine(this.ApplicationDataPath, this.ConfigurationFileName);
-
-                if (File.Exists(fullFileName))
-                {
-                    this.ElectrifierForm = new electrifier.Core.Forms.Electrifier(AppContext.Icon);
-                    this.ElectrifierForm.LoadConfiguration(fullFileName);
-
-                }
-
-                return false;
-            }
-
-
-            /// <summary>
+            /// Save Electrifier Form state configuration into XML-file.
+            /// 
             /// Called by AppContext.AppContext_ThreadExit()
             /// </summary>
             public void SaveConfiguration()

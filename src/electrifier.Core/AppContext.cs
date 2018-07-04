@@ -86,9 +86,7 @@ namespace electrifier.Core
             // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
             //
             this.Session = new AppContextSession(this.IsPortable);
-//            this.MainForm = this.Session.CreateElectrifierForm();
-            this.Session.LoadConfiguration();
-this.MainForm = this.Session.ElectrifierForm; // TODO: Remove!
+            this.MainForm = this.Session.ElectrifierForm;
 
             // Add ThreadExit-handler to save configuration when closing
             this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
