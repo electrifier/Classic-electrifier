@@ -106,7 +106,16 @@ namespace electrifier.Core.Forms
 
         public bool LoadConfiguration(string fullFileName)
         {
-            this.dpnDockPanel.LoadFromXml(fullFileName, new DeserializeDockContent(this.DockContent_Deserialize));
+            try
+            {
+                this.dpnDockPanel.LoadFromXml(fullFileName, new DeserializeDockContent(this.DockContent_Deserialize));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Electrifier.cs->LoadConfiguration" +
+                    "\n\tError loading configuarion file." +
+                    "\n\nError description: " + e.Message);
+            }
 
             return true;
         }

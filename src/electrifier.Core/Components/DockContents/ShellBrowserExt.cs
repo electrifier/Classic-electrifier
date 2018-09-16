@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-
+using Microsoft.WindowsAPICodePack.Controls;
 using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
 using Microsoft.WindowsAPICodePack.Shell;
 
@@ -41,7 +41,10 @@ namespace electrifier.Core.Components.DockContents
         #region Fields ========================================================================================================
 
         protected ExplorerBrowser explorerBrowser;
-        protected const string persistParamURI = "URI=";
+        protected const string persistParamURI = @"URI=";
+        protected const string persistParamViewMode = @"ViewMode=";
+
+        private ExplorerBrowserViewMode? initialViewMode = null;
 
         #endregion Fields =====================================================================================================
 
@@ -51,17 +54,20 @@ namespace electrifier.Core.Components.DockContents
 
         public ShellObject InitialNaviagtionTarget { get => this.initialNaviagtionTarget; set => this.initialNaviagtionTarget = value; }
 
+
+        public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
+
         #endregion Properties =================================================================================================
 
-        //
-        // TODO: Points of interest:
-        //     NavigationComplete
-        //     NavigationFailed
-        //     NavigationLog
-        //     ItemsChanged
-        //
+            //
+            // TODO: Points of interest:
+            //     NavigationComplete
+            //     NavigationFailed
+            //     NavigationLog
+            //     ItemsChanged
+            //
 
-        // TODO: Work on Get/Lost Focus in general!
+            // TODO: Work on Get/Lost Focus in general!
 
         public ShellBrowserExt(string persistString = null) : base()
         {
@@ -99,10 +105,18 @@ namespace electrifier.Core.Components.DockContents
         protected override string GetPersistString()
         {
             var sb = new StringBuilder();
+            string paramFmt = " {0}{1}";
 
+            // Append class name as identifier
             sb.Append(nameof(ShellBrowserExt));
-            sb.AppendFormat(@" {0}{1}", ShellBrowserExt.persistParamURI,
+
+            // Append URI
+            sb.AppendFormat(paramFmt, ShellBrowserExt.persistParamURI,
                 WindowsShell.Tools.UrlCreateFromPath(this.explorerBrowser.NavigationLog.CurrentLocation.ParsingName));
+
+            // Append ViewMode
+            // TODO: For any reason, this doesn't work... :(
+            sb.AppendFormat(paramFmt, ShellBrowserExt.persistParamViewMode, this.ViewMode);
 
             return sb.ToString();
         }
@@ -118,22 +132,43 @@ namespace electrifier.Core.Components.DockContents
                 if ((null != persistString) && (persistString.Trim().Length > ShellBrowserExt.persistParamURI.Length))
                 {
                     var args = WindowsShell.Tools.SplitArgumentString(persistString);
-                    string navTargetURI = null;
+                    string strInitialNaviagtionTarget = null;
+                    string strViewMode = null;
 
                     foreach (string arg in args)
                     {
                         if (arg.StartsWith(ShellBrowserExt.persistParamURI))
                         {
-                            navTargetURI = WindowsShell.Tools.PathCreateFromUrl(arg.Substring(ShellBrowserExt.persistParamURI.Length));
-
-                            this.InitialNaviagtionTarget = ShellObject.FromParsingName(navTargetURI);
+                            strInitialNaviagtionTarget = WindowsShell.Tools.PathCreateFromUrl(arg.Substring(ShellBrowserExt.persistParamURI.Length));
                         }
+
+                        if (arg.StartsWith(ShellBrowserExt.persistParamViewMode))
+                        {
+                            strViewMode = arg.Substring(ShellBrowserExt.persistParamViewMode.Length);
+                        }
+
+
+                    }
+
+                    // Finally, when all parameters have been parsed successfully, apply them
+                    if (null != strInitialNaviagtionTarget)
+                        this.InitialNaviagtionTarget = ShellObject.FromParsingName(strInitialNaviagtionTarget);
+
+                    if (null != strViewMode)
+                    {
+                        ExplorerBrowserViewMode ebvm = ExplorerBrowserViewMode.Auto;
+
+                        ebvm = (ExplorerBrowserViewMode) Enum.Parse(typeof(ExplorerBrowserViewMode), strViewMode);
+                        this.initialViewMode = ebvm;
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                MessageBox.Show("ShellBrowserExt.EvaluatePersistString: Error evaluating parameters"
+                    + "\n\nParameters: '" + persistString + "'"
+                    + "\n\nError description: '" + e.Message + "'"
+                    + "\n\nResetting to default values.");
             }
         }
 
@@ -141,8 +176,13 @@ namespace electrifier.Core.Components.DockContents
         {
             base.OnShown(e);
 
-            // TODO: When multiple Tabs are opened initially, sometimes this won't be called for some folders... Most likely if unvisible!
+            // TODO: When multiple Tabs are opened initially, sometimes this won't be called for some folders... Most likely if invisible!
             this.explorerBrowser.Navigate(this.InitialNaviagtionTarget);
+
+            if (null != this.initialViewMode)
+            {
+                this.ViewMode = (ExplorerBrowserViewMode)this.initialViewMode;
+            }
         }
 
         protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
