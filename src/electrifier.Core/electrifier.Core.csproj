@@ -139,6 +139,9 @@
     <Compile Include="Components\FormStatePersistor.Designer.cs">
       <DependentUpon>FormStatePersistor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\NavigationToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Forms\AboutElectrifier.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,6 +165,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Compile Include="Components\ToolStripSpringComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="WindowsShell\Tools.cs" />
   </ItemGroup>
   <ItemGroup>

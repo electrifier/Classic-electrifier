@@ -61,12 +61,101 @@ namespace electrifier.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {\rtf1\adeflang1025\ansi\ansicpg1252\uc1\adeff0\deff0\stshfdbch0\stshfloch37\stshfhich37\stshfbi37\deflang1031\deflangfe1031\themelang1031\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset0\fprq2{\*\panose 02020603050405020304}Times New Roman;}{\f3\fbidi \froman\fcharset2\fprq2{\*\panose 05050102010706020507}Symbol;}
-        ///{\f34\fbidi \froman\fcharset0\fprq2{\*\panose 02040503050406030204}Cambria Math;}{\f36\fbidi \fswiss\fcharset0\fprq2{\*\panose 020f0302020204030204}Calibri Light;}{\f37\fbidi \fswi [rest of string was truncated]&quot;;.
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DropDown_Arrow_16px {
+            get {
+                object obj = ResourceManager.GetObject("DropDown_Arrow_16px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset0 Arial;}{\f1\fnil\fcharset2 Symbol;}}
+        ///{\colortbl ;\red0\green0\blue255;\red155\green0\blue211;}
+        ///{\*\generator Riched20 10.0.17134}\viewkind4\uc1 
+        ///\pard\sa200\sl276\slmult1\ul\b\fs22\lang9 Table of contents\ulnone\b0\par
+        ///
+        ///\pard{\pntext\f1\&apos;B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\&apos;B7}}\fi-360\li720\sa200\sl276\slmult1 Preface\par
+        ///{\pntext\f1\&apos;B7\tab}Apache License, Version 2.0\par
+        ///
+        ///\pard\sa200\sl276\slmult1\par
+        ///
+        ///\pard\sa200\sl [rest of string was truncated]&quot;;.
         /// </summary>
         public static string License {
             get {
                 return ResourceManager.GetString("License", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Backward_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Backward_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Filter_Add_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Filter_Add_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Filter_Remove_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Filter_Remove_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Forward_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Forward_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Parent_Folder_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Parent_Folder_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Quick_Access_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Quick_Access_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Navigation_Refresh_24px {
+            get {
+                object obj = ResourceManager.GetObject("Navigation_Refresh_24px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

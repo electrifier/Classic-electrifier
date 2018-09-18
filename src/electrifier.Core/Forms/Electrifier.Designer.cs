@@ -55,17 +55,22 @@ namespace electrifier.Core.Forms
             this.components = new System.ComponentModel.Container();
             this.stsStatusStrip = new System.Windows.Forms.StatusStrip();
             this.rbnRibbon = new Sunburst.WindowsForms.Ribbon.Ribbon();
-            this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.fspFormStatePersistor = new electrifier.Core.Components.FormStatePersistor(this.components);
+            this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
+            this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.ntsNavigation = new electrifier.Core.Components.NavigationToolStrip();
+            this.tscToolStripContainer.ContentPanel.SuspendLayout();
+            this.tscToolStripContainer.TopToolStripPanel.SuspendLayout();
+            this.tscToolStripContainer.SuspendLayout();
             this.SuspendLayout();
             // 
             // stsStatusStrip
             // 
             this.stsStatusStrip.AutoSize = false;
             this.stsStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.stsStatusStrip.Location = new System.Drawing.Point(0, 511);
+            this.stsStatusStrip.Location = new System.Drawing.Point(0, 531);
             this.stsStatusStrip.Name = "stsStatusStrip";
-            this.stsStatusStrip.Size = new System.Drawing.Size(782, 42);
+            this.stsStatusStrip.Size = new System.Drawing.Size(782, 22);
             this.stsStatusStrip.TabIndex = 0;
             // 
             // rbnRibbon
@@ -78,29 +83,60 @@ namespace electrifier.Core.Forms
             this.rbnRibbon.Size = new System.Drawing.Size(782, 122);
             this.rbnRibbon.TabIndex = 3;
             // 
-            // dpnDockPanel
-            // 
-            this.dpnDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
-            this.dpnDockPanel.Location = new System.Drawing.Point(0, 122);
-            this.dpnDockPanel.Name = "dpnDockPanel";
-            this.dpnDockPanel.Size = new System.Drawing.Size(782, 389);
-            this.dpnDockPanel.TabIndex = 4;
-            // 
             // fspFormStatePersistor
             // 
             this.fspFormStatePersistor.ClientForm = this;
             this.fspFormStatePersistor.PropertyKeyPrefix = "Electrifier";
+            // 
+            // tscToolStripContainer
+            // 
+            // 
+            // tscToolStripContainer.ContentPanel
+            // 
+            this.tscToolStripContainer.ContentPanel.AutoScroll = true;
+            this.tscToolStripContainer.ContentPanel.Controls.Add(this.dpnDockPanel);
+            this.tscToolStripContainer.ContentPanel.Size = new System.Drawing.Size(782, 362);
+            this.tscToolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tscToolStripContainer.Location = new System.Drawing.Point(0, 122);
+            this.tscToolStripContainer.Name = "tscToolStripContainer";
+            this.tscToolStripContainer.Size = new System.Drawing.Size(782, 409);
+            this.tscToolStripContainer.TabIndex = 5;
+            this.tscToolStripContainer.Text = "toolStripContainer1";
+            // 
+            // tscToolStripContainer.TopToolStripPanel
+            // 
+            this.tscToolStripContainer.TopToolStripPanel.Controls.Add(this.ntsNavigation);
+            // 
+            // dpnDockPanel
+            // 
+            this.dpnDockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
+            this.dpnDockPanel.Location = new System.Drawing.Point(0, 0);
+            this.dpnDockPanel.Name = "dpnDockPanel";
+            this.dpnDockPanel.Size = new System.Drawing.Size(782, 362);
+            this.dpnDockPanel.TabIndex = 5;
+            // 
+            // ntsNavigation
+            // 
+            this.ntsNavigation.Location = new System.Drawing.Point(0, 0);
+            this.ntsNavigation.Name = "ntsNavigation";
+            this.ntsNavigation.Size = new System.Drawing.Size(782, 47);
+            this.ntsNavigation.TabIndex = 0;
             // 
             // Electrifier
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 553);
-            this.Controls.Add(this.dpnDockPanel);
+            this.Controls.Add(this.tscToolStripContainer);
             this.Controls.Add(this.rbnRibbon);
             this.Controls.Add(this.stsStatusStrip);
             this.Name = "Electrifier";
+            this.tscToolStripContainer.ContentPanel.ResumeLayout(false);
+            this.tscToolStripContainer.TopToolStripPanel.ResumeLayout(false);
+            this.tscToolStripContainer.TopToolStripPanel.PerformLayout();
+            this.tscToolStripContainer.ResumeLayout(false);
+            this.tscToolStripContainer.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -272,7 +308,9 @@ namespace electrifier.Core.Forms
 
         private System.Windows.Forms.StatusStrip stsStatusStrip;
         private Sunburst.WindowsForms.Ribbon.Ribbon rbnRibbon;
-        private WeifenLuo.WinFormsUI.Docking.DockPanel dpnDockPanel;
         private Components.FormStatePersistor fspFormStatePersistor;
+        private System.Windows.Forms.ToolStripContainer tscToolStripContainer;
+        private WeifenLuo.WinFormsUI.Docking.DockPanel dpnDockPanel;
+        private Components.NavigationToolStrip ntsNavigation;
     }
 }

@@ -139,9 +139,9 @@ namespace electrifier.Core.Components
             string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
             string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
 
-            if (SettingExists(strWindowLocation) &&
-                SettingExists(strWindowSize) &&
-                SettingExists(strWindowState))
+            if (this.SettingExists(strWindowLocation) &&
+                this.SettingExists(strWindowSize) &&
+                this.SettingExists(strWindowState))
             {
                 this.ClientForm.Location = (System.Drawing.Point)Settings.Default[strWindowLocation];
                 this.ClientForm.Size = (System.Drawing.Size)Settings.Default[strWindowSize];

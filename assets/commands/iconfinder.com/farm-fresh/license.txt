@@ -1,0 +1,3 @@
+Some of the Icons used in electrifier are taken from the Farm Fresh icon set, distributed by http://www.fatcow.com/
+
+See its license: https://creativecommons.org/licenses/by/3.0/us/

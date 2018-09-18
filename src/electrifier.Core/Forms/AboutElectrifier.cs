@@ -31,7 +31,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            InitializeComponent();
+            this.InitializeComponent();
 
             // Load background image of version tab from electrifier.exe embedded resource
             this.tpgVersion.BackgroundImage = new Bitmap(Assembly.GetEntryAssembly().
