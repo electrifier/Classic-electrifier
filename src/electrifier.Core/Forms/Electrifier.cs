@@ -82,7 +82,7 @@ namespace electrifier.Core.Forms
 
         private void CreateNewFileBrowser(DockAlignment? dockAlignment = null)
         {
-            var newDockContent = new Components.DockContents.ShellBrowserExt();
+            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
             var activeDocumentPane = this.dpnDockPanel.ActiveDocumentPane;
 
             AppContext.TraceScope();
@@ -122,7 +122,7 @@ namespace electrifier.Core.Forms
 
         private IDockContent DockContent_Deserialize(string persistString)
         {
-            // e.g. PersistString="ShellBrowserExt URI=file:///S:/%5BGit.Workspace%5D/electrifier"
+            // e.g. PersistString="ShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"
             var typeNameSeperatorPos = persistString.IndexOf(" ");
             string dockContentTypeName, dockContentArguments = null;
 
@@ -136,9 +136,9 @@ namespace electrifier.Core.Forms
 
 
 
-            if (nameof(ShellBrowserExt).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
+            if (nameof(ShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
             {
-                return new ShellBrowserExt(dockContentArguments);
+                return new ShellBrowserDockContent(dockContentArguments);
             }
 
             return null;        // TODO: Throw Exception cause of unkown type in XML?!?
@@ -235,7 +235,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            var newDockContent = new Components.DockContents.ShellBrowserExt();
+            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
             var floatWindowBounds = new Rectangle(this.Location, this.Size);
 
             floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));

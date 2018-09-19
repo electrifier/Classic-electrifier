@@ -130,7 +130,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserExt.cs">
+    <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Components\FormStatePersistor.cs">
@@ -139,7 +139,7 @@
     <Compile Include="Components\FormStatePersistor.Designer.cs">
       <DependentUpon>FormStatePersistor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\NavigationToolStrip.cs">
+    <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Forms\AboutElectrifier.cs">
@@ -165,7 +165,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="Components\ToolStripSpringComboBox.cs">
+    <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="WindowsShell\Tools.cs" />
