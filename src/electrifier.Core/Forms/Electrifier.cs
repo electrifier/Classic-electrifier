@@ -26,6 +26,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Win32API;
 using electrifier.Core.Components.DockContents;
+using System.Runtime.CompilerServices;
 
 namespace electrifier.Core.Forms
 {
@@ -44,7 +45,7 @@ namespace electrifier.Core.Forms
 
         #region Properties ====================================================================================================
 
-        public Guid Guid { get { return this.guid; } }
+        //public Guid Guid => this.guid;
 
         public override string Text {
             get { return base.Text; }
@@ -69,6 +70,12 @@ namespace electrifier.Core.Forms
 
 
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
+            this.dpnDockPanel.ShowDocumentIcon = true;
+
+            this.ntsNavigation.NavigateBackwardClick += this.NtsNavigation_NavigateBackwardClick;
+            this.ntsNavigation.NavigateForwardClick += this.NtsNavigation_NavigateForwardClick;
+            this.ntsNavigation.NavigateRefreshClick += this.NtsNavigation_NavigateRefreshClick;
+
 
         }
 
@@ -86,6 +93,11 @@ namespace electrifier.Core.Forms
             var activeDocumentPane = this.dpnDockPanel.ActiveDocumentPane;
 
             AppContext.TraceScope();
+
+            newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
+            newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+
+
 
             // See <href="https://github.com/dockpanelsuite/dockpanelsuite/issues/348"/>, we only take care of DocumentStyle.DockingWindow
             //
@@ -138,7 +150,12 @@ namespace electrifier.Core.Forms
 
             if (nameof(ShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
             {
-                return new ShellBrowserDockContent(dockContentArguments);
+                var newDockContent = new Components.DockContents.ShellBrowserDockContent(dockContentArguments);
+
+                newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
+                newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+
+                return newDockContent;
             }
 
             return null;        // TODO: Throw Exception cause of unkown type in XML?!?
@@ -240,9 +257,72 @@ namespace electrifier.Core.Forms
 
             floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
 
+            newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
+            newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+
             newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
         }
 
         #endregion
+
+        private void NewDockContent_ItemsChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
+        {
+            int itemCount = sender.ItemsCount;
+            string txt = null;
+
+            switch (itemCount)
+            {
+                case 1:
+                    txt = "1 item";
+                    break;
+                default:
+                    txt = itemCount + " items";
+                    break;
+            }
+
+            this.tslItemCount.Text = txt;
+        }
+
+        private void NewDockContent_SelectionChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
+        {
+            int selectedItemsCount = sender.SelectedItemsCount;
+            string txt = null;
+
+            switch (selectedItemsCount)
+            {
+                case 0:
+                    break;
+                case 1:
+                    txt = "1 item selected";
+                    break;
+                default:
+                    txt = selectedItemsCount + " items selected";
+                    break;
+            }
+
+            this.tslSelectionCount.Text = txt;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ShellBrowserDockContent GetActiveShellBrowserDockContent()
+        {
+            return (this.dpnDockPanel.ActiveDocumentPane?.ActiveContent as ShellBrowserDockContent);
+        }
+
+        private void NtsNavigation_NavigateBackwardClick(object sender, EventArgs eventArgs)
+        {
+            this.GetActiveShellBrowserDockContent()?.NavigateBackward();
+        }
+
+        private void NtsNavigation_NavigateForwardClick(object sender, EventArgs eventArgs)
+        {
+            this.GetActiveShellBrowserDockContent()?.NavigateForward();
+        }
+
+        private void NtsNavigation_NavigateRefreshClick(object sender, EventArgs e)
+        {
+            this.GetActiveShellBrowserDockContent()?.NavigateRefresh();
+        }
+
     }
 }

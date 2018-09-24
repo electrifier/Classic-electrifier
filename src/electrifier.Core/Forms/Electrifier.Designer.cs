@@ -55,10 +55,13 @@ namespace electrifier.Core.Forms
             this.components = new System.ComponentModel.Container();
             this.stsStatusStrip = new System.Windows.Forms.StatusStrip();
             this.rbnRibbon = new Sunburst.WindowsForms.Ribbon.Ribbon();
-            this.fspFormStatePersistor = new electrifier.Core.Components.FormStatePersistor(this.components);
             this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
+            this.tslItemCount = new System.Windows.Forms.ToolStripStatusLabel();
+            this.tslSelectionCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.ntsNavigation = new electrifier.Core.Components.NavigationToolStrip();
+            this.fspFormStatePersistor = new electrifier.Core.Components.FormStatePersistor(this.components);
+            this.stsStatusStrip.SuspendLayout();
             this.tscToolStripContainer.ContentPanel.SuspendLayout();
             this.tscToolStripContainer.TopToolStripPanel.SuspendLayout();
             this.tscToolStripContainer.SuspendLayout();
@@ -68,9 +71,12 @@ namespace electrifier.Core.Forms
             // 
             this.stsStatusStrip.AutoSize = false;
             this.stsStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.stsStatusStrip.Location = new System.Drawing.Point(0, 531);
+            this.stsStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.tslItemCount,
+            this.tslSelectionCount});
+            this.stsStatusStrip.Location = new System.Drawing.Point(0, 528);
             this.stsStatusStrip.Name = "stsStatusStrip";
-            this.stsStatusStrip.Size = new System.Drawing.Size(782, 22);
+            this.stsStatusStrip.Size = new System.Drawing.Size(782, 25);
             this.stsStatusStrip.TabIndex = 0;
             // 
             // rbnRibbon
@@ -83,11 +89,6 @@ namespace electrifier.Core.Forms
             this.rbnRibbon.Size = new System.Drawing.Size(782, 122);
             this.rbnRibbon.TabIndex = 3;
             // 
-            // fspFormStatePersistor
-            // 
-            this.fspFormStatePersistor.ClientForm = this;
-            this.fspFormStatePersistor.PropertyKeyPrefix = "Electrifier";
-            // 
             // tscToolStripContainer
             // 
             // 
@@ -95,11 +96,11 @@ namespace electrifier.Core.Forms
             // 
             this.tscToolStripContainer.ContentPanel.AutoScroll = true;
             this.tscToolStripContainer.ContentPanel.Controls.Add(this.dpnDockPanel);
-            this.tscToolStripContainer.ContentPanel.Size = new System.Drawing.Size(782, 362);
+            this.tscToolStripContainer.ContentPanel.Size = new System.Drawing.Size(782, 359);
             this.tscToolStripContainer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tscToolStripContainer.Location = new System.Drawing.Point(0, 122);
             this.tscToolStripContainer.Name = "tscToolStripContainer";
-            this.tscToolStripContainer.Size = new System.Drawing.Size(782, 409);
+            this.tscToolStripContainer.Size = new System.Drawing.Size(782, 406);
             this.tscToolStripContainer.TabIndex = 5;
             this.tscToolStripContainer.Text = "toolStripContainer1";
             // 
@@ -113,15 +114,39 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.DocumentStyle = WeifenLuo.WinFormsUI.Docking.DocumentStyle.DockingWindow;
             this.dpnDockPanel.Location = new System.Drawing.Point(0, 0);
             this.dpnDockPanel.Name = "dpnDockPanel";
-            this.dpnDockPanel.Size = new System.Drawing.Size(782, 362);
+            this.dpnDockPanel.Size = new System.Drawing.Size(782, 359);
             this.dpnDockPanel.TabIndex = 5;
+            // 
+            // tslItemCount
+            // 
+            this.tslItemCount.AutoSize = false;
+            this.tslItemCount.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
+            this.tslItemCount.Name = "tslItemCount";
+            this.tslItemCount.Size = new System.Drawing.Size(120, 20);
+            // 
+            // tslSelectionCount
+            // 
+            this.tslSelectionCount.AutoSize = false;
+            this.tslSelectionCount.Name = "tslSelectionCount";
+            this.tslSelectionCount.Size = new System.Drawing.Size(120, 20);
             // 
             // ntsNavigation
             // 
+            this.ntsNavigation.Dock = System.Windows.Forms.DockStyle.None;
+            this.ntsNavigation.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.ntsNavigation.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.ntsNavigation.Location = new System.Drawing.Point(0, 0);
             this.ntsNavigation.Name = "ntsNavigation";
+            this.ntsNavigation.Padding = new System.Windows.Forms.Padding(8);
+            this.ntsNavigation.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.ntsNavigation.Size = new System.Drawing.Size(782, 47);
+            this.ntsNavigation.Stretch = true;
             this.ntsNavigation.TabIndex = 0;
+            // 
+            // fspFormStatePersistor
+            // 
+            this.fspFormStatePersistor.ClientForm = this;
+            this.fspFormStatePersistor.PropertyKeyPrefix = "Electrifier";
             // 
             // Electrifier
             // 
@@ -132,6 +157,8 @@ namespace electrifier.Core.Forms
             this.Controls.Add(this.rbnRibbon);
             this.Controls.Add(this.stsStatusStrip);
             this.Name = "Electrifier";
+            this.stsStatusStrip.ResumeLayout(false);
+            this.stsStatusStrip.PerformLayout();
             this.tscToolStripContainer.ContentPanel.ResumeLayout(false);
             this.tscToolStripContainer.TopToolStripPanel.ResumeLayout(false);
             this.tscToolStripContainer.TopToolStripPanel.PerformLayout();
@@ -312,5 +339,7 @@ namespace electrifier.Core.Forms
         private System.Windows.Forms.ToolStripContainer tscToolStripContainer;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dpnDockPanel;
         private Components.NavigationToolStrip ntsNavigation;
+        private System.Windows.Forms.ToolStripStatusLabel tslItemCount;
+        private System.Windows.Forms.ToolStripStatusLabel tslSelectionCount;
     }
 }

@@ -29,11 +29,10 @@ using Microsoft.WindowsAPICodePack.Shell;
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
-    /// ShellBrowserDockContent is our wrapper for ExplorerBrowser Control.
+    /// ShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
     /// 
     /// A reference implementation of a wrapper for ExplorerBrowser can be found
-    /// <see href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">
-    /// here</see>.
+    /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
 
     public class ShellBrowserDockContent : WeifenLuo.WinFormsUI.Docking.DockContent
@@ -46,6 +45,13 @@ namespace electrifier.Core.Components.DockContents
 
         private ExplorerBrowserViewMode? initialViewMode = null;
 
+        protected System.Windows.Forms.Timer UIDecouplingTimer = new System.Windows.Forms.Timer();
+        protected System.Threading.AutoResetEvent explorerBrowser_itemsChangedEvent = new System.Threading.AutoResetEvent(false);
+        protected System.Threading.AutoResetEvent explorerBrowser_selectionChangedEvent = new System.Threading.AutoResetEvent(false);
+
+        private static readonly int UIDecouplingInterval = 100;                 // Wait 100ms for UI Thread to react on Item- and Selection-Changes
+
+
         #endregion Fields =====================================================================================================
 
         #region Properties ====================================================================================================
@@ -54,20 +60,25 @@ namespace electrifier.Core.Components.DockContents
 
         public ShellObject InitialNaviagtionTarget { get => this.initialNaviagtionTarget; set => this.initialNaviagtionTarget = value; }
 
-
         public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
+
+        public int ItemsCount { get => this.explorerBrowser.Items.Count; }
+        public int SelectedItemsCount { get => this.explorerBrowser.SelectedItems.Count; }
 
         #endregion Properties =================================================================================================
 
-            //
-            // TODO: Points of interest:
-            //     NavigationComplete
-            //     NavigationFailed
-            //     NavigationLog
-            //     ItemsChanged
-            //
+        #region Published Events ==============================================================================================
 
-            // TODO: Work on Get/Lost Focus in general!
+        public delegate void ItemsChangedHandler(ShellBrowserDockContent sender, EventArgs eventArgs);               // TODO: EventArgs?!?
+        public event ItemsChangedHandler ItemsChanged;
+
+        public delegate void SelectionChangedHandler(ShellBrowserDockContent sender, EventArgs eventArgs);           // TODO: EventArgs?!?
+        public event SelectionChangedHandler SelectionChanged;
+
+        #endregion Published Events ===========================================================================================
+
+
+        // TODO: Work on Get/Lost Focus in general!
 
         public ShellBrowserDockContent(string persistString = null) : base()
         {
@@ -84,7 +95,19 @@ namespace electrifier.Core.Components.DockContents
                 this.Controls.Add(this.explorerBrowser);
 
                 // Connect ExplorerBrowser Events
+                this.explorerBrowser.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
+                this.explorerBrowser.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
+                this.explorerBrowser.NavigationPending += this.ExplorerBrowser_NavigationPending;
                 this.explorerBrowser.NavigationComplete += this.ExplorerBrowser_NavigationComplete;
+                this.explorerBrowser.NavigationFailed += this.ExplorerBrowser_NavigationFailed;
+                this.explorerBrowser.ViewEnumerationComplete += this.ExplorerBrowser_ViewEnumerationComplete;
+
+                // Initialize UIDecouplingTimer
+                this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
+                this.UIDecouplingTimer.Interval = ShellBrowserDockContent.UIDecouplingInterval;
+                this.UIDecouplingTimer.Start();
+
+
 
                 // Evaluate persistString
                 this.EvaluatePersistString(persistString);
@@ -96,7 +119,22 @@ namespace electrifier.Core.Components.DockContents
         }
 
 
+        public void NavigateBackward()
+        {
+            this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Backward);
+        }
 
+        public void NavigateForward()
+        {
+            this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Forward);
+        }
+
+        public void NavigateRefresh()
+        {
+            
+        }
+
+        #region DockContent Persistence Overrides =============================================================================
 
         /// <summary>
         /// Override of WeifenLuo.WinFormsUI.Docking.DockContent.GetPersistString()
@@ -146,8 +184,6 @@ namespace electrifier.Core.Components.DockContents
                         {
                             strViewMode = arg.Substring(ShellBrowserDockContent.persistParamViewMode.Length);
                         }
-
-
                     }
 
                     // Finally, when all parameters have been parsed successfully, apply them
@@ -172,6 +208,10 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
+        #endregion DockContent Persistence Overrides ==========================================================================
+
+        #region DockContent Event Handler =====================================================================================
+
         protected override void OnShown(EventArgs e)
         {
             base.OnShown(e);
@@ -185,12 +225,58 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
+        #endregion DockContent Event Handler ==================================================================================
+
+        protected void UIDecouplingTimer_Tick(object sender, EventArgs e)
+        {
+            if (this.explorerBrowser_itemsChangedEvent.WaitOne(1)) {
+                //AppContext.TraceDebug("Firing of ItemsChanged event.");
+
+                this.ItemsChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+            if (this.explorerBrowser_selectionChangedEvent.WaitOne(1)) {
+                //AppContext.TraceDebug("Firing of SelectionChanged event.");
+
+                this.SelectionChanged?.Invoke(this, EventArgs.Empty);
+            }
+
+        }
+
+        #region ExplorerBrowser Internal Events Handler ========================================================================
+
+
+
+        protected void ExplorerBrowser_NavigationPending(object sender, NavigationPendingEventArgs e)
+        {
+        }
+
+
         protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
         {
+
+            //this.Icon = args.NewLocation.Thumbnail.Icon;        // Icon-Property seems not to be thread-safe
+
             this.BeginInvoke(new MethodInvoker(delegate ()
             {
                 this.Text = args.NewLocation.Name;
+
+                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;
+
             }));
         }
+
+        protected void ExplorerBrowser_NavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+        }
+
+        protected void ExplorerBrowser_ViewEnumerationComplete(object sender, EventArgs e)
+        {
+            this.explorerBrowser_itemsChangedEvent.Set();
+            this.explorerBrowser_selectionChangedEvent.Set();
+        }
+
+        #endregion ExplorerBrowser Internal Events Handler =====================================================================
+
     }
 }

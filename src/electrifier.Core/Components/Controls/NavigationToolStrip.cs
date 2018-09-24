@@ -42,6 +42,50 @@ namespace electrifier.Core.Components
 
         #endregion ============================================================================================================
 
+        #region Published Events ==============================================================================================
+
+        public event System.EventHandler NavigateBackwardClick {
+            add {
+                this.tbtNavigateBack.Click += value;
+            }
+            remove {
+                this.tbtNavigateBack.Click -= value;
+            }
+        }
+
+        public event System.EventHandler NavigateForwardClick {
+            add {
+                this.tbtNavigateForward.Click += value;
+            }
+            remove {
+                this.tbtNavigateForward.Click -= value;
+            }
+        }
+
+
+
+        public event System.EventHandler NavigateParentClick {
+            add {
+                this.tbtNavigateParent.Click += value;
+            }
+            remove {
+                this.tbtNavigateParent.Click -= value;
+            }
+        }
+
+        public event System.EventHandler NavigateRefreshClick {
+            add {
+                this.tbtNavigateRefresh.Click += value;
+            }
+            remove {
+                this.tbtNavigateRefresh.Click -= value;
+            }
+        }
+
+
+
+        #endregion Published Events ===========================================================================================
+
         public NavigationToolStrip()
         {
             this.InitializeComponent();
