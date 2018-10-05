@@ -65,25 +65,57 @@ namespace electrifier.Core.Forms
             this.InitializeRibbon();
 
             this.Icon = icon;
-            this.Text = this.Text;  // TODO: Add formTitleAffix
+            this.FormTitle_AddDebugRemark();
 
-
-
+            // Initialize DockPanel
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
             this.dpnDockPanel.ShowDocumentIcon = true;
+            this.dpnDockPanel.ActiveContentChanged += this.DpnDockPanel_ActiveContentChanged;
 
+            // Initialize NavigationToolStrip
             this.ntsNavigation.NavigateBackwardClick += this.NtsNavigation_NavigateBackwardClick;
             this.ntsNavigation.NavigateForwardClick += this.NtsNavigation_NavigateForwardClick;
+            this.ntsNavigation.NavigateRecentLocationsClicked += this.NtsNavigation_NavigateRecentLocationsClicked;
             this.ntsNavigation.NavigateRefreshClick += this.NtsNavigation_NavigateRefreshClick;
 
+            // TODO: Update status bar to values of currently active Document
+        }
 
+        private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)
+        {
+            var activeShellBrowser = this.dpnDockPanel.ActiveContent as ShellBrowserDockContent;
+
+            if (activeShellBrowser is null)
+            {
+                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, Type:" + sender.GetType().ToString());
+            }
+            else
+            {
+                this.ActiveShellBrowserChanged(activeShellBrowser, e);
+            }
+        }
+
+        protected void ActiveShellBrowserChanged(ShellBrowserDockContent shellBrowser, EventArgs e)
+        {
+            AppContext.TraceDebug("Activating '" + shellBrowser.Text + "'");
+
+            // Update Navigation Log and check for all possible changes
+            var navigationLogEventArgs = new Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs()
+            {
+                CanNavigateBackwardChanged = true,
+                CanNavigateForwardChanged = true,
+                LocationsChanged = true,
+            };
+            this.ntsNavigation.UpdateNavigationLog(navigationLogEventArgs, shellBrowser.NavigationLog);
+
+            // Update Status Bar
+            this.UpdateTslItemCount(shellBrowser);
+            this.UpdateTslSelectionCount(shellBrowser);
         }
 
         [Conditional("DEBUG")]
         private void FormTitle_AddDebugRemark()
         {
-            AppContext.TraceScope();
-
             base.Text += " [DEBUG]";
         }
 
@@ -96,7 +128,7 @@ namespace electrifier.Core.Forms
 
             newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
             newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-
+            newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
 
             // See <href="https://github.com/dockpanelsuite/dockpanelsuite/issues/348"/>, we only take care of DocumentStyle.DockingWindow
@@ -154,6 +186,7 @@ namespace electrifier.Core.Forms
 
                 newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
                 newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+                newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
                 return newDockContent;
             }
@@ -259,6 +292,7 @@ namespace electrifier.Core.Forms
 
             newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
             newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+            newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
             newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
         }
@@ -267,40 +301,66 @@ namespace electrifier.Core.Forms
 
         private void NewDockContent_ItemsChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
         {
-            int itemCount = sender.ItemsCount;
+            this.UpdateTslItemCount(sender);
+        }
+
+        private void NewDockContent_SelectionChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
+        {
+            this.UpdateTslSelectionCount(sender);
+        }
+
+        protected void UpdateTslItemCount(ShellBrowserDockContent activeContent)
+        {
             string txt = null;
 
-            switch (itemCount)
+            if (!(activeContent is null))
             {
-                case 1:
-                    txt = "1 item";
-                    break;
-                default:
-                    txt = itemCount + " items";
-                    break;
+                int itemCount = activeContent.ItemsCount;
+
+                switch (itemCount)
+                {
+                    case 1:
+                        txt = "1 item";
+                        break;
+                    default:
+                        txt = itemCount + " items";
+                        break;
+                }
             }
 
             this.tslItemCount.Text = txt;
         }
 
-        private void NewDockContent_SelectionChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
+        protected void UpdateTslSelectionCount(ShellBrowserDockContent activeContent)
         {
-            int selectedItemsCount = sender.SelectedItemsCount;
             string txt = null;
 
-            switch (selectedItemsCount)
+            if (!(activeContent is null))
             {
-                case 0:
-                    break;
-                case 1:
-                    txt = "1 item selected";
-                    break;
-                default:
-                    txt = selectedItemsCount + " items selected";
-                    break;
+                int selectedItemsCount = activeContent.SelectedItemsCount;
+
+                switch (selectedItemsCount)
+                {
+                    case 0:
+                        break;
+                    case 1:
+                        txt = "1 item selected";
+                        break;
+                    default:
+                        txt = selectedItemsCount + " items selected";
+                        break;
+                }
             }
 
             this.tslSelectionCount.Text = txt;
+        }
+
+        private void NewDockContent_NavigationLogChanged(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs e)
+        {
+            // TODO: Check if this DockContent is (still) the ActiveContent
+            // TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
+            this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
+
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -317,6 +377,11 @@ namespace electrifier.Core.Forms
         private void NtsNavigation_NavigateForwardClick(object sender, EventArgs eventArgs)
         {
             this.GetActiveShellBrowserDockContent()?.NavigateForward();
+        }
+
+        private void NtsNavigation_NavigateRecentLocationsClicked(object sender, Components.NavigationToolStrip.NavigateRecentLocationsEventArgs e)
+        {
+            this.GetActiveShellBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
         }
 
         private void NtsNavigation_NavigateRefreshClick(object sender, EventArgs e)

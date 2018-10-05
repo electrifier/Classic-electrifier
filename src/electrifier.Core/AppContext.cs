@@ -145,6 +145,8 @@ namespace electrifier.Core
                 LogFileName = filePath
             };
 
+            defaultTraceListener.WriteLine("\nNEW SESSION STARTED...\n");
+
             Trace.Listeners.Clear();
             Trace.Listeners.Add(defaultTraceListener);
         }
@@ -159,7 +161,7 @@ namespace electrifier.Core
             fullMessage += " Enter Scope of Member " + memberName;
             fullMessage += " @ '" + filePath;
 
-            Trace.WriteLine(fullMessage);
+            Trace.WriteLine(fullMessage, "Scope");
         }
 
         [Conditional("DEBUG")]
@@ -173,7 +175,7 @@ namespace electrifier.Core
             fullMessage += " @ '" + filePath;
             fullMessage += "' in " + memberName;
 
-            Trace.WriteLine(fullMessage);
+            Trace.WriteLine(fullMessage, "Debug");
         }
 
         [Conditional("DEBUG")]
@@ -187,7 +189,7 @@ namespace electrifier.Core
             fullMessage += " @ '" + filePath;
             fullMessage += "' in " + memberName;
 
-            Trace.WriteLine(fullMessage);
+            Trace.WriteLine(fullMessage, "Warning");
         }
 
         [Conditional("DEBUG")]
@@ -202,7 +204,7 @@ namespace electrifier.Core
             fullMessage += "', in " + memberName;
             fullMessage += "#" + lineNumber;
 
-            Trace.WriteLine(fullMessage);
+            Trace.WriteLine(fullMessage, "Error");
         }
 
         #endregion

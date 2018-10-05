@@ -122,7 +122,7 @@ namespace electrifier.Core.Forms
             this.tslItemCount.AutoSize = false;
             this.tslItemCount.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.tslItemCount.Name = "tslItemCount";
-            this.tslItemCount.Size = new System.Drawing.Size(120, 20);
+            this.tslItemCount.Size = new System.Drawing.Size(96, 20);
             // 
             // tslSelectionCount
             // 

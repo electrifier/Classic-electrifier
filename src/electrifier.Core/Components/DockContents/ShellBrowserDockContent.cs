@@ -65,6 +65,8 @@ namespace electrifier.Core.Components.DockContents
         public int ItemsCount { get => this.explorerBrowser.Items.Count; }
         public int SelectedItemsCount { get => this.explorerBrowser.SelectedItems.Count; }
 
+        public ExplorerBrowserNavigationLog NavigationLog { get => this.explorerBrowser.NavigationLog; }
+
         #endregion Properties =================================================================================================
 
         #region Published Events ==============================================================================================
@@ -75,8 +77,12 @@ namespace electrifier.Core.Components.DockContents
         public delegate void SelectionChangedHandler(ShellBrowserDockContent sender, EventArgs eventArgs);           // TODO: EventArgs?!?
         public event SelectionChangedHandler SelectionChanged;
 
-        #endregion Published Events ===========================================================================================
+        public event System.EventHandler<Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs> NavigationLogChanged {
+            add { this.explorerBrowser.NavigationLog.NavigationLogChanged += value; }
+            remove { this.explorerBrowser.NavigationLog.NavigationLogChanged -= value; }
+        }
 
+        #endregion Published Events ===========================================================================================
 
         // TODO: Work on Get/Lost Focus in general!
 
@@ -92,8 +98,6 @@ namespace electrifier.Core.Components.DockContents
                     Dock = DockStyle.Fill,
                 };
 
-                this.Controls.Add(this.explorerBrowser);
-
                 // Connect ExplorerBrowser Events
                 this.explorerBrowser.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
                 this.explorerBrowser.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
@@ -101,6 +105,8 @@ namespace electrifier.Core.Components.DockContents
                 this.explorerBrowser.NavigationComplete += this.ExplorerBrowser_NavigationComplete;
                 this.explorerBrowser.NavigationFailed += this.ExplorerBrowser_NavigationFailed;
                 this.explorerBrowser.ViewEnumerationComplete += this.ExplorerBrowser_ViewEnumerationComplete;
+
+                this.Controls.Add(this.explorerBrowser);
 
                 // Initialize UIDecouplingTimer
                 this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
@@ -118,6 +124,13 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+                this.UIDecouplingTimer.Dispose();
+
+            base.Dispose(disposing);
+        }
 
         public void NavigateBackward()
         {
@@ -127,6 +140,11 @@ namespace electrifier.Core.Components.DockContents
         public void NavigateForward()
         {
             this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Forward);
+        }
+
+        public void NavigateLogLocation(int navigationLogIndex)
+        {
+            this.explorerBrowser.NavigateLogLocation(navigationLogIndex);
         }
 
         public void NavigateRefresh()
@@ -229,14 +247,14 @@ namespace electrifier.Core.Components.DockContents
 
         protected void UIDecouplingTimer_Tick(object sender, EventArgs e)
         {
-            if (this.explorerBrowser_itemsChangedEvent.WaitOne(1)) {
-                //AppContext.TraceDebug("Firing of ItemsChanged event.");
+            if (this.explorerBrowser_itemsChangedEvent.WaitOne(0)) {
+                AppContext.TraceDebug("Firing of ItemsChanged event.");
 
                 this.ItemsChanged?.Invoke(this, EventArgs.Empty);
             }
 
-            if (this.explorerBrowser_selectionChangedEvent.WaitOne(1)) {
-                //AppContext.TraceDebug("Firing of SelectionChanged event.");
+            if (this.explorerBrowser_selectionChangedEvent.WaitOne(0)) {
+                AppContext.TraceDebug("Firing of SelectionChanged event.");
 
                 this.SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
@@ -244,8 +262,6 @@ namespace electrifier.Core.Components.DockContents
         }
 
         #region ExplorerBrowser Internal Events Handler ========================================================================
-
-
 
         protected void ExplorerBrowser_NavigationPending(object sender, NavigationPendingEventArgs e)
         {
@@ -255,7 +271,7 @@ namespace electrifier.Core.Components.DockContents
         protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
         {
 
-            //this.Icon = args.NewLocation.Thumbnail.Icon;        // Icon-Property seems not to be thread-safe
+            //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
 
             this.BeginInvoke(new MethodInvoker(delegate ()
             {

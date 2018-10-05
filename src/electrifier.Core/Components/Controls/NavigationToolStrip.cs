@@ -29,7 +29,7 @@ namespace electrifier.Core.Components
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.ToolStripButton tbtNavigateBack;
+        private System.Windows.Forms.ToolStripButton tbtNavigateBackward;
         private System.Windows.Forms.ToolStripButton tbtNavigateForward;
         private System.Windows.Forms.ToolStripDropDownButton tddNavigateRecentLocations;
         private System.Windows.Forms.ToolStripButton tbtNavigateParent;
@@ -45,50 +45,69 @@ namespace electrifier.Core.Components
         #region Published Events ==============================================================================================
 
         public event System.EventHandler NavigateBackwardClick {
-            add {
-                this.tbtNavigateBack.Click += value;
-            }
-            remove {
-                this.tbtNavigateBack.Click -= value;
-            }
+            add { this.tbtNavigateBackward.Click += value; }
+            remove { this.tbtNavigateBackward.Click -= value; }
         }
 
         public event System.EventHandler NavigateForwardClick {
-            add {
-                this.tbtNavigateForward.Click += value;
-            }
-            remove {
-                this.tbtNavigateForward.Click -= value;
-            }
+            add { this.tbtNavigateForward.Click += value; }
+            remove { this.tbtNavigateForward.Click -= value; }
         }
 
-
+        public event System.EventHandler<NavigateRecentLocationsEventArgs> NavigateRecentLocationsClicked;
 
         public event System.EventHandler NavigateParentClick {
-            add {
-                this.tbtNavigateParent.Click += value;
-            }
-            remove {
-                this.tbtNavigateParent.Click -= value;
-            }
+            add { this.tbtNavigateParent.Click += value; }
+            remove { this.tbtNavigateParent.Click -= value; }
         }
 
         public event System.EventHandler NavigateRefreshClick {
-            add {
-                this.tbtNavigateRefresh.Click += value;
-            }
-            remove {
-                this.tbtNavigateRefresh.Click -= value;
-            }
+            add { this.tbtNavigateRefresh.Click += value; }
+            remove { this.tbtNavigateRefresh.Click -= value; }
         }
 
+        public class NavigateRecentLocationsEventArgs : System.EventArgs
+        {
+            public int NavigationLogIndex { get; }
 
+            public NavigateRecentLocationsEventArgs(int navigationLogIndex) { this.NavigationLogIndex = navigationLogIndex; }
+        }
 
         #endregion Published Events ===========================================================================================
 
         public NavigationToolStrip()
         {
             this.InitializeComponent();
+
+            this.tbtNavigateBackward.Enabled = false;
+            this.tbtNavigateForward.Enabled = false;
+            this.tbtNavigateParent.Enabled = false;         // TODO: Not implemented yet
+            this.tcbNavigateFolder.Enabled = false;         // TODO: Not implemented yet
+            this.tbtNavigateRefresh.Enabled = false;        // TODO: Not implemented yet
+            this.tddNavigateQuickAccess.Enabled = false;    // TODO: Not implemented yet
+            this.tcbNavigateSearch.Enabled = false;         // TODO: Not implemented yet
+            this.tddNavigateFilterItems.Enabled = false;    // TODO: Not implemented yet
+
+            this.tddNavigateRecentLocations.DropDownItemClicked += this.TddNavigateRecentLocations_DropDownItemClicked;
+
+            // TODO: Associate ShellBrowserDockContent!!! 04.10.18, 01:11 => ActiveShellBrowser, events direkt hier abwickeln.
+            // TODO: Associate ShellBrowserDockContent!!! 04.10.18, 01:11
+
+        }
+
+        private void TddNavigateRecentLocations_DropDownItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
+        {
+            // This should be safe, cause "DropDownItems.IndexOf(null);" returns "-1"
+            int index = this.tddNavigateRecentLocations.DropDownItems.IndexOf(e.ClickedItem);
+
+            if (-1 != index)
+            {
+                this.NavigateRecentLocationsClicked?.Invoke(this, new NavigateRecentLocationsEventArgs(index));
+            }
+            else
+            {
+                AppContext.TraceWarning("IndexOf failed!");
+            }
         }
 
         /// <summary> 
@@ -104,6 +123,32 @@ namespace electrifier.Core.Components
             base.Dispose(disposing);
         }
 
+        public void UpdateNavigationLog(Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs navigationLogEventArgs,
+            Microsoft.WindowsAPICodePack.Controls.ExplorerBrowserNavigationLog navigationLog)
+        {
+            if (navigationLogEventArgs.CanNavigateBackwardChanged)
+            {
+                this.tbtNavigateBackward.Enabled = navigationLog.CanNavigateBackward;
+            }
+
+            if (navigationLogEventArgs.CanNavigateForwardChanged)
+            {
+                this.tbtNavigateForward.Enabled = navigationLog.CanNavigateForward;
+            }
+
+            if (navigationLogEventArgs.LocationsChanged)
+            {
+                this.tddNavigateRecentLocations.DropDownItems.Clear();
+
+                foreach (Microsoft.WindowsAPICodePack.Shell.ShellObject shObj in navigationLog.Locations)
+                {
+                    this.tddNavigateRecentLocations.DropDownItems.Add(shObj.Name);
+                }
+            }
+        }
+
+
+
         #region Component Designer generated code =============================================================================
 
         /// <summary> 
@@ -114,7 +159,7 @@ namespace electrifier.Core.Components
         {
             this.components = new System.ComponentModel.Container();
 
-            this.tbtNavigateBack = new System.Windows.Forms.ToolStripButton();
+            this.tbtNavigateBackward = new System.Windows.Forms.ToolStripButton();
             this.tbtNavigateForward = new System.Windows.Forms.ToolStripButton();
             this.tddNavigateRecentLocations = new System.Windows.Forms.ToolStripDropDownButton();
             this.tbtNavigateParent = new System.Windows.Forms.ToolStripButton();
@@ -131,7 +176,7 @@ namespace electrifier.Core.Components
             this.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tbtNavigateBack,
+            this.tbtNavigateBackward,
             this.tbtNavigateForward,
             this.tddNavigateRecentLocations,
             this.tbtNavigateParent,
@@ -145,14 +190,14 @@ namespace electrifier.Core.Components
             this.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.Stretch = true;
             // 
-            // tbtNavigateBack
+            // tbtNavigateBackward
             // 
-            this.tbtNavigateBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbtNavigateBack.Image = global::electrifier.Core.Properties.Resources.Navigation_Backward_24px;
-            this.tbtNavigateBack.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbtNavigateBack.Name = "tbtNavigateBack";
-            this.tbtNavigateBack.Size = new System.Drawing.Size(28, 28);
-            this.tbtNavigateBack.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
+            this.tbtNavigateBackward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.tbtNavigateBackward.Image = global::electrifier.Core.Properties.Resources.Navigation_Backward_24px;
+            this.tbtNavigateBackward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tbtNavigateBackward.Name = "tbtNavigateBackward";
+            this.tbtNavigateBackward.Size = new System.Drawing.Size(28, 28);
+            this.tbtNavigateBackward.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
             // 
             // tbtNavigateForward
             // 
