@@ -21,12 +21,13 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Win32API;
 using electrifier.Core.Components.DockContents;
-using System.Runtime.CompilerServices;
+using common.Interop;
 
 namespace electrifier.Core.Forms
 {
@@ -37,15 +38,11 @@ namespace electrifier.Core.Forms
     {
         #region Fields ========================================================================================================
 
-        protected Guid guid = Guid.NewGuid();
-
         private static string formTitle_Affix = String.Format("electrifier v{0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
 
         #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
-
-        //public Guid Guid => this.guid;
 
         public override string Text {
             get { return base.Text; }
@@ -65,7 +62,7 @@ namespace electrifier.Core.Forms
             this.InitializeRibbon();
 
             this.Icon = icon;
-            this.FormTitle_AddDebugRemark();
+            this.Text = this.Text;          //this.FormTitle_AddDebugRemark(); // TODO: Add formTitleAffix
 
             // Initialize DockPanel
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
@@ -79,6 +76,32 @@ namespace electrifier.Core.Forms
             this.ntsNavigation.NavigateRefreshClick += this.NtsNavigation_NavigateRefreshClick;
 
             // TODO: Update status bar to values of currently active Document
+
+            // Add this window to clipboard format listener list, i.e. register for clipboard changes
+            AppContext.TraceDebug("AddClipboardFormatListener");
+            User32.AddClipboardFormatListener(this.Handle);
+            this.FormClosed += this.Electrifier_FormClosed;
+        }
+
+        private void Electrifier_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Remove this window from clipboard format listener list, i.e. cancel registration of clipboard changes
+            AppContext.TraceDebug("RemoveClipboardFormatListener");
+            User32.RemoveClipboardFormatListener(this.Handle);
+        }
+
+        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
+        protected override void WndProc(ref Message m)
+        {
+            switch ((WinAPI.WM)m.Msg)
+            {
+                case WinAPI.WM.ClipboardUpdate:
+                    AppContext.TraceDebug("WM_CLIPBOARDUPDATE");
+
+                    break;
+            }
+
+            base.WndProc(ref m);
         }
 
         private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)

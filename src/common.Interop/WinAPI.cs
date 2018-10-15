@@ -444,6 +444,7 @@ namespace electrifier.Win32API
             NCLBUTTONDOWN = 0x000000A1,
             HSCROLL = 0x00000114,
             VSCROLL = 0x00000115,
+            ClipboardUpdate = 0x0000031D,               // <seealso href="https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-addclipboardformatlistener"/>
             USER = 0x00000400,
             GETISHELLBROWSER = 0x00000007 + USER,       // See KB 157247
             REFLECT = 0x00001c00 + USER,

@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellFolderViewCB.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShellAPI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)User32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WTypes.cs" />
   </ItemGroup>
