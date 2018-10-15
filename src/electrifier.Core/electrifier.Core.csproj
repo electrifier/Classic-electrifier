@@ -21,7 +21,7 @@
     <StartupObject />
     <FileUpgradeFlags>
     </FileUpgradeFlags>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>0.0</OldToolsVersion>
@@ -93,8 +93,8 @@
     <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="Sunburst.WindowsForms.Ribbon, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\lib\net45\Sunburst.WindowsForms.Ribbon.dll</HintPath>
+    <Reference Include="Sunburst.WindowsForms.Ribbon, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\lib\net46\Sunburst.WindowsForms.Ribbon.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -105,6 +105,9 @@
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing">
       <Name>System.Drawing</Name>
+    </Reference>
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
@@ -240,11 +243,11 @@
     <PreBuildEvent />
     <PostBuildEvent />
   </PropertyGroup>
-  <Import Project="..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets" Condition="Exists('..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" />
+  <Import Project="..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets" Condition="Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Sunburst.WindowsForms.Ribbon.1.1.0\build\Sunburst.WindowsForms.Ribbon.targets'))" />
+    <Error Condition="!Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets'))" />
   </Target>
 </Project>
