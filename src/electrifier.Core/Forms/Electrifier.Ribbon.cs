@@ -19,13 +19,11 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using System.Windows.Forms;
 using Sunburst.WindowsForms.Ribbon.Controls;
 using Sunburst.WindowsForms.Ribbon.Controls.Events;
+
+using electrifier.Win32API;
 
 
 namespace electrifier.Core.Forms
@@ -35,9 +33,84 @@ namespace electrifier.Core.Forms
     /// </summary>
     public partial class Electrifier : System.Windows.Forms.Form
     {
+        private enum RibbonCommand : uint
+        {
+            //
+            // Quick Access Toolbar Commands ==================================================================================
+            //
+            cmdQATOpenNewShellBrowserPane = 19903,
+
+            //
+            // Application Menu Items =========================================================================================
+            //
+            cmdAppApplicationMenu = 100,
+            cmdAppOpenNewWindow = 101,
+            cmdAppOpenNewShellBrowserPane = 102,
+            cmdAppOpenCommandPrompt = 103,
+            cmdAppOpenWindowsPowerShell = 104,
+            cmdAppChangeElectrifierOptions = 110,
+            cmdAppChangeFolderAndSearchOptions = 111,
+            cmdApp_HelpMenu = 120,
+            cmdAppHelp = 121,
+            cmdAppHelpAboutElectrifier = 122,
+            cmdAppHelpAboutWindows = 125,
+            cmdAppClose = 130,
+            //
+            // Ribbon tabs ====================================================================================================
+            //
+            cmdTabHome = 1000,
+            cmdTabShare = 2000,
+            cmdTabView = 3000,
+            //
+            // Command Group: Home -> Clipboard ===============================================================================
+            //
+            cmdGrpHomeClipboard = 1100,
+            cmdBtnClipboardCut = 1101,
+            cmdBtnClipboardCopy = 1102,
+            cmdBtnClipboardPaste = 1103,
+            //
+            // Command Group: Home -> Organize ================================================================================
+            //
+            cmdGrpHomeOrganize = 1200,
+            cmdBtnOrganizeMoveTo = 1201,
+            cmdBtnOrganizeDelete = 1202,
+            cmdBtnOrganizeRename = 1203,
+        }
+
+
         private Sunburst.WindowsForms.Ribbon.Ribbon rbnRibbon;
 
-        #region Ribbon members ================================================================================================
+        // Quick Access Toolbar Commands
+
+        private RibbonButton cmdQATOpenNewShellBrowserPane;
+
+        // Application Menu Commands
+
+        private RibbonButton cmdAppOpenNewWindow;
+        private RibbonButton cmdAppOpenNewShellBrowserPane;
+        private RibbonButton cmdAppOpenCommandPrompt;
+        private RibbonButton cmdAppOpenWindowsPowerShell;
+        private RibbonButton cmdAppChangeElectrifierOptions;
+        private RibbonButton cmdAppChangeFolderAndSearchOptions;
+        private RibbonButton cmdAppHelp;
+        private RibbonButton cmdAppHelpAboutElectrifier;
+        private RibbonButton cmdAppHelpAboutWindows;
+        private RibbonButton cmdAppClose;
+
+        // Ribbon Tab: Home Commands
+
+        private RibbonTab cmdTabHome;
+        private RibbonButton cmdGrpHomeClipboard;
+        private RibbonButton cmdBtnClipboardCut;
+        private RibbonButton cmdBtnClipboardCopy;
+        private RibbonButton cmdBtnClipboardPaste;
+        private RibbonButton cmdGrpHomeOrganize;
+        private RibbonButton cmdBtnOrganizeMoveTo;
+        private RibbonButton cmdBtnOrganizeDelete;
+        private RibbonButton cmdBtnOrganizeRename;
+
+
+
 
         private void InitializeRibbon()
         {
@@ -150,84 +223,45 @@ namespace electrifier.Core.Forms
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdBtnOrganizeRename_Execute),
             };
-
-
-
         }
 
-        private enum RibbonCommand : uint
+        #region Ribbon event listeners ========================================================================================
+
+        private void CmdAppOpenNewShellBrowserPane_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         {
-            //
-            // Quick Access Toolbar Commands ==================================================================================
-            //
-            cmdQATOpenNewShellBrowserPane = 19903,
+            AppContext.TraceScope();
 
-            //
-            // Application Menu Items =========================================================================================
-            //
-            cmdAppApplicationMenu = 100,
-            cmdAppOpenNewWindow = 101,
-            cmdAppOpenNewShellBrowserPane = 102,
-            cmdAppOpenCommandPrompt = 103,
-            cmdAppOpenWindowsPowerShell = 104,
-            cmdAppChangeElectrifierOptions = 110,
-            cmdAppChangeFolderAndSearchOptions = 111,
-            cmdApp_HelpMenu = 120,
-            cmdAppHelp = 121,
-            cmdAppHelpAboutElectrifier = 122,
-            cmdAppHelpAboutWindows = 125,
-            cmdAppClose = 130,
-            //
-            // Ribbon tabs ====================================================================================================
-            //
-            cmdTabHome = 1000,
-            cmdTabShare = 2000,
-            cmdTabView = 3000,
-            //
-            // Command Group: Home -> Clipboard ===============================================================================
-            //
-            cmdGrpHomeClipboard = 1100,
-            cmdBtnClipboardCut = 1101,
-            cmdBtnClipboardCopy = 1102,
-            cmdBtnClipboardPaste = 1103,
-            //
-            // Command Group: Home -> Organize ================================================================================
-            //
-            cmdGrpHomeOrganize = 1200,
-            cmdBtnOrganizeMoveTo = 1201,
-            cmdBtnOrganizeDelete = 1202,
-            cmdBtnOrganizeRename = 1203,
+            this.CreateNewFileBrowser();
+        }
+
+        private void CmdAppHelpAboutElectrifier_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            var aboutElectrifier = new AboutElectrifier();
+
+            aboutElectrifier.ShowDialog();
+        }
+
+        private void CmdAppHelpAboutWindows_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            string szOtherStuff = ".NET Framework Version: " + Environment.Version.ToString();
+
+            ShellAPI.ShellAbout(this.Handle, "Microsoft Windows", szOtherStuff, IntPtr.Zero);
         }
 
 
-        private RibbonButton cmdQATOpenNewShellBrowserPane;
+        private void CmdAppClose_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
 
+            // Close form asynchronously since we are in a ribbon event handler, so the ribbon is still in use, and calling Close 
+            // will eventually call _ribbon.DestroyFramework(), which is a big no-no, if you still use the ribbon.
+            this.BeginInvoke(new MethodInvoker(this.Close));
+        }
 
-        private RibbonTab cmdTabHome;
-
-
-        private RibbonButton cmdAppOpenNewWindow;
-        private RibbonButton cmdAppOpenNewShellBrowserPane;
-        private RibbonButton cmdAppOpenCommandPrompt;
-        private RibbonButton cmdAppOpenWindowsPowerShell;
-        private RibbonButton cmdAppChangeElectrifierOptions;
-        private RibbonButton cmdAppChangeFolderAndSearchOptions;
-        private RibbonButton cmdAppHelp;
-        private RibbonButton cmdAppHelpAboutElectrifier;
-        private RibbonButton cmdAppHelpAboutWindows;
-        private RibbonButton cmdAppClose;
-        private RibbonButton cmdGrpHomeClipboard;
-        private RibbonButton cmdBtnClipboardCut;
-        private RibbonButton cmdBtnClipboardCopy;
-        private RibbonButton cmdBtnClipboardPaste;
-        private RibbonButton cmdGrpHomeOrganize;
-        private RibbonButton cmdBtnOrganizeMoveTo;
-        private RibbonButton cmdBtnOrganizeDelete;
-        private RibbonButton cmdBtnOrganizeRename;
-
-
-
-
-        #endregion
+        #endregion Ribbon event listeners =====================================================================================
     }
 }

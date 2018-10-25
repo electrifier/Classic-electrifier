@@ -228,47 +228,6 @@ namespace electrifier.Core.Forms
 
         #region Event Listeners ===============================================================================================
 
-        #region Ribbon event listeners ========================================================================================
-
-        private void CmdAppOpenNewShellBrowserPane_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.CreateNewFileBrowser();
-        }
-
-        private void CmdAppHelpAboutElectrifier_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
-        {
-            AppContext.TraceScope();
-
-            var aboutElectrifier = new AboutElectrifier();
-
-            aboutElectrifier.ShowDialog();
-        }
-
-        private void CmdAppHelpAboutWindows_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
-        {
-            AppContext.TraceScope();
-
-            string szOtherStuff = ".NET Framework Version: " + Environment.Version.ToString();
-
-            ShellAPI.ShellAbout(this.Handle, "Microsoft Windows", szOtherStuff, IntPtr.Zero);
-        }
-
-
-        private void CmdAppClose_Execute(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
-        {
-            AppContext.TraceScope();
-
-            // Close form asynchronously since we are in a ribbon event 
-            // handler, so the ribbon is still in use, and calling Close 
-            // will eventually call _ribbon.DestroyFramework(), which is 
-            // a big no-no, if you still use the ribbon.
-            this.BeginInvoke(new MethodInvoker(this.Close));
-        }
-
-        #endregion Ribbon event listeners =====================================================================================
-
         private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
         {
             AppContext.TraceScope();
