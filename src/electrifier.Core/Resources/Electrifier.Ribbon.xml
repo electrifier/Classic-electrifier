@@ -33,8 +33,16 @@
     ==== Ribbon Commands ======================================================================================================
     ======================================================================================================================= -->
 
-    <Command Name="cmdBtnApp_OpenNewWindow"
+    <Command Name="cmdBtnApp_ApplicationMenu"
              Id="100"
+             LabelTitle="Application Menu"
+             LabelDescription="Open Application Menu"
+             TooltipTitle="Application Menu"
+             TooltipDescription="Opens Application Menu.">
+    </Command>
+
+    <Command Name="cmdBtnApp_OpenNewWindow"
+             Id="101"
              LabelTitle="Open &amp;new electrifier Window"
              LabelDescription="Open new window"
              TooltipTitle="New window"
@@ -45,7 +53,7 @@
     </Command>
 
     <Command Name="cmdBtnApp_OpenNewShellBrowserPanel"
-             Id="101"
+             Id="102"
              LabelTitle="New Panel"
              LabelDescription="New Description"
              TooltipTitle="Open new electrifier panel"
@@ -56,7 +64,7 @@
     </Command>
 
     <Command Name="cmdBtnApp_OpenCommandPrompt"
-             Id="102"
+             Id="103"
              LabelTitle="Open command &amp;prompt"
              LabelDescription="Open Description"
              TooltipTitle="Open"
@@ -67,7 +75,7 @@
     </Command>
 
     <Command Name="cmdBtnApp_OpenWindowsPowerShell"
-             Id="103"
+             Id="104"
              LabelTitle="Open Windows Powe&amp;rShell"
              LabelDescription="Save Description"
              TooltipTitle="Save"
@@ -99,8 +107,16 @@
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_Help"
+    <Command Name="cmdBtnApp_HelpMenu"
              Id="120"
+             LabelTitle="Help Menu"
+             LabelDescription="Open Help Menu"
+             TooltipTitle="Help Menu"
+             TooltipDescription="Opens Help Menu.">
+    </Command>
+
+    <Command Name="cmdBtnApp_Help"
+             Id="121"
              LabelTitle="Help"
              LabelDescription="Help Description"
              TooltipTitle="Help"
@@ -111,11 +127,11 @@
     </Command>
 
     <Command Name="cmdBtnApp_Help_AboutElectrifier"
-             Id="121"
+             Id="122"
              LabelTitle="About"
              LabelDescription="About electrifier"
              TooltipTitle="About"
-             TooltipDescription="Show information about electrifier">
+             TooltipDescription="Show information about electrifier.">
       <Command.LargeImages>
         <Image>Commands/app_help.bmp</Image>
       </Command.LargeImages>
@@ -126,7 +142,7 @@
              LabelTitle="Windows info"
              LabelDescription="Show information about Windows"
              TooltipTitle="About"
-             TooltipDescription="Show information about Windows">
+             TooltipDescription="Show information about Windows.">
       <Command.LargeImages>
         <Image>Commands/app_help.bmp</Image>
       </Command.LargeImages>
@@ -162,8 +178,8 @@
     <Command Name="cmdBtnClipboardCut"
              Id="1101"
              LabelTitle="Cut"
-             TooltipTitle="..."
-             TooltipDescription="...">
+             TooltipTitle="Cut selected items"
+             TooltipDescription="Cut selected items">
       <Command.LargeImages>
         <Image>Commands/clipboard_cut.bmp</Image>
       </Command.LargeImages>
@@ -172,8 +188,8 @@
     <Command Name="cmdBtnClipboardCopy"
              Id="1102"
              LabelTitle="Copy"
-             TooltipTitle="..."
-             TooltipDescription="...">
+             TooltipTitle="Copy selected items"
+             TooltipDescription="Copy selected items">
       <Command.LargeImages>
         <Image>Commands/clipboard_copy.bmp</Image>
       </Command.LargeImages>
@@ -182,8 +198,8 @@
     <Command Name="cmdBtnClipboardPaste"
              Id="1103"
              LabelTitle="Paste"
-             TooltipTitle="..."
-             TooltipDescription="...">
+             TooltipTitle="Paste from clipboard"
+             TooltipDescription="Paste from clipboard">
       <Command.LargeImages>
         <Image>Commands/clipboard_paste.bmp</Image>
       </Command.LargeImages>
@@ -199,8 +215,8 @@
     <Command Name="cmdBtnOrganizeMoveTo"
              Id="1201"
              LabelTitle="Move to"
-             TooltipTitle="..."
-             TooltipDescription="...">
+             TooltipTitle="Move selected item(s)"
+             TooltipDescription="Move selected item(s)">
       <Command.LargeImages>
         <Image>Commands/organize_moveto.bmp</Image>
       </Command.LargeImages>
@@ -209,8 +225,8 @@
     <Command Name="cmdBtnOrganizeDelete"
              Id="1202"
              LabelTitle="Delete"
-             TooltipTitle="..."
-             TooltipDescription="...">
+             TooltipTitle="Delete selected item(s)"
+             TooltipDescription="Delete selected item(s)">
       <Command.LargeImages>
         <Image>Commands/organize_delete.bmp</Image>
       </Command.LargeImages>
@@ -219,8 +235,8 @@
     <Command Name="cmdBtnOrganizeRename"
              Id="1203"
              LabelTitle="Rename"
-             TooltipTitle="..."
-             TooltipDescription="...">
+             TooltipTitle="Rename selected item(s)"
+             TooltipDescription="Rename selected item(s)">
       <Command.LargeImages>
         <Image>Commands/organize_rename.bmp</Image>
       </Command.LargeImages>
@@ -249,7 +265,7 @@
       </Ribbon.HelpButton>
 
       <Ribbon.ApplicationMenu>
-        <ApplicationMenu>
+        <ApplicationMenu CommandName="cmdBtnApp_ApplicationMenu">
           <MenuGroup>
             <Button CommandName="cmdBtnApp_OpenNewWindow" />
             <Button CommandName="cmdBtnApp_OpenNewShellBrowserPanel" />
@@ -259,7 +275,7 @@
           <MenuGroup>
             <Button CommandName="cmdBtnApp_ChangeElectrifierOptions" />
             <Button CommandName="cmdBtnApp_ChangeFolderAndSearchOptions" />
-            <SplitButton>
+            <SplitButton CommandName="cmdBtnApp_HelpMenu">
               <SplitButton.ButtonItem>
                 <Button CommandName="cmdBtnApp_Help" />
               </SplitButton.ButtonItem>

@@ -165,14 +165,16 @@ namespace electrifier.Core.Forms
             //
             // Application Menu Items =========================================================================================
             //
-            cmdAppOpenNewWindow = 100,
-            cmdAppOpenNewShellBrowserPane = 101,
-            cmdAppOpenCommandPrompt = 102,
-            cmdAppOpenWindowsPowerShell = 103,
+            cmdAppApplicationMenu = 100,
+            cmdAppOpenNewWindow = 101,
+            cmdAppOpenNewShellBrowserPane = 102,
+            cmdAppOpenCommandPrompt = 103,
+            cmdAppOpenWindowsPowerShell = 104,
             cmdAppChangeElectrifierOptions = 110,
             cmdAppChangeFolderAndSearchOptions = 111,
-            cmdAppHelp = 120,
-            cmdAppHelpAboutElectrifier = 121,
+            cmdApp_HelpMenu = 120,
+            cmdAppHelp = 121,
+            cmdAppHelpAboutElectrifier = 122,
             cmdAppHelpAboutWindows = 125,
             cmdAppClose = 130,
             //
