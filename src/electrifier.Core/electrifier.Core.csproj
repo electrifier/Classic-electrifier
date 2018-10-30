@@ -93,8 +93,8 @@
     <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="Sunburst.WindowsForms.Ribbon, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\lib\net46\Sunburst.WindowsForms.Ribbon.dll</HintPath>
+    <Reference Include="Sunburst.WindowsForms.Ribbon, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\lib\net46\Sunburst.WindowsForms.Ribbon.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
@@ -247,11 +247,11 @@
     <PreBuildEvent />
     <PostBuildEvent />
   </PropertyGroup>
-  <Import Project="..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets" Condition="Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets')" />
+  <Import Project="..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\build\Sunburst.WindowsForms.Ribbon.targets" Condition="Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Sunburst.WindowsForms.Ribbon.2.0.0\build\Sunburst.WindowsForms.Ribbon.targets'))" />
+    <Error Condition="!Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\build\Sunburst.WindowsForms.Ribbon.targets'))" />
   </Target>
 </Project>
