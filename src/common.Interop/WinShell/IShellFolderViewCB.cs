@@ -1,15 +1,34 @@
-﻿using System;
+﻿/*
+** 
+**  electrifier
+** 
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
+**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**  
+**      http://www.apache.org/licenses/LICENSE-2.0
+**  
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+**
+*/
+
+
+using System;
 using System.Runtime.InteropServices;
 
-namespace electrifier.Win32API.Shell32
+namespace common.Interop.WinShell
 {
-
     /// <summary>
     /// 
-    /// See C:\Program Files\Microsoft SDKs\Windows\v7.1\Include\ShlObj.h, section "#define INTERFACE   IShellFolderViewCB"
+    /// See Microsoft SDKs\Windows\v7.1\Include\ShlObj.h, section "#define INTERFACE   IShellFolderViewCB"
     /// 
     /// </summary>
-
     public enum SFVM : uint
     {                                 // wParam             lParam
         MERGEMENU = 1,                // -                  LPQCMINFO
@@ -82,11 +101,16 @@ namespace electrifier.Win32API.Shell32
     /// 
     /// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb774967(v=vs.85).aspx
     /// </summary>
-    [ComImport]
-    [Guid("2047E320-F2A9-11CE-AE65-08002B2E1262")]
-    [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [
+        ComImport,
+        Guid("2047E320-F2A9-11CE-AE65-08002B2E1262"),
+        InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IShellFolderViewCB
     {
-        [PreserveSig] HResult MessageSFVCB(SFVM uMsg, IntPtr wParam, IntPtr lParam);
+        [PreserveSig]
+        common.Interop.WinError.HResult MessageSFVCB(
+            SFVM uMsg,
+            IntPtr wParam,
+            IntPtr lParam);
     }
 }

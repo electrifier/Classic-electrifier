@@ -270,7 +270,7 @@ namespace electrifier.Core.Components.DockContents
 
         protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
         {
-
+            AppContext.TraceDebug("Firing of ExplorerBrowser_NavigationComplete event.");
             //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
 
             this.BeginInvoke(new MethodInvoker(delegate ()
@@ -282,12 +282,15 @@ namespace electrifier.Core.Components.DockContents
             }));
         }
 
-        protected void ExplorerBrowser_NavigationFailed(object sender, NavigationFailedEventArgs e)
+        protected void ExplorerBrowser_NavigationFailed(object sender, NavigationFailedEventArgs args)
         {
+            AppContext.TraceError("Firing of ExplorerBrowser_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
         }
 
         protected void ExplorerBrowser_ViewEnumerationComplete(object sender, EventArgs e)
         {
+            AppContext.TraceDebug("Firing of ExplorerBrowser_ViewEnumerationComplete event.");
+
             this.explorerBrowser_itemsChangedEvent.Set();
             this.explorerBrowser_selectionChangedEvent.Set();
         }

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace electrifier.Win32API
 {
-
+    [ObsoleteAttribute("Class electrifier.Win32API.ShellAPI is obsolete. It will be replaced and removed.")]
     public class ShellAPI
     {
 
@@ -154,7 +154,7 @@ namespace electrifier.Win32API
         {
             public IntPtr hIcon;
             public int iIcon;
-            public SFGAO dwAttributes;
+            public common.Interop.WinShell.SFGAO dwAttributes;
             [MarshalAs(UnmanagedType.LPStr, SizeConst = 260)]
             public string szDisplayName;
             [MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
@@ -441,70 +441,6 @@ namespace electrifier.Win32API
         }
 
         /// <summary>
-        /// Attributes that can be retrieved on an item (file or folder) or set of items.
-        /// 
-        /// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762589(v=vs.85).aspx
-        /// 
-        /// 
-        /// </summary> 
-
-        [Flags]
-        public enum SFGAO : uint
-        {
-            CanCopy = 0x1,
-            CanMove = 0x2,
-            CanLink = 0x4,
-            Storage = 0x8,
-            CanRename = 0x10,
-            CanDelete = 0x20,
-            HasPropSheet = 0x40,
-            DropTarget = 0x100,
-            CAPABILITYMASK = 0x177,
-            Encrypted = 0x2000,
-            IsSlow = 0x4000,
-            Ghosted = 0x8000,
-            Link = 0x10000,
-            Share = 0x20000,
-            ReadOnly = 0x40000,
-            Hidden = 0x80000,
-            DISPLAYATTRMASK = 0xFC000,
-            FileSysAncestor = 0x10000000,
-            Folder = 0x20000000,
-            FileSystem = 0x40000000,
-            HasSubfolder = 0x80000000,
-            CONTENTSMASK = 0x80000000,
-            Validate = 0x1000000,
-            Removable = 0x2000000,
-            Compressed = 0x4000000,
-            Browsable = 0x8000000,
-            Nonenumerated = 0x100000,
-            NewContent = 0x200000,
-            Stream = 0x400000,
-            StorageAncestor = 0x800000,
-            STORAGECAPMASK = 0x70C50008,
-        }
-
-        [DllImport("shell32.dll")]
-        public static extern Int32 SHGetDesktopFolder(
-            // TODO: [MarshalAs(UnmanagedType.IUnknown)]
-            out IntPtr ppshf);
-
-        [DllImport("shell32.dll")]
-        public static extern Int32 SHGetMalloc(
-            // TODO: [MarshalAs(UnmanagedType.IUnknown)]
-            out IntPtr hObject);
-
-
-        public enum SHGDN : uint
-        {
-            NORMAL = 0x0000,        // default (display purpose)
-            INFOLDER = 0x0001,      // displayed under a folder (relative)
-            FOREDITING = 0x1000,        // for in-place editing
-            FORADDRESSBAR = 0x4000,     // UI friendly parsing name (remove ugly stuff)
-            FORPARSING = 0x8000,        // parsing name for ParseDisplayName()
-        }
-
-        /// <summary>
         /// System interface id for IMalloc interface
         /// </summary>
         public const string GuidString_IMalloc = "00000002-0000-0000-C000-000000000046";
@@ -546,9 +482,9 @@ namespace electrifier.Win32API
         public interface IOleWindow
         {
             [PreserveSig]
-            HResult GetWindow(out IntPtr HWND);
+            common.Interop.WinError.HResult GetWindow(out IntPtr HWND);
             [PreserveSig]
-            HResult ContextSensitiveHelp(bool fEnterMode);
+            common.Interop.WinError.HResult ContextSensitiveHelp(bool fEnterMode);
         }
 
         #endregion
@@ -565,37 +501,37 @@ namespace electrifier.Win32API
         {
             // IOleWindow-Member
             [PreserveSig]
-            HResult GetWindow(out IntPtr HWND);
+            common.Interop.WinError.HResult GetWindow(out IntPtr HWND);
             [PreserveSig]
-            HResult ContextSensitiveHelp(bool fEnterMode);
+            common.Interop.WinError.HResult ContextSensitiveHelp(bool fEnterMode);
             // End of IOleWindow-Member
 
             [PreserveSig]
-            HResult InsertMenusSB(IntPtr hmenuShared, ref IntPtr /* LPOLEMENUGROUPWIDTHS */ lpMenuWidths);
+            common.Interop.WinError.HResult InsertMenusSB(IntPtr hmenuShared, ref IntPtr /* LPOLEMENUGROUPWIDTHS */ lpMenuWidths);
             [PreserveSig]
-            HResult SetMenuSB(IntPtr hmenuShared, IntPtr /* HOLEMENU */ holemenuRes, IntPtr hwndActiveObject);
+            common.Interop.WinError.HResult SetMenuSB(IntPtr hmenuShared, IntPtr /* HOLEMENU */ holemenuRes, IntPtr hwndActiveObject);
             [PreserveSig]
-            HResult RemoveMenusSB(IntPtr hmenuShared);
+            common.Interop.WinError.HResult RemoveMenusSB(IntPtr hmenuShared);
             [PreserveSig]
-            HResult SetStatusTextSB([MarshalAs(UnmanagedType.LPWStr)] String pszStatusText);
+            common.Interop.WinError.HResult SetStatusTextSB([MarshalAs(UnmanagedType.LPWStr)] String pszStatusText);
             [PreserveSig]
-            HResult EnableModelessSB(bool fEnable);
+            common.Interop.WinError.HResult EnableModelessSB(bool fEnable);
             [PreserveSig]
-            HResult TranslateAcceleratorSB(IntPtr pmsg, UInt16 wID);
+            common.Interop.WinError.HResult TranslateAcceleratorSB(IntPtr pmsg, UInt16 wID);
             [PreserveSig]
-            HResult BrowseObject(IntPtr pidl, SBSP wFlags);
+            common.Interop.WinError.HResult BrowseObject(IntPtr pidl, SBSP wFlags);
             [PreserveSig]
-            HResult GetViewStateStream(uint /* DWORD */ grfMode, IntPtr /*IStream */ ppStrm);
+            common.Interop.WinError.HResult GetViewStateStream(uint /* DWORD */ grfMode, IntPtr /*IStream */ ppStrm);
             [PreserveSig]
-            HResult GetControlWindow(uint id, out IntPtr phwnd);
+            common.Interop.WinError.HResult GetControlWindow(uint id, out IntPtr phwnd);
             [PreserveSig]
-            HResult SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, IntPtr pret);
+            common.Interop.WinError.HResult SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, IntPtr pret);
             [PreserveSig]
-            HResult QueryActiveShellView([MarshalAs(UnmanagedType.Interface)] ref ShellAPI.IShellView ppshv);
+            common.Interop.WinError.HResult QueryActiveShellView([MarshalAs(UnmanagedType.Interface)] ref ShellAPI.IShellView ppshv);
             [PreserveSig]
-            HResult OnViewWindowActive([MarshalAs(UnmanagedType.Interface)] ShellAPI.IShellView pshv);
+            common.Interop.WinError.HResult OnViewWindowActive([MarshalAs(UnmanagedType.Interface)] ShellAPI.IShellView pshv);
             [PreserveSig]
-            HResult SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags);
+            common.Interop.WinError.HResult SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags);
         }
 
         #endregion
@@ -644,27 +580,6 @@ namespace electrifier.Win32API
             OFFSET = 0x0001,                                    // Use STRRET.uOffset to Ansi
             CSTR = 0x0002,                                  // Use STRRET.cStr
         }
-
-        [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid("000214F2-0000-0000-C000-000000000046")]
-        public interface IEnumIDList
-        {
-            [PreserveSig]
-            int Next(
-                int celt,
-                ref IntPtr rgelt,
-                out int pceltFetched);
-
-            [PreserveSig]
-            void Skip(
-                int celt);
-
-            [PreserveSig]
-            int Reset();
-
-            [PreserveSig]
-            void Clone(
-                ref IEnumIDList ppenum);
-        };
 
 
         /// <summary>
@@ -717,14 +632,14 @@ namespace electrifier.Win32API
         public struct SFV_CREATE
         {
             public int cbSize;                          // The size of the SFV_CREATE structure, in bytes.
-            public ShellAPI.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
+            public common.Interop.WinShell.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
             public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
-            public Shell32.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
+            public common.Interop.WinShell.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
 
             public SFV_CREATE(
-                ShellAPI.IShellFolder pshf = default(ShellAPI.IShellFolder),
+                common.Interop.WinShell.IShellFolder pshf = default(common.Interop.WinShell.IShellFolder),
                 ShellAPI.IShellView psvOuter = default(ShellAPI.IShellView),
-                Shell32.IShellFolderViewCB psfvcb = default(Shell32.IShellFolderViewCB))
+                common.Interop.WinShell.IShellFolderViewCB psfvcb = default(common.Interop.WinShell.IShellFolderViewCB))
             {
                 this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
                 this.pshf = pshf;
@@ -735,93 +650,7 @@ namespace electrifier.Win32API
 
         // See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762141(v=vs.85).aspx
         [DllImport("shell32.dll")]
-        public static extern HResult SHCreateShellFolderView(SFV_CREATE pcsfv, out ShellAPI.IShellView ppsv);
-
-        /// <summary>
-        /// System interface id for IShellFolder interface
-        /// </summary>
-        public const string IIDS_IShellFolder = "000214E6-0000-0000-C000-000000000046";
-        public static Guid IID_IShellFolder = new Guid(IIDS_IShellFolder);
-
-        [ComImport, InterfaceType(ComInterfaceType.InterfaceIsIUnknown), Guid(IIDS_IShellFolder)]
-        public interface IShellFolder
-        {
-            [PreserveSig]
-            Int32 ParseDisplayName(
-                IntPtr hwnd,
-                IntPtr pbc,
-                [MarshalAs(UnmanagedType.LPWStr)]
-                String pszDisplayName,
-                ref UInt32 pchEaten,
-                out IntPtr ppidl,
-                ref UInt32 pdwAttributes);
-
-            [PreserveSig]
-            Int32 EnumObjects(
-                IntPtr hwnd,
-                SHCONTF grfFlags,
-                ref IEnumIDList ppenumIDList);
-
-            [PreserveSig]
-            Int32 BindToObject(
-                IntPtr pidl,
-                IntPtr pbc,
-                ref Guid riid,
-                ref IShellFolder ppv);
-
-            [PreserveSig]
-            Int32 BindToStorage(
-                IntPtr pidl,
-                IntPtr pbc,
-                ref Guid riid,
-                out IntPtr ppv);
-
-            [PreserveSig]
-            Int32 CompareIDs(
-                Int32 lParam,
-                IntPtr pidl1,
-                IntPtr pidl2);
-
-            [PreserveSig]
-            Int32 CreateViewObject(
-                IntPtr hwndOwner,
-                ref Guid riid,
-                out IntPtr ppv);
-
-            [PreserveSig]
-            Int32 GetAttributesOf(
-                UInt32 cidl,
-                [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]
-                IntPtr[] apidl,
-                ref UInt32 rgfInOut);
-
-            [PreserveSig]
-            Int32 GetUIObjectOf(
-                IntPtr hwndOwner,
-                UInt32 cidl,
-                [MarshalAs(UnmanagedType.LPArray, SizeParamIndex=0)]
-                IntPtr[] apidl,
-                ref Guid riid,
-                ref UInt32 rgfReserved,
-                //				out object ppv);
-                //			// TODO:	[MarshalAs(UnmanagedType.IUnknown)]
-                out IntPtr ppv);
-
-            [PreserveSig]
-            Int32 GetDisplayNameOf(
-                IntPtr pidl,
-                SHGDN uFlags,
-                out STRRET pName);
-
-            [PreserveSig]
-            Int32 SetNameOf(
-                IntPtr hwnd,
-                IntPtr pidl,
-                [MarshalAs(UnmanagedType.LPWStr)]
-                String pszName,
-                UInt32 uFlags,
-                out IntPtr ppidlOut);
-        }
+        public static extern common.Interop.WinError.HResult SHCreateShellFolderView(SFV_CREATE pcsfv, out ShellAPI.IShellView ppsv);
 
         /// <summary>
         /// Accepts a STRRET structure returned by IShellFolder::GetDisplayNameOf that contains or points to a string, and returns that string as a BSTR.
@@ -840,23 +669,10 @@ namespace electrifier.Win32API
             IntPtr pidl,
             [MarshalAs(UnmanagedType.BStr)] out String pbstr);
 
-        public enum SHCONTF : uint
-        {
-            FOLDERS = 0x0020,   // only want folders enumerated (SFGAO_FOLDER)
-            NONFOLDERS = 0x0040,   // include non folders
-            INCLUDEHIDDEN = 0x0080,   // show items normally hidden
-            INIT_ON_FIRST_NEXT = 0x0100,   // allow EnumObject() to return before validating enum
-            NETPRINTERSRCH = 0x0200,   // hint that client is looking for printers
-            SHAREABLE = 0x0400,   // hint that client is looking sharable resources (remote shares)
-            STORAGE = 0x0800,   // include all items with accessible storage and their ancestors
-            DefaultForTreeView = ShellAPI.SHCONTF.FOLDERS | ShellAPI.SHCONTF.INCLUDEHIDDEN,
-            DefaultForListView = ShellAPI.SHCONTF.FOLDERS | ShellAPI.SHCONTF.NONFOLDERS | ShellAPI.SHCONTF.INCLUDEHIDDEN,
-        }
-
         #region ICommDlgBrowser3
 
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern HResult IUnknown_SetSite(
+        public static extern common.Interop.WinError.HResult IUnknown_SetSite(
                 [In, MarshalAs(UnmanagedType.IUnknown)] object punk,
                 [In, MarshalAs(UnmanagedType.IUnknown)] object punkSite);
 
@@ -906,33 +722,33 @@ namespace electrifier.Win32API
         {
             // ICommDlgBrowser1
             [PreserveSig]
-            HResult OnDefaultCommand(ShellAPI.IShellView /* IntPtr */ ppshv);
+            common.Interop.WinError.HResult OnDefaultCommand(ShellAPI.IShellView /* IntPtr */ ppshv);
 
             [PreserveSig]
-            HResult OnStateChange(ShellAPI.IShellView /* IntPtr */ ppshv, ShellAPI.CommDlgBrowserStateChange uChange);
+            common.Interop.WinError.HResult OnStateChange(ShellAPI.IShellView /* IntPtr */ ppshv, ShellAPI.CommDlgBrowserStateChange uChange);
 
             [PreserveSig]
-            HResult IncludeObject(ShellAPI.IShellView /* IntPtr */ ppshv, IntPtr pidl);
+            common.Interop.WinError.HResult IncludeObject(ShellAPI.IShellView /* IntPtr */ ppshv, IntPtr pidl);
 
             // ICommDlgBrowser2
             [PreserveSig]
-            HResult GetDefaultMenuText(ShellAPI.IShellView shellView, /* WCHAR* */IntPtr buffer, int bufferMaxLength);   // 'buffer' should be at least MAX_CHAR in size...
+            common.Interop.WinError.HResult GetDefaultMenuText(ShellAPI.IShellView shellView, /* WCHAR* */IntPtr buffer, int bufferMaxLength);   // 'buffer' should be at least MAX_CHAR in size...
 
             [PreserveSig]
-            HResult GetViewFlags([Out] out ShellAPI.CommDlgBrowser2ViewFlags pdwFlags);
+            common.Interop.WinError.HResult GetViewFlags([Out] out ShellAPI.CommDlgBrowser2ViewFlags pdwFlags);
 
             [PreserveSig]
-            HResult Notify(ShellAPI.IShellView /* IntPtr */ pshv, ShellAPI.CommDlgBrowserNotifyType notifyType);
+            common.Interop.WinError.HResult Notify(ShellAPI.IShellView /* IntPtr */ pshv, ShellAPI.CommDlgBrowserNotifyType notifyType);
 
             // ICommDlgBrowser3
             [PreserveSig]
-            HResult GetCurrentFilter(System.Text.StringBuilder pszFileSpec, int cchFileSpec);
+            common.Interop.WinError.HResult GetCurrentFilter(System.Text.StringBuilder pszFileSpec, int cchFileSpec);
 
             [PreserveSig]
-            HResult OnColumnClicked(ShellAPI.IShellView ppshv, int iColumn);
+            common.Interop.WinError.HResult OnColumnClicked(ShellAPI.IShellView ppshv, int iColumn);
 
             [PreserveSig]
-            HResult OnPreViewCreated(ShellAPI.IShellView ppshv);
+            common.Interop.WinError.HResult OnPreViewCreated(ShellAPI.IShellView ppshv);
         }
 
         #endregion ICommDlgBrowser3

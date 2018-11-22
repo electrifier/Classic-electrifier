@@ -60,7 +60,6 @@ namespace electrifier.Core
         /// <param name="appIcon">The icon resource used by this application</param>
         /// <param name="appLogo">The logo resource used by this application</param>
         /// <param name="splashScreenForm">The form representing the logo as splash screen</param>
-
         public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) : base()
         {
             AppContext.Icon = appIcon;
@@ -122,6 +121,8 @@ namespace electrifier.Core
             if (false == this.IsIncognito)
                 this.Session.SaveConfiguration();
         }
+
+ 
 
         #region TraceListener helper members for logging and debugging purposes ===============================================
 

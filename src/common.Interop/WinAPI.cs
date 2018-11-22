@@ -5,63 +5,6 @@ using System.Windows.Forms;
 namespace electrifier.Win32API
 {
 
-    #region HResult-Implementation (Helper struct)
-
-    /// <summary>
-    /// Helper struct for HResult values of Windows API.
-    /// 
-    /// See https://msdn.microsoft.com/en-us/library/windows/desktop/aa378137(v=vs.85).aspx
-    /// 
-    /// The following HRESULT values are the most common. More values are contained in the header file Winerror.h.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential)]
-    public struct HResult
-    {
-        public int Value { get; private set; }
-
-        public static readonly HResult S_OK = new HResult(0x00000000);              // Operation successful
-        public static readonly HResult E_NotImpl = new HResult(0x80004001);         // Not implemented
-        public static readonly HResult E_NoInterface = new HResult(0x80004002);     // No such interface supported
-        public static readonly HResult E_Pointer = new HResult(0x80004003);         // Pointer that is not valid
-        public static readonly HResult E_Abort = new HResult(0x80004004);           // Operation aborted
-        public static readonly HResult E_Fail = new HResult(0x80004005);            // Unspecified failure
-        public static readonly HResult E_Unexpected = new HResult(0x8000FFFF);      // Unexpected failure
-        public static readonly HResult E_AccessDenied = new HResult(0x80070005);    // General access denied error
-        public static readonly HResult E_Handle = new HResult(0x80070006);          // Handle that is not valid
-        public static readonly HResult E_OutOfMemory = new HResult(0x8007000E);     // Failed to allocate necessary memory
-        public static readonly HResult E_InvalidArg = new HResult(0x80070057);      // One or more arguments are not valid
-
-        public HResult(int value) { this.Value = value; }
-        public HResult(uint value) { this.Value = unchecked((int)value); }
-
-        public static implicit operator HResult(int value) { return (new Win32API.HResult(value)); }
-        public static implicit operator HResult(uint value) { return (new Win32API.HResult(value)); }
-
-        public bool Succeeded { get { return (HResult.S_OK == this.Value); } }
-        public bool Failed { get { return (HResult.S_OK != this.Value); } }
-
-        public static bool operator ==(HResult hResultA, HResult hResultB) { return (hResultA.Value == hResultB.Value); }
-        public static bool operator !=(HResult hResultA, HResult hResultB) { return (hResultA.Value != hResultB.Value); }
-
-        public void ThrowException() { Marshal.ThrowExceptionForHR(this.Value); }
-        public override int GetHashCode() { return this.Value; }
-        public override string ToString() { return this.Value.ToString("X8"); }
-
-        public override bool Equals(object obj)
-        {
-            if (null == obj)
-                return false;
-
-            HResult HResultObj = (HResult)obj;
-            if ((object)HResultObj == null)
-                return false;
-
-            return (this.Value == HResultObj.Value);
-        }
-    }
-
-    #endregion
-
     public enum WMSG : uint
     {
         /**
@@ -427,6 +370,7 @@ namespace electrifier.Win32API
         public Int32 iIntegral;                         //    int iIntegral;
     }
 
+    [ObsoleteAttribute("Class electrifier.Win32API.WinAPI is obsolete. It will be replaced and removed.")]
     public class WinAPI
     {
         public enum WM : int
@@ -884,6 +828,7 @@ namespace electrifier.Win32API
             ENHMF = 64,
         }
 
+        [Obsolete("FORMATETC is obsolete! Use System.Runtime.InteropServices.ComTypes.FORMATETC instead!")]
         [StructLayout(LayoutKind.Sequential)]
         public struct FORMATETC
         {
@@ -917,7 +862,7 @@ namespace electrifier.Win32API
         public interface IServiceProvider
         {
             [PreserveSig]
-            HResult QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject);
+            common.Interop.WinError.HResult QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject);
         }
 
         #endregion

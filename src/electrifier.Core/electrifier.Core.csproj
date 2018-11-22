@@ -175,6 +175,8 @@
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WindowsShell\DesktopFolder.cs" />
+    <Compile Include="WindowsShell\FileOperation.cs" />
     <Compile Include="WindowsShell\Tools.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -227,7 +229,6 @@
     <Content Include="Resources\Commands\organize_delete.bmp" />
     <Content Include="Resources\Commands\organize_moveto.bmp" />
     <Content Include="Resources\Commands\organize_rename.bmp" />
-    <None Include="Resources\New_Tab.png" />
     <None Include="Resources\Navigation Refresh 24px.png" />
     <None Include="Resources\Navigation Quick Access 24px.png" />
     <None Include="Resources\Navigation Parent Folder 24px.png" />
