@@ -361,7 +361,7 @@ namespace electrifier.Core.Forms
             this.GetActiveShellBrowserDockContent()?.NavigateForward();
         }
 
-        private void NtsNavigation_NavigateRecentLocationsClicked(object sender, Components.NavigationToolStrip.NavigateRecentLocationsEventArgs e)
+        private void NtsNavigation_NavigateRecentLocationsClicked(object sender, Components.Controls.NavigationToolStrip.NavigateRecentLocationsEventArgs e)
         {
             this.GetActiveShellBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
         }

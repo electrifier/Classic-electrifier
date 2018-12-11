@@ -18,7 +18,7 @@
 **
 */
 
-namespace electrifier.Core.Components
+namespace electrifier.Core.Components.Controls
 {
     public class NavigationToolStrip : System.Windows.Forms.ToolStrip
     {
@@ -33,7 +33,7 @@ namespace electrifier.Core.Components
         private System.Windows.Forms.ToolStripButton tbtNavigateForward;
         private System.Windows.Forms.ToolStripDropDownButton tddNavigateRecentLocations;
         private System.Windows.Forms.ToolStripButton tbtNavigateParent;
-        private Components.ToolStripSpringComboBox tcbNavigateFolder;
+        private Components.Controls.ToolStripSpringComboBox tcbNavigateFolder;
         private System.Windows.Forms.ToolStripButton tbtNavigateRefresh;
         private System.Windows.Forms.ToolStripDropDownButton tddNavigateQuickAccess;
         private System.Windows.Forms.ToolStripSeparator tssNavigateSeparator;
@@ -163,7 +163,7 @@ namespace electrifier.Core.Components
             this.tbtNavigateForward = new System.Windows.Forms.ToolStripButton();
             this.tddNavigateRecentLocations = new System.Windows.Forms.ToolStripDropDownButton();
             this.tbtNavigateParent = new System.Windows.Forms.ToolStripButton();
-            this.tcbNavigateFolder = new electrifier.Core.Components.ToolStripSpringComboBox();
+            this.tcbNavigateFolder = new electrifier.Core.Components.Controls.ToolStripSpringComboBox();
             this.tbtNavigateRefresh = new System.Windows.Forms.ToolStripButton();
             this.tddNavigateQuickAccess = new System.Windows.Forms.ToolStripDropDownButton();
             this.tssNavigateSeparator = new System.Windows.Forms.ToolStripSeparator();

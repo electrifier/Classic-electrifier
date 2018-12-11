@@ -22,7 +22,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace electrifier.Core.Components
+namespace electrifier.Core.Components.Controls
 {
     public class ToolStripSpringComboBox : ToolStripComboBox
     {
