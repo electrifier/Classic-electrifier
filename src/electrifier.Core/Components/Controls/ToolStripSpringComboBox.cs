@@ -28,12 +28,9 @@ namespace electrifier.Core.Components.Controls
     {
         /// <summary>
         /// <see cref="ToolStripSpringComboBox"/> represents a ToolStripComboBox with ability to extend to full size in its containing toolbar.
-        /// 
-        /// 
-        /// See <see cref="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs"/> for details.
         /// </summary>
 
-        public ToolStripSpringComboBox()
+        public ToolStripSpringComboBox() : base()
         {
         }
 
