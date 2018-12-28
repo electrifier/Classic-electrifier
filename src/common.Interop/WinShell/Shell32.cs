@@ -149,6 +149,7 @@ namespace common.Interop.WinShell
 
 
 
+    [System.ObsoleteAttribute("Class common.Interop.WinShell.Shell32 is obsolete. It will be replaced and removed.")]
     public class Shell32
     {
         ///// <summary>

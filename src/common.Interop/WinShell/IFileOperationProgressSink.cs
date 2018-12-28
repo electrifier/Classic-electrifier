@@ -30,6 +30,7 @@ namespace common.Interop.WinShell
         ComImport,
         Guid("04B0F1A7-9490-44BC-96E1-4296A31252E2"),
         InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [System.ObsoleteAttribute("Interface common.Interop.WinShell.IFileOperationProgressSink is obsolete. It will be replaced and removed.")]
     public interface IFileOperationProgressSink
     {
         void StartOperations();

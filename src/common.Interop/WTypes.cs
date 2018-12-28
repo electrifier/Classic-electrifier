@@ -5,6 +5,7 @@ namespace electrifier.Win32API
     /// <summary>
     /// Classes, interfaces, types and enums derived from include file wtypes.h
     /// </summary>
+    [System.ObsoleteAttribute("Class electrifier.Win32API.WTypes is obsolete. It will be replaced and removed.")]
     public class WTypes
     {
         /// <summary>

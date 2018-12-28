@@ -74,6 +74,7 @@ namespace common.Interop.WinShell
         ComImport,
         Guid("947AAB5F-0A5C-4C13-B4D6-4BF7836FC9F8"),
         InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    [System.ObsoleteAttribute("Interface common.Interop.WinShell.IFileOperation is obsolete. It will be replaced and removed.")]
     public interface IFileOperation
     {
         uint Advise(
