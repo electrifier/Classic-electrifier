@@ -123,28 +123,28 @@ namespace electrifier.Core.Components.Controls
             base.Dispose(disposing);
         }
 
-        public void UpdateNavigationLog(Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs navigationLogEventArgs,
-            Microsoft.WindowsAPICodePack.Controls.ExplorerBrowserNavigationLog navigationLog)
+        public void UpdateNavigationLog(/*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/ System.IntPtr navigationLogEventArgs,
+            /*Microsoft.WindowsAPICodePack.Controls.ExplorerBrowserNavigationLog*/ System.IntPtr navigationLog)
         {
-            if (navigationLogEventArgs.CanNavigateBackwardChanged)
-            {
-                this.tbtNavigateBackward.Enabled = navigationLog.CanNavigateBackward;
-            }
+            //if (navigationLogEventArgs.CanNavigateBackwardChanged)
+            //{
+            //    this.tbtNavigateBackward.Enabled = navigationLog.CanNavigateBackward;
+            //}
 
-            if (navigationLogEventArgs.CanNavigateForwardChanged)
-            {
-                this.tbtNavigateForward.Enabled = navigationLog.CanNavigateForward;
-            }
+            //if (navigationLogEventArgs.CanNavigateForwardChanged)
+            //{
+            //    this.tbtNavigateForward.Enabled = navigationLog.CanNavigateForward;
+            //}
 
-            if (navigationLogEventArgs.LocationsChanged)
-            {
-                this.tddNavigateRecentLocations.DropDownItems.Clear();
+            //if (navigationLogEventArgs.LocationsChanged)
+            //{
+            //    this.tddNavigateRecentLocations.DropDownItems.Clear();
 
-                foreach (Microsoft.WindowsAPICodePack.Shell.ShellObject shObj in navigationLog.Locations)
-                {
-                    this.tddNavigateRecentLocations.DropDownItems.Add(shObj.Name);
-                }
-            }
+            //    foreach (Microsoft.WindowsAPICodePack.Shell.ShellObject shObj in navigationLog.Locations)
+            //    {
+            //        this.tddNavigateRecentLocations.DropDownItems.Add(shObj.Name);
+            //    }
+            //}
         }
 
 

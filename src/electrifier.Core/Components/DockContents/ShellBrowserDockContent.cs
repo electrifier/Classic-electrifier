@@ -22,9 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-using Microsoft.WindowsAPICodePack.Controls;
-using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
-using Microsoft.WindowsAPICodePack.Shell;
+//using Microsoft.WindowsAPICodePack.Controls;
+//using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
+//using Microsoft.WindowsAPICodePack.Shell;
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -39,11 +39,11 @@ namespace electrifier.Core.Components.DockContents
     {
         #region Fields ========================================================================================================
 
-        protected ExplorerBrowser explorerBrowser;
+        //protected ExplorerBrowser explorerBrowser;
         protected const string persistParamURI = @"URI=";
         protected const string persistParamViewMode = @"ViewMode=";
 
-        private ExplorerBrowserViewMode? initialViewMode = null;
+        //private ExplorerBrowserViewMode? initialViewMode = null;
 
         protected System.Windows.Forms.Timer UIDecouplingTimer = new System.Windows.Forms.Timer();
         protected System.Threading.AutoResetEvent explorerBrowser_itemsChangedEvent = new System.Threading.AutoResetEvent(false);
@@ -56,16 +56,22 @@ namespace electrifier.Core.Components.DockContents
 
         #region Properties ====================================================================================================
 
-        private ShellObject initialNaviagtionTarget = (ShellObject)Microsoft.WindowsAPICodePack.Shell.KnownFolders.Desktop;
+        //private ShellObject initialNaviagtionTarget = (ShellObject)Microsoft.WindowsAPICodePack.Shell.KnownFolders.Desktop;
 
-        public ShellObject InitialNaviagtionTarget { get => this.initialNaviagtionTarget; set => this.initialNaviagtionTarget = value; }
+        //public ShellObject InitialNaviagtionTarget { get => this.initialNaviagtionTarget; set => this.initialNaviagtionTarget = value; }
 
-        public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
+        //public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
 
-        public int ItemsCount { get => this.explorerBrowser.Items.Count; }
-        public int SelectedItemsCount { get => this.explorerBrowser.SelectedItems.Count; }
+        public int ItemsCount {
+            //get => this.explorerBrowser.Items.Count; }
+            get => 0;
+        }
+        public int SelectedItemsCount {
+            //get => this.explorerBrowser.SelectedItems.Count; }
+            get => 0;
+        }
 
-        public ExplorerBrowserNavigationLog NavigationLog { get => this.explorerBrowser.NavigationLog; }
+        //public ExplorerBrowserNavigationLog NavigationLog { get => this.explorerBrowser.NavigationLog; }
 
         #endregion Properties =================================================================================================
 
@@ -77,10 +83,10 @@ namespace electrifier.Core.Components.DockContents
         public delegate void SelectionChangedHandler(ShellBrowserDockContent sender, EventArgs eventArgs);           // TODO: EventArgs?!?
         public event SelectionChangedHandler SelectionChanged;
 
-        public event System.EventHandler<Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs> NavigationLogChanged {
-            add { this.explorerBrowser.NavigationLog.NavigationLogChanged += value; }
-            remove { this.explorerBrowser.NavigationLog.NavigationLogChanged -= value; }
-        }
+        //public event System.EventHandler<Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs> NavigationLogChanged {
+        //    add { this.explorerBrowser.NavigationLog.NavigationLogChanged += value; }
+        //    remove { this.explorerBrowser.NavigationLog.NavigationLogChanged -= value; }
+        //}
 
         #endregion Published Events ===========================================================================================
 
@@ -93,20 +99,20 @@ namespace electrifier.Core.Components.DockContents
             try
             {
                 // Initialize ExplorerBrowser
-                this.explorerBrowser = new ExplorerBrowser()
-                {
-                    Dock = DockStyle.Fill,
-                };
+                //this.explorerBrowser = new ExplorerBrowser()
+                //{
+                //    Dock = DockStyle.Fill,
+                //};
 
                 // Connect ExplorerBrowser Events
-                this.explorerBrowser.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
-                this.explorerBrowser.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
-                this.explorerBrowser.NavigationPending += this.ExplorerBrowser_NavigationPending;
-                this.explorerBrowser.NavigationComplete += this.ExplorerBrowser_NavigationComplete;
-                this.explorerBrowser.NavigationFailed += this.ExplorerBrowser_NavigationFailed;
-                this.explorerBrowser.ViewEnumerationComplete += this.ExplorerBrowser_ViewEnumerationComplete;
+                //this.explorerBrowser.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
+                //this.explorerBrowser.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
+                //this.explorerBrowser.NavigationPending += this.ExplorerBrowser_NavigationPending;
+                //this.explorerBrowser.NavigationComplete += this.ExplorerBrowser_NavigationComplete;
+                //this.explorerBrowser.NavigationFailed += this.ExplorerBrowser_NavigationFailed;
+                //this.explorerBrowser.ViewEnumerationComplete += this.ExplorerBrowser_ViewEnumerationComplete;
 
-                this.Controls.Add(this.explorerBrowser);
+                //this.Controls.Add(this.explorerBrowser);
 
                 // Initialize UIDecouplingTimer
                 this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
@@ -134,17 +140,17 @@ namespace electrifier.Core.Components.DockContents
 
         public void NavigateBackward()
         {
-            this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Backward);
+            //this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Backward);
         }
 
         public void NavigateForward()
         {
-            this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Forward);
+            //this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Forward);
         }
 
         public void NavigateLogLocation(int navigationLogIndex)
         {
-            this.explorerBrowser.NavigateLogLocation(navigationLogIndex);
+            //this.explorerBrowser.NavigateLogLocation(navigationLogIndex);
         }
 
         public void NavigateRefresh()
@@ -167,12 +173,12 @@ namespace electrifier.Core.Components.DockContents
             sb.Append(nameof(ShellBrowserDockContent));
 
             // Append URI
-            sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamURI,
-                WindowsShell.Tools.UrlCreateFromPath(this.explorerBrowser.NavigationLog.CurrentLocation.ParsingName));
+            //sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamURI,
+            //    WindowsShell.Tools.UrlCreateFromPath(this.explorerBrowser.NavigationLog.CurrentLocation.ParsingName));
 
             // Append ViewMode
             // TODO: For any reason, this doesn't work... :(
-            sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamViewMode, this.ViewMode);
+            //sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamViewMode, this.ViewMode);
 
             return sb.ToString();
         }
@@ -205,16 +211,16 @@ namespace electrifier.Core.Components.DockContents
                     }
 
                     // Finally, when all parameters have been parsed successfully, apply them
-                    if (null != strInitialNaviagtionTarget)
-                        this.InitialNaviagtionTarget = ShellObject.FromParsingName(strInitialNaviagtionTarget);
+                    //if (null != strInitialNaviagtionTarget)
+                    //    this.InitialNaviagtionTarget = ShellObject.FromParsingName(strInitialNaviagtionTarget);
 
-                    if (null != strViewMode)
-                    {
-                        ExplorerBrowserViewMode ebvm = ExplorerBrowserViewMode.Auto;
+                    //if (null != strViewMode)
+                    //{
+                    //    ExplorerBrowserViewMode ebvm = ExplorerBrowserViewMode.Auto;
 
-                        ebvm = (ExplorerBrowserViewMode) Enum.Parse(typeof(ExplorerBrowserViewMode), strViewMode);
-                        this.initialViewMode = ebvm;
-                    }
+                    //    ebvm = (ExplorerBrowserViewMode) Enum.Parse(typeof(ExplorerBrowserViewMode), strViewMode);
+                    //    this.initialViewMode = ebvm;
+                    //}
                 }
             }
             catch (Exception e)
@@ -235,12 +241,12 @@ namespace electrifier.Core.Components.DockContents
             base.OnShown(e);
 
             // TODO: When multiple Tabs are opened initially, sometimes this won't be called for some folders... Most likely if invisible!
-            this.explorerBrowser.Navigate(this.InitialNaviagtionTarget);
+            //this.explorerBrowser.Navigate(this.InitialNaviagtionTarget);
 
-            if (null != this.initialViewMode)
-            {
-                this.ViewMode = (ExplorerBrowserViewMode)this.initialViewMode;
-            }
+            //if (null != this.initialViewMode)
+            //{
+            //    this.ViewMode = (ExplorerBrowserViewMode)this.initialViewMode;
+            //}
         }
 
         #endregion DockContent Event Handler ==================================================================================
@@ -263,37 +269,37 @@ namespace electrifier.Core.Components.DockContents
 
         #region ExplorerBrowser Internal Events Handler ========================================================================
 
-        protected void ExplorerBrowser_NavigationPending(object sender, NavigationPendingEventArgs e)
-        {
-        }
+        //protected void ExplorerBrowser_NavigationPending(object sender, NavigationPendingEventArgs e)
+        //{
+        //}
 
 
-        protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
-        {
-            AppContext.TraceDebug("Firing of ExplorerBrowser_NavigationComplete event.");
-            //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
+        //protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
+        //{
+        //    AppContext.TraceDebug("Firing of ExplorerBrowser_NavigationComplete event.");
+        //    //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
 
-            this.BeginInvoke(new MethodInvoker(delegate ()
-            {
-                this.Text = args.NewLocation.Name;
+        //    this.BeginInvoke(new MethodInvoker(delegate ()
+        //    {
+        //        this.Text = args.NewLocation.Name;
 
-                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;
+        //        //this.Icon = args.NewLocation.Thumbnail.SmallIcon;
 
-            }));
-        }
+        //    }));
+        //}
 
-        protected void ExplorerBrowser_NavigationFailed(object sender, NavigationFailedEventArgs args)
-        {
-            AppContext.TraceError("Firing of ExplorerBrowser_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
-        }
+        //protected void ExplorerBrowser_NavigationFailed(object sender, NavigationFailedEventArgs args)
+        //{
+        //    AppContext.TraceError("Firing of ExplorerBrowser_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
+        //}
 
-        protected void ExplorerBrowser_ViewEnumerationComplete(object sender, EventArgs e)
-        {
-            AppContext.TraceDebug("Firing of ExplorerBrowser_ViewEnumerationComplete event.");
+        //protected void ExplorerBrowser_ViewEnumerationComplete(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceDebug("Firing of ExplorerBrowser_ViewEnumerationComplete event.");
 
-            this.explorerBrowser_itemsChangedEvent.Set();
-            this.explorerBrowser_selectionChangedEvent.Set();
-        }
+        //    this.explorerBrowser_itemsChangedEvent.Set();
+        //    this.explorerBrowser_selectionChangedEvent.Set();
+        //}
 
         #endregion ExplorerBrowser Internal Events Handler =====================================================================
 

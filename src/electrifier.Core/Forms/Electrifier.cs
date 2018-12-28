@@ -123,13 +123,14 @@ namespace electrifier.Core.Forms
             AppContext.TraceDebug("Activating '" + shellBrowser.Text + "'");
 
             // Update Navigation Log and check for all possible changes
-            var navigationLogEventArgs = new Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs()
-            {
-                CanNavigateBackwardChanged = true,
-                CanNavigateForwardChanged = true,
-                LocationsChanged = true,
-            };
-            this.ntsNavigation.UpdateNavigationLog(navigationLogEventArgs, shellBrowser.NavigationLog);
+            // Issue #21 Refactoring: Remove Windows-API-Code-Pack
+            //var navigationLogEventArgs = new Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs()
+            //{
+            //    CanNavigateBackwardChanged = true,
+            //    CanNavigateForwardChanged = true,
+            //    LocationsChanged = true,
+            //};
+            //this.ntsNavigation.UpdateNavigationLog(navigationLogEventArgs, shellBrowser.NavigationLog);
 
             // Update Status Bar
             this.UpdateTslItemCount(shellBrowser);
@@ -151,7 +152,7 @@ namespace electrifier.Core.Forms
 
             newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
             newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-            newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
+            //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
 
             // See <href="https://github.com/dockpanelsuite/dockpanelsuite/issues/348"/>, we only take care of DocumentStyle.DockingWindow
@@ -209,7 +210,7 @@ namespace electrifier.Core.Forms
 
                 newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
                 newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-                newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
+                //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
                 return newDockContent;
             }
@@ -274,7 +275,7 @@ namespace electrifier.Core.Forms
 
             newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
             newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-            newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
+            //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
             newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
         }
@@ -337,11 +338,12 @@ namespace electrifier.Core.Forms
             this.tslSelectionCount.Text = txt;
         }
 
-        private void NewDockContent_NavigationLogChanged(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs e)
+        // Issue #21 Refactoring: Remove Windows-API-Code-Pack
+        private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/ IntPtr e)
         {
-            // TODO: Check if this DockContent is (still) the ActiveContent
-            // TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
-            this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
+            //// TODO: Check if this DockContent is (still) the ActiveContent
+            //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
+            //this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
 
         }
 
