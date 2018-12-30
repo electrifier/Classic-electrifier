@@ -106,7 +106,7 @@ namespace electrifier.Core.Forms
 
         private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)
         {
-            var activeShellBrowser = this.dpnDockPanel.ActiveContent as ShellBrowserDockContent;
+            var activeShellBrowser = this.dpnDockPanel.ActiveContent as ExplorerBrowserDockContent;
 
             if (activeShellBrowser is null)
             {
@@ -118,7 +118,7 @@ namespace electrifier.Core.Forms
             }
         }
 
-        protected void ActiveShellBrowserChanged(ShellBrowserDockContent shellBrowser, EventArgs e)
+        protected void ActiveShellBrowserChanged(ExplorerBrowserDockContent shellBrowser, EventArgs e)
         {
             AppContext.TraceDebug("Activating '" + shellBrowser.Text + "'");
 
@@ -145,7 +145,7 @@ namespace electrifier.Core.Forms
 
         private void CreateNewFileBrowser(DockAlignment? dockAlignment = null)
         {
-            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
+            var newDockContent = new Components.DockContents.ExplorerBrowserDockContent();
             var activeDocumentPane = this.dpnDockPanel.ActiveDocumentPane;
 
             AppContext.TraceScope();
@@ -190,7 +190,7 @@ namespace electrifier.Core.Forms
 
         private IDockContent DockContent_Deserialize(string persistString)
         {
-            // e.g. PersistString="ShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"
+            // e.g. PersistString="ExplorerBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"
             var typeNameSeperatorPos = persistString.IndexOf(" ");
             string dockContentTypeName, dockContentArguments = null;
 
@@ -204,9 +204,9 @@ namespace electrifier.Core.Forms
 
 
 
-            if (nameof(ShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
+            if (nameof(ExplorerBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
             {
-                var newDockContent = new Components.DockContents.ShellBrowserDockContent(dockContentArguments);
+                var newDockContent = new Components.DockContents.ExplorerBrowserDockContent(dockContentArguments);
 
                 newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
                 newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
@@ -268,7 +268,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
+            var newDockContent = new Components.DockContents.ExplorerBrowserDockContent();
             var floatWindowBounds = new Rectangle(this.Location, this.Size);
 
             floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
@@ -282,23 +282,23 @@ namespace electrifier.Core.Forms
 
         #endregion
 
-        private void NewDockContent_ItemsChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
+        private void NewDockContent_ItemsChanged(ExplorerBrowserDockContent sender, EventArgs eventArgs)
         {
             this.UpdateTslItemCount(sender);
         }
 
-        private void NewDockContent_SelectionChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
+        private void NewDockContent_SelectionChanged(ExplorerBrowserDockContent sender, EventArgs eventArgs)
         {
             this.UpdateTslSelectionCount(sender);
         }
 
-        protected void UpdateTslItemCount(ShellBrowserDockContent activeContent)
+        protected void UpdateTslItemCount(ExplorerBrowserDockContent activeContent)
         {
             string txt = null;
 
             if (!(activeContent is null))
             {
-                int itemCount = activeContent.ItemsCount;
+                uint itemCount = activeContent.ItemsCount;
 
                 switch (itemCount)
                 {
@@ -314,13 +314,13 @@ namespace electrifier.Core.Forms
             this.tslItemCount.Text = txt;
         }
 
-        protected void UpdateTslSelectionCount(ShellBrowserDockContent activeContent)
+        protected void UpdateTslSelectionCount(ExplorerBrowserDockContent activeContent)
         {
             string txt = null;
 
             if (!(activeContent is null))
             {
-                int selectedItemsCount = activeContent.SelectedItemsCount;
+                uint selectedItemsCount = activeContent.SelectedItemsCount;
 
                 switch (selectedItemsCount)
                 {
@@ -342,35 +342,35 @@ namespace electrifier.Core.Forms
         private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/ IntPtr e)
         {
             //// TODO: Check if this DockContent is (still) the ActiveContent
-            //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
-            //this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
+            //// TODO: Or, Change NavigationLogEventArgs to send the active ExplorerBrowserDockContent with it
+            //this.ntsNavigation.UpdateNavigationLog(e, this.ExplorerBrowserDockContent().NavigationLog);
 
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ShellBrowserDockContent GetActiveShellBrowserDockContent()
+        public ExplorerBrowserDockContent GetActiveExplorerBrowserDockContent()
         {
-            return (this.dpnDockPanel.ActiveDocumentPane?.ActiveContent as ShellBrowserDockContent);
+            return (this.dpnDockPanel.ActiveDocumentPane?.ActiveContent as ExplorerBrowserDockContent);
         }
 
         private void NtsNavigation_NavigateBackwardClick(object sender, EventArgs eventArgs)
         {
-            this.GetActiveShellBrowserDockContent()?.NavigateBackward();
+            this.GetActiveExplorerBrowserDockContent()?.NavigateBackward();
         }
 
         private void NtsNavigation_NavigateForwardClick(object sender, EventArgs eventArgs)
         {
-            this.GetActiveShellBrowserDockContent()?.NavigateForward();
+            this.GetActiveExplorerBrowserDockContent()?.NavigateForward();
         }
 
         private void NtsNavigation_NavigateRecentLocationsClicked(object sender, Components.Controls.NavigationToolStrip.NavigateRecentLocationsEventArgs e)
         {
-            this.GetActiveShellBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
+            this.GetActiveExplorerBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
         }
 
         private void NtsNavigation_NavigateRefreshClick(object sender, EventArgs e)
         {
-            this.GetActiveShellBrowserDockContent()?.NavigateRefresh();
+            this.GetActiveExplorerBrowserDockContent()?.NavigateRefresh();
         }
 
     }

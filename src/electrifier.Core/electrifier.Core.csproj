@@ -64,6 +64,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\electrifier\bin\Release\</OutputPath>
@@ -166,7 +167,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
+    <Compile Include="Components\DockContents\ExplorerBrowserDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Components\FormStatePersistor.cs">
