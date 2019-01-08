@@ -19,31 +19,32 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-namespace common.Interop.WinShell
+namespace common.Interop
 {
     public static partial class Shell32
     {
-        [ComImport, Guid("000214f2-0000-0000-c000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        public interface IEnumIDList
+        [ComImport, Guid("361bbdc7-e6ee-4e13-be58-58e2240c810f"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface IExplorerBrowserEvents
         {
             [PreserveSig]
-            int Next(
-                int celt,
-                ref IntPtr rgelt,
-                out int pceltFetched);
+            WinError.HResult OnNavigationPending(
+                IntPtr pidlFolder);
 
             [PreserveSig]
-            void Skip(
-                int celt);
+            WinError.HResult OnViewCreated(
+                [MarshalAs(UnmanagedType.IUnknown)]
+                object psv);
 
             [PreserveSig]
-            int Reset();
+            WinError.HResult OnNavigationComplete(
+                IntPtr pidlFolder);
 
             [PreserveSig]
-            void Clone(
-                ref IEnumIDList ppenum);
-        };
+            WinError.HResult OnNavigationFailed(
+                IntPtr pidlFolder);
+        }
     }
 }

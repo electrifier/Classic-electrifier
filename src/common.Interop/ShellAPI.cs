@@ -2,7 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using common.Interop.WinShell;
+using common.Interop;
 
 
 namespace electrifier.Win32API

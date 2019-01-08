@@ -28,7 +28,7 @@ using electrifier.Win32API;
 
 
 
-namespace common.Interop.WinShell
+namespace common.Interop
 {
     public static partial class Shell32
     {

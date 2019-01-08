@@ -10,23 +10,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Ole32.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\ICommDlgBrowser3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IEnumIDList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerBrowserEvents.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerPaneVisibility.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IFileOperation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IFileOperationProgressSink.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IServiceProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellFolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellFolderViewCB.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\Shell32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShellAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)User32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\ICommDlgBrowser3.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IEnumIDList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IExplorerBrowserEvents.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IExplorerPaneVisibility.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IFileOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IFileOperationProgressSink.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IServiceProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellFolder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellFolderViewCB.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellView.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\Shell32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WTypes.cs" />
   </ItemGroup>
 </Project>

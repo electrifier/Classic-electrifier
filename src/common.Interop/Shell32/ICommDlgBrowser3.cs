@@ -23,7 +23,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace common.Interop.WinShell
+namespace common.Interop
 {
     public static partial class Shell32
     {
