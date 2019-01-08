@@ -2,6 +2,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using common.Interop.WinShell;
+
 
 namespace electrifier.Win32API
 {
@@ -154,7 +156,7 @@ namespace electrifier.Win32API
         {
             public IntPtr hIcon;
             public int iIcon;
-            public common.Interop.WinShell.SFGAO dwAttributes;
+            public Shell32.SFGAO dwAttributes;
             [MarshalAs(UnmanagedType.LPStr, SizeConst = 260)]
             public string szDisplayName;
             [MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
@@ -632,14 +634,14 @@ namespace electrifier.Win32API
         public struct SFV_CREATE
         {
             public int cbSize;                          // The size of the SFV_CREATE structure, in bytes.
-            public common.Interop.WinShell.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
+            public Shell32.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
             public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
-            public common.Interop.WinShell.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
+            public Shell32.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
 
             public SFV_CREATE(
-                common.Interop.WinShell.IShellFolder pshf = default(common.Interop.WinShell.IShellFolder),
+                Shell32.IShellFolder pshf = default(Shell32.IShellFolder),
                 ShellAPI.IShellView psvOuter = default(ShellAPI.IShellView),
-                common.Interop.WinShell.IShellFolderViewCB psfvcb = default(common.Interop.WinShell.IShellFolderViewCB))
+                Shell32.IShellFolderViewCB psfvcb = default(Shell32.IShellFolderViewCB))
             {
                 this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
                 this.pshf = pshf;

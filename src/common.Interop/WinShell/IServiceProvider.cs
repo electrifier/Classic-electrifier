@@ -19,31 +19,21 @@
 */
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace common.Interop.WinShell
 {
     public static partial class Shell32
     {
-        [ComImport, Guid("000214f2-0000-0000-c000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        public interface IEnumIDList
+        [ComImport, Guid("6d5140c1-7436-11ce-8034-00aa006009fa"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface IServiceProvider
         {
             [PreserveSig]
-            int Next(
-                int celt,
-                ref IntPtr rgelt,
-                out int pceltFetched);
-
-            [PreserveSig]
-            void Skip(
-                int celt);
-
-            [PreserveSig]
-            int Reset();
-
-            [PreserveSig]
-            void Clone(
-                ref IEnumIDList ppenum);
+            WinError.HResult QueryService(
+                ref Guid guidService,
+                ref Guid riid,
+                out IntPtr ppvObject);
         };
     }
 }

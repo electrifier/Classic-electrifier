@@ -32,14 +32,14 @@ namespace electrifier.Core.WindowsShell
     /// </summary>
     public class FileOperation : IDisposable
     {
-        private IFileOperation shellFileOperation = null;
-        private Guid iShellItemGUID = typeof(IShellItem).GUID;
+        private Shell32.IFileOperation shellFileOperation = null;
+        private Guid iShellItemGUID = typeof(Shell32.IShellItem).GUID;
 
         public FileOperation(
             IntPtr windowHandle,
-            FileOperationFlags operationFlags = (FileOperationFlags.FOF_AllowUndo | FileOperationFlags.FOF_RenameOnCollision))
+            Shell32.FileOperationFlags operationFlags = (Shell32.FileOperationFlags.FOF_AllowUndo | Shell32.FileOperationFlags.FOF_RenameOnCollision))
         {
-            this.shellFileOperation = CLSID.CoCreateInstance<IFileOperation>(CLSID.FileOperation);
+            this.shellFileOperation = Shell32.CLSID.CoCreateInstance<Shell32.IFileOperation>(Shell32.CLSID.FileOperation);
 
             if (this.shellFileOperation is null)
                 throw new Exception("Could not instantiate FileOperation!");
@@ -56,7 +56,7 @@ namespace electrifier.Core.WindowsShell
             string destinationFolder,
             string pszCopyName = null)
         {
-            IShellItem shItemSource = null, shItemDestination = null;
+            Shell32.IShellItem shItemSource = null, shItemDestination = null;
 
             try
             {

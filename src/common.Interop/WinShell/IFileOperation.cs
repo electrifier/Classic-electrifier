@@ -25,130 +25,144 @@ using common.Interop;
 
 namespace common.Interop.WinShell
 {
-    #region Flags =============================================================================================================
-
-    /// <summary>
-    /// Pararmeters used for IFileOperation::SetOperationFlags
-    /// 
-    /// <see href="https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifileoperation-setoperationflags"/>
-    /// </summary>
-    [Flags]
-    public enum FileOperationFlags : uint
+    public static partial class Shell32
     {
-        FOF_MultiDestFiles = 0x00000001,
-        FOF_ConfirmMouse = 0x00000002,
-        FOF_Silent = 0x00000004,
-        FOF_RenameOnCollision = 0x00000008,
-        FOF_NoConfirmation = 0x00000010,
-        FOF_WantMappingHandle = 0x00000020,
-        FOF_AllowUndo = 0x00000040,
-        FOF_FilesOnly = 0x00000080,
-        FOF_SimpleProgress = 0x00000100,
-        FOF_NoConfirmMkDir = 0x00000200,
-        FOF_NoErrorUI = 0x00000400,
-        FOF_NoCopySecurityAttribs = 0x00000800,
-        FOF_NoRecursion = 0x00001000,
-        FOF_No_Connected_Elements = 0x00002000,
-        FOF_WantNukeWarning = 0x00004000,
-        FOF_NoRecurseReparse = 0x00008000,
-        FOFX_NoSkipJunctions = 0x00010000,
-        FOFX_PreferHardlink = 0x00020000,
-        FOFX_ShowElevationPrompt = 0x00040000,
-        FOFX_EarlyFailure = 0x00100000,
-        FOFX_PreserveFileExtensions = 0x00200000,
-        FOFX_KeepNewerFile = 0x00400000,
-        FOFX_NoCopyHooks = 0x00800000,
-        FOFX_NoMinimizeBox = 0x01000000,
-        FOFX_MoveAclsAcrossVolumes = 0x02000000,
-        FOFX_DontDisplaySourcePath = 0x04000000,
-        FOFX_DontDisplayDestPath = 0x08000000,
-        FOFX_RecycleOnDelete = 0x00080000,
-    }
+        #region Flags =============================================================================================================
 
-    #endregion ================================================================================================================
+        /// <summary>
+        /// Pararmeters used for IFileOperation::SetOperationFlags
+        /// 
+        /// <see href="https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifileoperation-setoperationflags"/>
+        /// </summary>
+        [Flags]
+        public enum FileOperationFlags : uint
+        {
+            FOF_MultiDestFiles = 0x00000001,
+            FOF_ConfirmMouse = 0x00000002,
+            FOF_Silent = 0x00000004,
+            FOF_RenameOnCollision = 0x00000008,
+            FOF_NoConfirmation = 0x00000010,
+            FOF_WantMappingHandle = 0x00000020,
+            FOF_AllowUndo = 0x00000040,
+            FOF_FilesOnly = 0x00000080,
+            FOF_SimpleProgress = 0x00000100,
+            FOF_NoConfirmMkDir = 0x00000200,
+            FOF_NoErrorUI = 0x00000400,
+            FOF_NoCopySecurityAttribs = 0x00000800,
+            FOF_NoRecursion = 0x00001000,
+            FOF_No_Connected_Elements = 0x00002000,
+            FOF_WantNukeWarning = 0x00004000,
+            FOF_NoRecurseReparse = 0x00008000,
+            FOFX_NoSkipJunctions = 0x00010000,
+            FOFX_PreferHardlink = 0x00020000,
+            FOFX_ShowElevationPrompt = 0x00040000,
+            FOFX_EarlyFailure = 0x00100000,
+            FOFX_PreserveFileExtensions = 0x00200000,
+            FOFX_KeepNewerFile = 0x00400000,
+            FOFX_NoCopyHooks = 0x00800000,
+            FOFX_NoMinimizeBox = 0x01000000,
+            FOFX_MoveAclsAcrossVolumes = 0x02000000,
+            FOFX_DontDisplaySourcePath = 0x04000000,
+            FOFX_DontDisplayDestPath = 0x08000000,
+            FOFX_RecycleOnDelete = 0x00080000,
+        }
 
-    /// <summary>
-    /// https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nn-shobjidl_core-ifileoperation
-    /// </summary>
-    [
-        ComImport,
-        Guid("947AAB5F-0A5C-4C13-B4D6-4BF7836FC9F8"),
-        InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IFileOperation
-    {
-        uint Advise(
-            IFileOperationProgressSink pfops);
+        #endregion ================================================================================================================
 
-        void Unadvise(
-            uint dwCookie);
+        /// <summary>
+        /// https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nn-shobjidl_core-ifileoperation
+        /// </summary>
+        [ComImport, Guid("947aab5f-0a5c-4c13-b4d6-4bf7836fc9f8"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        public interface IFileOperation
+        {
+            uint Advise(
+                IFileOperationProgressSink pfops);
 
-        void SetOperationFlags(
-            FileOperationFlags dwOperationFlags);
+            void Unadvise(
+                uint dwCookie);
 
-        void SetProgressMessage(
-            [MarshalAs(UnmanagedType.LPWStr)] string pszMessage);
+            void SetOperationFlags(
+                FileOperationFlags dwOperationFlags);
 
-        void SetProgressDialog(
-            [MarshalAs(UnmanagedType.Interface)] object popd);
+            void SetProgressMessage(
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszMessage);
 
-        void SetProperties(
-            [MarshalAs(UnmanagedType.Interface)] object pproparray);
+            void SetProgressDialog(
+                [MarshalAs(UnmanagedType.Interface)]
+                object popd);
 
-        void SetOwnerWindow(
-            IntPtr hwndParent);
+            void SetProperties(
+                [MarshalAs(UnmanagedType.Interface)]
+                object pproparray);
 
-        void ApplyPropertiesToItem(
-            IShellItem psiItem);
+            void SetOwnerWindow(
+                IntPtr hwndParent);
 
-        void ApplyPropertiesToItems(
-            [MarshalAs(UnmanagedType.Interface)] object punkItems);
+            void ApplyPropertiesToItem(
+                IShellItem psiItem);
 
-        void RenameItem(
-            IShellItem psiItem,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszNewName,
-            IFileOperationProgressSink pfopsItem);
+            void ApplyPropertiesToItems(
+                [MarshalAs(UnmanagedType.Interface)]
+                object punkItems);
 
-        void RenameItems(
-            [MarshalAs(UnmanagedType.Interface)] object pUnkItems,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszNewName);
+            void RenameItem(
+                IShellItem psiItem,
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszNewName,
+                IFileOperationProgressSink pfopsItem);
 
-        void MoveItem(
-            IShellItem psiItem,
-            IShellItem psiDestinationFolder,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszNewName,
-            IFileOperationProgressSink pfopsItem);
+            void RenameItems(
+                [MarshalAs(UnmanagedType.Interface)]
+                object pUnkItems,
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszNewName);
 
-        void MoveItems(
-            [MarshalAs(UnmanagedType.Interface)] object punkItems,
-            IShellItem psiDestinationFolder);
+            void MoveItem(
+                IShellItem psiItem,
+                IShellItem psiDestinationFolder,
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszNewName,
+                IFileOperationProgressSink pfopsItem);
 
-        void CopyItem(
-            IShellItem psiItem,
-            IShellItem psiDestinationFolder,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszCopyName,
-            IFileOperationProgressSink pfopsItem);
+            void MoveItems(
+                [MarshalAs(UnmanagedType.Interface)]
+                object punkItems,
+                IShellItem psiDestinationFolder);
 
-        void CopyItems(
-            [MarshalAs(UnmanagedType.Interface)] object punkItems,
-            IShellItem psiDestinationFolder);
+            void CopyItem(
+                IShellItem psiItem,
+                IShellItem psiDestinationFolder,
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszCopyName,
+                IFileOperationProgressSink pfopsItem);
 
-        void DeleteItem(
-            IShellItem psiItem,
-            IFileOperationProgressSink pfopsItem);
+            void CopyItems(
+                [MarshalAs(UnmanagedType.Interface)]
+                object punkItems,
+                IShellItem psiDestinationFolder);
 
-        void DeleteItems(
-            [MarshalAs(UnmanagedType.Interface)] object punkItems);
+            void DeleteItem(
+                IShellItem psiItem,
+                IFileOperationProgressSink pfopsItem);
 
-        common.Interop.WinError.HResult NewItem(
-            IShellItem psiDestinationFolder,
-            WinNT.File_Attribute /*FileAttributes*/ dwFileAttributes,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszName,
-            [MarshalAs(UnmanagedType.LPWStr)] string pszTemplateName,
-            IFileOperationProgressSink pfopsItem);
+            void DeleteItems(
+                [MarshalAs(UnmanagedType.Interface)]
+                object punkItems);
 
-        void PerformOperations();
+            common.Interop.WinError.HResult NewItem(
+                IShellItem psiDestinationFolder,
+                WinNT.File_Attribute /*FileAttributes*/ dwFileAttributes,
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszName,
+                [MarshalAs(UnmanagedType.LPWStr)]
+                string pszTemplateName,
+                IFileOperationProgressSink pfopsItem);
 
-        [return: MarshalAs(UnmanagedType.Bool)]
-        bool GetAnyOperationsAborted();
+            void PerformOperations();
+
+            [return: MarshalAs(UnmanagedType.Bool)]
+            bool GetAnyOperationsAborted();
+        }
     }
 }
