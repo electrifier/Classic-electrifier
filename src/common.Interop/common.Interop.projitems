@@ -24,7 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\Shell32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShellAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)User32.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)User32\User32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />

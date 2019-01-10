@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 
 namespace common.Interop
 {
-    public class User32
+    public static partial class User32
     {
         /// <summary>
         /// Places the given window in the system-maintained clipboard format listener list.

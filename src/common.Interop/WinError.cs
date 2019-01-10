@@ -37,7 +37,7 @@ namespace common.Interop
         public struct HResult
         {
             [FieldOffset(0)]
-            private readonly int Value;     // TODO: Convert to uint
+            private readonly int hr;
 
             public static readonly HResult S_OK = new HResult(0x00000000);              // Operation successful
             public static readonly HResult E_NotImpl = new HResult(0x80004001);         // Not implemented
@@ -51,21 +51,21 @@ namespace common.Interop
             public static readonly HResult E_OutOfMemory = new HResult(0x8007000E);     // Failed to allocate necessary memory
             public static readonly HResult E_InvalidArg = new HResult(0x80070057);      // One or more arguments are not valid
 
-            public HResult(int value) { this.Value = value; }
-            public HResult(uint value) { this.Value = unchecked((int)value); }
+            public HResult(int value) { this.hr = value; }
+            public HResult(uint value) { this.hr = unchecked((int)value); }
 
-            public static implicit operator HResult(int value) { return (new common.Interop.WinError.HResult(value)); }
-            public static implicit operator HResult(uint value) { return (new common.Interop.WinError.HResult(value)); }
+            public static implicit operator HResult(int value) { return (new HResult(value)); }
+            public static implicit operator HResult(uint value) { return (new HResult(value)); }
 
-            public bool Succeeded { get { return (HResult.S_OK == this.Value); } }
-            public bool Failed { get { return (HResult.S_OK != this.Value); } }
+            public bool Succeeded { get { return (this.hr >= 0); } }
+            public bool Failed { get { return (this.hr < 0); } }
 
-            public static bool operator ==(HResult hResultA, HResult hResultB) { return (hResultA.Value == hResultB.Value); }
-            public static bool operator !=(HResult hResultA, HResult hResultB) { return (hResultA.Value != hResultB.Value); }
+            public static bool operator ==(HResult hResultA, HResult hResultB) { return (hResultA.hr == hResultB.hr); }
+            public static bool operator !=(HResult hResultA, HResult hResultB) { return (hResultA.hr != hResultB.hr); }
 
-            public void ThrowException() { Marshal.ThrowExceptionForHR(this.Value); }
-            public override int GetHashCode() { return this.Value; }
-            public override string ToString() { return this.Value.ToString("X8"); }
+            public void ThrowException() { Marshal.ThrowExceptionForHR(this.hr); }
+            public override int GetHashCode() { return this.hr; }
+            public override string ToString() { return this.hr.ToString("0xX8"); }
 
             public override bool Equals(object obj)
             {
@@ -73,10 +73,10 @@ namespace common.Interop
                     return false;
 
                 HResult HResultObj = (HResult)obj;
-                if ((object)HResultObj == null)
+                if (((object)HResultObj) == null)
                     return false;
 
-                return (this.Value == HResultObj.Value);
+                return (this.hr == HResultObj.hr);
             }
         }
 

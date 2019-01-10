@@ -851,22 +851,6 @@ namespace electrifier.Win32API
         public const string GuidStr_SID_STopWindow = "49E1B500-4636-11D3-97F7-00C04F45D0B3";
         public static Guid SID_STopWindow = new Guid(GuidStr_SID_STopWindow);
 
-        #region IServiceProvider
-
-        public const string IIDS_IServiceProvider = "6D5140C1-7436-11CE-8034-00AA006009FA";
-        public static Guid IID_IServiceProvider = new Guid(IIDS_IServiceProvider);
-
-        [ComImport(),
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-            GuidAttribute(IIDS_IServiceProvider)]
-        public interface IServiceProvider
-        {
-            [PreserveSig]
-            common.Interop.WinError.HResult QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject);
-        }
-
-        #endregion
-
 
         [ComImport(),
             InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
