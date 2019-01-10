@@ -31,9 +31,10 @@ namespace common.Interop
         {
             [PreserveSig]
             WinError.HResult QueryService(
-                ref Guid guidService,
-                ref Guid riid,
-                out IntPtr ppvObject);
+                in Guid guidService,
+                in Guid riid,
+                [MarshalAs(UnmanagedType.IUnknown)]
+                out object ppvObject);
         };
     }
 }

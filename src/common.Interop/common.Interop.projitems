@@ -10,8 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Ole32.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\ICommDlgBrowser3.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\ICommDlgBrowser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\IEnumIDList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerBrowser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerBrowserEvents.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerPaneVisibility.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Shell32\IFileOperation.cs" />

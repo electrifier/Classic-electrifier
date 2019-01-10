@@ -26,6 +26,8 @@ using System.Windows.Forms;
 //using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
 //using Microsoft.WindowsAPICodePack.Shell;
 
+using common.Interop;
+
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
@@ -40,6 +42,8 @@ namespace electrifier.Core.Components.DockContents
         #region Fields ========================================================================================================
 
         //protected ExplorerBrowser explorerBrowser;
+        protected Controls.ExplorerBrowserControl explorerBrowserControl;
+
         protected const string persistParamURI = @"URI=";
         protected const string persistParamViewMode = @"ViewMode=";
 
@@ -99,6 +103,11 @@ namespace electrifier.Core.Components.DockContents
             try
             {
                 // Initialize ExplorerBrowser
+                this.explorerBrowserControl = new Controls.ExplorerBrowserControl()
+                {
+                    Dock = DockStyle.Fill,
+                };
+
                 //this.explorerBrowser = new ExplorerBrowser()
                 //{
                 //    Dock = DockStyle.Fill,
@@ -112,7 +121,9 @@ namespace electrifier.Core.Components.DockContents
                 //this.explorerBrowser.NavigationFailed += this.ExplorerBrowser_NavigationFailed;
                 //this.explorerBrowser.ViewEnumerationComplete += this.ExplorerBrowser_ViewEnumerationComplete;
 
+                this.Controls.Add(this.explorerBrowserControl);
                 //this.Controls.Add(this.explorerBrowser);
+
 
                 // Initialize UIDecouplingTimer
                 this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);

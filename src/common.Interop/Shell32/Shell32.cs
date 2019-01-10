@@ -142,6 +142,9 @@ namespace common.Interop
             #endregion
 
             #region Various CLSIDs added by tajbender
+            /// <summary>CLSID_ExplorerBrowser</summary>
+            /// <remarks>IID_IExplorerBrowser</remarks>
+            public const string ExplorerBrowser = "71f96385-ddd6-48d3-a0c1-ae06e8b055fb";
             /// <summary>CLSID_FileOperation</summary>
             /// <remarks>IID_IFileOperation</remarks>
             public const string FileOperation = "3ad05575-8857-4850-9277-11b85bdb8e09";
@@ -177,14 +180,10 @@ namespace common.Interop
         //    [MarshalAs(UnmanagedType.Interface, IidParameterIndex = 2)] out IShellItem ppv);
 
 
-        [DllImport("shell32.dll",
-            SetLastError = true,
-            CharSet = CharSet.Unicode,
-            PreserveSig = false)]
+        [DllImport("shell32.dll", SetLastError = true, CharSet = CharSet.Unicode, PreserveSig = false)]
         [return: MarshalAs(UnmanagedType.Interface)]
         public static extern IShellItem SHCreateItemFromParsingName(
-            [MarshalAs(UnmanagedType.LPWStr)]
-            string pszPath,
+            [MarshalAs(UnmanagedType.LPWStr)] string pszPath,
             System.Runtime.InteropServices.ComTypes.IBindCtx pbc,
             ref Guid riid);
 
@@ -205,7 +204,6 @@ namespace common.Interop
         [ObsoleteAttribute("SHGetMalloc interface is deprecated. Use CoTaskMemAlloc instead!")]
         [DllImport("shell32.dll")]
         public static extern WinError.HResult SHGetMalloc(
-            [MarshalAs(UnmanagedType.IUnknown)]
-            out object hObject);
+            [MarshalAs(UnmanagedType.IUnknown)] out object hObject);
     }
 }

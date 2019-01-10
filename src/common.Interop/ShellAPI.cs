@@ -172,7 +172,7 @@ namespace electrifier.Win32API
             public WinAPI.COLORREF crColorKey;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
+        [StructLayout(LayoutKind.Sequential, Pack = 4)]
         public struct FOLDERSETTINGS
         {
             public ShellAPI.FOLDERVIEWMODE ViewMode;
@@ -188,7 +188,7 @@ namespace electrifier.Win32API
             public static void LoadDefaults(out FOLDERSETTINGS folderSettings)
             {
                 folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.AUTO;
-                folderSettings.Flags = ShellAPI.FOLDERFLAGS.SNAPTOGRID;
+                folderSettings.Flags = ShellAPI.FOLDERFLAGS.SnapToGrid;
             }
         };
 
@@ -224,27 +224,44 @@ namespace electrifier.Win32API
             LAST = 8
         };
 
+        /// <summary>
+        /// https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/ne-shobjidl_core-folderflags
+        /// </summary>
         public enum FOLDERFLAGS : uint
         {
-            AUTOARRANGE = 0x00000001,
-            ABBREVIATEDNAMES = 0x00000002,
-            SNAPTOGRID = 0x00000004,
-            OWNERDATA = 0x00000008,
-            BESTFITWINDOW = 0x00000010,
-            DESKTOP = 0x00000020,
-            SINGLESEL = 0x00000040,
-            NOSUBFOLDERS = 0x00000080,
-            TRANSPARENT = 0x00000100,
-            NOCLIENTEDGE = 0x00000200,
-            NOSCROLL = 0x00000400,
-            ALIGNLEFT = 0x00000800,
-            NOICONS = 0x00001000,
-            SHOWSELALWAYS = 0x00002000,
-            NOVISIBLE = 0x00004000,
-            SINGLECLICKACTIVATE = 0x00008000,
-            NOWEBVIEW = 0x00010000,
-            HIDEFILENAMES = 0x00020000,
-            CHECKSELECT = 0x00040000,
+            None = 0x00000000,
+            AutoArrange = 0x00000001,
+            AbbreviatedNames = 0x00000002,
+            SnapToGrid = 0x00000004,
+            OwnerData = 0x00000008,
+            BestFitWindow = 0x00000010,
+            Desktop = 0x00000020,
+            SingleSelection = 0x00000040,
+            NoSubfolders = 0x00000080,
+            Transparent = 0x00000100,
+            NoClientEdge = 0x00000200,
+            NoScroll = 0x00000400,
+            AlignLeft = 0x00000800,
+            NoIcons = 0x00001000,
+            ShowSelectionAlways = 0x00002000,
+            NoVisible = 0x00004000,
+            SingleClickActivate = 0x00008000,
+            NoWebView = 0x00010000,
+            HideFilenames = 0x00020000,
+            CheckSelect = 0x00040000,
+            NoEnumRefresh = 0x00080000,
+            NoGrouping = 0x00100000,
+            FullRowSelect = 0x00200000,
+            NoFilters = 0x00400000,
+            NoColumnHeaders = 0x00800000,
+            NoHeaderInAllViews = 0x01000000,
+            ExtendedTiles = 0x02000000,
+            TriCheckSelect = 0x04000000,
+            AutoCheckSelect = 0x08000000,
+            NoBrowserViewState = 0x10000000,
+            SubsetGroups = 0x20000000,
+            UseSearchFolders = 0x40000000,
+            AllowRightToLeftReading = 0x80000000,
         };
 
         public enum SVUIA : uint

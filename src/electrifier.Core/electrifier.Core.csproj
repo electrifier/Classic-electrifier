@@ -64,6 +64,7 @@
     <DebugType>full</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\electrifier\bin\Release\</OutputPath>
@@ -126,6 +127,12 @@
     <Compile Include="AppContext.Session.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Components\Controls\ExplorerBrowserControl.Designer.cs">
+      <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
       <SubType>Form</SubType>
