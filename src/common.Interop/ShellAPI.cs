@@ -688,89 +688,10 @@ namespace electrifier.Win32API
             IntPtr pidl,
             [MarshalAs(UnmanagedType.BStr)] out String pbstr);
 
-        #region ICommDlgBrowser3
-
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern common.Interop.WinError.HResult IUnknown_SetSite(
                 [In, MarshalAs(UnmanagedType.IUnknown)] object punk,
                 [In, MarshalAs(UnmanagedType.IUnknown)] object punkSite);
-
-
-        /// <summary>
-        /// System interface id for ICommDlgBrowser3 interface
-        /// </summary>
-        /// 
-        public const string IIDS_ICommDlgBrowser = "000214F1-0000-0000-C000-000000000046";
-        public static Guid IID_ICommDlgBrowser = new Guid(IIDS_ICommDlgBrowser);
-
-        public const string IIDS_ICommDlgBrowser2 = "10339516-2894-11D2-9039-00C04F8EEB3E";
-        public static Guid IID_ICommDlgBrowser2 = new Guid(IIDS_ICommDlgBrowser2);
-
-        public const string IIDS_ICommDlgBrowser3 = "C8AD25A1-3294-41EE-8165-71174BD01C57";
-        public static Guid IID_ICommDlgBrowser3 = new Guid(IIDS_ICommDlgBrowser3);
-
-        public enum CommDlgBrowserStateChange
-        {
-            SetFocus = 0,
-            KillFocus = 1,
-            SelectionChange = 2,
-            Rename = 3,
-            StateChange = 4,
-        }
-
-        public enum CommDlgBrowserNotifyType
-        {
-            Done = 1,
-            Start = 2,
-        }
-
-        public enum CommDlgBrowser2ViewFlags
-        {
-            ShowAllFiles = 0x00000001,
-            IsFileSave = 0x00000002,
-            AllowPreviewPane = 0x00000004,
-            NoSelectVerb = 0x00000008,
-            NoIncludeItem = 0x00000010,
-            IsFolderPicker = 0x00000020,
-        }
-
-        [ComImport,
-            Guid(IIDS_ICommDlgBrowser3),
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        public interface ICommDlgBrowser3
-        {
-            // ICommDlgBrowser1
-            [PreserveSig]
-            common.Interop.WinError.HResult OnDefaultCommand(ShellAPI.IShellView /* IntPtr */ ppshv);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult OnStateChange(ShellAPI.IShellView /* IntPtr */ ppshv, ShellAPI.CommDlgBrowserStateChange uChange);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult IncludeObject(ShellAPI.IShellView /* IntPtr */ ppshv, IntPtr pidl);
-
-            // ICommDlgBrowser2
-            [PreserveSig]
-            common.Interop.WinError.HResult GetDefaultMenuText(ShellAPI.IShellView shellView, /* WCHAR* */IntPtr buffer, int bufferMaxLength);   // 'buffer' should be at least MAX_CHAR in size...
-
-            [PreserveSig]
-            common.Interop.WinError.HResult GetViewFlags([Out] out ShellAPI.CommDlgBrowser2ViewFlags pdwFlags);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult Notify(ShellAPI.IShellView /* IntPtr */ pshv, ShellAPI.CommDlgBrowserNotifyType notifyType);
-
-            // ICommDlgBrowser3
-            [PreserveSig]
-            common.Interop.WinError.HResult GetCurrentFilter(System.Text.StringBuilder pszFileSpec, int cchFileSpec);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult OnColumnClicked(ShellAPI.IShellView ppshv, int iColumn);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult OnPreViewCreated(ShellAPI.IShellView ppshv);
-        }
-
-        #endregion ICommDlgBrowser3
 
         /// <summary>
         /// Displays a ShellAbout dialog box.
