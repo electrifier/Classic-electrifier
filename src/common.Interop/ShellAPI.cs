@@ -172,26 +172,6 @@ namespace electrifier.Win32API
             public WinAPI.COLORREF crColorKey;
         }
 
-        [StructLayout(LayoutKind.Sequential, Pack = 4)]
-        public struct FOLDERSETTINGS
-        {
-            public ShellAPI.FOLDERVIEWMODE ViewMode;
-            public ShellAPI.FOLDERFLAGS Flags;
-
-            public FOLDERSETTINGS(FOLDERVIEWMODE ViewMode, FOLDERFLAGS Flags)
-            {
-                this.ViewMode = ViewMode;
-                this.Flags = Flags;
-            }
-
-            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-            public static void LoadDefaults(out FOLDERSETTINGS folderSettings)
-            {
-                folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.AUTO;
-                folderSettings.Flags = ShellAPI.FOLDERFLAGS.SnapToGrid;
-            }
-        };
-
         [StructLayout(LayoutKind.Sequential)]
         public struct CMINVOKECOMMANDINFO
         {
@@ -205,64 +185,6 @@ namespace electrifier.Win32API
             public uint dwHotKey;
             public IntPtr hIcon;
         }
-
-        /// <summary>
-        /// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762510(v=vs.85).aspx
-        /// </summary>
-        public enum FOLDERVIEWMODE : int
-        {
-            AUTO = -1,
-            FIRST = 1,
-            ICON = 1,
-            SMALLICON = 2,
-            LIST = 3,
-            DETAILS = 4,
-            THUMBNAIL = 5,
-            TILE = 6,
-            THUMBSTRIP = 7,
-            CONTENT = 8,
-            LAST = 8
-        };
-
-        /// <summary>
-        /// https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/ne-shobjidl_core-folderflags
-        /// </summary>
-        public enum FOLDERFLAGS : uint
-        {
-            None = 0x00000000,
-            AutoArrange = 0x00000001,
-            AbbreviatedNames = 0x00000002,
-            SnapToGrid = 0x00000004,
-            OwnerData = 0x00000008,
-            BestFitWindow = 0x00000010,
-            Desktop = 0x00000020,
-            SingleSelection = 0x00000040,
-            NoSubfolders = 0x00000080,
-            Transparent = 0x00000100,
-            NoClientEdge = 0x00000200,
-            NoScroll = 0x00000400,
-            AlignLeft = 0x00000800,
-            NoIcons = 0x00001000,
-            ShowSelectionAlways = 0x00002000,
-            NoVisible = 0x00004000,
-            SingleClickActivate = 0x00008000,
-            NoWebView = 0x00010000,
-            HideFilenames = 0x00020000,
-            CheckSelect = 0x00040000,
-            NoEnumRefresh = 0x00080000,
-            NoGrouping = 0x00100000,
-            FullRowSelect = 0x00200000,
-            NoFilters = 0x00400000,
-            NoColumnHeaders = 0x00800000,
-            NoHeaderInAllViews = 0x01000000,
-            ExtendedTiles = 0x02000000,
-            TriCheckSelect = 0x04000000,
-            AutoCheckSelect = 0x08000000,
-            NoBrowserViewState = 0x10000000,
-            SubsetGroups = 0x20000000,
-            UseSearchFolders = 0x40000000,
-            AllowRightToLeftReading = 0x80000000,
-        };
 
         public enum SVUIA : uint
         {
@@ -573,10 +495,10 @@ namespace electrifier.Win32API
             [PreserveSig] uint UIActivate(SVUIA State);
             [PreserveSig] uint Refresh();
             [PreserveSig]
-            uint CreateViewWindow(IShellView psvPrevious, ref FOLDERSETTINGS pfs,
-                                 IShellBrowser psb, ref RECT prcView, out IntPtr phWnd);
+            uint CreateViewWindow(IShellView psvPrevious, ref Shell32.FolderSettings pfs,
+                                 IShellBrowser psb, ref Windows.Rect prcView, out IntPtr phWnd);
             [PreserveSig] uint DestroyViewWindow();
-            [PreserveSig] uint GetCurrentInfo(out FOLDERSETTINGS pfs);
+            [PreserveSig] uint GetCurrentInfo(out Shell32.FolderSettings pfs);
             [PreserveSig] uint AddPropertySheetPages(uint dwReserved, IntPtr /*LPFNSVADDPROPSHEETPAGE */ pfn, IntPtr /* LPARAM */ lparam);
             [PreserveSig] uint SaveViewState();
             [PreserveSig] uint SelectItem(IntPtr pidlItem, IntPtr /* SVSIF */ uFlags);
@@ -656,9 +578,9 @@ namespace electrifier.Win32API
             public Shell32.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
 
             public SFV_CREATE(
-                Shell32.IShellFolder pshf = default(Shell32.IShellFolder),
-                ShellAPI.IShellView psvOuter = default(ShellAPI.IShellView),
-                Shell32.IShellFolderViewCB psfvcb = default(Shell32.IShellFolderViewCB))
+                Shell32.IShellFolder pshf = default,
+                ShellAPI.IShellView psvOuter = default,
+                Shell32.IShellFolderViewCB psfvcb = default)
             {
                 this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
                 this.pshf = pshf;

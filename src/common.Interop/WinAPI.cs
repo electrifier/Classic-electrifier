@@ -143,22 +143,22 @@ namespace electrifier.Win32API
         public LVITEM item;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
+    //[StructLayout(LayoutKind.Sequential)]
+    //public struct RECT
+    //{
+    //    public int Left;
+    //    public int Top;
+    //    public int Right;
+    //    public int Bottom;
 
-        public RECT(System.Drawing.Rectangle Rectangle)
-        {
-            this.Left = Rectangle.Left;
-            this.Top = Rectangle.Top;
-            this.Right = Rectangle.Right;
-            this.Bottom = Rectangle.Bottom;
-        }
-    };
+    //    public RECT(System.Drawing.Rectangle Rectangle)
+    //    {
+    //        this.Left = Rectangle.Left;
+    //        this.Top = Rectangle.Top;
+    //        this.Right = Rectangle.Right;
+    //        this.Bottom = Rectangle.Bottom;
+    //    }
+    //};
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct LVITEM

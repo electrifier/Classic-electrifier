@@ -84,9 +84,8 @@ namespace electrifier.Core.Components.Controls
 
                 this.explorerBrowser.Advise(this, out this.adviseEventsCookie);
 
-                var clientRect = new Win32API.RECT(this.ClientRectangle);        // implizite Konvertierung!!!!
-                var folderSettings = new Win32API.ShellAPI.FOLDERSETTINGS(
-                    Win32API.ShellAPI.FOLDERVIEWMODE.DETAILS, Win32API.ShellAPI.FOLDERFLAGS.None);
+                var clientRect = new Windows.Rect(this.ClientRectangle);
+                var folderSettings = new Shell32.FolderSettings();
 
                 this.explorerBrowser.Initialize(this.Handle, clientRect, folderSettings);
 
@@ -123,12 +122,7 @@ namespace electrifier.Core.Components.Controls
 
         protected override void OnSizeChanged(EventArgs e)
         {
-            if (!(this.explorerBrowser is null))
-            {
-                var rc = new Win32API.RECT(this.ClientRectangle);
-
-                this.explorerBrowser.SetRect(IntPtr.Zero, rc);
-            }
+            this.explorerBrowser?.SetRect(IntPtr.Zero, this.ClientRectangle);
 
             base.OnSizeChanged(e);
         }

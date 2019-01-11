@@ -21,8 +21,6 @@
 using System;
 using System.Runtime.InteropServices;
 
-using electrifier.Win32API;
-
 namespace common.Interop
 {
     public static partial class Shell32
@@ -107,8 +105,8 @@ namespace common.Interop
             /// <returns></returns>
             void Initialize(
                 IntPtr hwndParent,
-                in electrifier.Win32API.RECT prc,
-                in ShellAPI.FOLDERSETTINGS pfs);
+                in Windows.Rect prc,
+                in FolderSettings pfs);
 
             /// <summary>
             /// Destroys the browser.
@@ -124,7 +122,7 @@ namespace common.Interop
             /// <returns></returns>
             void SetRect(
                 IntPtr phdwp,
-                electrifier.Win32API.RECT rcBrowser);
+                Windows.Rect rcBrowser);
 
             /// <summary>
             /// Sets the name of the property bag.
@@ -153,7 +151,7 @@ namespace common.Interop
             /// <returns></returns>
             [PreserveSig]
             WinError.HResult SetFolderSettings(
-                ShellAPI.FOLDERSETTINGS pfs);
+                FolderSettings pfs);
 
             /// <summary>
             /// Initiates a connection with IExplorerBrowser for event callbacks.

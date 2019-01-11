@@ -32,12 +32,6 @@ namespace common.Interop
 {
     public static partial class Shell32
     {
-        #region Flags =============================================================================================================
-
-
-
-        #endregion ================================================================================================================
-
         #region Common COM Interface GUIDs
 
         /// <summary>
@@ -152,6 +146,289 @@ namespace common.Interop
         }
         #endregion
 
+
+        #region Constants =====================================================================================================
+
+        /// <summary>
+        /// Specifies the folder view type.
+        /// 
+        /// <seealso href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb762510(v=vs.85).aspx"/>
+        /// </summary>
+        public enum FolderViewMode : int
+        {
+            /// <summary>
+            /// FVM_AUTO
+            /// The view should determine the best option.
+            /// </summary>
+            Auto = -1,
+            /// <summary>
+            /// FVM_FIRST
+            /// The minimum constant value in FOLDERVIEWMODE, for validation purposes.
+            /// </summary>
+            First = 1,
+            /// <summary>
+            /// FVM_ICON
+            /// The view should display medium-size icons.
+            /// </summary>
+            Icon = 1,
+            /// <summary>
+            /// FVM_SMALLICON
+            /// The view should display small icons.
+            /// </summary>
+            SmallIcon = 2,
+            /// <summary>
+            /// FVM_LIST
+            /// Object names are displayed in a list view.
+            /// </summary>
+            List = 3,
+            /// <summary>
+            /// FVM_DETAILS
+            /// Object names and other selected information, such as the size or date last updated, are shown.
+            /// </summary>
+            Details = 4,
+            /// <summary>
+            /// FVM_THUMBNAIL
+            /// The view should display thumbnail icons.
+            /// </summary>
+            Thumbnail = 5,
+            /// <summary>
+            /// FVM_TILE
+            /// The view should display large icons.
+            /// </summary>
+            Tile = 6,
+            /// <summary>
+            /// FVM_THUMBSTRIP
+            /// The view should display icons in a filmstrip format.
+            /// </summary>
+            Thumbstrip = 7,
+            /// <summary>
+            /// FVM_CONTENT
+            /// Windows 7 and later. The view should display content mode.
+            /// </summary>
+            Content = 8,
+            /// <summary>
+            /// FVM_LAST:
+            /// The maximum constant value in FOLDERVIEWMODE, for validation purposes.
+            /// </summary>
+            Last = 8
+        };
+
+        /// <summary>
+        /// A set of flags that specify folder view options.
+        /// The flags are independent of each other and can be used in any combination.
+        /// 
+        /// <seealso href="https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/ne-shobjidl_core-folderflags"/>
+        /// </summary>
+        [Flags]
+        public enum FolderFlags : uint
+        {
+            /// <summary>
+            /// FWF_NONE
+            /// Windows 7 and later. No special view options.
+            /// </summary>
+            None = 0x00000000,
+            /// <summary>
+            /// FWF_AUTOARRANGE
+            /// Automatically arrange the elements in the view.
+            /// This implies LVS_AUTOARRANGE if the list-view control is used to implement the view.
+            /// </summary>
+            AutoArrange = 0x00000001,
+            /// <summary>
+            /// FWF_ABBREVIATEDNAMES
+            /// Not supported.
+            /// </summary>
+            AbbreviatedNames = 0x00000002,
+            /// <summary>
+            /// FWF_SNAPTOGRID
+            /// Not supported.
+            /// </summary>
+            SnapToGrid = 0x00000004,
+            /// <summary>
+            /// FWF_OWNERDATA
+            /// Not supported.
+            /// </summary>
+            OwnerData = 0x00000008,
+            /// <summary>
+            /// FWF_BESTFITWINDOW
+            /// Not supported.
+            /// </summary>
+            BestFitWindow = 0x00000010,
+            /// <summary>
+            /// FWF_DESKTOP
+            /// Make the folder behave like the desktop. This value applies only to the desktop and is
+            /// not used for typical Shell folders. This flag implies FWF_NOCLIENTEDGE and FWF_NOSCROLL.
+            /// </summary>
+            Desktop = 0x00000020,
+            /// <summary>
+            /// FWF_SINGLESEL
+            /// Do not allow more than a single item to be selected. This is used in the common dialog boxes.
+            /// </summary>
+            SingleSelection = 0x00000040,
+            /// <summary>
+            /// FWF_NOSUBFOLDERS
+            /// Do not show subfolders.
+            /// </summary>
+            NoSubfolders = 0x00000080,
+            /// <summary>
+            /// FWF_TRANSPARENT
+            /// Draw transparently. This is used only for the desktop.
+            /// </summary>
+            Transparent = 0x00000100,
+            /// <summary>
+            /// FWF_NOCLIENTEDGE
+            /// Not supported.
+            /// </summary>
+            NoClientEdge = 0x00000200,
+            /// <summary>
+            /// FWF_NOSCROLL
+            /// Do not add scroll bars. This is used only for the desktop.
+            /// </summary>
+            NoScroll = 0x00000400,
+            /// <summary>
+            /// FWF_ALIGNLEFT
+            /// The view should be left-aligned. This implies LVS_ALIGNLEFT if the list-view control is used to implement the view.
+            /// </summary>
+            AlignLeft = 0x00000800,
+            /// <summary>
+            /// FWF_NOICONS
+            /// The view should not display icons.
+            /// </summary>
+            NoIcons = 0x00001000,
+            /// <summary>
+            /// FWF_SHOWSELALWAYS
+            /// This flag is deprecated as of Windows XP and has no effect. Always show the selection.
+            /// </summary>
+            ShowSelectionAlways = 0x00002000,
+            /// <summary>
+            /// FWF_NOVISIBLE
+            /// Not supported.
+            /// </summary>
+            NoVisible = 0x00004000,
+            /// <summary>
+            /// FWF_SINGLECLICKACTIVATE
+            /// Not supported.
+            /// </summary>
+            SingleClickActivate = 0x00008000,
+            /// <summary>
+            /// FWF_NOWEBVIEW
+            /// The view should not be shown as a web view.
+            /// </summary>
+            NoWebView = 0x00010000,
+            /// <summary>
+            /// FWF_HIDEFILENAMES
+            /// The view should not display file names.
+            /// </summary>
+            HideFilenames = 0x00020000,
+            /// <summary>
+            /// FWF_CHECKSELECT
+            /// Turns on the check mode for the view.
+            /// </summary>
+            CheckSelect = 0x00040000,
+            /// <summary>
+            /// FWF_NOENUMREFRESH
+            /// Windows Vista and later.
+            /// Do not re-enumerate the view (or drop the current contents of the view) when the view is refreshed.
+            /// </summary>
+            NoEnumRefresh = 0x00080000,
+            /// <summary>
+            /// FWF_NOGROUPING
+            /// Windows Vista and later.
+            /// Do not allow grouping in the view
+            /// </summary>
+            NoGrouping = 0x00100000,
+            /// <summary>
+            /// FWF_FULLROWSELECT
+            /// Windows Vista and later.
+            /// When an item is selected, the item and all its sub-items are highlighted.
+            /// </summary>
+            FullRowSelect = 0x00200000,
+            /// <summary>
+            /// FWF_NOFILTERS
+            /// Windows Vista and later.
+            /// Do not display filters in the view.
+            /// </summary>
+            NoFilters = 0x00400000,
+            /// <summary>
+            /// FWF_NOCOLUMNHEADER
+            /// Windows Vista and later.
+            /// Do not display a column header in the view in any view mode.
+            /// </summary>
+            NoColumnHeaders = 0x00800000,
+            /// <summary>
+            /// FWF_NOHEADERINALLVIEWS
+            /// Windows Vista and later.
+            /// Only show the column header in details view mode.
+            /// </summary>
+            NoHeaderInAllViews = 0x01000000,
+            /// <summary>
+            /// FWF_EXTENDEDTILES
+            /// Windows Vista and later.
+            /// When the view is in "tile view mode" the layout of a single item should be extended to the width of the view.
+            /// </summary>
+            ExtendedTiles = 0x02000000,
+            /// <summary>
+            /// FWF_TRICHECKSELECT
+            /// Windows Vista and later.
+            /// Not supported.
+            /// </summary>
+            TriCheckSelect = 0x04000000,
+            /// <summary>
+            /// FWF_AUTOCHECKSELECT
+            /// Windows Vista and later.
+            /// Items can be selected using checkboxes.
+            /// </summary>
+            AutoCheckSelect = 0x08000000,
+            /// <summary>
+            /// FWF_NOBROWSERVIEWSTATE
+            /// Windows Vista and later.
+            /// The view should not save view state in the browser.
+            /// </summary>
+            NoBrowserViewState = 0x10000000,
+            /// <summary>
+            /// FWF_SUBSETGROUPS
+            /// Windows Vista and later.
+            /// The view should list the number of items displayed in each group. To be used with IFolderView2::SetGroupSubsetCount.
+            /// </summary>
+            SubsetGroups = 0x20000000,
+            /// <summary>
+            /// FWF_USESEARCHFOLDER
+            /// Windows Vista and later.
+            /// Use the search folder for stacking and searching.
+            /// </summary>
+            UseSearchFolders = 0x40000000,
+            /// <summary>
+            /// FWF_ALLOWRTLREADING
+            /// Windows Vista and later.
+            /// Ensure right-to-left reading layout in a right-to-left system. Without this flag, the view displays
+            /// strings from left-to-right both on systems set to left-to-right and right-to-left reading layout,
+            /// which ensures that file names display correctly.
+            /// </summary>
+            AllowRightToLeftReading = 0x80000000,
+        };
+
+        #endregion Constants ==================================================================================================
+
+        #region Structures ====================================================================================================
+
+        /// <summary>
+        /// Contains folder view information.
+        /// 
+        /// <seealso href="https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/ns-shobjidl_core-foldersettings"/>
+        /// </summary>
+        [StructLayout(LayoutKind.Sequential, Pack = 4)]
+        public struct FolderSettings
+        {
+            public FolderViewMode ViewMode;
+            public FolderFlags Flags;
+
+            public FolderSettings(FolderViewMode ViewMode = FolderViewMode.Auto, FolderFlags Flags = FolderFlags.AutoArrange)
+            {
+                this.ViewMode = ViewMode;
+                this.Flags = Flags;
+            }
+        };
+
+        #endregion Structures =================================================================================================
 
 
         ///// <summary>
