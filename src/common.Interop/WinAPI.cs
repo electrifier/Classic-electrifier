@@ -767,12 +767,6 @@ namespace electrifier.Win32API
         [DllImport("comctl32.dll")]
         public static extern IntPtr ImageList_GetDragImage(ref POINT ppt, ref POINT pptHotspot);
 
-        [DllImport("ole32.Dll")]
-        public static extern int CoCreateInstance(ref Guid clsid,
-            [MarshalAs(UnmanagedType.IUnknown)] object inner,
-            Win32API.WTypes.CLSCTX context, ref Guid uuid,
-            [MarshalAs(UnmanagedType.IUnknown)] out object rReturnedComObject);
-
         public static Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
         /*
 		 * Drag and Drop stuff

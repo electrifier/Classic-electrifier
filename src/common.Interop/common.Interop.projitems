@@ -28,6 +28,5 @@
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WTypes.cs" />
   </ItemGroup>
 </Project>
