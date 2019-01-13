@@ -26,14 +26,42 @@ namespace common.Interop
 {
     public static partial class Shell32
     {
-
+        /// <summary>
+        /// Used with the IFolderView::Items, IFolderView::ItemCount, and IShellView::GetItemObject
+        /// methods to restrict or control the items in their collections.
+        /// </summary>
         public enum ShellViewGetItemObject
         {
+            /// <summary>
+            /// SVGIO_BACKGROUND
+            /// Refers to the background of the view. It is used with IID_IContextMenu to get a shortcut menu for the view background 
+            /// and with IID_IDispatch to get a dispatch interface that represents the ShellFolderView object for the view.
+            /// </summary>
             Background = 0x00000000,
+            /// <summary>
+            /// SVGIO_SELECTION
+            /// Refers to the currently selected items. Used with IID_IDataObject to retrieve a data object that represents the selected items.
+            /// </summary>
             Selection = 0x00000001,
+            /// <summary>
+            /// SVGIO_ALLVIEW
+            /// Used in the same way as SVGIO_SELECTION but refers to all items in the view.
+            /// </summary>
             AllView = 0x00000002,
+            /// <summary>
+            /// SVGIO_CHECKED
+            /// Used in the same way as SVGIO_SELECTION but refers to checked items in views where checked mode is supported.
+            /// For more details on checked mode, see FOLDERFLAGS.
+            /// </summary>
             Checked = 0x00000003,
+            /// <summary>
+            /// SVGIO_TYPE_MASK	0x0000000F. Masks all bits but those corresponding to the _SVGIO flags.
+            /// </summary>
             TypeMask = 0x0000000F,
+            /// <summary>
+            /// SVGIO_FLAG_VIEWORDER
+            /// Returns the items in the order they appear in the view. If this flag is not set, the selected item will be listed first.
+            /// </summary>
             ViewOrderFlag = unchecked((int)0x80000000)
         }
 

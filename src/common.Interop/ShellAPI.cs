@@ -610,11 +610,6 @@ namespace electrifier.Win32API
             IntPtr pidl,
             [MarshalAs(UnmanagedType.BStr)] out String pbstr);
 
-        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern common.Interop.WinError.HResult IUnknown_SetSite(
-                [In, MarshalAs(UnmanagedType.IUnknown)] object punk,
-                [In, MarshalAs(UnmanagedType.IUnknown)] object punkSite);
-
         /// <summary>
         /// Displays a ShellAbout dialog box.
         /// </summary>

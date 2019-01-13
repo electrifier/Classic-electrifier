@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)User32\User32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Windows\WinDef.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Windows\Windows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />
   </ItemGroup>

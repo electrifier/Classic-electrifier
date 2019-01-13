@@ -34,6 +34,7 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IExplorerPaneVisibility
         , Shell32.IExplorerBrowserEvents
         , Shell32.ICommDlgBrowser3
+        //TODO: IMessageFilter
     {
         #region Fields ========================================================================================================
 
@@ -43,6 +44,13 @@ namespace electrifier.Core.Components.Controls
         /// Used for this.explorerBrowser.Advise() and this.explorerBrowser.Unadvise() calls
         /// </summary>
         private uint adviseEventsCookie;
+
+        /// <summary>
+        /// Nested class ViewEvents acts as the connection to IShellView of ExplorerBrowser
+        /// </summary>
+        protected ExplorerBrowserControl.ViewEvents ebViewEvents;
+
+        private readonly string propertyBagName = "electrifier.ExplorerBrowserControl";
 
 
 
@@ -56,6 +64,26 @@ namespace electrifier.Core.Components.Controls
         #endregion Properties =================================================================================================
 
         #region Published Events ==============================================================================================
+
+        /// <summary>
+        /// Fires when the Items collection in ShellView has changed.
+        /// </summary>
+        public event EventHandler ContentsChanged;
+
+        /// <summary>
+        /// Fires when ShellView has finished enumerating files.
+        /// </summary>
+        public event EventHandler ViewEnumerationComplete;
+
+        /// <summary>
+        /// Fires when SelectedItems collection in ShellView has changed.
+        /// </summary>
+        public event EventHandler SelectionChanged;
+
+        /// <summary>
+        /// Fires when the selected item in the ShellView has changed, e.g. a rename.
+        /// </summary>
+        public event EventHandler SelectedItemChanged;
 
         #endregion Published Events ===========================================================================================
 
@@ -73,27 +101,32 @@ namespace electrifier.Core.Components.Controls
 
             if (false == this.DesignMode)
             {
-                this.explorerBrowser = Shell32.CLSID.CoCreateInstance<Shell32.IExplorerBrowser>(Shell32.CLSID.ExplorerBrowser);
+                this.explorerBrowser =
+                    Shell32.CLSID.CoCreateInstance<Shell32.IExplorerBrowser>(Shell32.CLSID.ExplorerBrowser);
 
                 if (this.explorerBrowser is null)
-                    throw new Exception("Could not instantiate ExplorerBrowser!");
+                    throw new COMException("Could not instantiate ExplorerBrowser!");
 
+                // Set site to get notified of IExplorerPaneVisibility and ICommDlgBrowser events
+                Shell32.IUnknown_SetSite(this.explorerBrowser, this);
 
-
-                Win32API.ShellAPI.IUnknown_SetSite(this.explorerBrowser, this);
-
+                // Advise of IExplorerBrowserEvents
                 this.explorerBrowser.Advise(this, out this.adviseEventsCookie);
 
-                var clientRect = new Windows.Rect(this.ClientRectangle);
-                var folderSettings = new Shell32.FolderSettings();
+                // Create connection point to ExplorerBrowser's ShellView events
+                this.ebViewEvents = new ExplorerBrowserControl.ViewEvents(this);
 
-                this.explorerBrowser.Initialize(this.Handle, clientRect, folderSettings);
+                this.explorerBrowser.Initialize(this.Handle, this.ClientRectangle, new Shell32.FolderSettings());
 
-                this.explorerBrowser.SetOptions(Shell32.ExplorerBrowserOptions.ShowFrames);       // NoBorder?
+                // Force an initial show frames so that IExplorerPaneVisibility works the first time it is set.
+                // This also enables the control panel to be browsed to. If it is not set, then navigating to 
+                // the control panel succeeds, but no items are visible in the view.
+                this.explorerBrowser.SetOptions(Shell32.ExplorerBrowserOptions.ShowFrames);
 
-                this.explorerBrowser.SetPropertyBag("electrifier.ExplorerBrowserControl");
+                this.explorerBrowser.SetPropertyBag(this.propertyBagName);
 
 
+                // Do initial navigation on background thread
                 this.BeginInvoke(new MethodInvoker(
                     delegate
                     {
@@ -106,10 +139,10 @@ namespace electrifier.Core.Components.Controls
         {
             if (!(this.explorerBrowser is null))
             {
-                //this.viewevents.Disconnectview();         // TODO!!!
+                this.ebViewEvents.DisconnectShellView();
 
                 this.explorerBrowser.Unadvise(this.adviseEventsCookie);
-                Win32API.ShellAPI.IUnknown_SetSite(this.explorerBrowser, null);
+                Shell32.IUnknown_SetSite(this.explorerBrowser, null);
 
                 this.explorerBrowser.Destroy();
 
@@ -192,6 +225,8 @@ namespace electrifier.Core.Components.Controls
 
         public WinError.HResult OnViewCreated(object psv)
         {
+            this.ebViewEvents.ConnectShellView(psv as Shell32.IShellView);
+
             return WinError.HResult.S_OK;
         }
 

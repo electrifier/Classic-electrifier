@@ -67,6 +67,9 @@ namespace common.Interop
             public override int GetHashCode() { return this.hr; }
             public override string ToString() { return this.hr.ToString("0xX8"); }
 
+            // Explicit conversion to int
+            public static explicit operator int(HResult hResult) => hResult.hr;
+
             public override bool Equals(object obj)
             {
                 if (null == obj)

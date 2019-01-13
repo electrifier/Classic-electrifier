@@ -94,6 +94,9 @@ namespace common.Interop
             public const string ITaskbarList4 = "c43dc798-95d1-4bea-9030-bb99e2983a1a";
 
             #endregion
+
+            /// <summary>IID_DShellFolderViewEvents</summary>
+            public const string DShellFolderViewEvents = "62112aa2-ebe4-11cf-a5fb-0020afe7292d";
         }
         #endregion
 
@@ -482,5 +485,48 @@ namespace common.Interop
         [DllImport("shell32.dll")]
         public static extern WinError.HResult SHGetMalloc(
             [MarshalAs(UnmanagedType.IUnknown)] out object hObject);
+
+        /// <summary>
+        /// Sets the specified object's site by calling its IObjectWithSite::SetSite method.
+        /// </summary>
+        /// <remarks>
+        /// This function calls the specified object's IUnknown::QueryInterface method to obtain a pointer to the object's
+        /// IObjectWithSite interface.
+        /// If successful, the function calls IObjectWithSite::SetSite to set or change the site.
+        /// </remarks>
+        /// <param name="punk">A pointer to the IUnknown interface of the object whose site is to be changed.</param>
+        /// <param name="punkSite">A pointer to the IUnknown interface of the new site.</param>
+        /// <returns>Returns S_OK if the site was successfully set, or a COM error code otherwise.</returns>
+        [DllImport("shlwapi.dll", SetLastError = true)]
+        public static extern WinError.HResult IUnknown_SetSite(
+            [In, MarshalAs(UnmanagedType.IUnknown)] object punk,
+            [In, MarshalAs(UnmanagedType.IUnknown)] object punkSite);
+
+        /// <summary>
+        /// [This function is available through Windows XP and Windows Server 2003. It might be altered or unavailable in subsequent versions of Windows.]
+        /// 
+        /// Establishes or terminates a connection between a client's sink and a connection point container.
+        /// </summary>
+        /// <param name="punk">A pointer to the IUnknown interface of the object to be connected to the connection point container.
+        /// If you set fConnect to FALSE to indicate that you are disconnecting the object, this parameter is ignored and can be set to NULL.</param>
+        /// <param name="riidEvent">The IID of the interface on the connection point container whose connection point object is being requested.</param>
+        /// <param name="fConnect">TRUE if a connection is being established; FALSE if a connection is being broken.</param>
+        /// <param name="punkTarget">A pointer to the connection point container's IUnknown interface.</param>
+        /// <param name="pdwCookie">A connection token. If you set fConnect to TRUE to make a new connection, this parameter receives a token that uniquely
+        /// identifies the connection. If you set fConnect to FALSE to break a connection, this parameter must point to the token that you received when
+        /// you called ConnectToConnectionPoint to establish the connection.</param>
+        /// <param name="ppcpOut">A pointer to the connection point container's IConnectionPoint interface, if the operation was successful. The
+        /// calling application must release this pointer when it is no longer needed. If the request is unsuccessful, the pointer receives NULL.
+        /// This parameter is optional and can be NULL.</param>
+        /// <returns>If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.</returns>
+        [DllImport("shlwapi.dll", SetLastError = true)]
+        internal static extern WinError.HResult ConnectToConnectionPoint(
+            [In, MarshalAs(UnmanagedType.IUnknown)] object punk,
+            ref Guid riidEvent,
+            [MarshalAs(UnmanagedType.Bool)] bool fConnect,
+            [In, MarshalAs(UnmanagedType.IUnknown)] object punkTarget,
+            ref uint pdwCookie,
+            ref IntPtr ppcpOut);
+
     }
 }
