@@ -209,7 +209,12 @@ namespace electrifier.Core.Components.Controls
 
         public WinError.HResult GetPaneState(ref Guid explorerPane, out Shell32.ExplorerPaneState peps)
         {
-            peps = Shell32.ExplorerPaneState.DefaultOn;
+            switch (explorerPane.ToString())
+            {
+                default:
+                    peps = Shell32.ExplorerPaneState.DoNotCare;
+                    break;
+            }
 
             return WinError.HResult.S_OK;
         }
