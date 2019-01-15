@@ -21,7 +21,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-using common.Interop;
+using Vanara.PInvoke;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -63,8 +63,8 @@ namespace electrifier.Core.Components.Controls
                 internal const int SelectedItemChanged = 220;
             }
 
-            protected static Guid IID_IDispatch = new Guid(Windows.IID.IDispatch);
-            protected static Guid IID_DShellFolderViewEvents = new Guid(Shell32.IID.DShellFolderViewEvents);
+            protected static Guid IID_IDispatch = new Guid("00020400-0000-0000-c000-000000000046");         // TODO
+            protected static Guid IID_DShellFolderViewEvents = new Guid("62112aa2-ebe4-11cf-a5fb-0020afe7292d");    // TODO
 
             #endregion Fields =====================================================================================================
 
@@ -77,23 +77,17 @@ namespace electrifier.Core.Components.Controls
             {
                 this.DisconnectShellView();
 
-                WinError.HResult hResult = psv.GetItemObject(Shell32.ShellViewGetItemObject.Background,
-                    ref ViewEvents.IID_IDispatch, out this.viewDispatch);
+                this.viewDispatch = psv.GetItemObject(Shell32.SVGIO.SVGIO_BACKGROUND, ViewEvents.IID_IDispatch);
 
-                if (hResult.Succeeded)
+                HRESULT hResult = ShlwApi.ConnectToConnectionPoint(this, ViewEvents.IID_DShellFolderViewEvents, true, this.viewDispatch,
+                    ref this.viewConnectionPointCookie, out System.Runtime.InteropServices.ComTypes.IConnectionPoint ppcpOut);
+
+                if (hResult.Failed)
                 {
-                    IntPtr ppcpOut = IntPtr.Zero;
+                    Marshal.ReleaseComObject(this.viewDispatch);
+                    this.viewDispatch = null;
 
-                    hResult = Shell32.ConnectToConnectionPoint(this, ref IID_DShellFolderViewEvents,
-                        true, this.viewDispatch, ref this.viewConnectionPointCookie, ref ppcpOut);
-
-                    if (hResult.Failed)
-                    {
-                        Marshal.ReleaseComObject(this.viewDispatch);
-                        this.viewDispatch = null;
-
-                        throw new COMException("ExplorerBrowserControl.ViewEvents.ConnectShellView: Shell32.ConnectToConnectionPoint() failed.", (int)hResult);
-                    }
+                    throw new COMException("ExplorerBrowserControl.ViewEvents.ConnectShellView: Shell32.ConnectToConnectionPoint() failed.", (int)hResult);
                 }
             }
 
@@ -101,10 +95,8 @@ namespace electrifier.Core.Components.Controls
             {
                 if (this.viewDispatch != null)
                 {
-                    IntPtr ppcpOut = IntPtr.Zero;
-
-                    Shell32.ConnectToConnectionPoint(this, ref IID_DShellFolderViewEvents,
-                        false, this.viewDispatch, ref this.viewConnectionPointCookie, ref ppcpOut);
+                    ShlwApi.ConnectToConnectionPoint(this, ViewEvents.IID_DShellFolderViewEvents, false, this.viewDispatch,
+                        ref this.viewConnectionPointCookie, out System.Runtime.InteropServices.ComTypes.IConnectionPoint ppcpOut);
                     this.viewConnectionPointCookie = 0;
 
                     Marshal.ReleaseComObject(this.viewDispatch);

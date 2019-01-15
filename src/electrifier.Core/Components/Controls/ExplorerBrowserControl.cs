@@ -23,8 +23,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-using common.Interop;
-
+using Vanara.PInvoke;
+using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -34,7 +34,7 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IExplorerPaneVisibility
         , Shell32.IExplorerBrowserEvents
         , Shell32.ICommDlgBrowser3
-        //TODO: IMessageFilter
+        // , IMessageFilter // TODO!
     {
         #region Fields ========================================================================================================
 
@@ -53,7 +53,8 @@ namespace electrifier.Core.Components.Controls
         private readonly string propertyBagName = "electrifier.ExplorerBrowserControl";
 
 
-
+        private const int HRESULT_CANCELLED = unchecked((int)0x800704C7);
+        private const int HRESULT_RESOURCE_IN_USE = unchecked((int)0x800700AA);
 
 
 
@@ -101,14 +102,13 @@ namespace electrifier.Core.Components.Controls
 
             if (false == this.DesignMode)
             {
-                this.explorerBrowser =
-                    Shell32.CLSID.CoCreateInstance<Shell32.IExplorerBrowser>(Shell32.CLSID.ExplorerBrowser);
+                this.explorerBrowser = new Vanara.PInvoke.Shell32.IExplorerBrowser();
 
                 if (this.explorerBrowser is null)
                     throw new COMException("Could not instantiate ExplorerBrowser!");
 
                 // Set site to get notified of IExplorerPaneVisibility and ICommDlgBrowser events
-                Shell32.IUnknown_SetSite(this.explorerBrowser, this);
+                this.SetSite(this);
 
                 // Advise of IExplorerBrowserEvents
                 this.explorerBrowser.Advise(this, out this.adviseEventsCookie);
@@ -116,12 +116,13 @@ namespace electrifier.Core.Components.Controls
                 // Create connection point to ExplorerBrowser's ShellView events
                 this.ebViewEvents = new ExplorerBrowserControl.ViewEvents(this);
 
-                this.explorerBrowser.Initialize(this.Handle, this.ClientRectangle, new Shell32.FolderSettings());
+                this.explorerBrowser.Initialize(this.Handle, this.ClientRectangle,
+                    new Shell32.FOLDERSETTINGS(Shell32.FOLDERVIEWMODE.FVM_AUTO, Shell32.FOLDERFLAGS.FWF_NONE));
 
                 // Force an initial show frames so that IExplorerPaneVisibility works the first time it is set.
                 // This also enables the control panel to be browsed to. If it is not set, then navigating to 
                 // the control panel succeeds, but no items are visible in the view.
-                this.explorerBrowser.SetOptions(Shell32.ExplorerBrowserOptions.ShowFrames);
+                this.explorerBrowser.SetOptions(Shell32.EXPLORER_BROWSER_OPTIONS.EBO_SHOWFRAMES);
 
                 this.explorerBrowser.SetPropertyBag(this.propertyBagName);
 
@@ -129,8 +130,9 @@ namespace electrifier.Core.Components.Controls
                 // Do initial navigation on background thread
                 this.BeginInvoke(new MethodInvoker(
                     delegate
-                    {
-                        this.NavigateToFolder(@"S:\");
+                    {   // TODO
+                        this.NavigateTo(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_UsersFiles
+                            ));
                     }));
             }
         }
@@ -142,7 +144,7 @@ namespace electrifier.Core.Components.Controls
                 this.ebViewEvents.DisconnectShellView();
 
                 this.explorerBrowser.Unadvise(this.adviseEventsCookie);
-                Shell32.IUnknown_SetSite(this.explorerBrowser, null);
+                this.SetSite(null);
 
                 this.explorerBrowser.Destroy();
 
@@ -153,6 +155,8 @@ namespace electrifier.Core.Components.Controls
             base.OnHandleDestroyed(e);
         }
 
+        protected void SetSite(Shell32.IServiceProvider sp) => (this.explorerBrowser as Shell32.IObjectWithSite)?.SetSite(sp);
+
         protected override void OnSizeChanged(EventArgs e)
         {
             this.explorerBrowser?.SetRect(IntPtr.Zero, this.ClientRectangle);
@@ -160,30 +164,60 @@ namespace electrifier.Core.Components.Controls
             base.OnSizeChanged(e);
         }
 
-        public void NavigateToFolder(in string folderPath)
+        /// <summary>
+        /// Clears the Explorer Browser of existing content, fills it with content from the specified container, and adds a new point to the
+        /// Travel Log.
+        /// </summary>
+        /// <param name="shellItem">The shell container to navigate to.</param>
+        /// <param name="category">The category of the <paramref name="shellItem"/>.</param>
+        public void NavigateTo(ShellItem shellItem)
         {
-            Shell32.IShellItem shellItem;
-            Guid guid = new Guid(Shell32.IID.IShellItem);
+            if (shellItem == null)
+                throw new ArgumentNullException(nameof(shellItem));
 
-            shellItem = Shell32.SHCreateItemFromParsingName(folderPath, null, ref guid);
-
-            WinError.HResult hr = this.explorerBrowser.BrowseToObject(shellItem, 0);
+            //if (this.explorerBrowser == null)
+            //{
+            //    antecreationNavigationTarget = new Tuple<ShellItem, ExplorerBrowserNavigationItemCategory>(shellItem, category);
+            //}
+            //else
+            {
+                try
+                {
+                    this.explorerBrowser.BrowseToObject(shellItem.IShellItem, Shell32.SBSP.SBSP_ABSOLUTE);
+                }
+                catch (COMException e)
+                {
+                    if (e.ErrorCode == HRESULT_RESOURCE_IN_USE || e.ErrorCode == HRESULT_CANCELLED)
+                    {
+                        //OnNavigationFailed(new NavigationFailedEventArgs { FailedLocation = shellItem });
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Unable to browse to this shell item.", nameof(shellItem), e);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException("Unable to browse to this shell item.", nameof(shellItem), e);
+                }
+            }
         }
 
-        #region Implemented Interfaces ========================================================================================
 
         #region Implemented Interface: IServiceProvider =======================================================================
 
-        public WinError.HResult QueryService(in Guid guidService, in Guid riid, out object ppvObject)
+        public HRESULT QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
         {
+            HRESULT hr = HRESULT.E_NOINTERFACE;
+            ppvObject = default;
+
             if (guidService.Equals(typeof(Shell32.IExplorerPaneVisibility).GUID))
             {
-                // IExplorerPaneVisibility controls the visibility of explorer browser's panes
                 ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IExplorerPaneVisibility));
 
-                return WinError.HResult.S_OK;
+                return HRESULT.S_OK;
             }
-            else if (guidService.Equals(typeof(Shell32.IExplorerPaneVisibility).GUID))
+            else if (guidService.Equals(typeof(Shell32.ICommDlgBrowser3).GUID))
             {
                 // ICommDlgBrowserX is exposed to host the Shell Browser and control its behaviour
                 //
@@ -195,110 +229,99 @@ namespace electrifier.Core.Components.Controls
                 {
                     ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.ICommDlgBrowser3));
 
-                    return WinError.HResult.S_OK;
+                    return HRESULT.S_OK;
                 }
             }
 
-            ppvObject = null;
-            return WinError.HResult.E_NoInterface;
+            return hr;
         }
 
         #endregion Implemented Interface: IServiceProvider ====================================================================
 
         #region Implemented Interface: IExplorerPaneVisibility ================================================================
 
-        public WinError.HResult GetPaneState(ref Guid explorerPane, out Shell32.ExplorerPaneState peps)
+        public HRESULT GetPaneState(in Guid ep, out Shell32.EXPLORERPANESTATE peps)
         {
-            switch (explorerPane.ToString())
-            {
-                default:
-                    peps = Shell32.ExplorerPaneState.DoNotCare;
-                    break;
-            }
+            peps = Shell32.EXPLORERPANESTATE.EPS_DONTCARE;
 
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
         #endregion Implemented Interface: IExplorerPaneVisibility =============================================================
 
         #region Implemented Interface: IExplorerBrowserEvents =================================================================
 
-        public WinError.HResult OnNavigationPending(IntPtr pidlFolder)
+        public HRESULT OnNavigationPending(IntPtr pidlFolder)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult OnViewCreated(object psv)
+        public HRESULT OnViewCreated(Shell32.IShellView psv)
         {
-            this.ebViewEvents.ConnectShellView(psv as Shell32.IShellView);
-
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult OnNavigationComplete(IntPtr pidlFolder)
+        public HRESULT OnNavigationComplete(IntPtr pidlFolder)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult OnNavigationFailed(IntPtr pidlFolder)
+        public HRESULT OnNavigationFailed(IntPtr pidlFolder)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
         #endregion Implemented Interface: IExplorerBrowserEvents ==============================================================
 
         #region Implemented Interface: ICommDlgBrowser3 =======================================================================
 
-        public WinError.HResult OnDefaultCommand(IntPtr ppshv)
+        public HRESULT OnDefaultCommand(Shell32.IShellView ppshv)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult OnStateChange(IntPtr ppshv, Shell32.CommDlgBrowserStateChange uChange)
+        public HRESULT OnStateChange(Shell32.IShellView ppshv, Shell32.CDBOSC uChange)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult IncludeObject(IntPtr ppshv, IntPtr pidl)
+        public HRESULT IncludeObject(Shell32.IShellView ppshv, IntPtr pidl)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult GetDefaultMenuText(Shell32.IShellView shellView, IntPtr buffer, int bufferMaxLength)
+        public HRESULT GetDefaultMenuText(Shell32.IShellView ppshv, StringBuilder pszText, int cchMax)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult GetViewFlags(out Shell32.CommDlgBrowserViewFlags pdwFlags)
+        public HRESULT GetViewFlags(out Shell32.CDB2GVF pdwFlags)
         {
-            pdwFlags = Shell32.CommDlgBrowserViewFlags.ShowAllFiles;
+            pdwFlags = Shell32.CDB2GVF.CDB2GVF_SHOWALLFILES;
 
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult Notify(IntPtr pshv, Shell32.CommDlgBrowserNotifyType notifyType)
+        public HRESULT Notify(Shell32.IShellView ppshv, Shell32.CDB2N dwNotifyType)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult GetCurrentFilter(StringBuilder pszFileSpec, int cchFileSpec)
+        public HRESULT GetCurrentFilter(StringBuilder pszFileSpec, int cchFileSpec)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult OnColumnClicked(Shell32.IShellView ppshv, int iColumn)
+        public HRESULT OnColumnClicked(Shell32.IShellView ppshv, int iColumn)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
-        public WinError.HResult OnPreViewCreated(Shell32.IShellView ppshv)
+        public HRESULT OnPreViewCreated(Shell32.IShellView ppshv)
         {
-            return WinError.HResult.S_OK;
+            return HRESULT.S_OK;
         }
 
         #endregion Implemented Interface: ICommDlgBrowser3 ====================================================================
-
-        #endregion Implemented Interfaces =====================================================================================
-
     }
 }
