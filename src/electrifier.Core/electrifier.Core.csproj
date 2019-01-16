@@ -166,6 +166,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
       <SubType>Form</SubType>
     </Compile>

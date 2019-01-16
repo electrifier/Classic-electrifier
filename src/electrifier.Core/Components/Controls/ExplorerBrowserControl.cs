@@ -1,4 +1,29 @@
 ﻿/*
+** 
+**  electrifier
+** 
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
+**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**  
+**      http://www.apache.org/licenses/LICENSE-2.0
+**  
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+**
+*/
+
+/*
+** Initial conversion from Windows-API-Pack to Vanara done by David Hall,
+** <see href="https://github.com/dahall/Vanara/blob/master/WIndows.Forms/Controls/ExplorerBrowser.cs">
+**
+** Original license information:
+
 MIT License
 
 Copyright (c) 2017 David Hall
@@ -45,7 +70,7 @@ using static Vanara.PInvoke.ShlwApi;
 using static Vanara.PInvoke.User32_Gdi;
 using IServiceProvider = Vanara.PInvoke.Shell32.IServiceProvider;
 
-namespace Vanara.Windows.Forms
+namespace electrifier.Core.Components.Controls
 {
 	/// <summary>
 	/// Indicates the content options of the explorer browser. Typically use one, or a bitwise combination of these flags to specify how
@@ -138,7 +163,7 @@ namespace Vanara.Windows.Forms
 		AllowRtlReading = FOLDERFLAGS.FWF_ALLOWRTLREADING,
 	}
 
-	/// <summary>These flags are used with <see cref="ExplorerBrowser.LoadCustomItems"/>.</summary>
+	/// <summary>These flags are used with <see cref="ExplorerBrowserControl.LoadCustomItems"/>.</summary>
 	[Flags]
 	public enum ExplorerBrowserLoadFlags
 	{
@@ -146,7 +171,7 @@ namespace Vanara.Windows.Forms
 		None = EXPLORER_BROWSER_FILL_FLAGS.EBF_NONE,
 
 		/// <summary>
-		/// Causes <see cref="ExplorerBrowser.LoadCustomItems"/> to first populate the results folder with the contents of the parent folders
+		/// Causes <see cref="ExplorerBrowserControl.LoadCustomItems"/> to first populate the results folder with the contents of the parent folders
 		/// of the items in the data object, and then select only the items that are in the data object.
 		/// </summary>
 		SelectFromDataObject = EXPLORER_BROWSER_FILL_FLAGS.EBF_SELECTFROMDATAOBJECT,
@@ -364,10 +389,10 @@ namespace Vanara.Windows.Forms
 	/// <seealso cref="IExplorerBrowserEvents" />
 	/// <seealso cref="ICommDlgBrowser3" />
 	/// <seealso cref="IMessageFilter" />
-	[Designer(typeof(Design.ExplorerBrowserDesigner)), DefaultProperty(nameof(Name)), DefaultEvent(nameof(SelectionChanged))]
-	[ToolboxItem(true), ToolboxBitmap(typeof(ExplorerBrowser), "ExplorerBrowser.bmp")]
+	// FIX by taj 16/01/19 - [Designer(typeof(Design.ExplorerBrowserDesigner)), DefaultProperty(nameof(Name)), DefaultEvent(nameof(SelectionChanged))]
+	// FIX by taj 16/01/19 - [ToolboxItem(true), ToolboxBitmap(typeof(ExplorerBrowserControl), "ExplorerBrowser.bmp")]
 	[Description("A Shell browser object that can be either navigated or that can host a view of a data object.")]
-	public class ExplorerBrowser : UserControl, IServiceProvider, IExplorerPaneVisibility, IExplorerBrowserEvents, ICommDlgBrowser3, IMessageFilter
+	public class ExplorerBrowserControl : UserControl, IServiceProvider, IExplorerPaneVisibility, IExplorerBrowserEvents, ICommDlgBrowser3, IMessageFilter
 	{
 		internal uint eventsCookie;
 		internal IExplorerBrowser explorerBrowserControl;
@@ -378,7 +403,7 @@ namespace Vanara.Windows.Forms
 		private const int HRESULT_CANCELLED = unchecked((int)0x800704C7);
 		private const int HRESULT_RESOURCE_IN_USE = unchecked((int)0x800700AA);
 
-		private static readonly string defaultPropBagName = typeof(ExplorerBrowser).FullName;
+		private static readonly string defaultPropBagName = typeof(ExplorerBrowserControl).FullName;
 		private static readonly Guid IID_ICommDlgBrowser = new Guid("000214F1-0000-0000-C000-000000000046");
 
 		private Tuple<ShellItem, ExplorerBrowserNavigationItemCategory> antecreationNavigationTarget;
@@ -387,8 +412,8 @@ namespace Vanara.Windows.Forms
 		private int thumbnailSize = defaultThumbnailSize;
 		private ExplorerBrowserViewEvents viewEvents;
 
-		/// <summary>Initializes a new instance of the <see cref="ExplorerBrowser"/> class.</summary>
-		public ExplorerBrowser()
+		/// <summary>Initializes a new instance of the <see cref="ExplorerBrowserControl"/> class.</summary>
+		public ExplorerBrowserControl()
 		{
 			History = new ExplorerBrowserNavigationLog(this);
 			Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW);
@@ -963,8 +988,20 @@ namespace Vanara.Windows.Forms
 			return HRESULT.S_OK;
 		}
 
-		bool IMessageFilter.PreFilterMessage(ref Message m) => (explorerBrowserControl as IInputObject)?.TranslateAcceleratorIO(m.ToMSG()).Succeeded ?? false;
-		HRESULT IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
+        bool IMessageFilter.PreFilterMessage(ref Message m)
+        {
+            HRESULT hr = HRESULT.S_FALSE;
+
+            if (this.explorerBrowserControl is IInputObject io)
+            {
+                hr = io.TranslateAcceleratorIO(
+                    new MSG { message = (uint)m.Msg, hwnd = m.HWnd, wParam = m.WParam, lParam = m.LParam });
+            }
+
+            return (hr == HRESULT.S_OK);
+        }
+
+        HRESULT IServiceProvider.QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
 		{
 			HRESULT hr = HRESULT.E_NOINTERFACE;
 			ppvObject = default;
@@ -1129,7 +1166,7 @@ namespace Vanara.Windows.Forms
 				using (var font = new Font("Segoe UI", 9))
 				using (var sf = new StringFormat { Alignment = StringAlignment.Near, LineAlignment = StringAlignment.Near })
 				{
-					pe.Graphics.DrawString(nameof(ExplorerBrowser), font, SystemBrushes.GrayText, cr, sf);
+					pe.Graphics.DrawString(nameof(ExplorerBrowserControl), font, SystemBrushes.GrayText, cr, sf);
 				}
 			}
 
@@ -1190,12 +1227,12 @@ namespace Vanara.Windows.Forms
 		/// <summary>The navigation log is a history of the locations visited by the explorer browser.</summary>
 		public class ExplorerBrowserNavigationLog
 		{
-			private ExplorerBrowser parent = null;
+			private ExplorerBrowserControl parent = null;
 
 			/// <summary>The pending navigation log action. null if the user is not navigating via the navigation log.</summary>
 			private PendingNavigation pendingNavigation;
 
-			internal ExplorerBrowserNavigationLog(ExplorerBrowser parent)
+			internal ExplorerBrowserNavigationLog(ExplorerBrowserControl parent)
 			{
 				// Hook navigation events from the parent to distinguish between navigation log induced navigation, and other navigations.
 				this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
@@ -1350,9 +1387,9 @@ namespace Vanara.Windows.Forms
 			}
 		}
 
-		/// <summary>Controls the visibility of the various ExplorerBrowser panes on subsequent navigation</summary>
-		[TypeConverter(typeof(BetterExpandableObjectConverter)), Serializable]
-		public class ExplorerBrowserPaneVisibility
+        /// <summary>Controls the visibility of the various ExplorerBrowser panes on subsequent navigation</summary>
+        // FIX by taj 16/01/19 - [TypeConverter(typeof(BetterExpandableObjectConverter)), Serializable]
+        public class ExplorerBrowserPaneVisibility
 		{
 			/// <summary>Additional fields and options to aid in a search.</summary>
 			[DefaultValue(PaneVisibilityState.Default), Category("Appearance"), Description("Additional fields and options to aid in a search.")]
@@ -1408,14 +1445,14 @@ namespace Vanara.Windows.Forms
 			private const int SelectionChanged = 200;
 			private static readonly Guid IID_DShellFolderViewEvents = new Guid("62112AA2-EBE4-11cf-A5FB-0020AFE7292D");
 			private static readonly Guid IID_IDispatch = new Guid("00020400-0000-0000-C000-000000000046");
-			private ExplorerBrowser parent;
+			private ExplorerBrowserControl parent;
 			private uint viewConnectionPointCookie;
 			private object viewDispatch;
 
 			/// <summary>Default constructor for ExplorerBrowserViewEvents</summary>
 			public ExplorerBrowserViewEvents() : this(null) { }
 
-			internal ExplorerBrowserViewEvents(ExplorerBrowser parent) => this.parent = parent;
+			internal ExplorerBrowserViewEvents(ExplorerBrowserControl parent) => this.parent = parent;
 
 			/// <summary>Finalizes ExplorerBrowserViewEvents</summary>
 			~ExplorerBrowserViewEvents()
@@ -1475,13 +1512,13 @@ namespace Vanara.Windows.Forms
 			}
 		}
 
-		/// <summary>Represents a collection of <see cref="ShellItem"/> attached to an <see cref="ExplorerBrowser"/>.</summary>
+		/// <summary>Represents a collection of <see cref="ShellItem"/> attached to an <see cref="ExplorerBrowserControl"/>.</summary>
 		private class ShellItemCollection : IReadOnlyList<ShellItem>
 		{
-			private readonly ExplorerBrowser eb;
+			private readonly ExplorerBrowserControl eb;
 			private readonly SVGIO option;
 
-			internal ShellItemCollection(ExplorerBrowser eb, SVGIO opt)
+			internal ShellItemCollection(ExplorerBrowserControl eb, SVGIO opt)
 			{
 				this.eb = eb;
 				option = opt;
