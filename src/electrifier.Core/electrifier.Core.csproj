@@ -169,6 +169,13 @@
     <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Components\Controls\ExplorerBrowserControl.Designer.cs">
+      <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\Controls\ExplorerBrowserControl.ViewEvents.cs">
+      <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
