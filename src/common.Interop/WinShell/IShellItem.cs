@@ -75,7 +75,6 @@ namespace common.Interop.WinShell
         ComImport,
         Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE"),
         InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    [System.ObsoleteAttribute("Interface common.Interop.WinShell.IShellItem is obsolete. It will be replaced and removed.")]
     public interface IShellItem
     {
         [return: MarshalAs(UnmanagedType.Interface)]

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace electrifier.Win32API
 {
-    [System.ObsoleteAttribute("Class electrifier.Win32API.ShellAPI is obsolete. It will be replaced and removed.")]
+    [ObsoleteAttribute("Class electrifier.Win32API.ShellAPI is obsolete. It will be replaced and removed.")]
     public class ShellAPI
     {
 

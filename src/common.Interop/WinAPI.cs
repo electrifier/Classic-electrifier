@@ -370,7 +370,7 @@ namespace electrifier.Win32API
         public Int32 iIntegral;                         //    int iIntegral;
     }
 
-    [System.ObsoleteAttribute("Class electrifier.Win32API.WinAPI is obsolete. It will be replaced and removed.")]
+    [ObsoleteAttribute("Class electrifier.Win32API.WinAPI is obsolete. It will be replaced and removed.")]
     public class WinAPI
     {
         public enum WM : int

@@ -24,7 +24,6 @@ using System;
 
 namespace common.Interop
 {
-    [System.ObsoleteAttribute("Class electrifier.Win32API.WinNT is obsolete. It will be replaced and removed.")]
     public class WinNT
     {
         /// <summary>

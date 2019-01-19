@@ -105,7 +105,6 @@ namespace common.Interop.WinShell
         ComImport,
         Guid("2047E320-F2A9-11CE-AE65-08002B2E1262"),
         InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    [System.ObsoleteAttribute("Interface common.Interop.WinShell.IShellFolderViewCB is obsolete. It will be replaced and removed.")]
     public interface IShellFolderViewCB
     {
         [PreserveSig]

@@ -27,7 +27,6 @@ namespace common.Interop.WinShell
         ComImport,
         Guid("000214F2-0000-0000-C000-000000000046"),
         InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    [System.ObsoleteAttribute("Interface common.Interop.WinShell.IEnumIDList is obsolete. It will be replaced and removed.")]
     public interface IEnumIDList
     {
         [PreserveSig]

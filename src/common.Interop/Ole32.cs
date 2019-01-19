@@ -22,7 +22,6 @@ using System.Runtime.InteropServices;
 
 namespace common.Interop
 {
-    [System.ObsoleteAttribute("Class electrifier.Win32API.Ole32 is obsolete. It will be replaced and removed.")]
     public class Ole32
     {
         /// <summary>
