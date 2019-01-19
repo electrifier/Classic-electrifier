@@ -58,11 +58,11 @@ namespace electrifier.Core.Components.Controls
 
 
 
-        #endregion Fields =====================================================================================================
+        #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
 
-        #endregion Properties =================================================================================================
+        #endregion ============================================================================================================
 
         #region Published Events ==============================================================================================
 
@@ -86,7 +86,7 @@ namespace electrifier.Core.Components.Controls
         /// </summary>
         public event EventHandler SelectedItemChanged;
 
-        #endregion Published Events ===========================================================================================
+        #endregion ============================================================================================================
 
         public ExplorerBrowserControl()
         {
@@ -95,6 +95,47 @@ namespace electrifier.Core.Components.Controls
 
 
         }
+
+        /// <summary>
+        /// Clears the Explorer Browser of existing content, fills it with content from the specified container, and adds a new point to the
+        /// Travel Log.
+        /// </summary>
+        /// <param name="shellItem">The shell container to navigate to.</param>
+        /// <param name="category">The category of the <paramref name="shellItem"/>.</param>
+        public void NavigateTo(ShellItem shellItem)
+        {
+            if (shellItem == null)
+                throw new ArgumentNullException(nameof(shellItem));
+
+            //if (this.explorerBrowser == null)     // TODO!
+            //{
+            //    antecreationNavigationTarget = new Tuple<ShellItem, ExplorerBrowserNavigationItemCategory>(shellItem, category);
+            //}
+            //else
+            {
+                try
+                {
+                    this.explorerBrowser.BrowseToObject(shellItem.IShellItem, Shell32.SBSP.SBSP_ABSOLUTE);
+                }
+                catch (COMException e)
+                {
+                    if (e.ErrorCode == HRESULT_RESOURCE_IN_USE || e.ErrorCode == HRESULT_CANCELLED)
+                    {
+                        //OnNavigationFailed(new NavigationFailedEventArgs { FailedLocation = shellItem });
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Unable to browse to this shell item.", nameof(shellItem), e);
+                    }
+                }
+                catch (Exception e)
+                {
+                    throw new ArgumentException("Unable to browse to this shell item.", nameof(shellItem), e);
+                }
+            }
+        }
+
+        protected void SetSite(Shell32.IServiceProvider sp) => (this.explorerBrowser as Shell32.IObjectWithSite)?.SetSite(sp);
 
         protected override void OnCreateControl()
         {
@@ -126,13 +167,13 @@ namespace electrifier.Core.Components.Controls
 
                 this.explorerBrowser.SetPropertyBag(this.propertyBagName);
 
-
                 // Do initial navigation on background thread
                 this.BeginInvoke(new MethodInvoker(
                     delegate
-                    {   // TODO
-                        this.NavigateTo(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_UsersFiles
-                            ));
+                    {
+                        // TODO: On Windows 10, navigate to Quick Access by default...
+                        // <seealso href="https://www.tenforums.com/tutorials/3123-clsid-key-guid-shortcuts-list-windows-10-a.html">
+                        this.NavigateTo(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_UsersFiles));
                     }));
             }
         }
@@ -155,54 +196,12 @@ namespace electrifier.Core.Components.Controls
             base.OnHandleDestroyed(e);
         }
 
-        protected void SetSite(Shell32.IServiceProvider sp) => (this.explorerBrowser as Shell32.IObjectWithSite)?.SetSite(sp);
-
         protected override void OnSizeChanged(EventArgs e)
         {
             this.explorerBrowser?.SetRect(IntPtr.Zero, this.ClientRectangle);
 
             base.OnSizeChanged(e);
         }
-
-        /// <summary>
-        /// Clears the Explorer Browser of existing content, fills it with content from the specified container, and adds a new point to the
-        /// Travel Log.
-        /// </summary>
-        /// <param name="shellItem">The shell container to navigate to.</param>
-        /// <param name="category">The category of the <paramref name="shellItem"/>.</param>
-        public void NavigateTo(ShellItem shellItem)
-        {
-            if (shellItem == null)
-                throw new ArgumentNullException(nameof(shellItem));
-
-            //if (this.explorerBrowser == null)
-            //{
-            //    antecreationNavigationTarget = new Tuple<ShellItem, ExplorerBrowserNavigationItemCategory>(shellItem, category);
-            //}
-            //else
-            {
-                try
-                {
-                    this.explorerBrowser.BrowseToObject(shellItem.IShellItem, Shell32.SBSP.SBSP_ABSOLUTE);
-                }
-                catch (COMException e)
-                {
-                    if (e.ErrorCode == HRESULT_RESOURCE_IN_USE || e.ErrorCode == HRESULT_CANCELLED)
-                    {
-                        //OnNavigationFailed(new NavigationFailedEventArgs { FailedLocation = shellItem });
-                    }
-                    else
-                    {
-                        throw new ArgumentException("Unable to browse to this shell item.", nameof(shellItem), e);
-                    }
-                }
-                catch (Exception e)
-                {
-                    throw new ArgumentException("Unable to browse to this shell item.", nameof(shellItem), e);
-                }
-            }
-        }
-
 
         #region Implemented Interface: IServiceProvider =======================================================================
 
@@ -217,7 +216,7 @@ namespace electrifier.Core.Components.Controls
 
                 return HRESULT.S_OK;
             }
-            else if (guidService.Equals(typeof(Shell32.ICommDlgBrowser3).GUID))
+            else if (guidService.Equals(typeof(Shell32.ICommDlgBrowser).GUID))
             {
                 // ICommDlgBrowserX is exposed to host the Shell Browser and control its behaviour
                 //
@@ -236,7 +235,7 @@ namespace electrifier.Core.Components.Controls
             return hr;
         }
 
-        #endregion Implemented Interface: IServiceProvider ====================================================================
+        #endregion ============================================================================================================
 
         #region Implemented Interface: IExplorerPaneVisibility ================================================================
 
@@ -247,7 +246,7 @@ namespace electrifier.Core.Components.Controls
             return HRESULT.S_OK;
         }
 
-        #endregion Implemented Interface: IExplorerPaneVisibility =============================================================
+        #endregion ============================================================================================================
 
         #region Implemented Interface: IExplorerBrowserEvents =================================================================
 
@@ -258,6 +257,8 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT OnViewCreated(Shell32.IShellView psv)
         {
+            this.ebViewEvents.ConnectShellView(psv);
+
             return HRESULT.S_OK;
         }
 
@@ -271,28 +272,34 @@ namespace electrifier.Core.Components.Controls
             return HRESULT.S_OK;
         }
 
-        #endregion Implemented Interface: IExplorerBrowserEvents ==============================================================
+        #endregion ============================================================================================================
 
         #region Implemented Interface: ICommDlgBrowser3 =======================================================================
 
         public HRESULT OnDefaultCommand(Shell32.IShellView ppshv)
         {
-            return HRESULT.S_OK;
+            return HRESULT.S_FALSE;
         }
 
         public HRESULT OnStateChange(Shell32.IShellView ppshv, Shell32.CDBOSC uChange)
         {
+            if (uChange == Shell32.CDBOSC.CDBOSC_STATECHANGE)
+            {
+                //this.OnSelectionChanged(); // TODO:
+            }
+
             return HRESULT.S_OK;
         }
 
         public HRESULT IncludeObject(Shell32.IShellView ppshv, IntPtr pidl)
         {
+            // this.OnIncludeObject(); // TODO: When returning false, the item won't get displayed!
             return HRESULT.S_OK;
         }
 
         public HRESULT GetDefaultMenuText(Shell32.IShellView ppshv, StringBuilder pszText, int cchMax)
         {
-            return HRESULT.S_OK;
+            return HRESULT.S_FALSE;
         }
 
         public HRESULT GetViewFlags(out Shell32.CDB2GVF pdwFlags)
@@ -322,6 +329,6 @@ namespace electrifier.Core.Components.Controls
             return HRESULT.S_OK;
         }
 
-        #endregion Implemented Interface: ICommDlgBrowser3 ====================================================================
+        #endregion ============================================================================================================
     }
 }

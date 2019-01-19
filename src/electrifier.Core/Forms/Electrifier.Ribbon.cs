@@ -317,28 +317,28 @@ namespace electrifier.Core.Forms
 
             //var ShellIDList = Clipboard.GetData("CFSTR_SHELLIDLIST");      // 31.10.18: We're looking for CFSTR_SHELLIDLIST or CFSTR_SHELLIDLISTOFFSET
 
-            if (Clipboard.ContainsFileDropList())
-            {
-                var scFileDropList = Clipboard.GetFileDropList();
+            //if (Clipboard.ContainsFileDropList())     // TODO: Use Vanara!
+            //{
+            //    var scFileDropList = Clipboard.GetFileDropList();
 
-                if (scFileDropList.Count < 1)
-                    return;
+            //    if (scFileDropList.Count < 1)
+            //        return;
 
-                using (var shellFileOperation = new WindowsShell.FileOperation(this.Handle))
-                {
-                    // TODO: When DragDropEffects.Move, move items instead of copying!
+            //    using (var shellFileOperation = new WindowsShell.FileOperation(this.Handle))
+            //    {
+            //        // TODO: When DragDropEffects.Move, move items instead of copying!
 
-                    foreach (var strFullPathName in scFileDropList)
-                    {
-                        var destFolder = System.IO.Path.GetDirectoryName(strFullPathName);
-                        // TODO: Get Destination folder (Active ShellBrowser!)
+            //        foreach (var strFullPathName in scFileDropList)
+            //        {
+            //            var destFolder = System.IO.Path.GetDirectoryName(strFullPathName);
+            //            // TODO: Get Destination folder (Active ShellBrowser!)
 
-                        shellFileOperation.CopyItem(strFullPathName, destFolder);
-                    }
+            //            shellFileOperation.CopyItem(strFullPathName, destFolder);
+            //        }
 
-                    shellFileOperation.PerformOperations();
-                }
-            }
+            //        shellFileOperation.PerformOperations();
+            //    }
+            //}
         }
 
         private bool ClipboardIsKnownFormat()

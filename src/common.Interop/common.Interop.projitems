@@ -9,25 +9,9 @@
     <Import_RootNamespace>common.Interop</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Ole32.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\ICommDlgBrowser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IEnumIDList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerBrowser.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerBrowserEvents.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IExplorerPaneVisibility.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IFileOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IFileOperationProgressSink.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IServiceProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellFolder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellFolderViewCB.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\IShellView.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Shell32\Shell32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShellAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)User32\User32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Windows\WinDef.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Windows\Windows.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />
   </ItemGroup>

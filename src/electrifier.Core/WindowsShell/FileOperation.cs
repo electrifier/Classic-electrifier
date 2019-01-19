@@ -21,7 +21,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using common.Interop;
+
+using Vanara.PInvoke;
+
 
 namespace electrifier.Core.WindowsShell
 {
@@ -37,9 +39,10 @@ namespace electrifier.Core.WindowsShell
 
         public FileOperation(
             IntPtr windowHandle,
-            Shell32.FileOperationFlags operationFlags = (Shell32.FileOperationFlags.FOF_AllowUndo | Shell32.FileOperationFlags.FOF_RenameOnCollision))
+            Shell32.FILEOP_FLAGS operationFlags = (Shell32.FILEOP_FLAGS.FOF_ALLOWUNDO | Shell32.FILEOP_FLAGS.FOF_RENAMEONCOLLISION))
         {
-            this.shellFileOperation = Shell32.CLSID.CoCreateInstance<Shell32.IFileOperation>(Shell32.CLSID.FileOperation);
+            //this.shellFileOperation = Shell32.CLSID.CoCreateInstance<Shell32.IFileOperation>(Shell32.CLSID.FileOperation);
+            this.shellFileOperation = new Shell32.IFileOperation();
 
             if (this.shellFileOperation is null)
                 throw new Exception("Could not instantiate FileOperation!");
@@ -60,8 +63,8 @@ namespace electrifier.Core.WindowsShell
 
             try
             {
-                shItemSource = Shell32.SHCreateItemFromParsingName(sourceFullPathName, null, ref this.iShellItemGUID);
-                shItemDestination = Shell32.SHCreateItemFromParsingName(destinationFolder, null, ref this.iShellItemGUID);
+                //shItemSource = Shell32.SHCreateItemFromParsingName(sourceFullPathName, null, ref this.iShellItemGUID);        // TODO! Excluded for switching to Vanara
+                //shItemDestination = Shell32.SHCreateItemFromParsingName(destinationFolder, null, ref this.iShellItemGUID);
 
                 this.shellFileOperation.CopyItem(shItemSource, shItemDestination, pszCopyName, null);
             }

@@ -218,8 +218,6 @@
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="WindowsShell\DesktopFolder.cs" />
-    <Compile Include="WindowsShell\FileOperation.cs" />
     <Compile Include="WindowsShell\Tools.cs" />
   </ItemGroup>
   <ItemGroup>
