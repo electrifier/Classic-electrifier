@@ -2,6 +2,8 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using common.Interop;
+
 
 namespace electrifier.Win32API
 {
@@ -132,34 +134,7 @@ namespace electrifier.Win32API
         [DllImport("shell32.dll")]
         public static extern bool ILRemoveLastID(IntPtr pidl);
 
-        [DllImport("shell32.dll")]
-        public static extern IntPtr SHGetFileInfo(  // TODO: IntPtr eigentlich Int
-            string pszPath,
-            uint dwFileAttributes,
-            out SHFILEINFO psfi,
-            UInt32 cbfileInfo,
-            SHGFI uFlags);
 
-        [DllImport("shell32.dll")]
-        public static extern IntPtr SHGetFileInfo(  // TODO: IntPtr eigentlich Int
-            IntPtr pszPath,                                                     // TODO: Overloaded
-            uint dwFileAttributes,
-            out SHFILEINFO psfi,
-            UInt32 cbfileInfo,
-            SHGFI uFlags);
-
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SHFILEINFO
-        {
-            public IntPtr hIcon;
-            public int iIcon;
-            public common.Interop.WinShell.SFGAO dwAttributes;
-            [MarshalAs(UnmanagedType.LPStr, SizeConst = 260)]
-            public string szDisplayName;
-            [MarshalAs(UnmanagedType.LPStr, SizeConst = 80)]
-            public string szTypeName;
-        }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct SHDRAGIMAGE
@@ -169,26 +144,6 @@ namespace electrifier.Win32API
             public IntPtr hbmpDragImage;
             public WinAPI.COLORREF crColorKey;
         }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct FOLDERSETTINGS
-        {
-            public ShellAPI.FOLDERVIEWMODE ViewMode;
-            public ShellAPI.FOLDERFLAGS Flags;
-
-            public FOLDERSETTINGS(FOLDERVIEWMODE ViewMode, FOLDERFLAGS Flags)
-            {
-                this.ViewMode = ViewMode;
-                this.Flags = Flags;
-            }
-
-            [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-            public static void LoadDefaults(out FOLDERSETTINGS folderSettings)
-            {
-                folderSettings.ViewMode = ShellAPI.FOLDERVIEWMODE.AUTO;
-                folderSettings.Flags = ShellAPI.FOLDERFLAGS.SNAPTOGRID;
-            }
-        };
 
         [StructLayout(LayoutKind.Sequential)]
         public struct CMINVOKECOMMANDINFO
@@ -203,47 +158,6 @@ namespace electrifier.Win32API
             public uint dwHotKey;
             public IntPtr hIcon;
         }
-
-        /// <summary>
-        /// See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762510(v=vs.85).aspx
-        /// </summary>
-        public enum FOLDERVIEWMODE : int
-        {
-            AUTO = -1,
-            FIRST = 1,
-            ICON = 1,
-            SMALLICON = 2,
-            LIST = 3,
-            DETAILS = 4,
-            THUMBNAIL = 5,
-            TILE = 6,
-            THUMBSTRIP = 7,
-            CONTENT = 8,
-            LAST = 8
-        };
-
-        public enum FOLDERFLAGS : uint
-        {
-            AUTOARRANGE = 0x00000001,
-            ABBREVIATEDNAMES = 0x00000002,
-            SNAPTOGRID = 0x00000004,
-            OWNERDATA = 0x00000008,
-            BESTFITWINDOW = 0x00000010,
-            DESKTOP = 0x00000020,
-            SINGLESEL = 0x00000040,
-            NOSUBFOLDERS = 0x00000080,
-            TRANSPARENT = 0x00000100,
-            NOCLIENTEDGE = 0x00000200,
-            NOSCROLL = 0x00000400,
-            ALIGNLEFT = 0x00000800,
-            NOICONS = 0x00001000,
-            SHOWSELALWAYS = 0x00002000,
-            NOVISIBLE = 0x00004000,
-            SINGLECLICKACTIVATE = 0x00008000,
-            NOWEBVIEW = 0x00010000,
-            HIDEFILENAMES = 0x00020000,
-            CHECKSELECT = 0x00040000,
-        };
 
         public enum SVUIA : uint
         {
@@ -494,75 +408,11 @@ namespace electrifier.Win32API
         public const string IIDS_IShellBrowser = "000214E2-0000-0000-C000-000000000046";
         public static Guid IID_IShellBrowser = new Guid(IIDS_IShellBrowser);
 
-        [ComImport,
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-            Guid(IIDS_IShellBrowser)]
-        public interface IShellBrowser
-        {
-            // IOleWindow-Member
-            [PreserveSig]
-            common.Interop.WinError.HResult GetWindow(out IntPtr HWND);
-            [PreserveSig]
-            common.Interop.WinError.HResult ContextSensitiveHelp(bool fEnterMode);
-            // End of IOleWindow-Member
-
-            [PreserveSig]
-            common.Interop.WinError.HResult InsertMenusSB(IntPtr hmenuShared, ref IntPtr /* LPOLEMENUGROUPWIDTHS */ lpMenuWidths);
-            [PreserveSig]
-            common.Interop.WinError.HResult SetMenuSB(IntPtr hmenuShared, IntPtr /* HOLEMENU */ holemenuRes, IntPtr hwndActiveObject);
-            [PreserveSig]
-            common.Interop.WinError.HResult RemoveMenusSB(IntPtr hmenuShared);
-            [PreserveSig]
-            common.Interop.WinError.HResult SetStatusTextSB([MarshalAs(UnmanagedType.LPWStr)] String pszStatusText);
-            [PreserveSig]
-            common.Interop.WinError.HResult EnableModelessSB(bool fEnable);
-            [PreserveSig]
-            common.Interop.WinError.HResult TranslateAcceleratorSB(IntPtr pmsg, UInt16 wID);
-            [PreserveSig]
-            common.Interop.WinError.HResult BrowseObject(IntPtr pidl, SBSP wFlags);
-            [PreserveSig]
-            common.Interop.WinError.HResult GetViewStateStream(uint /* DWORD */ grfMode, IntPtr /*IStream */ ppStrm);
-            [PreserveSig]
-            common.Interop.WinError.HResult GetControlWindow(uint id, out IntPtr phwnd);
-            [PreserveSig]
-            common.Interop.WinError.HResult SendControlMsg(uint id, uint uMsg, uint wParam, uint lParam, IntPtr pret);
-            [PreserveSig]
-            common.Interop.WinError.HResult QueryActiveShellView([MarshalAs(UnmanagedType.Interface)] ref ShellAPI.IShellView ppshv);
-            [PreserveSig]
-            common.Interop.WinError.HResult OnViewWindowActive([MarshalAs(UnmanagedType.Interface)] ShellAPI.IShellView pshv);
-            [PreserveSig]
-            common.Interop.WinError.HResult SetToolbarItems(IntPtr /* LPTBBUTTONSB */ lpButtons, uint nButtons, uint uFlags);
-        }
 
         #endregion
 
         public const string IIDS_IShellView = "000214E3-0000-0000-C000-000000000046";
         public static Guid IID_IShellView = new Guid(IIDS_IShellView);
-
-        [ComImport,
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-            Guid(IIDS_IShellView)]
-        public interface IShellView : IOleWindow
-        {
-            // IOleWindow-Member
-            [PreserveSig] new uint GetWindow(out IntPtr HWND);
-            [PreserveSig] new uint ContextSensitiveHelp(bool EnterMode);
-            // End of IOleWindow-Member
-
-            [PreserveSig] uint TranslateAcceleratorA(IntPtr Msg);
-            [PreserveSig] uint EnableModeless(bool Enable);
-            [PreserveSig] uint UIActivate(SVUIA State);
-            [PreserveSig] uint Refresh();
-            [PreserveSig]
-            uint CreateViewWindow(IShellView psvPrevious, ref FOLDERSETTINGS pfs,
-                                 IShellBrowser psb, ref RECT prcView, out IntPtr phWnd);
-            [PreserveSig] uint DestroyViewWindow();
-            [PreserveSig] uint GetCurrentInfo(out FOLDERSETTINGS pfs);
-            [PreserveSig] uint AddPropertySheetPages(uint dwReserved, IntPtr /*LPFNSVADDPROPSHEETPAGE */ pfn, IntPtr /* LPARAM */ lparam);
-            [PreserveSig] uint SaveViewState();
-            [PreserveSig] uint SelectItem(IntPtr pidlItem, IntPtr /* SVSIF */ uFlags);
-            [PreserveSig] uint GetItemObject(uint uItem, ref Guid riid, IntPtr ppv);
-        };
 
         [StructLayout(LayoutKind.Explicit)]
         public struct STRRET
@@ -626,33 +476,6 @@ namespace electrifier.Win32API
         }
 
         /// <summary>
-        /// See: https://msdn.microsoft.com/en-us/library/windows/desktop/bb773399(v=vs.85).aspx
-        /// </summary>
-        [StructLayout(LayoutKind.Sequential)]
-        public struct SFV_CREATE
-        {
-            public int cbSize;                          // The size of the SFV_CREATE structure, in bytes.
-            public common.Interop.WinShell.IShellFolder pshf;          // The IShellFolder interface of the folder for which to create the view.
-            public ShellAPI.IShellView psvOuter;        // A pointer to the parent IShellView interface. This parameter may be NULL. This parameter is used only when the view created by SHCreateShellFolderView is hosted in a common dialog box.
-            public common.Interop.WinShell.IShellFolderViewCB psfvcb;   // A pointer to the IShellFolderViewCB interface that handles the view's callbacks when various events occur. This parameter may be NULL.
-
-            public SFV_CREATE(
-                common.Interop.WinShell.IShellFolder pshf = default(common.Interop.WinShell.IShellFolder),
-                ShellAPI.IShellView psvOuter = default(ShellAPI.IShellView),
-                common.Interop.WinShell.IShellFolderViewCB psfvcb = default(common.Interop.WinShell.IShellFolderViewCB))
-            {
-                this.cbSize = Marshal.SizeOf(typeof(ShellAPI.SFV_CREATE));
-                this.pshf = pshf;
-                this.psvOuter = psvOuter;
-                this.psfvcb = psfvcb;
-            }
-        }
-
-        // See https://msdn.microsoft.com/en-us/library/windows/desktop/bb762141(v=vs.85).aspx
-        [DllImport("shell32.dll")]
-        public static extern common.Interop.WinError.HResult SHCreateShellFolderView(SFV_CREATE pcsfv, out ShellAPI.IShellView ppsv);
-
-        /// <summary>
         /// Accepts a STRRET structure returned by IShellFolder::GetDisplayNameOf that contains or points to a string, and returns that string as a BSTR.
         /// </summary>
         /// <see cref="https://msdn.microsoft.com/en-us/library/windows/desktop/bb773423(v=vs.85).aspx"/>
@@ -668,90 +491,6 @@ namespace electrifier.Win32API
             ref STRRET pstr,
             IntPtr pidl,
             [MarshalAs(UnmanagedType.BStr)] out String pbstr);
-
-        #region ICommDlgBrowser3
-
-        [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern common.Interop.WinError.HResult IUnknown_SetSite(
-                [In, MarshalAs(UnmanagedType.IUnknown)] object punk,
-                [In, MarshalAs(UnmanagedType.IUnknown)] object punkSite);
-
-
-        /// <summary>
-        /// System interface id for ICommDlgBrowser3 interface
-        /// </summary>
-        /// 
-        public const string IIDS_ICommDlgBrowser = "000214F1-0000-0000-C000-000000000046";
-        public static Guid IID_ICommDlgBrowser = new Guid(IIDS_ICommDlgBrowser);
-
-        public const string IIDS_ICommDlgBrowser2 = "10339516-2894-11D2-9039-00C04F8EEB3E";
-        public static Guid IID_ICommDlgBrowser2 = new Guid(IIDS_ICommDlgBrowser2);
-
-        public const string IIDS_ICommDlgBrowser3 = "C8AD25A1-3294-41EE-8165-71174BD01C57";
-        public static Guid IID_ICommDlgBrowser3 = new Guid(IIDS_ICommDlgBrowser3);
-
-        public enum CommDlgBrowserStateChange
-        {
-            SetFocus = 0,
-            KillFocus = 1,
-            SelectionChange = 2,
-            Rename = 3,
-            StateChange = 4,
-        }
-
-        public enum CommDlgBrowserNotifyType
-        {
-            Done = 1,
-            Start = 2,
-        }
-
-        public enum CommDlgBrowser2ViewFlags
-        {
-            ShowAllFiles = 0x00000001,
-            IsFileSave = 0x00000002,
-            AllowPreviewPane = 0x00000004,
-            NoSelectVerb = 0x00000008,
-            NoIncludeItem = 0x00000010,
-            IsFolderPicker = 0x00000020,
-        }
-
-        [ComImport,
-            Guid(IIDS_ICommDlgBrowser3),
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        public interface ICommDlgBrowser3
-        {
-            // ICommDlgBrowser1
-            [PreserveSig]
-            common.Interop.WinError.HResult OnDefaultCommand(ShellAPI.IShellView /* IntPtr */ ppshv);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult OnStateChange(ShellAPI.IShellView /* IntPtr */ ppshv, ShellAPI.CommDlgBrowserStateChange uChange);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult IncludeObject(ShellAPI.IShellView /* IntPtr */ ppshv, IntPtr pidl);
-
-            // ICommDlgBrowser2
-            [PreserveSig]
-            common.Interop.WinError.HResult GetDefaultMenuText(ShellAPI.IShellView shellView, /* WCHAR* */IntPtr buffer, int bufferMaxLength);   // 'buffer' should be at least MAX_CHAR in size...
-
-            [PreserveSig]
-            common.Interop.WinError.HResult GetViewFlags([Out] out ShellAPI.CommDlgBrowser2ViewFlags pdwFlags);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult Notify(ShellAPI.IShellView /* IntPtr */ pshv, ShellAPI.CommDlgBrowserNotifyType notifyType);
-
-            // ICommDlgBrowser3
-            [PreserveSig]
-            common.Interop.WinError.HResult GetCurrentFilter(System.Text.StringBuilder pszFileSpec, int cchFileSpec);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult OnColumnClicked(ShellAPI.IShellView ppshv, int iColumn);
-
-            [PreserveSig]
-            common.Interop.WinError.HResult OnPreViewCreated(ShellAPI.IShellView ppshv);
-        }
-
-        #endregion ICommDlgBrowser3
 
         /// <summary>
         /// Displays a ShellAbout dialog box.

@@ -27,7 +27,9 @@ using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Win32API;
 using electrifier.Core.Components.DockContents;
-using common.Interop;
+
+using Vanara.PInvoke;
+
 
 namespace electrifier.Core.Forms
 {

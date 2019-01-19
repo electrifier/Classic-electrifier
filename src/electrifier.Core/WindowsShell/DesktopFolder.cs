@@ -21,14 +21,14 @@
 using System;
 using System.Runtime.InteropServices;
 
-using common.Interop.WinShell;
+using common.Interop;
 
 namespace electrifier.Core.WindowsShell
 {
     public class DesktopFolder : IDisposable
     {
-        private common.Interop.WinShell.IShellFolder desktopFolder = null;
-        public common.Interop.WinShell.IShellFolder GetSHFolder => this.desktopFolder;
+        private Shell32.IShellFolder desktopFolder = null;
+        public Shell32.IShellFolder GetSHFolder => this.desktopFolder;
 
         public DesktopFolder()
         {

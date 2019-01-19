@@ -21,7 +21,9 @@
 using System;
 using System.Runtime.InteropServices;
 
-using common.Interop.WinShell;
+
+using Vanara.PInvoke;
+
 
 namespace electrifier.Core.WindowsShell
 {
@@ -32,14 +34,15 @@ namespace electrifier.Core.WindowsShell
     /// </summary>
     public class FileOperation : IDisposable
     {
-        private IFileOperation shellFileOperation = null;
-        private Guid iShellItemGUID = typeof(IShellItem).GUID;
+        private Shell32.IFileOperation shellFileOperation = null;
+        private Guid iShellItemGUID = typeof(Shell32.IShellItem).GUID;
 
         public FileOperation(
             IntPtr windowHandle,
-            FileOperationFlags operationFlags = (FileOperationFlags.FOF_AllowUndo | FileOperationFlags.FOF_RenameOnCollision))
+            Shell32.FILEOP_FLAGS operationFlags = (Shell32.FILEOP_FLAGS.FOF_ALLOWUNDO | Shell32.FILEOP_FLAGS.FOF_RENAMEONCOLLISION))
         {
-            this.shellFileOperation = CLSID.CoCreateInstance<IFileOperation>(CLSID.FileOperation);
+            //this.shellFileOperation = Shell32.CLSID.CoCreateInstance<Shell32.IFileOperation>(Shell32.CLSID.FileOperation);
+            this.shellFileOperation = new Shell32.IFileOperation();
 
             if (this.shellFileOperation is null)
                 throw new Exception("Could not instantiate FileOperation!");
@@ -56,12 +59,12 @@ namespace electrifier.Core.WindowsShell
             string destinationFolder,
             string pszCopyName = null)
         {
-            IShellItem shItemSource = null, shItemDestination = null;
+            Shell32.IShellItem shItemSource = null, shItemDestination = null;
 
             try
             {
-                shItemSource = Shell32.SHCreateItemFromParsingName(sourceFullPathName, null, ref this.iShellItemGUID);
-                shItemDestination = Shell32.SHCreateItemFromParsingName(destinationFolder, null, ref this.iShellItemGUID);
+                //shItemSource = Shell32.SHCreateItemFromParsingName(sourceFullPathName, null, ref this.iShellItemGUID);        // TODO! Excluded for switching to Vanara
+                //shItemDestination = Shell32.SHCreateItemFromParsingName(destinationFolder, null, ref this.iShellItemGUID);
 
                 this.shellFileOperation.CopyItem(shItemSource, shItemDestination, pszCopyName, null);
             }

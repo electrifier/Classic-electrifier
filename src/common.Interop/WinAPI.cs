@@ -143,22 +143,22 @@ namespace electrifier.Win32API
         public LVITEM item;
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    public struct RECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
+    //[StructLayout(LayoutKind.Sequential)]
+    //public struct RECT
+    //{
+    //    public int Left;
+    //    public int Top;
+    //    public int Right;
+    //    public int Bottom;
 
-        public RECT(System.Drawing.Rectangle Rectangle)
-        {
-            this.Left = Rectangle.Left;
-            this.Top = Rectangle.Top;
-            this.Right = Rectangle.Right;
-            this.Bottom = Rectangle.Bottom;
-        }
-    };
+    //    public RECT(System.Drawing.Rectangle Rectangle)
+    //    {
+    //        this.Left = Rectangle.Left;
+    //        this.Top = Rectangle.Top;
+    //        this.Right = Rectangle.Right;
+    //        this.Bottom = Rectangle.Bottom;
+    //    }
+    //};
 
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     public struct LVITEM
@@ -767,12 +767,6 @@ namespace electrifier.Win32API
         [DllImport("comctl32.dll")]
         public static extern IntPtr ImageList_GetDragImage(ref POINT ppt, ref POINT pptHotspot);
 
-        [DllImport("ole32.Dll")]
-        public static extern int CoCreateInstance(ref Guid clsid,
-            [MarshalAs(UnmanagedType.IUnknown)] object inner,
-            Win32API.WTypes.CLSCTX context, ref Guid uuid,
-            [MarshalAs(UnmanagedType.IUnknown)] out object rReturnedComObject);
-
         public static Guid IID_IUnknown = new Guid("00000000-0000-0000-C000-000000000046");
         /*
 		 * Drag and Drop stuff
@@ -850,22 +844,6 @@ namespace electrifier.Win32API
 
         public const string GuidStr_SID_STopWindow = "49E1B500-4636-11D3-97F7-00C04F45D0B3";
         public static Guid SID_STopWindow = new Guid(GuidStr_SID_STopWindow);
-
-        #region IServiceProvider
-
-        public const string IIDS_IServiceProvider = "6D5140C1-7436-11CE-8034-00AA006009FA";
-        public static Guid IID_IServiceProvider = new Guid(IIDS_IServiceProvider);
-
-        [ComImport(),
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-            GuidAttribute(IIDS_IServiceProvider)]
-        public interface IServiceProvider
-        {
-            [PreserveSig]
-            common.Interop.WinError.HResult QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject);
-        }
-
-        #endregion
 
 
         [ComImport(),

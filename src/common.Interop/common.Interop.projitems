@@ -9,19 +9,9 @@
     <Import_RootNamespace>common.Interop</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Ole32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ShellAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)User32.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IEnumIDList.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IFileOperation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IFileOperationProgressSink.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellFolder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellFolderViewCB.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\IShellItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinShell\Shell32.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WTypes.cs" />
   </ItemGroup>
 </Project>
