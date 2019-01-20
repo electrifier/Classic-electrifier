@@ -26,7 +26,7 @@ using System.Windows.Forms;
 //using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
 //using Microsoft.WindowsAPICodePack.Shell;
 
-using common.Interop;
+//using common.Interop;
 
 namespace electrifier.Core.Components.DockContents
 {

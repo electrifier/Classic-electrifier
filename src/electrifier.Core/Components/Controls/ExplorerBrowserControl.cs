@@ -34,7 +34,7 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IExplorerPaneVisibility
         , Shell32.IExplorerBrowserEvents
         , Shell32.ICommDlgBrowser3
-        // , IMessageFilter // TODO!
+        , IMessageFilter
     {
         #region Fields ========================================================================================================
 
@@ -203,6 +203,21 @@ namespace electrifier.Core.Components.Controls
             base.OnSizeChanged(e);
         }
 
+        /// <summary>
+        /// Ask ExplorerBrowser to translate Window-Messages for proper keyboard input handling
+        /// </summary>
+        /// <param name="msg">A reference to the Window Message</param>
+        /// <returns>True if successful, otherwise false</returns>
+        bool IMessageFilter.PreFilterMessage(ref Message msg)
+        {
+            return ((this.explorerBrowser as Shell32.IInputObject)?.TranslateAcceleratorIO(
+                new Vanara.PInvoke.MSG {
+                    message = (uint)msg.Msg,
+                    hwnd = msg.HWnd,
+                    wParam = msg.WParam,
+                    lParam = msg.LParam }).Succeeded ?? false);
+        }
+
         #region Implemented Interface: IServiceProvider =======================================================================
 
         public HRESULT QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
@@ -333,6 +348,8 @@ namespace electrifier.Core.Components.Controls
         }
 
         #endregion ============================================================================================================
+
+
 
         #region Nested class ExplorerBrowserControl.ViewEvents ================================================================
 

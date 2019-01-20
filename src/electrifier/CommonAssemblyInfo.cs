@@ -25,7 +25,7 @@ using System.Reflection;
 // associated with an assembly.
 [assembly: AssemblyProduct("electrifier")]
 [assembly: AssemblyCompany("electrifier.org")]
-[assembly: AssemblyCopyright("Copyright (c) 2018 Thorsten Jung, www.electrifier.org")]
+[assembly: AssemblyCopyright("Copyright (c) 2019 Thorsten Jung, www.electrifier.org")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug")]

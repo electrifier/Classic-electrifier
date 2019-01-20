@@ -11,7 +11,5 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ShellAPI.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WinAPI.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinError.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WinNT.cs" />
   </ItemGroup>
 </Project>

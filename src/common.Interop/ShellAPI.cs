@@ -2,9 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-using common.Interop;
-
-
 namespace electrifier.Win32API
 {
     [ObsoleteAttribute("Class electrifier.Win32API.ShellAPI is obsolete. It will be replaced and removed.")]
@@ -384,24 +381,6 @@ namespace electrifier.Win32API
             uint GetCommandString(IntPtr idCmd, uint uType, uint pwReserved,
                 [MarshalAs(UnmanagedType.LPStr)] string pszName, uint cchMax);
         }
-
-        #region IOleWindow
-
-        public const string IIDS_IOleWindow = "00000114-0000-0000-C000-000000000046";
-        public static Guid IID_IOleWindow = new Guid(IIDS_IOleWindow);
-
-        [ComImport,
-            InterfaceType(ComInterfaceType.InterfaceIsIUnknown),
-            Guid(IIDS_IOleWindow)]
-        public interface IOleWindow
-        {
-            [PreserveSig]
-            common.Interop.WinError.HResult GetWindow(out IntPtr HWND);
-            [PreserveSig]
-            common.Interop.WinError.HResult ContextSensitiveHelp(bool fEnterMode);
-        }
-
-        #endregion
 
         #region IShellBrowser (See ShObjIdl.h)
 
