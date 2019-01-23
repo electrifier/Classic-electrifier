@@ -11,13 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier", "electrifier\
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup", "WiX-Setup\Setup.wixproj", "{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "common.Interop", "common.Interop\common.Interop.shproj", "{2CB446A7-0BAE-4EF0-B796-A7D21ABC9D23}"
-EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		common.Interop\common.Interop.projitems*{2cb446a7-0bae-4ef0-b796-a7d21abc9d23}*SharedItemsImports = 13
-		common.Interop\common.Interop.projitems*{e566845e-e6fb-4db7-8ca7-5e26acdc50f3}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86

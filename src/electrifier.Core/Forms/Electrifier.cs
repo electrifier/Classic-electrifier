@@ -25,7 +25,6 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
-using electrifier.Win32API;
 using electrifier.Core.Components.DockContents;
 
 using Vanara.PInvoke;
@@ -55,6 +54,11 @@ namespace electrifier.Core.Forms
         }
 
         #endregion ============================================================================================================
+
+        #region Published Events ==============================================================================================
+
+        #endregion Published Events ===========================================================================================
+
 
         public Electrifier(Icon icon) : base()
         {
@@ -92,15 +96,21 @@ namespace electrifier.Core.Forms
             User32.RemoveClipboardFormatListener(this.Handle);
         }
 
+        public event EventHandler ClipboardUpdate;
+
+        protected virtual void OnClipboardUpdate()
+        {
+            // TODO: Build event args: Type of Clipboard content
+            this.ClipboardUpdate?.Invoke(this, new EventArgs());
+        }
+
+
         [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
         {
-            switch ((WinAPI.WM)m.Msg)
+            if ((int)User32.ClipboardNotificationMessage.WM_CLIPBOARDUPDATE == m.Msg)
             {
-                case WinAPI.WM.ClipboardUpdate:
-                    AppContext.TraceDebug("WM_CLIPBOARDUPDATE");
-
-                    break;
+                this.OnClipboardUpdate();
             }
 
             base.WndProc(ref m);

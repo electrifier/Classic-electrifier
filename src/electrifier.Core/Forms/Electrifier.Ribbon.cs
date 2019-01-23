@@ -23,7 +23,7 @@ using System.Windows.Forms;
 using Sunburst.WindowsForms.Ribbon.Controls;
 using Sunburst.WindowsForms.Ribbon.Controls.Events;
 
-using electrifier.Win32API;
+using Vanara.PInvoke;
 
 
 namespace electrifier.Core.Forms
@@ -231,9 +231,9 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            string szOtherStuff = ".NET Framework Version: " + Environment.Version.ToString();
+            string szOtherStuff = ".NET Framework Environment Version: " + Environment.Version.ToString();
 
-            ShellAPI.ShellAbout(this.Handle, "Microsoft Windows", szOtherStuff, IntPtr.Zero);
+            Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", szOtherStuff, IntPtr.Zero);
         }
 
 

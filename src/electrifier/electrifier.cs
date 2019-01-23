@@ -64,6 +64,9 @@ namespace electrifier
             SplashScreenForm splashScreen = null;
             ApplicationContext appContext = null;
 
+            // Catch all unhandled exceptions, exception-handlers will be configured in electrifier.Core.dll
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+
             // Never show splash-screen when debugging
             if (Debugger.IsAttached)
                 splashIsShown = false;

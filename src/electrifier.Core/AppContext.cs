@@ -22,6 +22,8 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
+using System.Security.Permissions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace electrifier.Core
@@ -60,11 +62,17 @@ namespace electrifier.Core
         /// <param name="appIcon">The icon resource used by this application</param>
         /// <param name="appLogo">The logo resource used by this application</param>
         /// <param name="splashScreenForm">The form representing the logo as splash screen</param>
+        [SecurityPermission(SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlAppDomain)]
         public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) : base()
         {
             AppContext.Icon = appIcon;
             this.Logo = appLogo;
 
+            // Initialize Exception handlers
+            Application.ThreadException += this.Application_ThreadException;
+            AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
+
+            // Parse command line paramaters
             foreach (string arg in args)
             {
                 // Portable: Issue #5: Add "-portable" command switch, storing configuration in application directory instead of "LocalApplicationData"
@@ -122,7 +130,18 @@ namespace electrifier.Core
                 this.Session.SaveConfiguration();
         }
 
- 
+        private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            AppContext.TraceError("Thread Exception:" + e.ToString());
+            MessageBox.Show(e.ToString(), "D'oh! That shouldn't have happened...");
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            AppContext.TraceError("Domain Exception:" + e.ToString());
+            MessageBox.Show(e.ToString(), "D'oh! That shouldn't have happened...");
+        }
+
 
         #region TraceListener helper members for logging and debugging purposes ===============================================
 

@@ -23,7 +23,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
+using Vanara.Extensions;
 using Vanara.PInvoke;
+using static Vanara.PInvoke.User32_Gdi;
 using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Components.Controls
@@ -93,7 +95,7 @@ namespace electrifier.Core.Components.Controls
             this.InitializeComponent();
 
 
-
+            // TODO: Draw background painting on ListView?
         }
 
         /// <summary>
@@ -167,6 +169,8 @@ namespace electrifier.Core.Components.Controls
 
                 this.explorerBrowser.SetPropertyBag(this.propertyBagName);
 
+                this.ExplorerBrowser_RemoveWindowBorder();
+
                 // Do initial navigation on background thread
                 this.BeginInvoke(new MethodInvoker(
                     delegate
@@ -204,6 +208,29 @@ namespace electrifier.Core.Components.Controls
         }
 
         /// <summary>
+        /// Find the native control handle, remove its border style, then ask for a redraw.
+        /// </summary>
+        /// <remarks>
+        /// [Note by dahall] There is an option (EBO_NOBORDER) to avoid showing a border on the native ExplorerBrowser
+        /// control so we wouldn't have to remove it afterwards, but:
+        ///  1. It's not implemented by the Windows API Code Pack
+        ///  2. The flag doesn't seem to work anyway (tested on 7 and 8.1)
+        /// For reference: 
+        ///  EXPLORER_BROWSER_OPTIONS
+        ///  <seealso href="https://msdn.microsoft.com/en-us/library/windows/desktop/bb762501(v=vs.85).aspx"/>
+        /// </remarks>
+        protected void ExplorerBrowser_RemoveWindowBorder()
+        {
+            var hwnd = FindWindowEx(this.Handle, default, "ExplorerBrowserControl", default);
+            var wndStyle = (WindowStyles)GetWindowLongAuto(hwnd, WindowLongFlags.GWL_STYLE).ToInt32();
+
+            SetWindowLong(hwnd, WindowLongFlags.GWL_STYLE,
+                (int)wndStyle.ClearFlags(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER));
+            SetWindowPos(hwnd, default, 0, 0, 0, 0,
+                (SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE));
+        }
+
+        /// <summary>
         /// Ask ExplorerBrowser to translate Window-Messages for proper keyboard input handling
         /// </summary>
         /// <param name="msg">A reference to the Window Message</param>
@@ -222,7 +249,6 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
         {
-            HRESULT hr = HRESULT.E_NOINTERFACE;
             ppvObject = default;
 
             if (guidService.Equals(typeof(Shell32.IExplorerPaneVisibility).GUID))
@@ -247,7 +273,7 @@ namespace electrifier.Core.Components.Controls
                 }
             }
 
-            return hr;
+            return HRESULT.E_NOINTERFACE;
         }
 
         #endregion ============================================================================================================

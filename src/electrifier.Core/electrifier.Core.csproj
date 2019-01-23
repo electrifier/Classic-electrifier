@@ -280,11 +280,10 @@
     </RibbonDefinition>
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\common.Interop\common.Interop.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
-    <PostBuildEvent />
+    <PostBuildEvent>del $(TargetDir)*.xml</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\build\Sunburst.WindowsForms.Ribbon.targets" Condition="Exists('..\packages\Sunburst.WindowsForms.Ribbon.2.1.0\build\Sunburst.WindowsForms.Ribbon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
