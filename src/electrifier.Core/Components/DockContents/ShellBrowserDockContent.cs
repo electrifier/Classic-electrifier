@@ -108,22 +108,15 @@ namespace electrifier.Core.Components.DockContents
                     Dock = DockStyle.Fill,
                 };
 
-                //this.explorerBrowser = new ExplorerBrowser()
-                //{
-                //    Dock = DockStyle.Fill,
-                //};
-
                 // Connect ExplorerBrowser Events
-                //this.explorerBrowser.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
-                //this.explorerBrowser.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
-                //this.explorerBrowser.NavigationPending += this.ExplorerBrowser_NavigationPending;
-                //this.explorerBrowser.NavigationComplete += this.ExplorerBrowser_NavigationComplete;
-                //this.explorerBrowser.NavigationFailed += this.ExplorerBrowser_NavigationFailed;
-                //this.explorerBrowser.ViewEnumerationComplete += this.ExplorerBrowser_ViewEnumerationComplete;
+                this.explorerBrowserControl.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
+                this.explorerBrowserControl.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
+                this.explorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
+                this.explorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
+                this.explorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
+                this.explorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
 
                 this.Controls.Add(this.explorerBrowserControl);
-                //this.Controls.Add(this.explorerBrowser);
-
 
                 // Initialize UIDecouplingTimer
                 this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
@@ -151,17 +144,17 @@ namespace electrifier.Core.Components.DockContents
 
         public void NavigateBackward()
         {
-            //this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Backward);
+            //this.explorerBrowserControl.NavigateLogLocation(NavigationLogDirection.Backward);
         }
 
         public void NavigateForward()
         {
-            //this.explorerBrowser.NavigateLogLocation(NavigationLogDirection.Forward);
+            //this.explorerBrowserControl.NavigateLogLocation(NavigationLogDirection.Forward);
         }
 
         public void NavigateLogLocation(int navigationLogIndex)
         {
-            //this.explorerBrowser.NavigateLogLocation(navigationLogIndex);
+            //this.explorerBrowserControl.NavigateLogLocation(navigationLogIndex);
         }
 
         public void NavigateRefresh()
@@ -275,42 +268,41 @@ namespace electrifier.Core.Components.DockContents
 
                 this.SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
-
         }
 
         #region ExplorerBrowser Internal Events Handler ========================================================================
 
-        //protected void ExplorerBrowser_NavigationPending(object sender, NavigationPendingEventArgs e)
-        //{
-        //}
+        protected void ExplorerBrowserControl_Navigating(object sender, Controls.ExplorerBrowserControl.NavigatingEventArgs args)
+        {
+        }
 
 
-        //protected void ExplorerBrowser_NavigationComplete(object sender, Microsoft.WindowsAPICodePack.Controls.NavigationCompleteEventArgs args)
-        //{
-        //    AppContext.TraceDebug("Firing of ExplorerBrowser_NavigationComplete event.");
-        //    //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
+        protected void ExplorerBrowserControl_Navigated(object sender, Controls.ExplorerBrowserControl.NavigatedEventArgs args)
+        {
+            AppContext.TraceDebug("Firing of ExplorerBrowserControl_Navigated event.");
+            //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
 
-        //    this.BeginInvoke(new MethodInvoker(delegate ()
-        //    {
-        //        this.Text = args.NewLocation.Name;
+            this.BeginInvoke(new MethodInvoker(delegate ()
+            {
+                this.Text = args.NewLocation.Name;
 
-        //        //this.Icon = args.NewLocation.Thumbnail.SmallIcon;
+                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;
 
-        //    }));
-        //}
+            }));
+        }
 
-        //protected void ExplorerBrowser_NavigationFailed(object sender, NavigationFailedEventArgs args)
-        //{
-        //    AppContext.TraceError("Firing of ExplorerBrowser_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
-        //}
+        protected void ExplorerBrowserControl_NavigationFailed(object sender, Controls.ExplorerBrowserControl.NavigationFailedEventArgs args)
+        {
+            AppContext.TraceError("Firing of ExplorerBrowserControl_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
+        }
 
-        //protected void ExplorerBrowser_ViewEnumerationComplete(object sender, EventArgs e)
-        //{
-        //    AppContext.TraceDebug("Firing of ExplorerBrowser_ViewEnumerationComplete event.");
+        protected void ExplorerBrowserControl_ItemsEnumerated(object sender, EventArgs e)
+        {
+            AppContext.TraceDebug("Firing of ExplorerBrowserControl_ItemsEnumerated event.");
 
-        //    this.explorerBrowser_itemsChangedEvent.Set();
-        //    this.explorerBrowser_selectionChangedEvent.Set();
-        //}
+            this.explorerBrowser_itemsChangedEvent.Set();
+            this.explorerBrowser_selectionChangedEvent.Set();
+        }
 
         #endregion ExplorerBrowser Internal Events Handler =====================================================================
 

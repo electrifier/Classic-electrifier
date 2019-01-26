@@ -20,7 +20,8 @@
 
 namespace electrifier.Core.Components.Controls
 {
-    public class NavigationToolStrip : System.Windows.Forms.ToolStrip
+    public class NavigationToolStrip 
+        : System.Windows.Forms.ToolStrip
     {
         #region Fields ========================================================================================================
 
