@@ -166,6 +166,7 @@ namespace electrifier.Core.Forms
 
         #endregion
 
+        private Sunburst.WindowsForms.Ribbon.Ribbon rbnRibbon;
         private System.Windows.Forms.StatusStrip stsStatusStrip;
         private Components.FormStatePersistor fspFormStatePersistor;
         private System.Windows.Forms.ToolStripContainer tscToolStripContainer;

@@ -19,14 +19,11 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
-//using Microsoft.WindowsAPICodePack.Controls;
-//using Microsoft.WindowsAPICodePack.Controls.WindowsForms;
-//using Microsoft.WindowsAPICodePack.Shell;
+using Vanara.Windows.Shell;
+using WeifenLuo.WinFormsUI.Docking;
 
-//using common.Interop;
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -37,7 +34,8 @@ namespace electrifier.Core.Components.DockContents
     /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
 
-    public class ShellBrowserDockContent : WeifenLuo.WinFormsUI.Docking.DockContent
+    public class ShellBrowserDockContent
+        : ElNavigableDockContent
     {
         #region Fields ========================================================================================================
 
@@ -60,9 +58,7 @@ namespace electrifier.Core.Components.DockContents
 
         #region Properties ====================================================================================================
 
-        //private ShellObject initialNaviagtionTarget = (ShellObject)Microsoft.WindowsAPICodePack.Shell.KnownFolders.Desktop;
-
-        //public ShellObject InitialNaviagtionTarget { get => this.initialNaviagtionTarget; set => this.initialNaviagtionTarget = value; }
+        public ShellItem InitialNaviagtionTarget { get; private set; } = default;
 
         //public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
 
@@ -74,6 +70,8 @@ namespace electrifier.Core.Components.DockContents
             //get => this.explorerBrowser.SelectedItems.Count; }
             get => 0;
         }
+
+        //public DockContent AsDockContent { get => this as WeifenLuo.WinFormsUI.Docking.DockContent; }
 
         //public ExplorerBrowserNavigationLog NavigationLog { get => this.explorerBrowser.NavigationLog; }
 
@@ -96,14 +94,18 @@ namespace electrifier.Core.Components.DockContents
 
         // TODO: Work on Get/Lost Focus in general!
 
-        public ShellBrowserDockContent(string persistString = null) : base()
+        public ShellBrowserDockContent(IElNavigationHost navigationHost, string persistString = null)
+          : base(navigationHost)
         {
             this.SuspendLayout();
 
             try
             {
+                // Evaluate persistString
+                this.EvaluatePersistString(persistString);
+
                 // Initialize ExplorerBrowser
-                this.explorerBrowserControl = new Controls.ExplorerBrowserControl()
+                this.explorerBrowserControl = new Controls.ExplorerBrowserControl(this.InitialNaviagtionTarget)
                 {
                     Dock = DockStyle.Fill,
                 };
@@ -122,11 +124,6 @@ namespace electrifier.Core.Components.DockContents
                 this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
                 this.UIDecouplingTimer.Interval = ShellBrowserDockContent.UIDecouplingInterval;
                 this.UIDecouplingTimer.Start();
-
-
-
-                // Evaluate persistString
-                this.EvaluatePersistString(persistString);
             }
             finally
             {
@@ -176,9 +173,9 @@ namespace electrifier.Core.Components.DockContents
             // Append class name as identifier
             sb.Append(nameof(ShellBrowserDockContent));
 
-            // Append URI
-            //sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamURI,
-            //    WindowsShell.Tools.UrlCreateFromPath(this.explorerBrowser.NavigationLog.CurrentLocation.ParsingName));
+            // Append URI of current location
+            sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamURI,
+                WindowsShell.Tools.UrlCreateFromPath(this.explorerBrowserControl.CurrentLocation));
 
             // Append ViewMode
             // TODO: For any reason, this doesn't work... :(
@@ -198,25 +195,25 @@ namespace electrifier.Core.Components.DockContents
                 if ((null != persistString) && (persistString.Trim().Length > ShellBrowserDockContent.persistParamURI.Length))
                 {
                     var args = WindowsShell.Tools.SplitArgumentString(persistString);
-                    string strInitialNaviagtionTarget = null;
-                    string strViewMode = null;
+                    string strInitialNavigationTarget = default;
+                    string strInitialViewMode = default;
 
                     foreach (string arg in args)
                     {
                         if (arg.StartsWith(ShellBrowserDockContent.persistParamURI))
                         {
-                            strInitialNaviagtionTarget = WindowsShell.Tools.PathCreateFromUrl(arg.Substring(ShellBrowserDockContent.persistParamURI.Length));
+                            strInitialNavigationTarget = WindowsShell.Tools.PathCreateFromUrl(arg.Substring(ShellBrowserDockContent.persistParamURI.Length));
                         }
 
                         if (arg.StartsWith(ShellBrowserDockContent.persistParamViewMode))
                         {
-                            strViewMode = arg.Substring(ShellBrowserDockContent.persistParamViewMode.Length);
+                            strInitialViewMode = arg.Substring(ShellBrowserDockContent.persistParamViewMode.Length);
                         }
                     }
 
                     // Finally, when all parameters have been parsed successfully, apply them
-                    //if (null != strInitialNaviagtionTarget)
-                    //    this.InitialNaviagtionTarget = ShellObject.FromParsingName(strInitialNaviagtionTarget);
+                    if (default != strInitialNavigationTarget)
+                        this.InitialNaviagtionTarget = new ShellItem(strInitialNavigationTarget);
 
                     //if (null != strViewMode)
                     //{
@@ -245,7 +242,8 @@ namespace electrifier.Core.Components.DockContents
             base.OnShown(e);
 
             // TODO: When multiple Tabs are opened initially, sometimes this won't be called for some folders... Most likely if invisible!
-            //this.explorerBrowser.Navigate(this.InitialNaviagtionTarget);
+            if (default != this.InitialNaviagtionTarget)
+                this.explorerBrowserControl.NavigateTo(this.InitialNaviagtionTarget);
 
             //if (null != this.initialViewMode)
             //{
@@ -280,13 +278,12 @@ namespace electrifier.Core.Components.DockContents
         protected void ExplorerBrowserControl_Navigated(object sender, Controls.ExplorerBrowserControl.NavigatedEventArgs args)
         {
             AppContext.TraceDebug("Firing of ExplorerBrowserControl_Navigated event.");
-            //this.Icon = args.NewLocation.Thumbnail.Icon;        // TODO: Icon-Property seems not to be thread-safe
 
             this.BeginInvoke(new MethodInvoker(delegate ()
             {
                 this.Text = args.NewLocation.Name;
 
-                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;
+                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;     // TODO: Icon-Property seems not to be thread-safe
 
             }));
         }
@@ -304,7 +301,18 @@ namespace electrifier.Core.Components.DockContents
             this.explorerBrowser_selectionChangedEvent.Set();
         }
 
-        #endregion ExplorerBrowser Internal Events Handler =====================================================================
+        #endregion =============================================================================================================
+
+        #region ElNavigableDockContent implementation ==========================================================================
+
+
+        public override string CurrentLocation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
+
+
+
+        #endregion =============================================================================================================
 
     }
 }

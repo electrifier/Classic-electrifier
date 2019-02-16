@@ -25,6 +25,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
+using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
 
 using Vanara.PInvoke;
@@ -35,7 +36,8 @@ namespace electrifier.Core.Forms
     /// <summary>
     /// The main Window of electrifier application.
     /// </summary>
-    public partial class Electrifier : System.Windows.Forms.Form
+    public partial class Electrifier
+      : System.Windows.Forms.Form
     {
         #region Fields ========================================================================================================
 
@@ -155,40 +157,27 @@ namespace electrifier.Core.Forms
             base.Text += " [DEBUG]";
         }
 
-        private void CreateNewFileBrowser(DockAlignment? dockAlignment = null)
+        private ShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
         {
-            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
-            var activeDocumentPane = this.dpnDockPanel.ActiveDocumentPane;
+            ShellBrowserDockContent newShellBrowser;
 
             AppContext.TraceScope();
 
-            newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
-            newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-            //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
-
-
-            // See <href="https://github.com/dockpanelsuite/dockpanelsuite/issues/348"/>, we only take care of DocumentStyle.DockingWindow
-            //
-            //if (this.dpnDockPanel.DocumentStyle == WeifenLuo.WinFormsUI.Docking.DocumentStyle.SystemMdi)
-            //{
-            //    newDockContent.Show();
-            //    newDockContent.MdiParent = this;
-            //} else ...
-
-            if ((dockAlignment != null) && (activeDocumentPane != null))
-                newDockContent.Show(activeDocumentPane, dockAlignment.Value, 0.5d);
-            else
-                newDockContent.Show(this.dpnDockPanel, DockState.Document);
-
-            // TODO: Add windows to open window list
+            this.AddDockContent(newShellBrowser = ElDockContentFactory.CreateShellBrowser(this));
             // TODO: Browse to standard folder...
+
+            return newShellBrowser;
         }
 
         public bool LoadConfiguration(string fullFileName)
         {
             try
             {
-                this.dpnDockPanel.LoadFromXml(fullFileName, new DeserializeDockContent(this.DockContent_Deserialize));
+                this.dpnDockPanel.LoadFromXml(fullFileName, new DeserializeDockContent(
+                    delegate(string persistString)
+                    {
+                        return ElDockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
+                    }));
             }
             catch (Exception e)
             {
@@ -200,36 +189,6 @@ namespace electrifier.Core.Forms
             return true;
         }
 
-        private IDockContent DockContent_Deserialize(string persistString)
-        {
-            // e.g. PersistString="ShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"
-            var typeNameSeperatorPos = persistString.IndexOf(" ");
-            string dockContentTypeName, dockContentArguments = null;
-
-            if (typeNameSeperatorPos < 0)
-                dockContentTypeName = persistString;
-            else
-            {
-                dockContentTypeName = persistString.Substring(0, typeNameSeperatorPos);
-                dockContentArguments = persistString.Substring(typeNameSeperatorPos);
-            }
-
-
-
-            if (nameof(ShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
-            {
-                var newDockContent = new Components.DockContents.ShellBrowserDockContent(dockContentArguments);
-
-                newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
-                newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-                //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
-
-                return newDockContent;
-            }
-
-            return null;        // TODO: Throw Exception cause of unkown type in XML?!?
-        }
-
         /// <summary>
         /// Called by AppContext.Session.SaveConfiguration()
         /// </summary>
@@ -238,61 +197,6 @@ namespace electrifier.Core.Forms
         {
             this.dpnDockPanel.SaveAsXml(fullFileName);
         }
-
-        #region Event Listeners ===============================================================================================
-
-        private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.CreateNewFileBrowser();
-        }
-
-        private void TsbNewFileBrowserLeft_Click(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.CreateNewFileBrowser(DockAlignment.Left);
-        }
-
-        private void TsbNewFileBrowserRight_Click(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.CreateNewFileBrowser(DockAlignment.Right);
-        }
-
-        private void TsbNewFileBrowserTop_Click(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.CreateNewFileBrowser(DockAlignment.Top);
-        }
-
-        private void TsbNewFileBrowserBottom_Click(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            this.CreateNewFileBrowser(DockAlignment.Bottom);
-        }
-
-        private void TsbNewFileBrowserFloating_Click(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            var newDockContent = new Components.DockContents.ShellBrowserDockContent();
-            var floatWindowBounds = new Rectangle(this.Location, this.Size);
-
-            floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
-
-            newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
-            newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-            //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
-
-            newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
-        }
-
-        #endregion
 
         private void NewDockContent_ItemsChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
         {
@@ -351,7 +255,8 @@ namespace electrifier.Core.Forms
         }
 
         // Issue #21 Refactoring: Remove Windows-API-Code-Pack
-        private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/ IntPtr e)
+        private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/
+                IntPtr e)
         {
             //// TODO: Check if this DockContent is (still) the ActiveContent
             //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
@@ -375,15 +280,14 @@ namespace electrifier.Core.Forms
             this.GetActiveShellBrowserDockContent()?.NavigateForward();
         }
 
-        private void NtsNavigation_NavigateRecentLocationsClicked(object sender, Components.Controls.NavigationToolStrip.NavigateRecentLocationsEventArgs e)
+        private void NtsNavigation_NavigateRecentLocationsClicked(object sender, /*Components.Controls.NavigationToolStrip.NavigateRecentLocationsEventArgs */ object e)
         {
-            this.GetActiveShellBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
+            //this.GetActiveShellBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
         }
 
         private void NtsNavigation_NavigateRefreshClick(object sender, EventArgs e)
         {
             this.GetActiveShellBrowserDockContent()?.NavigateRefresh();
         }
-
     }
 }

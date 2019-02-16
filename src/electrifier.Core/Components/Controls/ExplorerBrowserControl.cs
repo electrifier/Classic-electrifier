@@ -42,20 +42,21 @@ namespace electrifier.Core.Components.Controls
     {
         #region Fields ========================================================================================================
 
-        protected Shell32.IExplorerBrowser explorerBrowser = null;
+        protected Shell32.IExplorerBrowser explorerBrowser = default;
 
         /// <summary>
         /// Used for this.explorerBrowser.Advise() and this.explorerBrowser.Unadvise() calls
         /// </summary>
         private uint adviseEventsCookie;
 
+        private readonly string propertyBagName = "electrifier.ExplorerBrowserControl";
+
+        private ShellItem initialNavigationTarget = default;
+
         /// <summary>
         /// Nested class ViewEvents acts as the connection to IShellView of ExplorerBrowser
         /// </summary>
         protected ExplorerBrowserControl.ViewEvents ebViewEvents;
-
-        private readonly string propertyBagName = "electrifier.ExplorerBrowserControl";
-
 
         private readonly HRESULT HRESULT_CANCELLED = unchecked((int)0x800704C7);
         private readonly HRESULT HRESULT_RESOURCE_IN_USE = unchecked((int)0x800700AA);
@@ -70,9 +71,6 @@ namespace electrifier.Core.Components.Controls
             Backward
         }
 
-
-
-
         #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
@@ -80,6 +78,9 @@ namespace electrifier.Core.Components.Controls
         /// <summary>Contains the navigation history of the ExplorerBrowser</summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public NavigationLog History { get; }
+
+        // TODO: Add test for initialization, ante creation reaturn initialnavigationtarget?
+        public string CurrentLocation => this.History.CurrentLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteParsing);
 
         #endregion ============================================================================================================
 
@@ -182,11 +183,16 @@ namespace electrifier.Core.Components.Controls
 
         #endregion ============================================================================================================
 
-        public ExplorerBrowserControl()
+        public ExplorerBrowserControl(ShellItem initialNavigationTarget = default)
         {
             this.InitializeComponent();
             this.History = new NavigationLog(this);
 
+            //                         // TODO: On Windows 10, navigate to Quick Access by default...
+            // <seealso href="https://www.tenforums.com/tutorials/3123-clsid-key-guid-shortcuts-list-windows-10-a.html">
+            this.initialNavigationTarget = (default == initialNavigationTarget) ?
+                new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_UsersFiles) :        // TODO: On Windows 10, go to quick access; use virtual method for getting this for easy customization
+                new ShellFolder(initialNavigationTarget);
 
             // TODO: Draw background painting on ListView?
         }
@@ -199,14 +205,15 @@ namespace electrifier.Core.Components.Controls
         /// <param name="category">The category of the <paramref name="shellItem"/>.</param>
         public void NavigateTo(ShellItem shellItem)
         {
-            if (shellItem == null)
+            if (default == shellItem)
                 throw new ArgumentNullException(nameof(shellItem));
 
-            //if (this.explorerBrowser == null)     // TODO!
-            //{
-            //    antecreationNavigationTarget = new Tuple<ShellItem, ExplorerBrowserNavigationItemCategory>(shellItem, category);
-            //}
-            //else
+            // In case the control has not been created yet, just overwrite the initial navigation target
+            if (default == this.explorerBrowser)
+            {
+                this.initialNavigationTarget = shellItem;
+            }
+            else
             {
                 try
                 {
@@ -352,9 +359,7 @@ namespace electrifier.Core.Components.Controls
                 this.BeginInvoke(new MethodInvoker(
                     delegate
                     {
-                        // TODO: On Windows 10, navigate to Quick Access by default...
-                        // <seealso href="https://www.tenforums.com/tutorials/3123-clsid-key-guid-shortcuts-list-windows-10-a.html">
-                        this.NavigateTo(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_UsersFiles));
+                        this.NavigateTo(this.initialNavigationTarget);
                     }));
             }
         }

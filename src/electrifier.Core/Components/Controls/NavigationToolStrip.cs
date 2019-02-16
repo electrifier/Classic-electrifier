@@ -18,6 +18,12 @@
 **
 */
 
+using System;
+using System.Collections;
+using System.Windows.Forms;
+
+using electrifier.Core.Components.DockContents;
+
 namespace electrifier.Core.Components.Controls
 {
     public class NavigationToolStrip 
@@ -30,41 +36,41 @@ namespace electrifier.Core.Components.Controls
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        private System.Windows.Forms.ToolStripButton tbtNavigateBackward;
-        private System.Windows.Forms.ToolStripButton tbtNavigateForward;
-        private System.Windows.Forms.ToolStripDropDownButton tddNavigateRecentLocations;
-        private System.Windows.Forms.ToolStripButton tbtNavigateParent;
-        private Components.Controls.ToolStripSpringComboBox tcbNavigateFolder;
-        private System.Windows.Forms.ToolStripButton tbtNavigateRefresh;
-        private System.Windows.Forms.ToolStripDropDownButton tddNavigateQuickAccess;
-        private System.Windows.Forms.ToolStripSeparator tssNavigateSeparator;
-        private System.Windows.Forms.ToolStripComboBox tcbNavigateSearch;
-        private System.Windows.Forms.ToolStripDropDownButton tddNavigateFilterItems;
+        private System.Windows.Forms.ToolStripButton btnGoBack;
+        private System.Windows.Forms.ToolStripButton btnGoForward;
+        private System.Windows.Forms.ToolStripDropDownButton ddnHistoryItems;
+        private System.Windows.Forms.ToolStripButton btnGoToParentLocation;
+        private Components.Controls.ToolStripSpringComboBox cbbCurrentFolder;
+        private System.Windows.Forms.ToolStripButton btnRefresh;
+        private System.Windows.Forms.ToolStripDropDownButton ddnQuickAccessItems;
+        private System.Windows.Forms.ToolStripSeparator ssoSeparator;
+        private System.Windows.Forms.ToolStripComboBox cbbSearchPattern;
+        private System.Windows.Forms.ToolStripDropDownButton cbbFilterPattern;
 
         #endregion ============================================================================================================
 
         #region Published Events ==============================================================================================
 
         public event System.EventHandler NavigateBackwardClick {
-            add { this.tbtNavigateBackward.Click += value; }
-            remove { this.tbtNavigateBackward.Click -= value; }
+            add { this.btnGoBack.Click += value; }
+            remove { this.btnGoBack.Click -= value; }
         }
 
         public event System.EventHandler NavigateForwardClick {
-            add { this.tbtNavigateForward.Click += value; }
-            remove { this.tbtNavigateForward.Click -= value; }
+            add { this.btnGoForward.Click += value; }
+            remove { this.btnGoForward.Click -= value; }
         }
 
         public event System.EventHandler<NavigateRecentLocationsEventArgs> NavigateRecentLocationsClicked;
 
         public event System.EventHandler NavigateParentClick {
-            add { this.tbtNavigateParent.Click += value; }
-            remove { this.tbtNavigateParent.Click -= value; }
+            add { this.btnGoToParentLocation.Click += value; }
+            remove { this.btnGoToParentLocation.Click -= value; }
         }
 
         public event System.EventHandler NavigateRefreshClick {
-            add { this.tbtNavigateRefresh.Click += value; }
-            remove { this.tbtNavigateRefresh.Click -= value; }
+            add { this.btnRefresh.Click += value; }
+            remove { this.btnRefresh.Click -= value; }
         }
 
         public class NavigateRecentLocationsEventArgs : System.EventArgs
@@ -79,17 +85,12 @@ namespace electrifier.Core.Components.Controls
         public NavigationToolStrip()
         {
             this.InitializeComponent();
+            this.UpdateCurrentNavigationOptions();
 
-            this.tbtNavigateBackward.Enabled = false;
-            this.tbtNavigateForward.Enabled = false;
-            this.tbtNavigateParent.Enabled = false;         // TODO: Not implemented yet
-            this.tcbNavigateFolder.Enabled = false;         // TODO: Not implemented yet
-            this.tbtNavigateRefresh.Enabled = false;        // TODO: Not implemented yet
-            this.tddNavigateQuickAccess.Enabled = false;    // TODO: Not implemented yet
-            this.tcbNavigateSearch.Enabled = false;         // TODO: Not implemented yet
-            this.tddNavigateFilterItems.Enabled = false;    // TODO: Not implemented yet
 
-            this.tddNavigateRecentLocations.DropDownItemClicked += this.TddNavigateRecentLocations_DropDownItemClicked;
+
+            this.ddnHistoryItems.DropDownItemClicked += this.TddNavigateRecentLocations_DropDownItemClicked;
+
 
             // TODO: Associate ShellBrowserDockContent!!! 04.10.18, 01:11 => ActiveShellBrowser, events direkt hier abwickeln.
             // TODO: Associate ShellBrowserDockContent!!! 04.10.18, 01:11
@@ -99,11 +100,11 @@ namespace electrifier.Core.Components.Controls
         private void TddNavigateRecentLocations_DropDownItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
         {
             // This should be safe, cause "DropDownItems.IndexOf(null);" returns "-1"
-            int index = this.tddNavigateRecentLocations.DropDownItems.IndexOf(e.ClickedItem);
+            int index = this.ddnHistoryItems.DropDownItems.IndexOf(e.ClickedItem);
 
             if (-1 != index)
             {
-                this.NavigateRecentLocationsClicked?.Invoke(this, new NavigateRecentLocationsEventArgs(index));
+                //this.NavigateRecentLocationsClicked?.Invoke(this, new NavigateRecentLocationsEventArgs(index));
             }
             else
             {
@@ -129,24 +130,134 @@ namespace electrifier.Core.Components.Controls
         {
             //if (navigationLogEventArgs.CanNavigateBackwardChanged)
             //{
-            //    this.tbtNavigateBackward.Enabled = navigationLog.CanNavigateBackward;
+            //    this.btnGoBack.Enabled = navigationLog.CanNavigateBackward;
             //}
 
             //if (navigationLogEventArgs.CanNavigateForwardChanged)
             //{
-            //    this.tbtNavigateForward.Enabled = navigationLog.CanNavigateForward;
+            //    this.btnGoForward.Enabled = navigationLog.CanNavigateForward;
             //}
 
             //if (navigationLogEventArgs.LocationsChanged)
             //{
-            //    this.tddNavigateRecentLocations.DropDownItems.Clear();
+            //    this.ddnHistoryItems.DropDownItems.Clear();
 
             //    foreach (Microsoft.WindowsAPICodePack.Shell.ShellObject shObj in navigationLog.Locations)
             //    {
-            //        this.tddNavigateRecentLocations.DropDownItems.Add(shObj.Name);
+            //        this.ddnHistoryItems.DropDownItems.Add(shObj.Name);
             //    }
             //}
         }
+
+        #region IElNavigationHost Implementation ==============================================================================
+
+        protected ArrayList navigationClients = new ArrayList();
+        protected ElNavigableDockContent activeNavigableDockContent = null;
+
+        public void AddDockContent(ElNavigableDockContent DockContent)
+        {
+            this.navigationClients.Add(DockContent);
+        }
+
+        public void ActivateDockContent(ElNavigableDockContent DockContent)
+        {
+            //    // Check if active client has changed at all
+            //    if (this.GetActiveClient() == navigableDockContent)
+            //        return;
+
+            //    if (!this.navigationClients.Contains(navigableDockContent))
+            //        throw new ArgumentException("NavigationClient never has been added to NavigationHost");
+
+            //    //this.activeNavigableDockContent?.Deactivate();
+            //    this.activeNavigableDockContent = navigableDockContent;
+
+            //    // Activate the underlying DockContent if not already active
+            //    if (!navigableDockContent.IsActivated)
+            //        navigableDockContent.Activate();
+
+            //    this.UpdateCurrentNavigationOptions();
+        }
+
+        public ElNavigableDockContent GetActiveDockContent() => this.activeNavigableDockContent;
+
+        public void RemoveDockContent(ElNavigableDockContent DockContent)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        //public void AddClient(ElNavigableDockContent navigableDockContent)
+        //{
+        //    this.navigationClients.Add(navigableDockContent);
+        //}
+
+        //public void AddClient(ElNavigableDockContent navigationClient, bool autoActivate = false)
+        //{
+        //    this.AddClient(navigationClient);
+
+        //    if (autoActivate)
+        //        this.ActivateClient(navigationClient);
+        //}
+
+        //public void ActivateClient(ElNavigableDockContent navigableDockContent)
+        //{
+        //    // Check if active client has changed at all
+        //    if (this.GetActiveClient() == navigableDockContent)
+        //        return;
+
+        //    if (!this.navigationClients.Contains(navigableDockContent))
+        //        throw new ArgumentException("NavigationClient never has been added to NavigationHost");
+
+        //    //this.activeNavigableDockContent?.Deactivate();
+        //    this.activeNavigableDockContent = navigableDockContent;
+
+        //    // Activate the underlying DockContent if not already active
+        //    if (!navigableDockContent.IsActivated)
+        //        navigableDockContent.Activate();
+
+        //    this.UpdateCurrentNavigationOptions();
+        //}
+
+        //public ElNavigableDockContent GetActiveClient() => this.activeNavigableDockContent;
+
+        //public void RemoveClient(ElNavigableDockContent navClient)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        ////public void DeactivateClient()
+        ////{
+        //// Über History? Also Panel1 aktiv, dann Panel2, wenn Panel2 inaktiv, dann wieder Panel1?
+        ////    this.activeNavigableDockContent.Deactivate();
+        ////}
+
+        protected void UpdateCurrentNavigationOptions(ElNavigableDockContent navigableDockContent = null)
+        {
+            navigableDockContent = (navigableDockContent ?? this.activeNavigableDockContent);
+
+            if (null != navigableDockContent)
+            {
+                this.btnGoBack.Enabled = navigableDockContent.CanGoBack();
+                this.btnGoForward.Enabled = navigableDockContent.CanGoForward();
+                this.ddnHistoryItems.Enabled = navigableDockContent.HasHistoryItems();
+                this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation();
+                this.btnRefresh.Enabled = navigableDockContent.CanRefresh();
+                this.ddnQuickAccessItems.Enabled = navigableDockContent.HasQuickAccesItems();
+                this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems();
+            }
+            else
+            {
+                this.btnGoBack.Enabled = false;
+                this.btnGoForward.Enabled = false;
+                this.ddnHistoryItems.Enabled = false;
+                this.btnGoToParentLocation.Enabled = false;
+                this.btnRefresh.Enabled = false;
+                this.ddnQuickAccessItems.Enabled = false;
+                this.cbbSearchPattern.Enabled = false;
+            }
+        }
+
+        #endregion ============================================================================================================
 
 
 
@@ -160,16 +271,16 @@ namespace electrifier.Core.Components.Controls
         {
             this.components = new System.ComponentModel.Container();
 
-            this.tbtNavigateBackward = new System.Windows.Forms.ToolStripButton();
-            this.tbtNavigateForward = new System.Windows.Forms.ToolStripButton();
-            this.tddNavigateRecentLocations = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tbtNavigateParent = new System.Windows.Forms.ToolStripButton();
-            this.tcbNavigateFolder = new electrifier.Core.Components.Controls.ToolStripSpringComboBox();
-            this.tbtNavigateRefresh = new System.Windows.Forms.ToolStripButton();
-            this.tddNavigateQuickAccess = new System.Windows.Forms.ToolStripDropDownButton();
-            this.tssNavigateSeparator = new System.Windows.Forms.ToolStripSeparator();
-            this.tcbNavigateSearch = new System.Windows.Forms.ToolStripComboBox();
-            this.tddNavigateFilterItems = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnGoBack = new System.Windows.Forms.ToolStripButton();
+            this.btnGoForward = new System.Windows.Forms.ToolStripButton();
+            this.ddnHistoryItems = new System.Windows.Forms.ToolStripDropDownButton();
+            this.btnGoToParentLocation = new System.Windows.Forms.ToolStripButton();
+            this.cbbCurrentFolder = new electrifier.Core.Components.Controls.ToolStripSpringComboBox();
+            this.btnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.ddnQuickAccessItems = new System.Windows.Forms.ToolStripDropDownButton();
+            this.ssoSeparator = new System.Windows.Forms.ToolStripSeparator();
+            this.cbbSearchPattern = new System.Windows.Forms.ToolStripComboBox();
+            this.cbbFilterPattern = new System.Windows.Forms.ToolStripDropDownButton();
 
             this.SuspendLayout();
 
@@ -177,101 +288,101 @@ namespace electrifier.Core.Components.Controls
             this.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
             this.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.tbtNavigateBackward,
-            this.tbtNavigateForward,
-            this.tddNavigateRecentLocations,
-            this.tbtNavigateParent,
-            this.tcbNavigateFolder,
-            this.tbtNavigateRefresh,
-            this.tddNavigateQuickAccess,
-            this.tssNavigateSeparator,
-            this.tcbNavigateSearch,
-            this.tddNavigateFilterItems});
+            this.btnGoBack,
+            this.btnGoForward,
+            this.ddnHistoryItems,
+            this.btnGoToParentLocation,
+            this.cbbCurrentFolder,
+            this.btnRefresh,
+            this.ddnQuickAccessItems,
+            this.ssoSeparator,
+            this.cbbSearchPattern,
+            this.cbbFilterPattern});
             this.Padding = new System.Windows.Forms.Padding(8);
             this.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.Stretch = true;
             // 
-            // tbtNavigateBackward
+            // btnGoBack
             // 
-            this.tbtNavigateBackward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbtNavigateBackward.Image = global::electrifier.Core.Properties.Resources.Navigation_Backward_24px;
-            this.tbtNavigateBackward.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbtNavigateBackward.Name = "tbtNavigateBackward";
-            this.tbtNavigateBackward.Size = new System.Drawing.Size(28, 28);
-            this.tbtNavigateBackward.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
+            this.btnGoBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGoBack.Image = global::electrifier.Core.Properties.Resources.Navigation_Backward_24px;
+            this.btnGoBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGoBack.Name = "btnGoBack";
+            this.btnGoBack.Size = new System.Drawing.Size(28, 28);
+            this.btnGoBack.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
             // 
-            // tbtNavigateForward
+            // btnGoForward
             // 
-            this.tbtNavigateForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbtNavigateForward.Image = global::electrifier.Core.Properties.Resources.Navigation_Forward_24px;
-            this.tbtNavigateForward.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbtNavigateForward.Name = "tbtNavigateForward";
-            this.tbtNavigateForward.Size = new System.Drawing.Size(28, 28);
-            this.tbtNavigateForward.ToolTipText = "Forward to [insert folder here] (Alt + Right Arrow)";
+            this.btnGoForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGoForward.Image = global::electrifier.Core.Properties.Resources.Navigation_Forward_24px;
+            this.btnGoForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGoForward.Name = "btnGoForward";
+            this.btnGoForward.Size = new System.Drawing.Size(28, 28);
+            this.btnGoForward.ToolTipText = "Forward to [insert folder here] (Alt + Right Arrow)";
             // 
-            // tddNavigateRecentLocations
+            // ddnHistoryItems
             // 
-            this.tddNavigateRecentLocations.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tddNavigateRecentLocations.Image = global::electrifier.Core.Properties.Resources.DropDown_Arrow_16px;
-            this.tddNavigateRecentLocations.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.tddNavigateRecentLocations.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tddNavigateRecentLocations.Name = "tddNavigateRecentLocations";
-            this.tddNavigateRecentLocations.ShowDropDownArrow = false;
-            this.tddNavigateRecentLocations.Size = new System.Drawing.Size(20, 28);
-            this.tddNavigateRecentLocations.ToolTipText = "Recent locations";
+            this.ddnHistoryItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ddnHistoryItems.Image = global::electrifier.Core.Properties.Resources.DropDown_Arrow_16px;
+            this.ddnHistoryItems.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
+            this.ddnHistoryItems.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ddnHistoryItems.Name = "ddnHistoryItems";
+            this.ddnHistoryItems.ShowDropDownArrow = false;
+            this.ddnHistoryItems.Size = new System.Drawing.Size(20, 28);
+            this.ddnHistoryItems.ToolTipText = "Recent locations";
             // 
-            // tbtNavigateParent
+            // btnGoToParentLocation
             // 
-            this.tbtNavigateParent.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbtNavigateParent.Image = global::electrifier.Core.Properties.Resources.Navigation_Parent_Folder_24px;
-            this.tbtNavigateParent.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbtNavigateParent.Name = "tbtNavigateParent";
-            this.tbtNavigateParent.Size = new System.Drawing.Size(28, 28);
-            this.tbtNavigateParent.ToolTipText = "Up to [Insert folder here]... (Alt + Up Arrow)";
+            this.btnGoToParentLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGoToParentLocation.Image = global::electrifier.Core.Properties.Resources.Navigation_Parent_Folder_24px;
+            this.btnGoToParentLocation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGoToParentLocation.Name = "btnGoToParentLocation";
+            this.btnGoToParentLocation.Size = new System.Drawing.Size(28, 28);
+            this.btnGoToParentLocation.ToolTipText = "Up to [Insert folder here]... (Alt + Up Arrow)";
             // 
-            // tcbNavigateFolder
+            // cbbCurrentFolder
             // 
-            this.tcbNavigateFolder.Name = "tcbNavigateFolder";
+            this.cbbCurrentFolder.Name = "cbbCurrentFolder";
             // 
-            // tbtNavigateRefresh
+            // btnRefresh
             // 
-            this.tbtNavigateRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tbtNavigateRefresh.Image = global::electrifier.Core.Properties.Resources.Navigation_Refresh_24px;
-            this.tbtNavigateRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tbtNavigateRefresh.Name = "tbtNavigateRefresh";
-            this.tbtNavigateRefresh.Size = new System.Drawing.Size(28, 28);
-            this.tbtNavigateRefresh.ToolTipText = "Refresh [Insert folder here]";
+            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnRefresh.Image = global::electrifier.Core.Properties.Resources.Navigation_Refresh_24px;
+            this.btnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(28, 28);
+            this.btnRefresh.ToolTipText = "Refresh [Insert folder here]";
             // 
-            // tddNavigateQuickAccess
+            // ddnQuickAccessItems
             // 
-            this.tddNavigateQuickAccess.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tddNavigateQuickAccess.Image = global::electrifier.Core.Properties.Resources.Navigation_Quick_Access_24px;
-            this.tddNavigateQuickAccess.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tddNavigateQuickAccess.Name = "tddNavigateQuickAccess";
-            this.tddNavigateQuickAccess.Size = new System.Drawing.Size(38, 28);
-            this.tddNavigateQuickAccess.Text = "tddNavigateQuickAccess";
+            this.ddnQuickAccessItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ddnQuickAccessItems.Image = global::electrifier.Core.Properties.Resources.Navigation_Quick_Access_24px;
+            this.ddnQuickAccessItems.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ddnQuickAccessItems.Name = "ddnQuickAccessItems";
+            this.ddnQuickAccessItems.Size = new System.Drawing.Size(38, 28);
+            this.ddnQuickAccessItems.Text = "ddnQuickAccessItems";
             // 
-            // tssNavigateSeparator
+            // ssoSeparator
             // 
-            this.tssNavigateSeparator.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.tssNavigateSeparator.Name = "tssNavigateSeparator";
-            this.tssNavigateSeparator.Size = new System.Drawing.Size(6, 31);
+            this.ssoSeparator.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ssoSeparator.Name = "ssoSeparator";
+            this.ssoSeparator.Size = new System.Drawing.Size(6, 31);
             // 
-            // tcbNavigateSearch
+            // cbbSearchFilter
             // 
-            this.tcbNavigateSearch.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tcbNavigateSearch.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.tcbNavigateSearch.Name = "tcbNavigateSearch";
-            this.tcbNavigateSearch.Size = new System.Drawing.Size(250, 31);
-            this.tcbNavigateSearch.Text = "Enter search phrase...";
+            this.cbbSearchPattern.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cbbSearchPattern.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.cbbSearchPattern.Name = "cbbSearchFilter";
+            this.cbbSearchPattern.Size = new System.Drawing.Size(250, 31);
+            this.cbbSearchPattern.Text = "Enter search phrase...";
             // 
-            // tddNavigateFilterItems
+            // cbbFilterPattern
             // 
-            this.tddNavigateFilterItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.tddNavigateFilterItems.Image = global::electrifier.Core.Properties.Resources.Navigation_Filter_Add_24px;
-            this.tddNavigateFilterItems.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tddNavigateFilterItems.Name = "tddNavigateFilterItems";
-            this.tddNavigateFilterItems.Size = new System.Drawing.Size(38, 28);
+            this.cbbFilterPattern.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cbbFilterPattern.Image = global::electrifier.Core.Properties.Resources.Navigation_Filter_Add_24px;
+            this.cbbFilterPattern.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cbbFilterPattern.Name = "cbbFilterPattern";
+            this.cbbFilterPattern.Size = new System.Drawing.Size(38, 28);
 
             this.ResumeLayout(false);
         }

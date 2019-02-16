@@ -21,9 +21,8 @@
 using System;
 using System.Windows.Forms;
 using Sunburst.WindowsForms.Ribbon.Controls;
-using Sunburst.WindowsForms.Ribbon.Controls.Events;
-
 using Vanara.PInvoke;
+using WeifenLuo.WinFormsUI.Docking;
 
 
 namespace electrifier.Core.Forms
@@ -31,9 +30,9 @@ namespace electrifier.Core.Forms
     /// <summary>
     /// The main Window of electrifier application.
     /// </summary>
-    public partial class Electrifier : System.Windows.Forms.Form
+    public partial class Electrifier
     {
-        private enum RibbonCommand : uint
+        private enum RibbonCommandID : uint
         {
             //
             // Quick Access Toolbar Commands ==================================================================================
@@ -78,8 +77,6 @@ namespace electrifier.Core.Forms
         }
 
 
-        private Sunburst.WindowsForms.Ribbon.Ribbon rbnRibbon;
-
         // Quick Access Toolbar Commands
 
         private RibbonButton cmdQATOpenNewShellBrowserPane;
@@ -117,92 +114,92 @@ namespace electrifier.Core.Forms
             //
             // Quick Access Toolbar Commands ==================================================================================
             //
-            this.cmdQATOpenNewShellBrowserPane = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdQATOpenNewShellBrowserPane);
+            this.cmdQATOpenNewShellBrowserPane = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdQATOpenNewShellBrowserPane);
             this.cmdQATOpenNewShellBrowserPane.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPane_ExecuteEvent);
 
             //
             // Application Menu Items =========================================================================================
             //
-            this.cmdAppOpenNewWindow = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppOpenNewWindow)
+            this.cmdAppOpenNewWindow = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppOpenNewWindow)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewWindow_Execute),
             };
 
-            this.cmdAppOpenNewShellBrowserPane = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppOpenNewShellBrowserPane);
+            this.cmdAppOpenNewShellBrowserPane = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppOpenNewShellBrowserPane);
             this.cmdAppOpenNewShellBrowserPane.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenNewShellBrowserPane_ExecuteEvent);
 
-            this.cmdAppOpenCommandPrompt = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppOpenCommandPrompt)
+            this.cmdAppOpenCommandPrompt = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppOpenCommandPrompt)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenCommandPrompt_Execute),
             };
 
-            this.cmdAppOpenWindowsPowerShell = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppOpenWindowsPowerShell)
+            this.cmdAppOpenWindowsPowerShell = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppOpenWindowsPowerShell)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppOpenWindowsPowerShell_Execute),
             };
 
 
-            this.cmdAppChangeElectrifierOptions = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppChangeElectrifierOptions)
+            this.cmdAppChangeElectrifierOptions = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppChangeElectrifierOptions)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppChangeElectrifierOptions_Execute),
             };
 
-            this.cmdAppChangeFolderAndSearchOptions = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppChangeFolderAndSearchOptions)
+            this.cmdAppChangeFolderAndSearchOptions = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppChangeFolderAndSearchOptions)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppChangeFolderAndSearchOptions_Execute),
             };
 
-            this.cmdAppHelp = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppHelp);
+            this.cmdAppHelp = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppHelp);
             //this.cmdAppHelp.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppHelp_Execute);
 
-            this.cmdAppHelpAboutElectrifier = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppHelpAboutElectrifier);
+            this.cmdAppHelpAboutElectrifier = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppHelpAboutElectrifier);
             this.cmdAppHelpAboutElectrifier.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppHelpAboutElectrifier_ExecuteEvent);
 
-            this.cmdAppHelpAboutWindows = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppHelpAboutWindows);
+            this.cmdAppHelpAboutWindows = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppHelpAboutWindows);
             this.cmdAppHelpAboutWindows.ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppHelpAboutWindows_ExecuteEvent);
 
-            this.cmdAppClose = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdAppClose);
+            this.cmdAppClose = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdAppClose);
             this.cmdAppClose.ExecuteEvent += new EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdAppClose_ExecuteEvent);
 
-            this.cmdTabHome = new RibbonTab(this.rbnRibbon, (uint)RibbonCommand.cmdTabHome);
+            this.cmdTabHome = new RibbonTab(this.rbnRibbon, (uint)RibbonCommandID.cmdTabHome);
             //
             // Command Group: Home -> Clipboard ===============================================================================
             //
-            this.cmdGrpHomeClipboard = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdGrpHomeClipboard);
+            this.cmdGrpHomeClipboard = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdGrpHomeClipboard);
 
-            this.cmdBtnClipboardCut = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdClipboardCut);
+            this.cmdBtnClipboardCut = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdClipboardCut);
             this.cmdBtnClipboardCut.Enabled = false;
 
-            this.cmdBtnClipboardCopy = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdClipboardCopy);
+            this.cmdBtnClipboardCopy = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdClipboardCopy);
             //this.cmdBtnClipboardCopy.ExecuteEvent += this.CmdClipboardCopy_ExecuteEvent;
             this.cmdBtnClipboardCopy.Enabled = false;
 
-            this.cmdBtnClipboardPaste = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdClipboardPaste);
+            this.cmdBtnClipboardPaste = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdClipboardPaste);
             this.cmdBtnClipboardPaste.ExecuteEvent += this.CmdClipboardPaste_ExecuteEvent;
 
             //
             // Command Group: Home -> Organize ================================================================================
             //
-            this.cmdGrpHomeOrganize = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdGrpHomeOrganize);
+            this.cmdGrpHomeOrganize = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdGrpHomeOrganize);
 
-            this.cmdBtnOrganizeMoveTo = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdOrganizeMoveTo)
+            this.cmdBtnOrganizeMoveTo = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdOrganizeMoveTo)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdBtnOrganizeMoveTo_Execute),
             };
 
-            this.cmdBtnOrganizeDelete = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdOrganizeDelete)
+            this.cmdBtnOrganizeDelete = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdOrganizeDelete)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdBtnOrganizeDelete_Execute),
             };
 
-            this.cmdBtnOrganizeRename = new RibbonButton(this.rbnRibbon, (uint)RibbonCommand.cmdOrganizeRename)
+            this.cmdBtnOrganizeRename = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdOrganizeRename)
             {
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdBtnOrganizeRename_Execute),
@@ -215,8 +212,60 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            this.CreateNewFileBrowser();
+            this.CreateNewShellBrowser();
         }
+
+        private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewShellBrowser();
+        }
+
+        private void TsbNewFileBrowserLeft_Click(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewShellBrowser(WeifenLuo.WinFormsUI.Docking.DockAlignment.Left);
+        }
+
+        private void TsbNewFileBrowserRight_Click(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewShellBrowser(DockAlignment.Right);
+        }
+
+        private void TsbNewFileBrowserTop_Click(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewShellBrowser(DockAlignment.Top);
+        }
+
+        private void TsbNewFileBrowserBottom_Click(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewShellBrowser(DockAlignment.Bottom);
+        }
+
+        // TODO 03/02/19: TsbNewFileBrowserFloating_Click has not been used yet
+        //private void TsbNewFileBrowserFloating_Click(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    var newDockContent = new Components.DockContents.ShellBrowserDockContent();
+        //    var floatWindowBounds = new Rectangle(this.Location, this.Size);
+
+        //    floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
+
+        //    newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
+        //    newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+        //    //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
+
+        //    newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
+        //}
 
         private void CmdAppHelpAboutElectrifier_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         {
