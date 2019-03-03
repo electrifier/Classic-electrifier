@@ -49,67 +49,25 @@ namespace electrifier.Core.Components.Controls
 
         #endregion ============================================================================================================
 
-        #region Published Events ==============================================================================================
+        #region Properties ====================================================================================================
 
-        public event System.EventHandler NavigateBackwardClick {
-            add { this.btnGoBack.Click += value; }
-            remove { this.btnGoBack.Click -= value; }
+        private ElNavigableDockContent activeDockContent = null;
+
+        public ElNavigableDockContent ActiveDockContent {
+            get => this.activeDockContent;
+            set => this.UpdateButtonState(this.activeDockContent = value);
         }
 
-        public event System.EventHandler NavigateForwardClick {
-            add { this.btnGoForward.Click += value; }
-            remove { this.btnGoForward.Click -= value; }
-        }
-
-        public event System.EventHandler<NavigateRecentLocationsEventArgs> NavigateRecentLocationsClicked;
-
-        public event System.EventHandler NavigateParentClick {
-            add { this.btnGoToParentLocation.Click += value; }
-            remove { this.btnGoToParentLocation.Click -= value; }
-        }
-
-        public event System.EventHandler NavigateRefreshClick {
-            add { this.btnRefresh.Click += value; }
-            remove { this.btnRefresh.Click -= value; }
-        }
-
-        public class NavigateRecentLocationsEventArgs : System.EventArgs
-        {
-            public int NavigationLogIndex { get; }
-
-            public NavigateRecentLocationsEventArgs(int navigationLogIndex) { this.NavigationLogIndex = navigationLogIndex; }
-        }
-
-        #endregion Published Events ===========================================================================================
+        #endregion ============================================================================================================
 
         public NavigationToolStrip()
         {
             this.InitializeComponent();
-            this.UpdateCurrentNavigationOptions();
+            this.UpdateButtonState(null);
 
-
-
-            this.ddnHistoryItems.DropDownItemClicked += this.TddNavigateRecentLocations_DropDownItemClicked;
-
-
-            // TODO: Associate ShellBrowserDockContent!!! 04.10.18, 01:11 => ActiveShellBrowser, events direkt hier abwickeln.
-            // TODO: Associate ShellBrowserDockContent!!! 04.10.18, 01:11
-
-        }
-
-        private void TddNavigateRecentLocations_DropDownItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
-        {
-            // This should be safe, cause "DropDownItems.IndexOf(null);" returns "-1"
-            int index = this.ddnHistoryItems.DropDownItems.IndexOf(e.ClickedItem);
-
-            if (-1 != index)
-            {
-                //this.NavigateRecentLocationsClicked?.Invoke(this, new NavigateRecentLocationsEventArgs(index));
-            }
-            else
-            {
-                AppContext.TraceWarning("IndexOf failed!");
-            }
+            this.btnGoBack.Click += this.BtnGoBack_Click;
+            this.btnGoForward.Click += this.BtnGoForward_Click;
+            this.ddnHistoryItems.DropDownItemClicked += this.DdnHistoryItems_DropDownItemClicked;
         }
 
         /// <summary> 
@@ -124,6 +82,50 @@ namespace electrifier.Core.Components.Controls
             }
             base.Dispose(disposing);
         }
+
+        /// <summary>
+        /// Call GoBack() on ActiveDockContent.
+        /// </summary>
+        /// <param name="sender">Not used.</param>
+        /// <param name="e">Not used.</param>
+        private void BtnGoBack_Click(object sender, EventArgs e)
+        {
+            if (this.ActiveDockContent is null)
+                AppContext.TraceWarning("ActiveDockContent is null in BtnGoBack_Click()");
+
+            this.ActiveDockContent?.GoBack();
+        }
+
+        /// <summary>
+        /// Call GoForward() on ActiveDockContent.
+        /// </summary>
+        /// <param name="sender">Not used.</param>
+        /// <param name="e">Not used.</param>
+        private void BtnGoForward_Click(object sender, EventArgs e)
+        {
+            if (this.ActiveDockContent is null)
+                AppContext.TraceWarning("ActiveDockContent is null in BtnGoForward_Click()");
+
+            this.ActiveDockContent?.GoForward();
+        }
+
+        private void DdnHistoryItems_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            // This should be safe, cause "DropDownItems.IndexOf(null);" returns "-1"
+            int index = this.ddnHistoryItems.DropDownItems.IndexOf(e.ClickedItem);
+
+            if (-1 != index)
+            {
+                //this.NavigateRecentLocationsClicked?.Invoke(this, new NavigateRecentLocationsEventArgs(index));
+            }
+            else
+            {
+                AppContext.TraceWarning("DdnHistoryItems_DropDownItemClicked: IndexOf failed!");
+            }
+        }
+
+
+
 
         public void UpdateNavigationLog(/*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/ System.IntPtr navigationLogEventArgs,
             /*Microsoft.WindowsAPICodePack.Controls.ExplorerBrowserNavigationLog*/ System.IntPtr navigationLog)
@@ -149,91 +151,12 @@ namespace electrifier.Core.Components.Controls
             //}
         }
 
-        #region IElNavigationHost Implementation ==============================================================================
 
-        protected ArrayList navigationClients = new ArrayList();
-        protected ElNavigableDockContent activeNavigableDockContent = null;
-
-        public void AddDockContent(ElNavigableDockContent DockContent)
+        public void UpdateButtonState(ElNavigableDockContent navigableDockContent)
         {
-            this.navigationClients.Add(DockContent);
-        }
-
-        public void ActivateDockContent(ElNavigableDockContent DockContent)
-        {
-            //    // Check if active client has changed at all
-            //    if (this.GetActiveClient() == navigableDockContent)
-            //        return;
-
-            //    if (!this.navigationClients.Contains(navigableDockContent))
-            //        throw new ArgumentException("NavigationClient never has been added to NavigationHost");
-
-            //    //this.activeNavigableDockContent?.Deactivate();
-            //    this.activeNavigableDockContent = navigableDockContent;
-
-            //    // Activate the underlying DockContent if not already active
-            //    if (!navigableDockContent.IsActivated)
-            //        navigableDockContent.Activate();
-
-            //    this.UpdateCurrentNavigationOptions();
-        }
-
-        public ElNavigableDockContent GetActiveDockContent() => this.activeNavigableDockContent;
-
-        public void RemoveDockContent(ElNavigableDockContent DockContent)
-        {
-            throw new NotImplementedException();
-        }
-
-
-        //public void AddClient(ElNavigableDockContent navigableDockContent)
-        //{
-        //    this.navigationClients.Add(navigableDockContent);
-        //}
-
-        //public void AddClient(ElNavigableDockContent navigationClient, bool autoActivate = false)
-        //{
-        //    this.AddClient(navigationClient);
-
-        //    if (autoActivate)
-        //        this.ActivateClient(navigationClient);
-        //}
-
-        //public void ActivateClient(ElNavigableDockContent navigableDockContent)
-        //{
-        //    // Check if active client has changed at all
-        //    if (this.GetActiveClient() == navigableDockContent)
-        //        return;
-
-        //    if (!this.navigationClients.Contains(navigableDockContent))
-        //        throw new ArgumentException("NavigationClient never has been added to NavigationHost");
-
-        //    //this.activeNavigableDockContent?.Deactivate();
-        //    this.activeNavigableDockContent = navigableDockContent;
-
-        //    // Activate the underlying DockContent if not already active
-        //    if (!navigableDockContent.IsActivated)
-        //        navigableDockContent.Activate();
-
-        //    this.UpdateCurrentNavigationOptions();
-        //}
-
-        //public ElNavigableDockContent GetActiveClient() => this.activeNavigableDockContent;
-
-        //public void RemoveClient(ElNavigableDockContent navClient)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        ////public void DeactivateClient()
-        ////{
-        //// Über History? Also Panel1 aktiv, dann Panel2, wenn Panel2 inaktiv, dann wieder Panel1?
-        ////    this.activeNavigableDockContent.Deactivate();
-        ////}
-
-        protected void UpdateCurrentNavigationOptions(ElNavigableDockContent navigableDockContent = null)
-        {
-            navigableDockContent = (navigableDockContent ?? this.activeNavigableDockContent);
+            // TODO: The following exception is thrown for test purposes only!
+            if (this.ActiveDockContent != navigableDockContent)
+                throw new ArgumentException("NavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
 
             if (null != navigableDockContent)
             {
@@ -257,7 +180,6 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
-        #endregion ============================================================================================================
 
 
 

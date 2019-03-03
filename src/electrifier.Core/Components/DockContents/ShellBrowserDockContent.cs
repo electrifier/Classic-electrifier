@@ -39,7 +39,6 @@ namespace electrifier.Core.Components.DockContents
     {
         #region Fields ========================================================================================================
 
-        //protected ExplorerBrowser explorerBrowser;
         protected Controls.ExplorerBrowserControl explorerBrowserControl;
 
         protected const string persistParamURI = @"URI=";
@@ -137,26 +136,6 @@ namespace electrifier.Core.Components.DockContents
                 this.UIDecouplingTimer.Dispose();
 
             base.Dispose(disposing);
-        }
-
-        public void NavigateBackward()
-        {
-            //this.explorerBrowserControl.NavigateLogLocation(NavigationLogDirection.Backward);
-        }
-
-        public void NavigateForward()
-        {
-            //this.explorerBrowserControl.NavigateLogLocation(NavigationLogDirection.Forward);
-        }
-
-        public void NavigateLogLocation(int navigationLogIndex)
-        {
-            //this.explorerBrowserControl.NavigateLogLocation(navigationLogIndex);
-        }
-
-        public void NavigateRefresh()
-        {
-            
         }
 
         #region DockContent Persistence Overrides =============================================================================
@@ -279,6 +258,8 @@ namespace electrifier.Core.Components.DockContents
         {
             AppContext.TraceDebug("Firing of ExplorerBrowserControl_Navigated event.");
 
+            this.OnNavigationOptionsChanged(null);  // TODO
+
             this.BeginInvoke(new MethodInvoker(delegate ()
             {
                 this.Text = args.NewLocation.Name;
@@ -305,12 +286,38 @@ namespace electrifier.Core.Components.DockContents
 
         #region ElNavigableDockContent implementation ==========================================================================
 
+        public override bool CanGoBack()
+        {
+            return this.explorerBrowserControl.History.CanNavigateBackward;
+        }
+
+        public override void GoBack()
+        {
+            this.explorerBrowserControl.History.NavigateLog(
+                Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Backward);
+        }
+
+        public override bool CanGoForward()
+        {
+            return this.explorerBrowserControl.History.CanNavigateForward;
+        }
+
+        public override void GoForward()
+        {
+            this.explorerBrowserControl.History.NavigateLog(
+                Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Forward);
+        }
+
 
         public override string CurrentLocation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
+        public override event EventHandler NavigationOptionsChanged;
 
-
+        public virtual void OnNavigationOptionsChanged(EventArgs args)
+        {
+            this.NavigationOptionsChanged?.Invoke(this, args);
+        }
 
         #endregion =============================================================================================================
 

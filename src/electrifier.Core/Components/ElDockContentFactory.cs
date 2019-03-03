@@ -49,7 +49,7 @@ namespace electrifier.Core.Components
 
             if (nameof(DockContents.ShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
             {
-                dockContent = new DockContents.ShellBrowserDockContent(navigationHost, dockContentArguments);
+                dockContent = ElDockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
             }
 
             return dockContent;

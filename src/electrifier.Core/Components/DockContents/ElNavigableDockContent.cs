@@ -68,6 +68,8 @@ namespace electrifier.Core.Components.DockContents
         public virtual string CurrentSearchPattern { get; set; }
         public virtual void DoSearchItems(string SearchPattern) { throw new NotImplementedException(); }
 
+        public abstract event EventHandler /* TODO: ElNavigableDockContent */ NavigationOptionsChanged;
+
         // TODO: 05/02/19 Search and Filter options will be combined!
         //public virtual ElNavOptionState CanApplyFilter() { return ElNavOptionState.Hidden; }
         //public virtual string CurrentFilterPattern { get; set; }

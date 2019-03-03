@@ -59,10 +59,13 @@ namespace electrifier.Core.Forms
 
         #region Published Events ==============================================================================================
 
-        #endregion Published Events ===========================================================================================
+        public event EventHandler ClipboardUpdate;
+
+        #endregion ============================================================================================================
 
 
-        public Electrifier(Icon icon) : base()
+        public Electrifier(Icon icon)
+          : base()
         {
             AppContext.TraceScope();
 
@@ -77,14 +80,6 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.ShowDocumentIcon = true;
             this.dpnDockPanel.ActiveContentChanged += this.DpnDockPanel_ActiveContentChanged;
 
-            // Initialize NavigationToolStrip
-            this.ntsNavigation.NavigateBackwardClick += this.NtsNavigation_NavigateBackwardClick;
-            this.ntsNavigation.NavigateForwardClick += this.NtsNavigation_NavigateForwardClick;
-            this.ntsNavigation.NavigateRecentLocationsClicked += this.NtsNavigation_NavigateRecentLocationsClicked;
-            this.ntsNavigation.NavigateRefreshClick += this.NtsNavigation_NavigateRefreshClick;
-
-            // TODO: Update status bar to values of currently active Document
-
             // Add this window to clipboard format listener list, i.e. register for clipboard changes
             AppContext.TraceDebug("AddClipboardFormatListener");
             User32.AddClipboardFormatListener(this.Handle);
@@ -97,8 +92,6 @@ namespace electrifier.Core.Forms
             AppContext.TraceDebug("RemoveClipboardFormatListener");
             User32.RemoveClipboardFormatListener(this.Handle);
         }
-
-        public event EventHandler ClipboardUpdate;
 
         protected virtual void OnClipboardUpdate()
         {
@@ -120,35 +113,34 @@ namespace electrifier.Core.Forms
 
         private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)
         {
-            var activeShellBrowser = this.dpnDockPanel.ActiveContent as ShellBrowserDockContent;
+            // Info: sender should be the DockPanel
+            var activatedContent = this.dpnDockPanel.ActiveContent;
 
-            if (activeShellBrowser is null)
+            if (!sender.Equals(this.dpnDockPanel))
+                throw new ArgumentException("TODO: Test purposes only: sender is not dpnDockPanel! @ DpnDockPanel_ActiveContentChanged");
+
+            if (null == activatedContent)
             {
-                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, Type:" + sender.GetType().ToString());
+                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, activatedContent is null");
             }
             else
             {
-                this.ActiveShellBrowserChanged(activeShellBrowser, e);
+                var activatedContentType = activatedContent?.GetType();
+
+                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
+                    + ", ActivatedContent=" + activatedContent
+                    + ", ActivatedContentType=" + activatedContentType);
+
+                // ShellBrowserDockContent has been activated.
+                if (typeof(ShellBrowserDockContent).Equals(activatedContentType))
+                {
+                    this.ActivateDockContent(activatedContent as ShellBrowserDockContent);
+                }
+                else
+                {
+                    AppContext.TraceWarning("DpnDockPanel_ActiveContentChanged => Unknwon ActiveContent");
+                }
             }
-        }
-
-        protected void ActiveShellBrowserChanged(ShellBrowserDockContent shellBrowser, EventArgs e)
-        {
-            AppContext.TraceDebug("Activating '" + shellBrowser.Text + "'");
-
-            // Update Navigation Log and check for all possible changes
-            // Issue #21 Refactoring: Remove Windows-API-Code-Pack
-            //var navigationLogEventArgs = new Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs()
-            //{
-            //    CanNavigateBackwardChanged = true,
-            //    CanNavigateForwardChanged = true,
-            //    LocationsChanged = true,
-            //};
-            //this.ntsNavigation.UpdateNavigationLog(navigationLogEventArgs, shellBrowser.NavigationLog);
-
-            // Update Status Bar
-            this.UpdateTslItemCount(shellBrowser);
-            this.UpdateTslSelectionCount(shellBrowser);
         }
 
         [Conditional("DEBUG")]
@@ -198,62 +190,6 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.SaveAsXml(fullFileName);
         }
 
-        private void NewDockContent_ItemsChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
-        {
-            this.UpdateTslItemCount(sender);
-        }
-
-        private void NewDockContent_SelectionChanged(ShellBrowserDockContent sender, EventArgs eventArgs)
-        {
-            this.UpdateTslSelectionCount(sender);
-        }
-
-        protected void UpdateTslItemCount(ShellBrowserDockContent activeContent)
-        {
-            string txt = null;
-
-            if (!(activeContent is null))
-            {
-                int itemCount = activeContent.ItemsCount;
-
-                switch (itemCount)
-                {
-                    case 1:
-                        txt = "1 item";
-                        break;
-                    default:
-                        txt = itemCount + " items";
-                        break;
-                }
-            }
-
-            this.tslItemCount.Text = txt;
-        }
-
-        protected void UpdateTslSelectionCount(ShellBrowserDockContent activeContent)
-        {
-            string txt = null;
-
-            if (!(activeContent is null))
-            {
-                int selectedItemsCount = activeContent.SelectedItemsCount;
-
-                switch (selectedItemsCount)
-                {
-                    case 0:
-                        break;
-                    case 1:
-                        txt = "1 item selected";
-                        break;
-                    default:
-                        txt = selectedItemsCount + " items selected";
-                        break;
-                }
-            }
-
-            this.tslSelectionCount.Text = txt;
-        }
-
         // Issue #21 Refactoring: Remove Windows-API-Code-Pack
         private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/
                 IntPtr e)
@@ -262,32 +198,6 @@ namespace electrifier.Core.Forms
             //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
             //this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
 
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ShellBrowserDockContent GetActiveShellBrowserDockContent()
-        {
-            return (this.dpnDockPanel.ActiveDocumentPane?.ActiveContent as ShellBrowserDockContent);
-        }
-
-        private void NtsNavigation_NavigateBackwardClick(object sender, EventArgs eventArgs)
-        {
-            this.GetActiveShellBrowserDockContent()?.NavigateBackward();
-        }
-
-        private void NtsNavigation_NavigateForwardClick(object sender, EventArgs eventArgs)
-        {
-            this.GetActiveShellBrowserDockContent()?.NavigateForward();
-        }
-
-        private void NtsNavigation_NavigateRecentLocationsClicked(object sender, /*Components.Controls.NavigationToolStrip.NavigateRecentLocationsEventArgs */ object e)
-        {
-            //this.GetActiveShellBrowserDockContent()?.NavigateLogLocation(e.NavigationLogIndex);
-        }
-
-        private void NtsNavigation_NavigateRefreshClick(object sender, EventArgs e)
-        {
-            this.GetActiveShellBrowserDockContent()?.NavigateRefresh();
         }
     }
 }

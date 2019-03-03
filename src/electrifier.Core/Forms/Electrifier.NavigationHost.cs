@@ -35,7 +35,15 @@ namespace electrifier.Core.Forms
 
         public void AddDockContent(ElNavigableDockContent DockContent)
         {
+            AppContext.TraceScope();
+
             this.dockContentList.Add(DockContent);
+
+            DockContent.Activated += this.DockContent_Activated;
+            DockContent.FormClosed += this.DockContent_FormClosed;
+
+            DockContent.NavigationOptionsChanged += this.DockContent_NavigationOptionsChanged;
+
 
             // TODO: Connect events!
 
@@ -48,6 +56,8 @@ namespace electrifier.Core.Forms
 
         public void ActivateDockContent(ElNavigableDockContent DockContent)
         {
+            AppContext.TraceScope();
+
             // Check if active DockContent has changed at all
             if (this.GetActiveDockContent() == DockContent)
                 return;
@@ -62,15 +72,50 @@ namespace electrifier.Core.Forms
             if (!DockContent.IsActivated)
                 DockContent.Activate();
 
-            //this.UpdateCurrentNavigationOptions();
+            this.ntsNavigation.ActiveDockContent = DockContent;
         }
 
         public ElNavigableDockContent GetActiveDockContent() => this.activeNavigableDockContent;
 
         public void RemoveDockContent(ElNavigableDockContent DockContent)
         {
-            // TODO: Not implemented yet!
-            throw new NotImplementedException();
+            AppContext.TraceScope();
+
+            DockContent.Activated -= this.DockContent_Activated;
+            DockContent.NavigationOptionsChanged -= this.DockContent_NavigationOptionsChanged;
+
+            this.dockContentList.Remove(DockContent);
         }
+
+        #region DockContent event handlers =====================================================================================
+
+        /// <summary>
+        /// DockContent_Activated is called when DockContent is floating (undocked) and has been activated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DockContent_Activated(/* TODO: ElNavigableDockContent */object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.ActivateDockContent(sender as ElNavigableDockContent);
+        }
+
+        private void DockContent_FormClosed(/* TODO: ElNavigableDockContent */object sender, System.Windows.Forms.FormClosedEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.RemoveDockContent(sender as ElNavigableDockContent);
+        }
+
+        private void DockContent_NavigationOptionsChanged(/* TODO: ElNavigableDockContent */object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            if (sender == this.GetActiveDockContent())
+                this.ntsNavigation.UpdateButtonState(sender as ElNavigableDockContent);
+        }
+
+        #endregion =============================================================================================================
     }
 }

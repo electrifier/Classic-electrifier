@@ -774,13 +774,14 @@ namespace electrifier.Core.Components.Controls
                 this.Locations.Clear();
                 this.CurrentLocationIndex = -1;
 
-                var args = new NavigationLogEventArgs
+                var eventArgs = new NavigationLogEventArgs
                 {
                     LocationsChanged = true,
                     CanNavigateBackwardChanged = oldCanNavigateBackward != this.CanNavigateBackward,
                     CanNavigateForwardChanged = oldCanNavigateForward != this.CanNavigateForward
                 };
-                NavigationLogChanged?.Invoke(this, args);
+
+                this.NavigationLogChanged?.Invoke(this, eventArgs);
             }
 
             internal bool NavigateLog(NavigationLogDirection direction)
@@ -878,7 +879,8 @@ namespace electrifier.Core.Components.Controls
                 eventArgs.CanNavigateBackwardChanged = (oldCanNavigateBackward != this.CanNavigateBackward);
                 eventArgs.CanNavigateForwardChanged = (oldCanNavigateForward != this.CanNavigateForward);
 
-                NavigationLogChanged?.Invoke(this, eventArgs);
+                // Fire event NavigationLogChanged
+                this.NavigationLogChanged?.Invoke(this, eventArgs);
             }
 
             private void OnNavigationFailed(object sender, NavigationFailedEventArgs args)
