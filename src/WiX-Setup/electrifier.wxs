@@ -1,25 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/*
+** 
+**  electrifier
+** 
+**  Copyright 2018 Thorsten Jung, www.electrifier.org
+**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**  
+**      http://www.apache.org/licenses/LICENSE-2.0
+**  
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+**
+*/
+-->
+
+<?define gProductName         = "electrifier" ?>
+<?define gProductVersion      = "0.1.1" ?>
+<?define gProductManufacturer = "electrifier.org"?>
+
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:ui="http://schemas.microsoft.com/wix/UIExtension">
-  <Product Name="electrifier" Manufacturer="electrifier.org"
-					 Id="FEFDADB6-9D7F-45E2-9A0D-21C9F911C1B6"
-					 Language="1033" Version="0.1.0"
-					 UpgradeCode="5EF00F55-738A-44D1-86A8-470AD761B125">
-    <Package Id="*" Keywords="Installer" Description="electrifier 0.1.0 Setup"
-						 Comments="For more information consult electrifier.org"
-						 Manufacturer="electrifier.org"
-						 Compressed="yes" InstallerVersion="200" InstallScope="perMachine"/>
+  <Product Id="*"
+           Name="$(var.gProductName)"
+           Manufacturer="$(var.gProductManufacturer)"
+           Language="!(loc.LanguageID)"
+           Version="$(var.gProductVersion)"
+           UpgradeCode="{BF9AAE5B-7070-4730-993F-0B8BDA8C0563}">
+    <Package Id="*"
+             Keywords="Installer"
+             Description="$(var.gProductName) v$(var.gProductVersion) Setup"
+             Comments="!(loc.PackageComments)"
+             Manufacturer="$(var.gProductManufacturer)"
+             Compressed="yes"
+             InstallerVersion="200"
+             InstallScope="perMachine"/>
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of electrifier is already installed." />
+    <MajorUpgrade DowngradeErrorMessage="!(loc.ErrorMessage_Downgrade)" />
+    
+    <!-- TODO: Build Multi-Language setup -->
+    <!-- TODO: Remove registry values, e.g. for disabling beta warning! -->
+    <!-- TODO: Remove session and config files! -->
 
-    <Media Id='1' Cabinet='electrifier.cab' EmbedCab='yes'/>
+    <!-- = Check for .net Framework v4.6.1 or later ======================================================================== -->
+    <!-- TODO: Embed download option?!? -->
+    <!-- TODO: .net 4.6 runs on Vista, 4.6.1 does not! -->
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED" />
+    <Condition Message="!(loc.ErrorMessage_NetFrameworkVersion)">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_461_OR_LATER_INSTALLED]]>
+    </Condition>
 
-    <!-- Properties controlling the installer GUI including the license agreement -->
+    <!-- = Check for Windows Vista SP 1, Windows Server 2008, or higher ==================================================== -->
+    <!-- See: https://docs.microsoft.com/en-us/windows/desktop/Msi/operating-system-property-values -->
+    <Condition Message="!(loc.ErrorMessage_WindowsVersion)">
+      <![CDATA[Installed OR (WindowsBuild >= 6001)]]>
+    </Condition>
+
+    <!-- = Describe cabinet file =========================================================================================== -->
+    <Media Id='1' Cabinet='$(var.gProductName)Setup.cab' EmbedCab='yes'/>
+
+    <!-- = Properties controlling the installer GUI including license agreement ============================================ -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <UIRef Id="WixUI_InstallDir" />
     <WixVariable Id="WixUILicenseRtf" Value="..\..\assets\License.rtf" />
 
-    <Feature Id="ProductFeature" Title="electrifier" Level="1">
+    <Feature Id="ProductFeature" Title="$(var.gProductName)" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
       <ComponentGroupRef Id="StartMenuShortcuts" />
     </Feature>
@@ -28,64 +80,144 @@
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="electrifier"/>
+        <Directory Id="INSTALLFOLDER" Name="$(var.gProductName)">
+          <Directory Id="INSTALLFOLDERx64" Name="x64"/>
+          <Directory Id="INSTALLFOLDERx86" Name="x86"/>
+        </Directory>
       </Directory>
       <Directory Id="ProgramMenuFolder">
-        <Directory Id="ApplicationProgramsFolder" Name="electrifier"/>
+        <Directory Id="ApplicationProgramsFolder" Name="$(var.gProductName)"/>
       </Directory>
     </Directory>
   </Fragment>
 
-  <!-- Main product components -->
+  <!-- = Main product components =========================================================================================== -->
   <Fragment>
     <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
-      <Component Id="electrifier.exe" Guid="95DCC755-0591-4D0C-8417-89323377F58A">
-        <File Id="electrifier.exe"
-							Source="$(var.electrifier.TargetPath)" KeyPath="yes" Checksum="yes"/>
+      <Component>
+        <File Id="electrifier.exe" Source="$(var.electrifier.TargetPath)" KeyPath="yes" Checksum="yes"/>
       </Component>
-      <Component Id="electrifier.Core.dll" Guid="C2E08C77-6624-4D12-A1B5-983547AC017C">
-        <File Id="electrifier.Core.dll"
-							Source="$(var.electrifier.Core.TargetPath)" KeyPath="yes" Checksum="yes"/>
+      <Component>
+        <File Id="electrifier.Core.dll" Source="$(var.electrifier.Core.TargetPath)" KeyPath="yes" Checksum="yes"/>
       </Component>
-      <!--<Component Id="Ribbon.dll" Guid="E0585B1A-F371-47BB-B2BD-7A9686BB79B0">
-        <File Id="Ribbon.dll"
-							Source="$(var.electrifier.Core.TargetDir)\Ribbon.dll" KeyPath="yes" Checksum="yes"/>
-      </Component>-->
-      <Component Id="Microsoft.WindowsAPICodePack.dll" Guid="EFC2DC76-8D9D-4121-B75C-77560D54A58D">
-        <File Id="Microsoft.WindowsAPICodePack.dll"
-							Source="$(var.electrifier.Core.TargetDir)\Microsoft.WindowsAPICodePack.dll" KeyPath="yes" Checksum="yes"/>
+
+      <ComponentGroupRef Id="ResourceFiles"/>
+      <ComponentGroupRef Id="DockPanelSuite"/>
+      <ComponentGroupRef Id="SunburstWindowsFormsRibbon"/>
+      <ComponentGroupRef Id="Vanara"/>
+
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- = Resource files ==================================================================================================== -->
+  <Fragment>
+    <ComponentGroup Id="ResourceFiles">
+      <Component Directory="INSTALLFOLDERx64">
+        <File Id="Electrifier.Ribbon.ribbon_x64" Source="$(var.electrifier.Core.TargetDir)\x64\Electrifier.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
       </Component>
-      <Component Id="Microsoft.WindowsAPICodePack.Shell.dll" Guid="126DE769-B7FC-41CB-B3BB-9C262F9FE8D1">
-        <File Id="Microsoft.WindowsAPICodePack.Shell.dll"
-							Source="$(var.electrifier.Core.TargetDir)\Microsoft.WindowsAPICodePack.Shell.dll" KeyPath="yes" Checksum="yes"/>
-      </Component>
-      <Component Id="WeifenLuo.WinFormsUI.Docking.dll" Guid="D1CE63A5-AD52-457C-B296-D8319ADB0907">
-        <File Id="WeifenLuo.WinFormsUI.Docking.dll"
-							Source="$(var.electrifier.Core.TargetDir)\WeifenLuo.WinFormsUI.Docking.dll" KeyPath="yes" Checksum="yes"/>
+      <Component Directory="INSTALLFOLDERx86">
+        <File Id="Electrifier.Ribbon.ribbon_x86" Source="$(var.electrifier.Core.TargetDir)\x86\Electrifier.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
       </Component>
     </ComponentGroup>
   </Fragment>
 
-  <!-- Start menu shortcuts -->
+  <!-- = 3rd Party Component: DockPanelSuite =============================================================================== -->
+  <Fragment>
+    <ComponentGroup Id="DockPanelSuite" Directory="INSTALLFOLDER">
+      <Component>
+        <File Id="WeifenLuo.WinFormsUI.Docking.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- = 3rd Party Component: Suburst.WindowsForms.Ribbon ================================================================== -->
+  <Fragment>
+    <ComponentGroup Id="SunburstWindowsFormsRibbon" Directory="INSTALLFOLDER">
+      <Component>
+        <File Id="Sunburst.WindowsForms.Ribbon.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- = 3rd Party Component: Vanara ======================================================================================= -->
+  <Fragment>
+    <ComponentGroup Id="Vanara" Directory="INSTALLFOLDER">
+      <Component>
+        <File Id="System.Collections.NonGeneric.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="System.Runtime.InteropServices.RuntimeInformation.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="System.Runtime.Serialization.Formatters.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="System.Runtime.Serialization.Primitives.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Theraot.Core.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.Core.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.ComCtl32.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.Gdi32.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.Kernel32.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.Ole.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.Security.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.Shared.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.Shell32.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.ShlwApi.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.User32.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.PInvoke.User32.Gdi.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
+        <File Id="Vanara.Windows.Shell.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+
+  <!-- = Start menu shortcuts ============================================================================================== -->
   <Fragment>
     <ComponentGroup Id="StartMenuShortcuts" Directory="ApplicationProgramsFolder">
-      <Component Id="ApplicationShortcuts" Guid="C7390F72-C8AE-4817-B237-F0A9C61E038A">
+      <Component Id="ApplicationShortcuts">
         <Shortcut Id="Launch_electrifier"
-									Name="electrifier"
-									Description="Launches electrifier"
-									Target="[#electrifier.exe]"
-									WorkingDirectory="ApplicationRootDirectory"/>
+                  Name="electrifier"
+                  Description="Launches electrifier"
+                  Target="[#electrifier.exe]"
+                  WorkingDirectory="ApplicationRootDirectory"/>
 
         <Shortcut Id="Uninstall_Product"
-									Name="Uninstall electrifier"
-									Description="Uninstalls electrifier"
-									Target="[System64Folder]msiexec.exe"
-									Arguments="/x [ProductCode]"/>
+                  Name="Uninstall electrifier"
+                  Description="Uninstalls electrifier"
+                  Target="[System64Folder]\msiexec.exe"
+                  Arguments="/x [ProductCode]"/>
 
         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
-        <RegistryValue Root="HKCU"
-											 Key="Software\electrifier.org\electrifier"
-											 Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+
+        <RegistryValue Root="HKCU" Key="Software\electrifier.org\electrifier" Name="InstalledProductVersion" Type="string" Value="$(var.gProductVersion)" KeyPath="yes"/>
       </Component>
     </ComponentGroup>
   </Fragment>
