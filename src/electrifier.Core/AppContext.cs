@@ -98,10 +98,14 @@ namespace electrifier.Core
             // Add ThreadExit-handler to save configuration when closing
             this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
 
+            // TODO: Implement own MessageBox with "This is ALPHA-sign" and warning-text, perhaps use logo again
             if (this.IsBetaVersion())
             {
                 if (false == Properties.Settings.Default.Disable_BETAVersion_Warning)
                 {
+                    // Disable TopMost-property of SplashScreenForm to ensure Beta-Warning is shown in front of it
+                    splashScreenForm.TopMost = false;
+
                     string msgText = "Hello and welcome to electrifier!\n\n" +
                         "Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested " +
                         "there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!\n\n" +

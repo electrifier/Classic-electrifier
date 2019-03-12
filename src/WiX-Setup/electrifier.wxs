@@ -47,7 +47,7 @@
     
     <!-- TODO: Build Multi-Language setup -->
     <!-- TODO: Remove registry values, e.g. for disabling beta warning! -->
-    <!-- TODO: Remove session and config files! -->
+    <!-- TODO: Remove session and config files!, e.g. 'C:\Users\tajbender\AppData\Local\electrifier.org' -->
 
     <!-- = Check for .net Framework v4.6.1 or later ======================================================================== -->
     <!-- TODO: Embed download option?!? -->
