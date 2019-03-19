@@ -203,12 +203,16 @@
     <Compile Include="Components\FormStatePersistor.Designer.cs">
       <DependentUpon>FormStatePersistor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\IElClipboardConsumer.cs" />
     <Compile Include="Components\IElNavigationHost.cs" />
     <Compile Include="Forms\AboutElectrifier.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\AboutElectrifier.Designer.cs">
       <DependentUpon>AboutElectrifier.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Electrifier.Commands.cs">
+      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\Electrifier.cs">
       <SubType>Form</SubType>
@@ -236,6 +240,7 @@
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WindowsShell\ElClipboard.cs" />
     <Compile Include="WindowsShell\Tools.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -38,6 +38,7 @@ namespace electrifier.Core.Forms
     /// </summary>
     public partial class Electrifier
       : System.Windows.Forms.Form
+      , System.Windows.Forms.IWin32Window       // Used for ShellFileOperations
     {
         #region Fields ========================================================================================================
 
@@ -93,13 +94,13 @@ namespace electrifier.Core.Forms
             User32.RemoveClipboardFormatListener(this.Handle);
         }
 
-        protected virtual void OnClipboardUpdate()
-        {
-            // TODO: Build event args: Type of Clipboard content
-            this.ClipboardUpdate?.Invoke(this, new EventArgs());
-        }
-
-
+        /// <summary>
+        /// Overridden WndProc processes Windows Messages not handled by .net framework.
+        /// 
+        /// The following messages are handled:
+        ///   WM_CLIPBOARDUPDATE
+        /// </summary>
+        /// <param name="m">The message that has to be processed.</param>
         [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
         protected override void WndProc(ref Message m)
         {
@@ -111,30 +112,48 @@ namespace electrifier.Core.Forms
             base.WndProc(ref m);
         }
 
+        /// <summary>
+        /// Clipboard content has been updated, which may have happened inside, but also outside electrifier.
+        /// </summary>
+        protected virtual void OnClipboardUpdate()
+        {
+            // TODO: Build event args: Type of Clipboard content
+            this.ClipboardUpdate?.Invoke(this, new EventArgs());
+        }
+
+        /// <summary>
+        /// Currently active DockContent has been changed.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)
         {
             // Info: sender should be the DockPanel
-            var activatedContent = this.dpnDockPanel.ActiveContent;
+            var activeContent = this.dpnDockPanel.ActiveContent;
 
             if (!sender.Equals(this.dpnDockPanel))
                 throw new ArgumentException("TODO: Test purposes only: sender is not dpnDockPanel! @ DpnDockPanel_ActiveContentChanged");
 
-            if (null == activatedContent)
+            // Process Clipboard-part of DockContent-Activation
+            this.Clipboard_ActiveDockContentChanged(activeContent);
+
+            // Process Interface IElNavigationHost-part of DockContent-Activation
+            if (null == activeContent)
             {
-                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, activatedContent is null");
+                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, activeContent is null");
             }
             else
             {
-                var activatedContentType = activatedContent?.GetType();
+                var activatedContentType = activeContent?.GetType();
 
                 AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
-                    + ", ActivatedContent=" + activatedContent
+                    + ", ActivatedContent=" + activeContent
                     + ", ActivatedContentType=" + activatedContentType);
 
                 // ShellBrowserDockContent has been activated.
                 if (typeof(ShellBrowserDockContent).Equals(activatedContentType))
                 {
-                    this.ActivateDockContent(activatedContent as ShellBrowserDockContent);
+                    this.ActivateDockContent(activeContent as ShellBrowserDockContent);
                 }
                 else
                 {

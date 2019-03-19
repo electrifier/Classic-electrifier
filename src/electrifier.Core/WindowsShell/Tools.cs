@@ -18,7 +18,9 @@
 **
 */
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -63,6 +65,18 @@ namespace electrifier.Core.WindowsShell
             [In]      uint reserved);
 
         #endregion SHLWApi.dll Imports ================================================================================================================================================================
+
+        /// <summary>
+        /// Normalize the given path name, i.e. the full path converted to uppercase.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>The normalized path name.</returns>
+        public static string NormalizePath(string path)
+        {
+            return Path.GetFullPath(new Uri(path).LocalPath)
+                .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .ToUpperInvariant();
+        }
 
         /// <summary>
         /// Transform the fiven filePath into an URL.
