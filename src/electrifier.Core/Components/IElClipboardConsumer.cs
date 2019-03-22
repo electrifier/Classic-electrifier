@@ -33,32 +33,35 @@ namespace electrifier.Core.Components
 
     interface IElClipboardConsumer
     {
-        void CutToClipboard();
-        void CopyToClipboard();
+        // Cut & Copy
 
         ElClipboardAbilities GetClipboardAbilities();
         /// <summary>
         /// ClipboardAbilitiesChanged is invoked by IElClipboardConsumer when CanCut or CanCopy have changed, e.g. after selection changed.
         /// </summary>
-        event EventHandler /* TODO: CanCut/CopyChanged => ClipboardAbility */ ClipboardAbilitiesChanged;
+        event EventHandler ClipboardAbilitiesChanged; // TODO: CanCut/CopyChanged => ClipboardAbility
 
+        void CutToClipboard();
+        void CopyToClipboard();
+
+        // Paste
+
+        /// <summary>
+        /// Returns the possibly paste types, the clipboard consumer can handle generally, i.e. without looking at the current state of content or selection.
+        /// </summary>
+        void GetSupportedClipboardPasteTypes();
 
         /// <summary>
         /// CanPaste is invoked by IElNavigationHost when the clipboard content has changed.
         /// </summary>
-        bool CanPasteFromClipboard(/* TODO: Type of clipboard content*/);
+        bool CanPasteFromClipboard(); // TODO: Type of clipboard content
 
         ///// <summary>
         ///// CanPasteFromClipboardChanged is invoked by IElClipboardConsumer when CanPasteFromClipboard changed, e.g. after navigation to a new destination folder has completed.
         ///// </summary>
         //event EventHandler CanPasteFromClipboardChanged;
 
-        // /* TODO: Type of clipboard content*/ GetClipboardPasteTypes();
-        void PasteFromClipboard(/* TODO: The clipboard content*/);
-
-        /// <summary>
-        /// Returns the possibly paste types, the clipboard consumer can handle generally, i.e. without looking at the current state of content or selection.
-        /// </summary>
-        void GetSupportedClipboardPasteTypes();
+        // TODO: Type of clipboard content => GetClipboardPasteTypes();
+        void PasteFromClipboard();  // TODO: The clipboard content
     }
 }

@@ -18,13 +18,15 @@
 **
 */
 
-using electrifier.Core.WindowsShell;
 using System;
+using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+
 using Vanara.Windows.Shell;
-using WeifenLuo.WinFormsUI.Docking;
+
+using electrifier.Core.WindowsShell;
 
 
 namespace electrifier.Core.Components.DockContents
@@ -327,24 +329,75 @@ namespace electrifier.Core.Components.DockContents
 
         #region IElClipboardConsumer interface implementation ==================================================================
 
-        public event EventHandler ClipboardAbilitiesChanged;
-
-        public void CutToClipboard()
-        {
-            // TODO: Not implemented yet
-            throw new NotImplementedException();
-        }
-
-        public void CopyToClipboard()
-        {
-            // TODO: Not implemented yet
-            throw new NotImplementedException();
-        }
-
         public ElClipboardAbilities GetClipboardAbilities()
         {
             // TODO: Check for selection. No selection => No Abilities!
             return (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut);
+        }
+
+        public event EventHandler ClipboardAbilitiesChanged;
+
+
+        /// <summary>
+        /// Cut selected files, if any, to the clipboard.
+        /// <seealso href="https://docs.microsoft.com/en-us/windows/desktop/shell/dragdrop"/>
+        /// </summary>
+        public void CutToClipboard()
+        {
+            this.PlaceFileDropListOnClipboard(DragDropEffects.Move);
+        }
+
+        /// <summary>
+        /// Copy selected files, if any, to the clipboard.
+        /// <seealso href="https://docs.microsoft.com/en-us/windows/desktop/shell/dragdrop"/>
+        /// </summary>
+        public void CopyToClipboard()
+        {
+            this.PlaceFileDropListOnClipboard(DragDropEffects.Copy);
+        }
+
+        private void PlaceFileDropListOnClipboard(DragDropEffects dropEffect)
+        {
+            AppContext.TraceScope();
+
+            if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
+                throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
+
+            if (dropEffect.HasFlag(DragDropEffects.Copy) && dropEffect.HasFlag(DragDropEffects.Move))
+                throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
+
+            // TODO: IFolderView can return a DataObject, too: https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifolderview-items
+
+            // Get collection of selected items, return if empty cause nothing to do then
+            var selItems = this.explorerBrowserControl.SelectedItems;
+
+            if (selItems.Count < 1)
+                return;
+
+            // Build file drop list
+            StringCollection scFileDropList = new StringCollection();
+            foreach (var selectedItem in selItems)
+            {
+                scFileDropList.Add(selectedItem.ParsingName);
+            }
+
+            // Build the data object, including the DropEffect, and place it on the clipboard
+            DataObject dataObject = new DataObject();
+            byte[] baDropEffect = new byte[] { (byte)dropEffect, 0, 0, 0 };
+            MemoryStream msDropEffect = new MemoryStream();
+            msDropEffect.Write(baDropEffect, 0, baDropEffect.Length);
+
+            dataObject.SetFileDropList(scFileDropList);
+            dataObject.SetData("Preferred DropEffect", msDropEffect);       // TODO: Use Vanaras constant
+
+            //Clipboard.Clear();        // TODO: Do we have to call Clear before placing data on the clipboard?
+            Clipboard.SetDataObject(dataObject, true);
+        }
+
+        public void GetSupportedClipboardPasteTypes()
+        {
+            // TODO: Not implemented yet
+            throw new NotImplementedException();
         }
 
         public bool CanPasteFromClipboard()
@@ -357,6 +410,8 @@ namespace electrifier.Core.Components.DockContents
 
         public void PasteFromClipboard()
         {
+            AppContext.TraceScope();
+
             // Check whether clipboard contains any data object
             if (!ElClipboard.ContainsData())
             {
@@ -391,6 +446,8 @@ namespace electrifier.Core.Components.DockContents
         /// <param name="operationFlags">Additional operation flags. Default is ShellFileOperations.OperationFlags.AllowUndo.</param>
         private void PasteFileDropListFromClipboard(DragDropEffects dropEffect, ShellFileOperations.OperationFlags operationFlags = ShellFileOperations.OperationFlags.AllowUndo)
         {
+            AppContext.TraceScope();
+
             if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
                 throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
 
@@ -436,11 +493,6 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
-        public void GetSupportedClipboardPasteTypes()
-        {
-            // TODO: Not implemented yet
-            throw new NotImplementedException();
-        }
 
         //
         //

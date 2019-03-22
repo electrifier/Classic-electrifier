@@ -173,9 +173,10 @@ namespace electrifier.Core.Forms
             this.cmdGrpHomeClipboard = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdGrpHomeClipboard);
 
             this.cmdBtnClipboardCut = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdClipboardCut);
+            this.cmdBtnClipboardCut.ExecuteEvent += this.CmdClipboardCut_ExecuteEvent;
 
             this.cmdBtnClipboardCopy = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdClipboardCopy);
-            //this.cmdBtnClipboardCopy.ExecuteEvent += this.CmdClipboardCopy_ExecuteEvent;
+            this.cmdBtnClipboardCopy.ExecuteEvent += this.CmdClipboardCopy_ExecuteEvent;
 
             this.cmdBtnClipboardPaste = new RibbonButton(this.rbnRibbon, (uint)RibbonCommandID.cmdClipboardPaste);
             this.cmdBtnClipboardPaste.ExecuteEvent += this.CmdClipboardPaste_ExecuteEvent;

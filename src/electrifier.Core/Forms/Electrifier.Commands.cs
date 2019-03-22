@@ -50,7 +50,50 @@ namespace electrifier.Core.Forms
         }
 
         /// <summary>
+        /// Perform Clipboard-Cut Operation.
         /// 
+        /// Includes the following validations:
+        ///  1.) Check if ActiveContent is IElClipboardConsumer.
+        ///  2.) Check if this IElClipboardConsumer can actually cut.
+        ///  3.) Perform the Cut-Operation to cut selected data/items to the clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal void CmdClipboardCut_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
+            {
+                if (clipboardConsumer.GetClipboardAbilities().HasFlag(ElClipboardAbilities.CanCut))
+                    clipboardConsumer.CutToClipboard();
+            }
+        }
+
+        /// <summary>
+        /// Perform Clipboard-Copy Operation.
+        /// 
+        /// Includes the following validations:
+        ///  1.) Check if ActiveContent is IElClipboardConsumer.
+        ///  2.) Check if this IElClipboardConsumer can actually copy.
+        ///  3.) Perform the Copy-Operation to copy selected data/items to the clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        internal void CmdClipboardCopy_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        {
+            if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
+            {
+                if (clipboardConsumer.GetClipboardAbilities().HasFlag(ElClipboardAbilities.CanCopy))
+                    clipboardConsumer.CopyToClipboard();
+            }
+        }
+
+        /// <summary>
+        /// Perform Clipboard-Paste Operation.
+        /// 
+        /// Includes the following validations:
+        ///  1.) Check if ActiveContent is IElClipboardConsumer.
+        ///  2.) Check if this IElClipboardConsumer can actually paste, i.e. if clipoard content os suitable for this type of ClipboardConsumer.
+        ///  3.) Perform the Paste-Operation to paste clipboard data/items into this ClipboardConsumers View/Folder.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

@@ -19,8 +19,10 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
@@ -75,8 +77,25 @@ namespace electrifier.Core.Components.Controls
 
         #region Properties ====================================================================================================
 
-        /// <summary>Contains the navigation history of the ExplorerBrowser</summary>
-        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>
+        /// The set of ShellItems in the Explorer Browser.
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IReadOnlyList<ShellItem> Items { get; }
+
+        /// <summary>
+        /// The set of selected ShellItems in the Explorer Browser.
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IReadOnlyList<ShellItem> SelectedItems { get; }
+
+        /// <summary>
+        /// Contains the navigation history of the ExplorerBrowser.
+        /// </summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public NavigationLog History { get; }
 
         // TODO: Add test for initialization, ante creation reaturn initialnavigationtarget?
@@ -186,9 +205,11 @@ namespace electrifier.Core.Components.Controls
         public ExplorerBrowserControl(ShellItem initialNavigationTarget = default)
         {
             this.InitializeComponent();
+            this.Items = new ShellItemCollection(this, Shell32.SVGIO.SVGIO_ALLVIEW);
+            this.SelectedItems = new ShellItemCollection(this, Shell32.SVGIO.SVGIO_SELECTION);
             this.History = new NavigationLog(this);
 
-            //                         // TODO: On Windows 10, navigate to Quick Access by default...
+            // TODO: On Windows 10, navigate to Quick Access by default...
             // <seealso href="https://www.tenforums.com/tutorials/3123-clsid-key-guid-shortcuts-list-windows-10-a.html">
             this.initialNavigationTarget = (default == initialNavigationTarget) ?
                 new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_UsersFiles) :        // TODO: On Windows 10, go to quick access; use virtual method for getting this for easy customization
@@ -238,6 +259,34 @@ namespace electrifier.Core.Components.Controls
         }
 
         protected void SetSite(Shell32.IServiceProvider sp) => (this.explorerBrowser as Shell32.IObjectWithSite)?.SetSite(sp);
+
+        /// <summary>
+        /// Gets the IFolderView2 interface from the explorer browser.
+        /// </summary>
+        /// <returns>An <see cref="Shell32.IFolderView2"/> instance.</returns>
+        protected Shell32.IFolderView2 GetFolderView2() => this.explorerBrowser?.GetCurrentView<Shell32.IFolderView2>();
+
+        /// <summary>
+        /// Gets the items in the ExplorerBrowser as an IShellItemArray.
+        /// </summary>
+        /// <param name="option">A valid <see cref="Shell32.SVGIO"/> option to restrict the returned item collection.</param>
+        /// <returns>An <see cref="Shell32.IShellItemArray"/> of the requested items in the folder view.</returns>
+        protected Shell32.IShellItemArray GetItemsArray(Shell32.SVGIO option)
+        {
+            var iFV2 = this.GetFolderView2();
+
+            if (iFV2 is null)
+                return null;
+
+            try
+            {
+                return iFV2.Items<Shell32.IShellItemArray>(option);
+            }
+            finally
+            {
+                iFV2 = null;
+            }
+        }
 
         /// <summary>
         /// Find the native control handle, remove its border style, then ask for a redraw.
@@ -901,6 +950,65 @@ namespace electrifier.Core.Components.Controls
 
                 internal ShellItem Location { get; set; }
             }
+        }
+
+        #endregion ============================================================================================================
+
+        #region Nested class ExplorerBrowserControl.ShellItemCollection =======================================================
+
+        /// <summary>
+        /// Represents a collection of <see cref="ShellItem"/> attached to an <see cref="ExplorerBrowserControl"/>.
+        /// </summary>
+        private class ShellItemCollection
+          : IReadOnlyList<ShellItem>
+        {
+            private readonly ExplorerBrowserControl parentExplorerBrowser;
+            private readonly Shell32.SVGIO collectionOption;
+
+            internal ShellItemCollection(ExplorerBrowserControl parentExplorerBrowser, Shell32.SVGIO collectionOption)
+            {
+                this.parentExplorerBrowser = parentExplorerBrowser;
+                this.collectionOption = collectionOption;
+            }
+
+            /// <summary>Gets the number of elements in the collection.</summary>
+            /// <value>Returns a <see cref="int"/> value.</value>
+            public int Count => (int)this.Array.GetCount();
+
+            private Shell32.IShellItemArray Array => this.parentExplorerBrowser.GetItemsArray(this.collectionOption);
+
+            private IEnumerable<Shell32.IShellItem> Items {
+                get {
+                    var array = this.Array;
+
+                    for (uint i = 0; i < array.GetCount(); i++)
+                        yield return array.GetItemAt(i);
+                }
+            }
+
+            /// <summary>Gets the <see cref="ShellItem"/> at the specified index.</summary>
+            /// <value>The <see cref="ShellItem"/>.</value>
+            /// <param name="index">The zero-based index of the element to get.</param>
+            public ShellItem this[int index] {
+                get {
+                    try
+                    {
+                        return ShellItem.Open(this.Array.GetItemAt((uint)index));
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            /// <summary>Returns an enumerator that iterates through the collection.</summary>
+            /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+            public IEnumerator<ShellItem> GetEnumerator() => this.Items.Select(ShellItem.Open).GetEnumerator();
+
+            /// <summary>Returns an enumerator that iterates through the collection.</summary>
+            /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+            IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
         }
 
         #endregion ============================================================================================================
