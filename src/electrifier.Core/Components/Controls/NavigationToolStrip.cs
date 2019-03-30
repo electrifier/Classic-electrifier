@@ -19,17 +19,18 @@
 */
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 using electrifier.Core.Components.DockContents;
 
 namespace electrifier.Core.Components.Controls
 {
-    public class NavigationToolStrip 
+    public class NavigationToolStrip
         : System.Windows.Forms.ToolStrip
+        , IElThemedControl
     {
-        #region Fields ========================================================================================================
+        #region Fields =========================================================================================================
 
         /// <summary> 
         /// Required designer variable.
@@ -47,9 +48,9 @@ namespace electrifier.Core.Components.Controls
         private System.Windows.Forms.ToolStripComboBox cbbSearchPattern;
         private System.Windows.Forms.ToolStripDropDownButton cbbFilterPattern;
 
-        #endregion ============================================================================================================
+        #endregion =============================================================================================================
 
-        #region Properties ====================================================================================================
+        #region Properties =====================================================================================================
 
         private ElNavigableDockContent activeDockContent = null;
 
@@ -58,7 +59,23 @@ namespace electrifier.Core.Components.Controls
             set => this.UpdateButtonState(this.activeDockContent = value);
         }
 
-        #endregion ============================================================================================================
+        #endregion =============================================================================================================
+
+        #region Implemented Interface: IElThemedControl ========================================================================
+
+        public string DefaultTheme => "Microsoft Windows (24px)";
+
+        public string ThemeResourceNamespace { get => this.GetThemeResourceNamespace(); }
+
+        public IEnumerable<string> GetAvailableThemes() { return this.EnumerateAvailableThemes(); }
+
+        private string currentTheme = null;
+        public string CurrentTheme {
+            get => this.currentTheme;
+            set => this.ImageList = this.GetThemeImageList(this.currentTheme = value);
+        }
+
+        #endregion =============================================================================================================
 
         public NavigationToolStrip()
         {
@@ -68,6 +85,9 @@ namespace electrifier.Core.Components.Controls
             this.btnGoBack.Click += this.BtnGoBack_Click;
             this.btnGoForward.Click += this.BtnGoForward_Click;
             this.ddnHistoryItems.DropDownItemClicked += this.DdnHistoryItems_DropDownItemClicked;
+
+            // Set current theme to default theme to get the ImageList populated
+            this.CurrentTheme = this.DefaultTheme;
         }
 
         /// <summary> 
@@ -183,7 +203,7 @@ namespace electrifier.Core.Components.Controls
 
 
 
-        #region Component Designer generated code =============================================================================
+        #region Component Designer generated code ==============================================================================
 
         /// <summary> 
         /// Required method for Designer support - do not modify 
@@ -227,8 +247,7 @@ namespace electrifier.Core.Components.Controls
             // btnGoBack
             // 
             this.btnGoBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoBack.Image = global::electrifier.Core.Properties.Resources.Navigation_Backward_24px;
-            this.btnGoBack.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGoBack.ImageIndex = 0;
             this.btnGoBack.Name = "btnGoBack";
             this.btnGoBack.Size = new System.Drawing.Size(28, 28);
             this.btnGoBack.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
@@ -236,8 +255,7 @@ namespace electrifier.Core.Components.Controls
             // btnGoForward
             // 
             this.btnGoForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoForward.Image = global::electrifier.Core.Properties.Resources.Navigation_Forward_24px;
-            this.btnGoForward.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGoForward.ImageIndex = 1;
             this.btnGoForward.Name = "btnGoForward";
             this.btnGoForward.Size = new System.Drawing.Size(28, 28);
             this.btnGoForward.ToolTipText = "Forward to [insert folder here] (Alt + Right Arrow)";
@@ -256,8 +274,7 @@ namespace electrifier.Core.Components.Controls
             // btnGoToParentLocation
             // 
             this.btnGoToParentLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoToParentLocation.Image = global::electrifier.Core.Properties.Resources.Navigation_Parent_Folder_24px;
-            this.btnGoToParentLocation.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnGoToParentLocation.ImageIndex = 2;
             this.btnGoToParentLocation.Name = "btnGoToParentLocation";
             this.btnGoToParentLocation.Size = new System.Drawing.Size(28, 28);
             this.btnGoToParentLocation.ToolTipText = "Up to [Insert folder here]... (Alt + Up Arrow)";
@@ -269,8 +286,7 @@ namespace electrifier.Core.Components.Controls
             // btnRefresh
             // 
             this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRefresh.Image = global::electrifier.Core.Properties.Resources.Navigation_Refresh_24px;
-            this.btnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnRefresh.ImageIndex = 3;
             this.btnRefresh.Name = "btnRefresh";
             this.btnRefresh.Size = new System.Drawing.Size(28, 28);
             this.btnRefresh.ToolTipText = "Refresh [Insert folder here]";
@@ -278,8 +294,7 @@ namespace electrifier.Core.Components.Controls
             // ddnQuickAccessItems
             // 
             this.ddnQuickAccessItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ddnQuickAccessItems.Image = global::electrifier.Core.Properties.Resources.Navigation_Quick_Access_24px;
-            this.ddnQuickAccessItems.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.ddnQuickAccessItems.ImageIndex = 4;
             this.ddnQuickAccessItems.Name = "ddnQuickAccessItems";
             this.ddnQuickAccessItems.Size = new System.Drawing.Size(38, 28);
             this.ddnQuickAccessItems.Text = "ddnQuickAccessItems";
@@ -301,15 +316,14 @@ namespace electrifier.Core.Components.Controls
             // cbbFilterPattern
             // 
             this.cbbFilterPattern.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.cbbFilterPattern.Image = global::electrifier.Core.Properties.Resources.Navigation_Filter_Add_24px;
-            this.cbbFilterPattern.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.cbbFilterPattern.ImageIndex = 5;
             this.cbbFilterPattern.Name = "cbbFilterPattern";
             this.cbbFilterPattern.Size = new System.Drawing.Size(38, 28);
 
             this.ResumeLayout(false);
         }
 
-        #endregion ============================================================================================================
+        #endregion =============================================================================================================
 
     }
 }

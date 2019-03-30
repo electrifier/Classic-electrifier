@@ -181,12 +181,14 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\Controls\ElThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Components\Controls\ExplorerBrowserControl.Designer.cs">
       <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Controls\IElThemedControl.cs" />
     <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -275,6 +277,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
@@ -293,13 +296,7 @@
     <Content Include="Resources\Commands\organize_delete.bmp" />
     <Content Include="Resources\Commands\organize_moveto.bmp" />
     <Content Include="Resources\Commands\organize_rename.bmp" />
-    <None Include="Resources\Navigation Refresh 24px.png" />
-    <None Include="Resources\Navigation Quick Access 24px.png" />
-    <None Include="Resources\Navigation Parent Folder 24px.png" />
-    <None Include="Resources\Navigation Forward 24px.png" />
-    <None Include="Resources\Navigation Filter Remove 24px.png" />
-    <None Include="Resources\Navigation Filter Add 24px.png" />
-    <None Include="Resources\Navigation Backward 24px.png" />
+    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\DropDown Arrow 16px.png" />
     <RibbonDefinition Include="Resources\Electrifier.Ribbon.xml">
       <SubType>Designer</SubType>
