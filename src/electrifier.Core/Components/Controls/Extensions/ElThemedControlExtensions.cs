@@ -26,7 +26,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace electrifier.Core.Components.Controls
+namespace electrifier.Core.Components.Controls.Extensions
 {
     /// <summary>
     /// Static class that provides the most common Extension Methods used in conjunction with Interface
@@ -82,14 +82,14 @@ namespace electrifier.Core.Components.Controls
                     imageList.ImageSize = new Size(bitmap.Height, bitmap.Height);
 
                     if (-1 == imageList.Images.AddStrip(bitmap))
-                        throw new Exception("ImageList.Images.AddStrip() failed.");
+                        throw new Exception(@"ImageList.Images.AddStrip() failed.");
                 }
 
                 return imageList;
             }
             catch (Exception ex)
             {
-                throw new Exception("Unable to get ImageList for theme.", ex);
+                throw new Exception(@"Unable to get ImageList for theme.", ex);
             }
         }
     }

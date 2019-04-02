@@ -181,13 +181,13 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Controls\ElThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Components\Controls\ExplorerBrowserControl.Designer.cs">
       <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="Components\Controls\Extensions\ElThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\IElThemedControl.cs" />
     <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>

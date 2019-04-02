@@ -22,6 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+using electrifier.Core.Components.Controls.Extensions;
 using electrifier.Core.Components.DockContents;
 
 namespace electrifier.Core.Components.Controls
