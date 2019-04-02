@@ -130,12 +130,10 @@ namespace electrifier.Core.Forms
             // 
             this.ntsNavigation.Dock = System.Windows.Forms.DockStyle.None;
             this.ntsNavigation.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.ntsNavigation.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.ntsNavigation.Location = new System.Drawing.Point(0, 0);
             this.ntsNavigation.Name = "ntsNavigation";
             this.ntsNavigation.Padding = new System.Windows.Forms.Padding(8);
             this.ntsNavigation.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ntsNavigation.Size = new System.Drawing.Size(782, 47);
             this.ntsNavigation.Stretch = true;
             this.ntsNavigation.TabIndex = 0;
             // 

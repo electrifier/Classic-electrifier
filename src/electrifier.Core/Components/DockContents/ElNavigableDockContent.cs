@@ -74,5 +74,6 @@ namespace electrifier.Core.Components.DockContents
         //public virtual ElNavOptionState CanApplyFilter() { return ElNavOptionState.Hidden; }
         //public virtual string CurrentFilterPattern { get; set; }
         //public virtual void DoApplyFilter(string FilterPattern) { throw new NotImplementedException(); }
+        public virtual bool CanFilterItems() { return false; }
     }
 }

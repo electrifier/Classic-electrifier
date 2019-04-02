@@ -20,10 +20,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
 
-using electrifier.Core.Components.Controls.Extensions;
 using electrifier.Core.Components.DockContents;
+using electrifier.Core.Components.Controls.Extensions;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -42,12 +41,23 @@ namespace electrifier.Core.Components.Controls
         private System.Windows.Forms.ToolStripButton btnGoForward;
         private System.Windows.Forms.ToolStripDropDownButton ddnHistoryItems;
         private System.Windows.Forms.ToolStripButton btnGoToParentLocation;
-        private Components.Controls.ToolStripSpringComboBox cbbCurrentFolder;
+        private ToolStripSpringComboBox cbbCurrentFolder;
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripDropDownButton ddnQuickAccessItems;
         private System.Windows.Forms.ToolStripSeparator ssoSeparator;
         private System.Windows.Forms.ToolStripComboBox cbbSearchPattern;
         private System.Windows.Forms.ToolStripDropDownButton cbbFilterPattern;
+
+        private enum ImageListIndex
+        {
+            btnGoBack = 0,
+            btnGoForward,
+            btnGoToParentLocation,
+            btnRefresh,
+            ddnQuickAccessItems,
+            cbbFilterPattern_Add,
+            cbbFilterPattern_Remove,
+        }
 
         #endregion =============================================================================================================
 
@@ -64,7 +74,9 @@ namespace electrifier.Core.Components.Controls
 
         #region Implemented Interface: IElThemedControl ========================================================================
 
-        public string DefaultTheme => "Microsoft Windows (24px)";
+        // Remember the theme resource name is build internally, so don't add its ".png"-file extension here :)
+        public string DefaultTheme => "iTweek by Miles Ponson (32px)";
+        //public string DefaultTheme => "Microsoft Windows (24px)";
 
         public string ThemeResourceNamespace { get => this.GetThemeResourceNamespace(); }
 
@@ -73,7 +85,10 @@ namespace electrifier.Core.Components.Controls
         private string currentTheme = null;
         public string CurrentTheme {
             get => this.currentTheme;
-            set => this.ImageList = this.GetThemeImageList(this.currentTheme = value);
+            set {
+                this.ImageList = this.LoadThemeImageListFromResource(this.currentTheme = value);
+                this.ImageScalingSize = this.ImageList.ImageSize;
+            }
         }
 
         #endregion =============================================================================================================
@@ -130,7 +145,7 @@ namespace electrifier.Core.Components.Controls
             this.ActiveDockContent?.GoForward();
         }
 
-        private void DdnHistoryItems_DropDownItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void DdnHistoryItems_DropDownItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
         {
             // This should be safe, cause "DropDownItems.IndexOf(null);" returns "-1"
             int index = this.ddnHistoryItems.DropDownItems.IndexOf(e.ClickedItem);
@@ -188,6 +203,7 @@ namespace electrifier.Core.Components.Controls
                 this.btnRefresh.Enabled = navigableDockContent.CanRefresh();
                 this.ddnQuickAccessItems.Enabled = navigableDockContent.HasQuickAccesItems();
                 this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems();
+                this.cbbFilterPattern.Enabled = navigableDockContent.CanFilterItems();
             }
             else
             {
@@ -198,6 +214,7 @@ namespace electrifier.Core.Components.Controls
                 this.btnRefresh.Enabled = false;
                 this.ddnQuickAccessItems.Enabled = false;
                 this.cbbSearchPattern.Enabled = false;
+                this.cbbFilterPattern.Enabled = false;
             }
         }
 
@@ -229,55 +246,49 @@ namespace electrifier.Core.Components.Controls
 
             this.Dock = System.Windows.Forms.DockStyle.Top;
             this.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnGoBack,
-            this.btnGoForward,
-            this.ddnHistoryItems,
-            this.btnGoToParentLocation,
-            this.cbbCurrentFolder,
-            this.btnRefresh,
-            this.ddnQuickAccessItems,
-            this.ssoSeparator,
-            this.cbbSearchPattern,
-            this.cbbFilterPattern});
+                this.btnGoBack,
+                this.btnGoForward,
+                this.ddnHistoryItems,
+                this.btnGoToParentLocation,
+                this.cbbCurrentFolder,
+                this.btnRefresh,
+                this.ddnQuickAccessItems,
+                this.ssoSeparator,
+                this.cbbSearchPattern,
+                this.cbbFilterPattern });
             this.Padding = new System.Windows.Forms.Padding(8);
             this.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
             this.Stretch = true;
             // 
             // btnGoBack
             // 
-            this.btnGoBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoBack.ImageIndex = 0;
             this.btnGoBack.Name = "btnGoBack";
-            this.btnGoBack.Size = new System.Drawing.Size(28, 28);
+            this.btnGoBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGoBack.ImageIndex = (int)ImageListIndex.btnGoBack;
             this.btnGoBack.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
             // 
             // btnGoForward
             // 
-            this.btnGoForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoForward.ImageIndex = 1;
             this.btnGoForward.Name = "btnGoForward";
-            this.btnGoForward.Size = new System.Drawing.Size(28, 28);
+            this.btnGoForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGoForward.ImageIndex = (int)ImageListIndex.btnGoForward;
             this.btnGoForward.ToolTipText = "Forward to [insert folder here] (Alt + Right Arrow)";
             // 
             // ddnHistoryItems
             // 
+            this.ddnHistoryItems.Name = "ddnHistoryItems";
             this.ddnHistoryItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.ddnHistoryItems.Image = global::electrifier.Core.Properties.Resources.DropDown_Arrow_16px;
             this.ddnHistoryItems.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
-            this.ddnHistoryItems.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ddnHistoryItems.Name = "ddnHistoryItems";
             this.ddnHistoryItems.ShowDropDownArrow = false;
-            this.ddnHistoryItems.Size = new System.Drawing.Size(20, 28);
             this.ddnHistoryItems.ToolTipText = "Recent locations";
             // 
             // btnGoToParentLocation
             // 
-            this.btnGoToParentLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoToParentLocation.ImageIndex = 2;
             this.btnGoToParentLocation.Name = "btnGoToParentLocation";
-            this.btnGoToParentLocation.Size = new System.Drawing.Size(28, 28);
+            this.btnGoToParentLocation.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnGoToParentLocation.ImageIndex = (int)ImageListIndex.btnGoToParentLocation;
             this.btnGoToParentLocation.ToolTipText = "Up to [Insert folder here]... (Alt + Up Arrow)";
             // 
             // cbbCurrentFolder
@@ -286,40 +297,35 @@ namespace electrifier.Core.Components.Controls
             // 
             // btnRefresh
             // 
-            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRefresh.ImageIndex = 3;
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(28, 28);
-            this.btnRefresh.ToolTipText = "Refresh [Insert folder here]";
+            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnRefresh.ImageIndex = (int)ImageListIndex.btnRefresh;
+            this.btnRefresh.ToolTipText = "Refresh current folder view";
             // 
             // ddnQuickAccessItems
             // 
-            this.ddnQuickAccessItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ddnQuickAccessItems.ImageIndex = 4;
             this.ddnQuickAccessItems.Name = "ddnQuickAccessItems";
-            this.ddnQuickAccessItems.Size = new System.Drawing.Size(38, 28);
-            this.ddnQuickAccessItems.Text = "ddnQuickAccessItems";
+            this.ddnQuickAccessItems.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.ddnQuickAccessItems.ImageIndex = (int)ImageListIndex.ddnQuickAccessItems;
             // 
             // ssoSeparator
             // 
-            this.ssoSeparator.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ssoSeparator.Name = "ssoSeparator";
-            this.ssoSeparator.Size = new System.Drawing.Size(6, 31);
+            this.ssoSeparator.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             // 
             // cbbSearchFilter
             // 
+            this.cbbSearchPattern.Name = "cbbSearchFilter";
             this.cbbSearchPattern.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.cbbSearchPattern.ForeColor = System.Drawing.SystemColors.GrayText;
-            this.cbbSearchPattern.Name = "cbbSearchFilter";
             this.cbbSearchPattern.Size = new System.Drawing.Size(250, 31);
             this.cbbSearchPattern.Text = "Enter search phrase...";
             // 
             // cbbFilterPattern
             // 
-            this.cbbFilterPattern.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.cbbFilterPattern.ImageIndex = 5;
             this.cbbFilterPattern.Name = "cbbFilterPattern";
-            this.cbbFilterPattern.Size = new System.Drawing.Size(38, 28);
+            this.cbbFilterPattern.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.cbbFilterPattern.ImageIndex = (int)ImageListIndex.cbbFilterPattern_Add;
 
             this.ResumeLayout(false);
         }

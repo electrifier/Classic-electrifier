@@ -68,11 +68,16 @@ namespace electrifier.Core.Components.Controls.Extensions
         /// <param name="control">The control that implements IElThemedControl interface.</param>
         /// <param name="themeName">The name of embedded resource that contains the theme.</param>
         /// <returns>The <see cref="ImageList"/> containing the images of the loaded image strip.</returns>
-        public static ImageList GetThemeImageList(this IElThemedControl control, string themeName)
+        public static ImageList LoadThemeImageListFromResource(this IElThemedControl control, string themeName)
         {
             try
             {
-                ImageList imageList = new ImageList();
+                ImageList imageList = new ImageList
+                {
+                    /// Fix bug with alpha channels by enabling transparency before adding any images to the list.
+                    /// <seealso href="https://www.codeproject.com/articles/9142/adding-and-using-32-bit-alphablended-images-and-ic"/>
+                    ColorDepth = ColorDepth.Depth32Bit
+                };
 
                 using (Stream bmpStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
                     control.ThemeResourceNamespace + themeName + ElThemedControlExtensions.ThemeFileExtension))

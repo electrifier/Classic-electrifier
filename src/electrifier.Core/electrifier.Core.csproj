@@ -296,6 +296,7 @@
     <Content Include="Resources\Commands\organize_delete.bmp" />
     <Content Include="Resources\Commands\organize_moveto.bmp" />
     <Content Include="Resources\Commands\organize_rename.bmp" />
+    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
     <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\DropDown Arrow 16px.png" />
     <RibbonDefinition Include="Resources\Electrifier.Ribbon.xml">
