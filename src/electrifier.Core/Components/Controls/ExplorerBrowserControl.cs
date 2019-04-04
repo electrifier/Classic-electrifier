@@ -268,9 +268,11 @@ namespace electrifier.Core.Components.Controls
 
         /// <summary>
         /// Gets the items in the ExplorerBrowser as an IShellItemArray.
+        /// May return null if IFolderView2 isn't available or the requested ItemsArray is an empty set.
         /// </summary>
         /// <param name="option">A valid <see cref="Shell32.SVGIO"/> option to restrict the returned item collection.</param>
-        /// <returns>An <see cref="Shell32.IShellItemArray"/> of the requested items in the folder view.</returns>
+        /// <returns>An <see cref="Shell32.IShellItemArray"/> of the requested items in the folder view,
+        /// or null if IFolderView2 isn't available or the requested ItemsArray is an empty set.</returns>
         protected Shell32.IShellItemArray GetItemsArray(Shell32.SVGIO option)
         {
             var iFV2 = this.GetFolderView2();
@@ -280,7 +282,11 @@ namespace electrifier.Core.Components.Controls
 
             try
             {
-                return iFV2.Items<Shell32.IShellItemArray>(option);
+                // Check ItemCount to avoid possible COMException if ItemsArray is an empty set
+                if (iFV2.ItemCount(option) > 0)
+                    return iFV2.Items<Shell32.IShellItemArray>(option);
+                else
+                    return null;
             }
             finally
             {
@@ -973,13 +979,22 @@ namespace electrifier.Core.Components.Controls
 
             /// <summary>Gets the number of elements in the collection.</summary>
             /// <value>Returns a <see cref="int"/> value.</value>
-            public int Count => (int)this.Array.GetCount();
+            public int Count {
+                get {
+                    var array = this.Array;
+
+                    return (array is null ? 0 : (int)array.GetCount());
+                }
+            }
 
             private Shell32.IShellItemArray Array => this.parentExplorerBrowser.GetItemsArray(this.collectionOption);
 
             private IEnumerable<Shell32.IShellItem> Items {
                 get {
                     var array = this.Array;
+
+                    if (array is null)
+                        yield break;
 
                     for (uint i = 0; i < array.GetCount(); i++)
                         yield return array.GetItemAt(i);
