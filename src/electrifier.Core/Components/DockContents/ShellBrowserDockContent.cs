@@ -105,6 +105,8 @@ namespace electrifier.Core.Components.DockContents
 
             try
             {
+                this.Icon = Properties.Resources.ShellBrowserDockContent;
+
                 // Evaluate persistString
                 this.EvaluatePersistString(persistString);
 
