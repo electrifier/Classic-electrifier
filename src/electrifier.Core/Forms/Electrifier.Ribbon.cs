@@ -279,9 +279,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            string szOtherStuff = ".NET Framework Environment Version: " + Environment.Version.ToString();
-
-            Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", szOtherStuff, IntPtr.Zero);
+            Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", AppContext.GetDotNetFrameworkVersion(), AppContext.Icon.Handle);
         }
 
 
