@@ -265,13 +265,18 @@ namespace electrifier.Core.Components.DockContents
         {
             AppContext.TraceDebug("Firing of ExplorerBrowserControl_Navigated event.");
 
-            this.OnNavigationOptionsChanged(null);  // TODO
-
             this.BeginInvoke(new MethodInvoker(delegate ()
             {
                 this.Text = args.NewLocation.Name;
+                this.currentLocation = args.NewLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
+
+
+                //args.NewLocation.ViewInExplorer(); // TODO: Nice to have :) However, shows parent with item selected
+
 
                 //this.Icon = args.NewLocation.Thumbnail.SmallIcon;     // TODO: Icon-Property seems not to be thread-safe
+
+                this.OnNavigationOptionsChanged(null);  // TODO
 
             }));
         }
@@ -292,6 +297,8 @@ namespace electrifier.Core.Components.DockContents
         #endregion =============================================================================================================
 
         #region ElNavigableDockContent implementation ==========================================================================
+
+        internal string currentLocation;
 
         public override bool CanGoBack()
         {
@@ -316,8 +323,12 @@ namespace electrifier.Core.Components.DockContents
         }
 
 
-        public override string CurrentLocation { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
+        public override string CurrentLocation {
+            get => this.currentLocation;
+            set {
+                this.explorerBrowserControl.NavigateTo(new ShellItem(this.currentLocation = value));        // TODO: Not tested yet! 07/04/19
+            }
+        }
 
         public override event EventHandler NavigationOptionsChanged;
 
@@ -496,36 +507,12 @@ namespace electrifier.Core.Components.DockContents
         }
 
 
-        //
-        //
-        //
-        //
         //        // 31.10. 21.15: https://stackoverflow.com/questions/2077981/cut-files-to-clipboard-in-c-sharp
         //        private void CmdClipboardCopy_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
         //        {
-        //            AppContext.TraceScope();
-        //
-        //            //11.11.18:
-        //
-        //            //common.Interop.WinShell.IShellFolder desktop = common.Interop.WinShell.DesktopFolder.Get();
-        //
-        //
-        //
-        //            //StringBuilder itemsText = new StringBuilder();
-        //
-        //            //foreach (ShellObject item in explorerBrowser.SelectedItems)
-        //            //{
-        //            //    if (item != null)
-        //            //        itemsText.AppendLine("\tItem = " + item.GetDisplayName(DisplayNameType.Default));
-        //            //}
-        //
-        //            //this.selectedItemsTextBox.Text = itemsText.ToString();
-        //            //this.itemsTabControl.TabPages[1].Text = "Selected Items (Count=" + explorerBrowser.SelectedItems.Count.ToString() + ")";
-        //
-        //
         //            // https://docs.microsoft.com/en-us/dotnet/api/system.windows.clipboard.setfiledroplist?view=netframework-4.7.2
         //
-        //            /* Wichtig:https://docs.microsoft.com/en-us/windows/desktop/shell/dragdrop
+        //            /* Important: https://docs.microsoft.com/en-us/windows/desktop/shell/dragdrop
         //             * Clipboard Data Transfers
         //                The Clipboard is the simplest way to transfer Shell data. The basic procedure is similar to standard Clipboard data transfers.
         //                However, because you are transferring a pointer to a data object, not the data itself, you must use the OLE clipboard API instead

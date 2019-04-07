@@ -200,6 +200,8 @@ namespace electrifier.Core.Components.Controls
                 this.btnGoForward.Enabled = navigableDockContent.CanGoForward();
                 this.ddnHistoryItems.Enabled = navigableDockContent.HasHistoryItems();
                 this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation();
+                this.cbbCurrentFolder.Enabled = true;
+                this.cbbCurrentFolder.Text = navigableDockContent.CurrentLocation;
                 this.btnRefresh.Enabled = navigableDockContent.CanRefresh();
                 this.ddnQuickAccessItems.Enabled = navigableDockContent.HasQuickAccesItems();
                 this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems();
@@ -211,6 +213,8 @@ namespace electrifier.Core.Components.Controls
                 this.btnGoForward.Enabled = false;
                 this.ddnHistoryItems.Enabled = false;
                 this.btnGoToParentLocation.Enabled = false;
+                this.cbbCurrentFolder.Enabled = false;
+                this.cbbCurrentFolder.Text = "";
                 this.btnRefresh.Enabled = false;
                 this.ddnQuickAccessItems.Enabled = false;
                 this.cbbSearchPattern.Enabled = false;
