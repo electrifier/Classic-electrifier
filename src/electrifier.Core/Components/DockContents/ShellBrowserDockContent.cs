@@ -28,7 +28,6 @@ using Vanara.Windows.Shell;
 
 using electrifier.Core.WindowsShell;
 
-
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
@@ -37,7 +36,6 @@ namespace electrifier.Core.Components.DockContents
     /// A reference implementation of a wrapper for ExplorerBrowser can be found
     /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
-
     public class ShellBrowserDockContent
         : ElNavigableDockContent
         , IElClipboardConsumer
@@ -107,6 +105,9 @@ namespace electrifier.Core.Components.DockContents
             {
                 this.Icon = Properties.Resources.ShellBrowserDockContent;
 
+                // Initialize ElNavigableDockContent backing fields
+                this.HistoryItems = new ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex>(this);
+
                 // Evaluate persistString
                 this.EvaluatePersistString(persistString);
 
@@ -123,6 +124,7 @@ namespace electrifier.Core.Components.DockContents
                 this.explorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
                 this.explorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
                 this.explorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
+                this.explorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
 
                 this.Controls.Add(this.explorerBrowserControl);
 
@@ -270,13 +272,10 @@ namespace electrifier.Core.Components.DockContents
                 this.Text = args.NewLocation.Name;
                 this.currentLocation = args.NewLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
 
-
                 //args.NewLocation.ViewInExplorer(); // TODO: Nice to have :) However, shows parent with item selected
-
-
                 //this.Icon = args.NewLocation.Thumbnail.SmallIcon;     // TODO: Icon-Property seems not to be thread-safe
 
-                this.OnNavigationOptionsChanged(null);  // TODO
+                this.OnNavigationOptionsChanged(null);  // TODO: Set some args
 
             }));
         }
@@ -286,12 +285,35 @@ namespace electrifier.Core.Components.DockContents
             AppContext.TraceError("Firing of ExplorerBrowserControl_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
         }
 
-        protected void ExplorerBrowserControl_ItemsEnumerated(object sender, EventArgs e)
+        protected void ExplorerBrowserControl_ItemsEnumerated(object sender, EventArgs args)
         {
             AppContext.TraceDebug("Firing of ExplorerBrowserControl_ItemsEnumerated event.");
 
             this.explorerBrowser_itemsChangedEvent.Set();
             this.explorerBrowser_selectionChangedEvent.Set();
+        }
+
+        private void ExplorerBrowserControl_History_NavigationLogChanged(object sender, Controls.ExplorerBrowserControl.NavigationLogEventArgs args)
+        {
+            // HACK: args.CanNavigateBackwardChanged / args.CanNavigateForwardChanged is currently ignored...
+
+            if (args.LocationsChanged)
+            {
+                this.HistoryItems.Clear();
+
+                // TODO: Instead of "copying" the HistoryItems, just point to ExplorerBrowserControl's History.Locations
+                // TODO: Convert HistoryItems to ShellItems-Array, add explicit conversion ShellItems->HistoryItems
+                foreach (var location in this.explorerBrowserControl.History.Locations)
+                {
+                    this.HistoryItems.AddNewItem(location);
+
+                    // TODO: delete the follwoing check and its warning
+                    if (!location.IsFolder)
+                        AppContext.TraceWarning("History.Location is not a folder!");
+                }
+
+                // TODO: Update ToolStripDropDownButton!
+            }
         }
 
         #endregion =============================================================================================================
@@ -300,10 +322,7 @@ namespace electrifier.Core.Components.DockContents
 
         internal string currentLocation;
 
-        public override bool CanGoBack()
-        {
-            return this.explorerBrowserControl.History.CanNavigateBackward;
-        }
+        public override bool CanGoBack() => this.explorerBrowserControl.History.CanNavigateBackward;
 
         public override void GoBack()
         {
@@ -311,10 +330,7 @@ namespace electrifier.Core.Components.DockContents
                 Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Backward);
         }
 
-        public override bool CanGoForward()
-        {
-            return this.explorerBrowserControl.History.CanNavigateForward;
-        }
+        public override bool CanGoForward() => this.explorerBrowserControl.History.CanNavigateForward;
 
         public override void GoForward()
         {
@@ -322,13 +338,65 @@ namespace electrifier.Core.Components.DockContents
                 Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Forward);
         }
 
+        public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
+
 
         public override string CurrentLocation {
             get => this.currentLocation;
             set {
-                this.explorerBrowserControl.NavigateTo(new ShellItem(this.currentLocation = value));        // TODO: Not tested yet! 07/04/19
+                this.explorerBrowserControl.NavigateTo(new ShellItem(this.currentLocation = value));
             }
         }
+
+        // TODO: Currently obsolete as of 28/04/19. But in the future, this will open a new DockContent of approriate type,
+        //       if one of the supported types is opened, e.g. text-file, md-file, icon-libraray...
+        // 
+        //public void NavigateToLocation(object value)
+        //{
+        //    try
+        //    {
+        //        // Use type pattern to try to cast given value to ShellFolder
+        //        // <see https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/switch >
+        //        switch (value)
+        //        {
+        //            case ShellFolder shellFolder:
+        //                this.explorerBrowserControl.NavigateTo(shellFolder);
+        //                break;
+        //            case string strPath:
+        //                this.explorerBrowserControl.NavigateTo(new ShellFolder(strPath));
+        //                break;
+        //            case object obj:
+        //                throw new ArgumentException("Can't cast CurrentLocation to value of type " + value.GetType().ToString());
+        //            default:
+        //                throw new ArgumentNullException("Given CurrentLocation is null");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new ArgumentException("Setting CurrentLocation failed. Value = " + value.ToString(), ex);
+        //    }
+        //}
+
+        /// <summary>
+        /// Navigate within the navigation log. This does not change the set of locations in the navigation log.
+        /// </summary>
+        /// <param name="historyIndex">An index into the navigation logs Locations collection.</param>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        ///   TODO: This will be replaced by CurrentLocation(HistoryIndex historyIndex);
+        public override bool GoToHistoryItem(int historyIndex)
+            => this.explorerBrowserControl.NavigateToHistoryIndex(historyIndex);
+
+        //protected internal ElNavigableTargetItemCollection recentLocationsList = null;
+        //public override ElNavigableTargetItemCollection RecentLocations => base.RecentLocations;
+
+
+        //public override bool CanHaveQuickAccesItems() => true;
+        //protected internal ElNavigableTargetItemCollection ntcQuickAccessItems = null;
+        //public override ElNavigableTargetItemCollection QuickAccessItems { get => this.ntcQuickAccessItems; }
+
+
+
+
 
         public override event EventHandler NavigationOptionsChanged;
 
@@ -339,6 +407,7 @@ namespace electrifier.Core.Components.DockContents
 
         #endregion =============================================================================================================
 
+        // TODO: Put IElClipboardConsumer into its own file:
 
         #region IElClipboardConsumer interface implementation ==================================================================
 

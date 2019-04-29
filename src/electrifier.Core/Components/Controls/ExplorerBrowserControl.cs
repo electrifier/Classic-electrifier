@@ -259,6 +259,13 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
+        /// <summary>
+        /// Navigate within the navigation log. This does not change the set of locations in the navigation log.
+        /// </summary>
+        /// <param name="historyIndex">An index into the navigation logs Locations collection.</param>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        public bool NavigateToHistoryIndex(int historyIndex) => this.History.NavigateLog(historyIndex);
+
         protected void SetSite(Shell32.IServiceProvider sp) => (this.explorerBrowser as Shell32.IObjectWithSite)?.SetSite(sp);
 
         /// <summary>
@@ -866,6 +873,11 @@ namespace electrifier.Core.Components.Controls
                 return true;
             }
 
+            /// <summary>
+            /// Initiate navigation within the navigation log...
+            /// </summary>
+            /// <param name="index"></param>
+            /// <returns>true if successful, false otherwise</returns>
             internal bool NavigateLog(int index)
             {
                 // Can't go anywhere

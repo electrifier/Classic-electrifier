@@ -21,8 +21,9 @@
 using System;
 using System.Collections.Generic;
 
-using electrifier.Core.Components.DockContents;
 using electrifier.Core.Components.Controls.Extensions;
+using electrifier.Core.Components.DockContents;
+using electrifier.Core.Components.DockContents.Extensions;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -100,7 +101,6 @@ namespace electrifier.Core.Components.Controls
 
             this.btnGoBack.Click += this.BtnGoBack_Click;
             this.btnGoForward.Click += this.BtnGoForward_Click;
-            this.ddnHistoryItems.DropDownItemClicked += this.DdnHistoryItems_DropDownItemClicked;
 
             // Set current theme to default theme to get the ImageList populated
             this.CurrentTheme = this.DefaultTheme;
@@ -145,80 +145,49 @@ namespace electrifier.Core.Components.Controls
             this.ActiveDockContent?.GoForward();
         }
 
-        private void DdnHistoryItems_DropDownItemClicked(object sender, System.Windows.Forms.ToolStripItemClickedEventArgs e)
-        {
-            // This should be safe, cause "DropDownItems.IndexOf(null);" returns "-1"
-            int index = this.ddnHistoryItems.DropDownItems.IndexOf(e.ClickedItem);
-
-            if (-1 != index)
-            {
-                //this.NavigateRecentLocationsClicked?.Invoke(this, new NavigateRecentLocationsEventArgs(index));
-            }
-            else
-            {
-                AppContext.TraceWarning("DdnHistoryItems_DropDownItemClicked: IndexOf failed!");
-            }
-        }
-
-
-
-
-        public void UpdateNavigationLog(/*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/ System.IntPtr navigationLogEventArgs,
-            /*Microsoft.WindowsAPICodePack.Controls.ExplorerBrowserNavigationLog*/ System.IntPtr navigationLog)
-        {
-            //if (navigationLogEventArgs.CanNavigateBackwardChanged)
-            //{
-            //    this.btnGoBack.Enabled = navigationLog.CanNavigateBackward;
-            //}
-
-            //if (navigationLogEventArgs.CanNavigateForwardChanged)
-            //{
-            //    this.btnGoForward.Enabled = navigationLog.CanNavigateForward;
-            //}
-
-            //if (navigationLogEventArgs.LocationsChanged)
-            //{
-            //    this.ddnHistoryItems.DropDownItems.Clear();
-
-            //    foreach (Microsoft.WindowsAPICodePack.Shell.ShellObject shObj in navigationLog.Locations)
-            //    {
-            //        this.ddnHistoryItems.DropDownItems.Add(shObj.Name);
-            //    }
-            //}
-        }
-
-
+        // TODO: Replace this whole procedure through appropriate event handlers!!!!! 28.04.19
         public void UpdateButtonState(ElNavigableDockContent navigableDockContent)
         {
-            // TODO: The following exception is thrown for test purposes only!
-            if (this.ActiveDockContent != navigableDockContent)
-                throw new ArgumentException("NavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
+            this.SuspendLayout();
 
-            if (null != navigableDockContent)
+            try
             {
-                this.btnGoBack.Enabled = navigableDockContent.CanGoBack();
-                this.btnGoForward.Enabled = navigableDockContent.CanGoForward();
-                this.ddnHistoryItems.Enabled = navigableDockContent.HasHistoryItems();
-                this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation();
-                this.cbbCurrentFolder.Enabled = true;
-                this.cbbCurrentFolder.Text = navigableDockContent.CurrentLocation;
-                this.btnRefresh.Enabled = navigableDockContent.CanRefresh();
-                this.ddnQuickAccessItems.Enabled = navigableDockContent.HasQuickAccesItems();
-                this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems();
-                this.cbbFilterPattern.Enabled = navigableDockContent.CanFilterItems();
+                // TODO: The following exception is thrown for test purposes only!
+                if (this.ActiveDockContent != navigableDockContent)
+                    throw new ArgumentException("NavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
+
+                if (null != navigableDockContent)
+                {
+                    this.btnGoBack.Enabled = navigableDockContent.CanGoBack();
+                    this.btnGoForward.Enabled = navigableDockContent.CanGoForward();
+                    this.ddnHistoryItems.Enabled = navigableDockContent.CanHaveHistoryItems();
+                    this.ddnHistoryItems.DropDownItems.Rebuild(navigableDockContent.HistoryItems, navigableDockContent.OnHistoryItemClick);      // TODO: Only do this when the item collection has changed!
+                    this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation();
+                    this.cbbCurrentFolder.Enabled = true;
+                    this.cbbCurrentFolder.Text = navigableDockContent.CurrentLocation;
+                    this.btnRefresh.Enabled = navigableDockContent.CanRefresh();
+                    this.ddnQuickAccessItems.Enabled = navigableDockContent.CanHaveQuickAccesItems();
+                    this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems();
+                    this.cbbFilterPattern.Enabled = navigableDockContent.CanFilterItems();
+                }
+                else
+                {
+                    this.btnGoBack.Enabled = false;
+                    this.btnGoForward.Enabled = false;
+                    this.ddnHistoryItems.Enabled = false;
+                    this.ddnHistoryItems.DropDownItems.Clear();
+                    this.btnGoToParentLocation.Enabled = false;
+                    this.cbbCurrentFolder.Enabled = false;
+                    this.cbbCurrentFolder.Text = "";
+                    this.btnRefresh.Enabled = false;
+                    this.ddnQuickAccessItems.Enabled = false;
+                    this.cbbSearchPattern.Enabled = false;
+                    this.cbbFilterPattern.Enabled = false;
+                }
             }
-            else
+            finally
             {
-                this.btnGoBack.Enabled = false;
-                this.btnGoForward.Enabled = false;
-                this.ddnHistoryItems.Enabled = false;
-                this.btnGoToParentLocation.Enabled = false;
-                this.cbbCurrentFolder.Enabled = false;
-                this.cbbCurrentFolder.Text = "";
-                this.btnRefresh.Enabled = false;
-                this.ddnQuickAccessItems.Enabled = false;
-                this.cbbSearchPattern.Enabled = false;
-                this.cbbFilterPattern.Enabled = false;
+                this.ResumeLayout();
             }
         }
 
