@@ -158,6 +158,9 @@
         <File Id="System.Runtime.Serialization.Primitives.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
       </Component>
       <Component>
+        <File Id="System.ValueTuple.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
+      </Component>
+      <Component>
         <File Id="Theraot.Core.dll" Source="$(var.electrifier.Core.TargetDir)" KeyPath="yes" Checksum="yes"/>
       </Component>
       <Component>
