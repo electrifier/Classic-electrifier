@@ -1,29 +1,82 @@
 # electrifier
+
 Desktop enhancement suite
 
-electrifier is an open-source project. It aims to be a replacement for standard Windows Explorer.
-electrifier features a ribbon as a replacement for its menu-bar (which can be used alternatively), full internationalization (currently English and German are supported), full drag and drop-support, allowing you to drag and drop shell objects from and to electrifier windows as also to windows explorer or your desktop, and a full-featured multi-tab experience.
+![electrifier Logo](./assets/Electrifier%20Logo%20-%20Unflashed.png)
+
+electrifier is an open-source project which extends Windows :registered: Explorer with
+
+* Full-featured multi-tab experience
+* PowerShell integration, automation and extensibility
+* Built-in file viewers and plain editors
+* Session management and history functionality
+
+However, since electrifier is still in early development stages, most mentioned features are currently work in progress or just plans for the future.
+
+If you want to get involved in its development feel free to contribute!
+
+![electrifier Main Form](./docs/Pictures/MainForm.png)
+
+# History
+
+03/05/19 Currently an internal alpha test is in progress
+
+Originally, the project was started back in 2004, using .NET-framework 1.0 and Windows XP. However, due to a system crash, I lost all my data, including the source-code, which was stored on a software RAID-5.
+
+Meanwhile I managed to restore those lost artefacts, converted them to Visual Studio 2019 and .NET 4.6 and relaunched the development cycle.
 
 # Development
 
-electrifier is developed using Visual Studio Community 2013. It uses .NET-framework 4.0. Originally, the project was started back in 2004, using .NET-framework 1.0 and Windows XP. However, due to a system crash, I lost all my data, including the source-code, which was stored on a software RAID-5. Meanwhile I managed to restore those lost artefacts, converted them to Visual Studio 2013 and .NET 4.0 and it still works somehow, even using Windows 7 64-bit.
+electrifier is developed using Visual Studio Community 2019 and uses .NET-framework 4.6.
 
-This is why I started this project on GitHub. Originally, the project was under version-control of Subversion, the last days I converted it to GIT and this is what you can see here.
+## Contributions
 
-# Contributing
+electrifier makes use of the following third party components:
 
-Currently, the project is in an alpha-stadium. However, if you feel interested in helping me out, you are welcome. Please contact me.
+Name | Author(s) | License
+---- | --------- | -------
+[Vanara](https://github.com/dahall/Vanara) | [David Hall](https://github.com/dahall) | MIT License
+[DockPanel Suite](https://github.com/dockpanelsuite/dockpanelsuite) | [Lex Li](https://github.com/lextm), [Ryan Rastedt](https://github.com/roken) & others | MIT License
+[Sunburst.WindowsForms.Ribbon](https://github.com/SunburstApps/Sunburst.WindowsForms.Ribbon) | [William Kent](https://github.com/wjk) | Microsoft Public License (Ms-PL)
+[Knob Buttons Toolbar icons](https://www.deviantart.com/itweek/art/Knob-Buttons-Toolbar-icons-73463960) | [iTweek](https://www.deviantart.com/itweek) | [Custom]
+
+## Contributing
+
+Currently, the project is in an early alpha-stage. However, if you feel interested in helping me out, you are welcome to contact me.
 
 # Pre-Requisites
 
 To run electrifier, you supposedly need nothing except a running Windows Operating System, Vista SP1 or above. The .NET-framework should be installed due normal Windows-Update cycle.
 
-To compile the sources:
+## Building electrifier
 
-* Install Visual Studio 2013
-* Download the sources, you'll need them
-* Open `electrifier/src/Electrifier - Main/Electrifier - Main.sln`
-* In sub-project `Core`, right-click `Core/Forms/MainWindowForm.RibbonMarkup.xml` and select `Run Custom Tool`
-* You most likely will get a missing reference, `Ribbon`. Select sub-project `Core`, right-click, Properties, Reference Paths, change `D:\src\trunk\src\Electrifier - Main\3rd Party\` to whatever fits your personal development environment. Ribbon.dll is located in folder `Electrifier - Main / 3rd Party`
-* Set "Electrifier" as the startup project (Right-click on Solution `Electrifier - Main`, select `Set StartUp Projects...`, `Single startup project`, select `Electrifier` from dropdown
-* electrifier will start with a blank UI, click `New Panel` from the ribbon or menu to get a fresh electrifier window
+* Install [Visual Studio Community 2019](https://visualstudio.microsoft.com/de/vs/community/) using at least the following Workloads:
+  * `.NET desktop development`
+  * `Desktop development with C++` (Required for the Ribbon Ressource Compiler)
+* Download the sources to extract them into an empty folder
+* From there, use `electrifier/src/electrifier.sln` to open the project solution in Visual Studio
+* In Solution Explorer, right-click `Solution 'electrifier' (3 projects)` to `Restore NuGet Packages`
+* In Solution Explorer, right-click project `electrifier` to `Set as StartUp Project`
+* Hit `F6`-key to `Build Solution`
+* Violá! In case you reached so far without ciritical errors, you've just successfully built electrifier :+1:
+* Hit `F5`-key to `Start Debugging`. Since electrifier will start with a blank UI at present, click `New Panel` from the ribbon to open a fresh electrifier Shell Browser window
+
+# License
+
+
+    Copyright 2019 Thorsten Jung
+ 
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+ 
+        http://www.apache.org/licenses/LICENSE-2.0
+ 
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+
+:pencil2: Last updated May 4th, 2019 :calendar:
