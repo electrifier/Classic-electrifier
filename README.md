@@ -6,10 +6,10 @@ Desktop enhancement suite
 
 electrifier is an open-source project which extends Windows :registered: Explorer with
 
-* Full-featured multi-tab experience
-* PowerShell integration, automation and extensibility
-* Built-in file viewers and plain editors
-* Session management and history functionality
+- [x] Full-featured multi-tab experience
+- [ ] Built-in file viewers and plain editors
+- [ ] Session management and history functionality
+- [ ] PowerShell integration, automation and extensibility
 
 However, since electrifier is still in early development stages, most mentioned features are currently work in progress or just plans for the future.
 
@@ -19,7 +19,9 @@ If you want to get involved in its development feel free to contribute!
 
 # History
 
-03/05/19 Currently an internal alpha test is in progress
+Released | Version | Details
+:------: | :-----: | :------
+04/05/19 | 0.1.1 | An internal alpha test is currently in progress
 
 Originally, the project was started back in 2004, using .NET-framework 1.0 and Windows XP. However, due to a system crash, I lost all my data, including the source-code, which was stored on a software RAID-5.
 
@@ -38,7 +40,7 @@ Name | Author(s) | License
 [Vanara](https://github.com/dahall/Vanara) | [David Hall](https://github.com/dahall) | MIT License
 [DockPanel Suite](https://github.com/dockpanelsuite/dockpanelsuite) | [Lex Li](https://github.com/lextm), [Ryan Rastedt](https://github.com/roken) & others | MIT License
 [Sunburst.WindowsForms.Ribbon](https://github.com/SunburstApps/Sunburst.WindowsForms.Ribbon) | [William Kent](https://github.com/wjk) | Microsoft Public License (Ms-PL)
-[Knob Buttons Toolbar icons](https://www.deviantart.com/itweek/art/Knob-Buttons-Toolbar-icons-73463960) | [iTweek](https://www.deviantart.com/itweek) | [Custom]
+[Knob Buttons Toolbar icons](https://www.deviantart.com/itweek/art/Knob-Buttons-Toolbar-icons-73463960) | [iTweek](https://www.deviantart.com/itweek) aka Miles Ponson| [Custom]
 
 ## Contributing
 
@@ -64,7 +66,7 @@ To run electrifier, you supposedly need nothing except a running Windows Operati
 # License
 
 
-    Copyright 2019 Thorsten Jung
+    Copyright 2017-19 Thorsten Jung, www.electrifier.org
  
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -79,4 +81,4 @@ To run electrifier, you supposedly need nothing except a running Windows Operati
     limitations under the License.
 
 
-:pencil2: Last updated May 4th, 2019 :calendar:
+:pencil2: Last updated :calendar: May the 4th, 2019

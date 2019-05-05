@@ -18,6 +18,14 @@
 **
 */
 
+/*** ADDITIONAL LICENSE NOTES: *************************************************
+**
+** Major parts of this code were contributed by David Hall, the author of Vanara
+**
+** Visit https://github.com/dahall/Vanara for more information
+**
+** Thank you very much, David! ************************************************/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
