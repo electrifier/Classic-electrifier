@@ -63,6 +63,8 @@ To run electrifier, you supposedly need nothing except a running Windows Operati
 * Violá! In case you reached so far without ciritical errors, you've just successfully built electrifier :+1:
 * Hit `F5`-key to `Start Debugging`. Since electrifier will start with a blank UI at present, click `New Panel` from the ribbon to open a fresh electrifier Shell Browser window
 
+:warning: To successfully build `Setup`, further steps have to be taken!
+
 # License
 
 

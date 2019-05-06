@@ -306,7 +306,7 @@ namespace electrifier.Core.Components.Controls
             }
             finally
             {
-                iFV2 = null;
+                iFV2 = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
             }
         }
 
@@ -669,15 +669,16 @@ namespace electrifier.Core.Components.Controls
 
                 this.viewDispatch = psv.GetItemObject(Shell32.SVGIO.SVGIO_BACKGROUND, ViewEvents.IID_IDispatch);
 
-                HRESULT hResult = ShlwApi.ConnectToConnectionPoint(this, ViewEvents.IID_DShellFolderViewEvents, true, this.viewDispatch,
-                    ref this.viewConnectionPointCookie, out System.Runtime.InteropServices.ComTypes.IConnectionPoint ppcpOut);
+                // Use discard here, cause we don't need ppcpOut
+                HRESULT hResult = ShlwApi.ConnectToConnectionPoint(this, ViewEvents.IID_DShellFolderViewEvents, true,
+                    this.viewDispatch, ref this.viewConnectionPointCookie, out _);
 
                 if (hResult.Failed)
                 {
                     Marshal.ReleaseComObject(this.viewDispatch);
                     this.viewDispatch = null;
 
-                    throw new COMException("ExplorerBrowserControl.ViewEvents.ConnectShellView: Shell32.ConnectToConnectionPoint() failed.", (int)hResult);
+                    throw new COMException("ExplorerBrowserControl.ViewEvents.ConnectShellView: ShlwApi.ConnectToConnectionPoint() failed.", (int)hResult);
                 }
             }
 
@@ -685,8 +686,9 @@ namespace electrifier.Core.Components.Controls
             {
                 if (this.viewDispatch != null)
                 {
-                    ShlwApi.ConnectToConnectionPoint(this, ViewEvents.IID_DShellFolderViewEvents, false, this.viewDispatch,
-                        ref this.viewConnectionPointCookie, out System.Runtime.InteropServices.ComTypes.IConnectionPoint ppcpOut);
+                    // Use discard here, cause we don't need ppcpOut
+                    ShlwApi.ConnectToConnectionPoint(this, ViewEvents.IID_DShellFolderViewEvents, false,
+                        this.viewDispatch, ref this.viewConnectionPointCookie, out _);
                     this.viewConnectionPointCookie = 0;
 
                     Marshal.ReleaseComObject(this.viewDispatch);
@@ -857,9 +859,9 @@ namespace electrifier.Core.Components.Controls
 
             internal bool NavigateLog(NavigationLogDirection direction)
             {
-                // Determine proper index to navigate to
-                var locationIndex = 0;
+                int locationIndex;
 
+                // Determine proper index to navigate to
                 if (direction == NavigationLogDirection.Backward && this.CanNavigateBackward)
                 {
                     locationIndex = this.CurrentLocationIndex - 1;
