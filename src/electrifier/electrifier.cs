@@ -52,8 +52,12 @@ namespace electrifier
             ERROR_FILE_NOT_FOUND = 2,
         }
 
+        private static readonly string elCoreDLLFileName = @"electrifier.Core.dll";
+        private static readonly string appIconResourceID = @"electrifier.electrifier.ico";
+        private static readonly string appContextTypeID = @"electrifier.Core.AppContext";
+
         /// <summary>
-        /// The Main method is the entry point of the electrifier application.
+        /// This Main method is the entry point of the electrifier application.
         /// </summary>
         [STAThread]
         static void Main(string[] args)
@@ -62,7 +66,6 @@ namespace electrifier
             bool splashIsFadedOut = true;
             Icon applicationIcon = null;
             SplashScreenForm splashScreen = null;
-            ApplicationContext appContext = null;
 
             // Catch all unhandled exceptions, exception-handlers will be configured in electrifier.Core.dll
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
@@ -75,9 +78,6 @@ namespace electrifier
             // Enable application to use Visual Styles
             Application.EnableVisualStyles();
             Application.DoEvents();
-
-            string electrifierCoreDLLFullPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) +
-                Path.DirectorySeparatorChar + @"electrifier.core.dll";
 
             // Search argument list for splash-screen-related arguments
             foreach (string arg in args)
@@ -93,20 +93,24 @@ namespace electrifier
                 }
             }
 
-            // Create an electrifier application context by loading electrifier.core.dll
+            // Create an electrifier application context by loading and running electrifier.core.dll
             try
             {
-                // Get the application icon
-                applicationIcon = new Icon(Assembly.GetEntryAssembly().
-                    GetManifestResourceStream("electrifier.electrifier.ico"));
-
                 // Create the splash-screen
                 splashScreen = new SplashScreenForm(splashIsShown, splashIsFadedOut);
 
-                // Create an instance of the application context
-                appContext = Activator.CreateInstance(
-                    Assembly.LoadFile(electrifierCoreDLLFullPath).GetType(@"electrifier.Core.AppContext"),
-                    new Object[] { args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen }) as ApplicationContext;
+                Assembly entryAssembly = Assembly.GetEntryAssembly();
+                string electrifierCoreDLLFullPath = Path.Combine(
+                    Path.GetDirectoryName(entryAssembly.Location),
+                    ElectrifierMainEntryPoint.elCoreDLLFileName);
+
+                // Get the application icon
+                applicationIcon = new Icon(entryAssembly.GetManifestResourceStream(appIconResourceID));
+
+                // Create the instance of the application context
+                ApplicationContext appContext = Activator.CreateInstance(
+                    Assembly.LoadFile(electrifierCoreDLLFullPath).GetType(appContextTypeID),
+                    args: new object[] { args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen }) as ApplicationContext;
 
                 // Run electrifier applicaton context
                 try
@@ -116,16 +120,20 @@ namespace electrifier
                 catch (Exception ex)
                 {
                     MessageBox.Show("Error while running electrifier.\n\n" + ex.Message,
-                        "electrifier: Runtime Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "electrifier: Runtime Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
 
                     Environment.ExitCode = (int)SystemErrorCodes.ERROR_INVALID_FUNCTION;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to load '" + electrifierCoreDLLFullPath + "'.\n\n" +
+                MessageBox.Show("Unable to load '" + ElectrifierMainEntryPoint.elCoreDLLFileName + "'.\n\n" +
                     "Please reinstall electrifier application.\n\n" + ex.Message,
-                    "electrifier: Critical Startup Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "electrifier: Critical Startup Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
 
                 Environment.ExitCode = (int)SystemErrorCodes.ERROR_FILE_NOT_FOUND;
             }
