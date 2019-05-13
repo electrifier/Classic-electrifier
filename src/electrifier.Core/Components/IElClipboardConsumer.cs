@@ -31,7 +31,7 @@ namespace electrifier.Core.Components
         CanCopy = 0x2,
     }
 
-    interface IElClipboardConsumer
+    public interface IElClipboardConsumer
     {
         // Cut & Copy
 

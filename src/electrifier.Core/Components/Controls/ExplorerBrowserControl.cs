@@ -306,7 +306,9 @@ namespace electrifier.Core.Components.Controls
             }
             finally
             {
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
                 iFV2 = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
             }
         }
 
@@ -564,9 +566,22 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT OnStateChange(Shell32.IShellView ppshv, Shell32.CDBOSC uChange)
         {
-            if (uChange == Shell32.CDBOSC.CDBOSC_STATECHANGE)
+            switch (uChange)
             {
-                this.OnSelectionChanged();
+                //case Shell32.CDBOSC.CDBOSC_SETFOCUS:
+                //    break;
+                //case Shell32.CDBOSC.CDBOSC_KILLFOCUS:
+                //    break;
+                case Shell32.CDBOSC.CDBOSC_SELCHANGE:
+                    AppContext.TraceDebug("ICommDlgBrowser3.OnStateChange: Selection changed [CDBOSC_SELCHANGE].");
+                    this.OnSelectionChanged();
+                    break;
+                //case Shell32.CDBOSC.CDBOSC_RENAME:
+                //    break;
+                //case Shell32.CDBOSC.CDBOSC_STATECHANGE:
+                //    break;
+                default:
+                    break;
             }
 
             return HRESULT.S_OK;

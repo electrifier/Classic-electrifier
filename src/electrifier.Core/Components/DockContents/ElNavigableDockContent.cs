@@ -34,8 +34,6 @@ namespace electrifier.Core.Components.DockContents
     public abstract class ElNavigableDockContent
       : WeifenLuo.WinFormsUI.Docking.DockContent
     {
-        // TODO: Add Clipboard functionality
-
         public IElNavigationHost NavigationHost { get; private set; }
 
         public ElNavigableDockContent(IElNavigationHost navigationHost)

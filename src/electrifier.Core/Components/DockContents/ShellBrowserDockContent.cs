@@ -37,7 +37,7 @@ namespace electrifier.Core.Components.DockContents
     /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
     public class ShellBrowserDockContent
-        : ElNavigableDockContent
+      : ElNavigableDockContent
         , IElClipboardConsumer
     {
         #region Fields ========================================================================================================
@@ -119,7 +119,8 @@ namespace electrifier.Core.Components.DockContents
 
                 // Connect ExplorerBrowser Events
                 this.explorerBrowserControl.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
-                this.explorerBrowserControl.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
+                //this.explorerBrowserControl.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
+                this.explorerBrowserControl.SelectionChanged += this.ExplorerBrowserControl_SelectionChanged;
                 this.explorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
                 this.explorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
                 this.explorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
@@ -131,12 +132,23 @@ namespace electrifier.Core.Components.DockContents
                 // Initialize UIDecouplingTimer
                 this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
                 this.UIDecouplingTimer.Interval = ShellBrowserDockContent.UIDecouplingInterval;
-                this.UIDecouplingTimer.Start();
+                //this.UIDecouplingTimer.Start();
+
             }
             finally
             {
                 this.ResumeLayout();
             }
+        }
+
+        private void ExplorerBrowserControl_SelectionChanged(object sender, EventArgs e)
+        {
+            //var selCount = this.explorerBrowserControl.SelectedItems.Count;
+
+            //// SelectionChanged.ClipboardConsumerHandler
+
+            //AppContext.TraceDebug("SHDockContent: ExplorerBrowserControl_SelectionChanged: " + selCount);
+
         }
 
         protected override void Dispose(bool disposing)
@@ -230,8 +242,9 @@ namespace electrifier.Core.Components.DockContents
             base.OnShown(e);
 
             // TODO: When multiple Tabs are opened initially, sometimes this won't be called for some folders... Most likely if invisible!
-            if (default != this.InitialNaviagtionTarget)
-                this.explorerBrowserControl.NavigateTo(this.InitialNaviagtionTarget);
+            // HACK: 13/05/19: Commented out, since InitialNaviagtionTarget is already set at construction.
+            //if (default != this.InitialNaviagtionTarget)
+            //    this.explorerBrowserControl.NavigateTo(this.InitialNaviagtionTarget);
 
             //if (null != this.initialViewMode)
             //{
@@ -350,6 +363,7 @@ namespace electrifier.Core.Components.DockContents
 
         // TODO: Currently obsolete as of 28/04/19. But in the future, this will open a new DockContent of approriate type,
         //       if one of the supported types is opened, e.g. text-file, md-file, icon-libraray...
+        // TODO: Anyways, this should reside in AppContext
         // 
         //public void NavigateToLocation(object value)
         //{
@@ -415,7 +429,7 @@ namespace electrifier.Core.Components.DockContents
         {
             // TODO: Check for selection. No selection => No Abilities!
             return (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut);
-        }
+    }
 
         public event EventHandler ClipboardAbilitiesChanged;
 
