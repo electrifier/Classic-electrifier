@@ -21,14 +21,13 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+
+using Vanara.PInvoke;
 using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
-
-using Vanara.PInvoke;
 
 
 namespace electrifier.Core.Forms
@@ -42,7 +41,7 @@ namespace electrifier.Core.Forms
     {
         #region Fields ========================================================================================================
 
-        private static string formTitle_Affix = String.Format("electrifier v{0}", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+        private static readonly string formTitle_Affix = $"electrifier v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
 
         #endregion ============================================================================================================
 
@@ -129,13 +128,13 @@ namespace electrifier.Core.Forms
         private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)
         {
             // Info: sender should be the DockPanel
-            var activeContent = this.dpnDockPanel.ActiveContent;
-
             if (!sender.Equals(this.dpnDockPanel))
                 throw new ArgumentException("TODO: Test purposes only: sender is not dpnDockPanel! @ DpnDockPanel_ActiveContentChanged");
 
-            // Process Clipboard-part of DockContent-Activation
-            this.Clipboard_ActiveDockContentChanged(activeContent);
+            var activeContent = this.dpnDockPanel.ActiveContent;
+
+            // Process Ribbon-part of DockContent-Activation
+            this.Ribbon_ProcessDockContentChange(activeContent);
 
             // Process Interface IElNavigationHost-part of DockContent-Activation
             if (null == activeContent)
@@ -209,14 +208,14 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.SaveAsXml(fullFileName);
         }
 
-        // Issue #21 Refactoring: Remove Windows-API-Code-Pack
-        private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/
-                IntPtr e)
-        {
-            //// TODO: Check if this DockContent is (still) the ActiveContent
-            //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
-            //this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
+        //// Issue #21 Refactoring: Remove Windows-API-Code-Pack
+        //private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/
+        //        IntPtr e)
+        //{
+        //    //// TODO: Check if this DockContent is (still) the ActiveContent
+        //    //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
+        //    //this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
 
-        }
+        //}
     }
 }

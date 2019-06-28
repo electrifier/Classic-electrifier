@@ -33,23 +33,6 @@ namespace electrifier.Core.Forms
         //public const string CFStr_ShellIdListOffset = "Shell Object Offsets";
 
         /// <summary>
-        /// TODO: https://docs.microsoft.com/de-de/dotnet/api/system.windows.dataobject?view=netframework-4.7.2
-        /// </summary>
-        /// <param name="activeContent"></param>
-        internal void Clipboard_ActiveDockContentChanged(IDockContent activeContent)
-        {
-            // Check for ClipboardAbilities
-            ElClipboardAbilities clipboardAbilities = ElClipboardAbilities.None;
-
-            if (activeContent is IElClipboardConsumer clipboardConsumer)
-                clipboardAbilities = clipboardConsumer.GetClipboardAbilities();
-
-            // Update ribbon command button state
-            this.cmdBtnClipboardCut.Enabled = clipboardAbilities.HasFlag(ElClipboardAbilities.CanCut);
-            this.cmdBtnClipboardCopy.Enabled = clipboardAbilities.HasFlag(ElClipboardAbilities.CanCopy);
-        }
-
-        /// <summary>
         /// Perform Clipboard-Cut Operation.
         /// 
         /// Includes the following validations:

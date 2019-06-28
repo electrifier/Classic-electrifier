@@ -74,7 +74,7 @@ namespace electrifier.Core
                 var fullFileName = Path.Combine(this.ApplicationDataPath, this.ConfigurationFileName);
 
                 // Create directory for configuration file, just in case it doesn't already exist
-                DirectoryInfo directoryInfo = Directory.CreateDirectory(this.ApplicationDataPath);
+                Directory.CreateDirectory(this.ApplicationDataPath);
 
                 this.ElectrifierForm.SaveConfiguration(fullFileName);
             }

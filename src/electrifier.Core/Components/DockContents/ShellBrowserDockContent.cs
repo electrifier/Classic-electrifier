@@ -43,13 +43,6 @@ namespace electrifier.Core.Components.DockContents
 
         //private ExplorerBrowserViewMode? initialViewMode = null;
 
-        protected System.Windows.Forms.Timer UIDecouplingTimer = new System.Windows.Forms.Timer();
-        protected System.Threading.AutoResetEvent explorerBrowser_itemsChangedEvent = new System.Threading.AutoResetEvent(false);
-        protected System.Threading.AutoResetEvent explorerBrowser_selectionChangedEvent = new System.Threading.AutoResetEvent(false);
-
-        private static readonly int UIDecouplingInterval = 100;                 // Wait 100ms for UI Thread to react on Item- and Selection-Changes
-
-
         #endregion Fields =====================================================================================================
 
         #region Properties ====================================================================================================
@@ -75,16 +68,6 @@ namespace electrifier.Core.Components.DockContents
 
         #region Published Events ==============================================================================================
 
-        public delegate void ItemsChangedHandler(ShellBrowserDockContent sender, EventArgs eventArgs);               // TODO: EventArgs?!?
-        public event ItemsChangedHandler ItemsChanged;
-
-        public delegate void SelectionChangedHandler(ShellBrowserDockContent sender, EventArgs eventArgs);           // TODO: EventArgs?!?
-        public event SelectionChangedHandler SelectionChanged;
-
-        //public event System.EventHandler<Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs> NavigationLogChanged {
-        //    add { this.explorerBrowser.NavigationLog.NavigationLogChanged += value; }
-        //    remove { this.explorerBrowser.NavigationLog.NavigationLogChanged -= value; }
-        //}
 
         #endregion Published Events ===========================================================================================
 
@@ -112,9 +95,7 @@ namespace electrifier.Core.Components.DockContents
                 };
 
                 // Connect ExplorerBrowser Events
-                this.explorerBrowserControl.ItemsChanged += delegate (object o, EventArgs e) { this.explorerBrowser_itemsChangedEvent.Set(); };
-                //this.explorerBrowserControl.SelectionChanged += delegate (object o, EventArgs e) { this.explorerBrowser_selectionChangedEvent.Set(); };
-                this.explorerBrowserControl.SelectionChanged += this.ExplorerBrowserControl_SelectionChanged;
+                this.explorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
                 this.explorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
                 this.explorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
                 this.explorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
@@ -122,12 +103,6 @@ namespace electrifier.Core.Components.DockContents
                 this.explorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
 
                 this.Controls.Add(this.explorerBrowserControl);
-
-                // Initialize UIDecouplingTimer
-                this.UIDecouplingTimer.Tick += new EventHandler(this.UIDecouplingTimer_Tick);
-                this.UIDecouplingTimer.Interval = ShellBrowserDockContent.UIDecouplingInterval;
-                //this.UIDecouplingTimer.Start();
-
             }
             finally
             {
@@ -135,20 +110,9 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
-        private void ExplorerBrowserControl_SelectionChanged(object sender, EventArgs e)
-        {
-            //var selCount = this.explorerBrowserControl.SelectedItems.Count;
-
-            //// SelectionChanged.ClipboardConsumerHandler
-
-            //AppContext.TraceDebug("SHDockContent: ExplorerBrowserControl_SelectionChanged: " + selCount);
-
-        }
-
         protected override void Dispose(bool disposing)
         {
-            if (disposing)
-                this.UIDecouplingTimer.Dispose();
+            // TODO: Dispose EcplorerBrowserControl?!?
 
             base.Dispose(disposing);
         }
@@ -248,20 +212,6 @@ namespace electrifier.Core.Components.DockContents
 
         #endregion DockContent Event Handler ==================================================================================
 
-        protected void UIDecouplingTimer_Tick(object sender, EventArgs e)
-        {
-            if (this.explorerBrowser_itemsChangedEvent.WaitOne(0)) {
-                AppContext.TraceDebug("Firing of ItemsChanged event.");
-
-                this.ItemsChanged?.Invoke(this, EventArgs.Empty);
-            }
-
-            if (this.explorerBrowser_selectionChangedEvent.WaitOne(0)) {
-                AppContext.TraceDebug("Firing of SelectionChanged event.");
-
-                this.SelectionChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
 
         #region ExplorerBrowser Internal Events Handler ========================================================================
 
@@ -295,9 +245,6 @@ namespace electrifier.Core.Components.DockContents
         protected void ExplorerBrowserControl_ItemsEnumerated(object sender, EventArgs args)
         {
             AppContext.TraceDebug("Firing of ExplorerBrowserControl_ItemsEnumerated event.");
-
-            this.explorerBrowser_itemsChangedEvent.Set();
-            this.explorerBrowser_selectionChangedEvent.Set();
         }
 
         private void ExplorerBrowserControl_History_NavigationLogChanged(object sender, Controls.ExplorerBrowserControl.NavigationLogEventArgs args)

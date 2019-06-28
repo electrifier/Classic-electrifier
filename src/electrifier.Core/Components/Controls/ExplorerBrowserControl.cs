@@ -228,11 +228,10 @@ namespace electrifier.Core.Components.Controls
         }
 
         /// <summary>
-        /// Clears the Explorer Browser of existing content, fills it with content from the specified container, and adds a new point to the
-        /// Travel Log.
+        /// Clears the Explorer Browser of existing content, fills it with content from the specified container,
+        /// and adds a new point to the Travel Log.
         /// </summary>
         /// <param name="shellItem">The shell container to navigate to.</param>
-        /// <param name="category">The category of the <paramref name="shellItem"/>.</param>
         public void NavigateTo(ShellItem shellItem)
         {
             if (default == shellItem)
@@ -283,7 +282,49 @@ namespace electrifier.Core.Components.Controls
         protected Shell32.IFolderView2 GetFolderView2() => this.explorerBrowser?.GetCurrentView<Shell32.IFolderView2>();
 
         /// <summary>
+        /// Determines if <see cref="ExplorerBrowserControl"/> is currently able to have a valid item collection.
+        /// Doing these checks before requesting a collection prevents from internal exceptions that may be raised.
+        /// 
+        /// Currently the following tests are applied:
+        ///   Check for full initialization of control
+        /// </summary>
+        /// <remarks>Note this does not guarantee that there is a valid collection currently, but the requisites are met.</remarks>
+        /// <returns>true, if this instance might have a valid collection of items, false if not.</returns>
+        protected bool CanHaveItemCollection()
+        {
+            // If initialNavigationTarget is set, we are still in creation of this control
+            if (default != this.initialNavigationTarget)
+                return false;
+
+            return true;
+        }
+
+        public int GetItemCount(Shell32.SVGIO option)
+        {
+            if (!this.CanHaveItemCollection())
+                return 0;
+
+            Shell32.IFolderView2 folderView;
+            try
+            {
+                folderView = this.GetFolderView2();
+
+                if (folderView is null)
+                    return 0;
+
+                return folderView.ItemCount(option);
+            }
+            finally
+            {
+#pragma warning disable IDE0059 // Value assigned to symbol is never used
+                folderView = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
+#pragma warning restore IDE0059 // Value assigned to symbol is never used
+            }
+        }
+
+        /// <summary>
         /// Gets the items in the ExplorerBrowser as an IShellItemArray.
+        ///
         /// May return null if IFolderView2 isn't available or the requested ItemsArray is an empty set.
         /// </summary>
         /// <param name="option">A valid <see cref="Shell32.SVGIO"/> option to restrict the returned item collection.</param>
@@ -291,23 +332,23 @@ namespace electrifier.Core.Components.Controls
         /// or null if IFolderView2 isn't available or the requested ItemsArray is an empty set.</returns>
         protected Shell32.IShellItemArray GetItemsArray(Shell32.SVGIO option)
         {
-            var iFV2 = this.GetFolderView2();
-
-            if (iFV2 is null)
+            if (!this.CanHaveItemCollection())
                 return null;
 
+            Shell32.IFolderView2 folderView;
             try
             {
-                // Check ItemCount to avoid possible COMException if ItemsArray is an empty set
-                if (iFV2.ItemCount(option) > 0)
-                    return iFV2.Items<Shell32.IShellItemArray>(option);
-                else
+                folderView = this.GetFolderView2();
+
+                if (folderView is null)
                     return null;
+
+                return folderView.Items<Shell32.IShellItemArray>(option);
             }
             finally
             {
 #pragma warning disable IDE0059 // Value assigned to symbol is never used
-                iFV2 = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
+                folderView = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
 #pragma warning restore IDE0059 // Value assigned to symbol is never used
             }
         }
@@ -433,6 +474,7 @@ namespace electrifier.Core.Components.Controls
                     delegate
                     {
                         this.NavigateTo(this.initialNavigationTarget);
+                        this.initialNavigationTarget = default;
                     }));
             }
         }
@@ -573,7 +615,6 @@ namespace electrifier.Core.Components.Controls
                 //case Shell32.CDBOSC.CDBOSC_KILLFOCUS:
                 //    break;
                 case Shell32.CDBOSC.CDBOSC_SELCHANGE:
-                    AppContext.TraceDebug("ICommDlgBrowser3.OnStateChange: Selection changed [CDBOSC_SELCHANGE].");
                     this.OnSelectionChanged();
                     break;
                 //case Shell32.CDBOSC.CDBOSC_RENAME:

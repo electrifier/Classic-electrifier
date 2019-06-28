@@ -23,6 +23,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Windows.Forms;
 
+using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 
 using electrifier.Core.WindowsShell;
@@ -37,14 +38,49 @@ namespace electrifier.Core.Components.DockContents
     public partial class ShellBrowserDockContent
       : IElClipboardConsumer
     {
-        public ElClipboardAbilities GetClipboardAbilities()
+        #region Fields ========================================================================================================
+
+        private ElClipboardAbilities currentClipboardAbilities = ElClipboardAbilities.None;
+
+        #endregion Fields =====================================================================================================
+
+        #region Published Events ==============================================================================================
+
+        /// <summary>
+        /// Fires when the clipboard abilities have changed.
+        /// </summary>
+        public event EventHandler ClipboardAbilitiesChanged;        // TODO: EventArgs
+
+        /// <summary>
+        /// Raises the <see cref="ClipboardAbilitiesChanged"/> event.
+        /// </summary>
+        protected internal virtual void OnClipboardAbilitiesChanged() => this.ClipboardAbilitiesChanged?.Invoke(this, EventArgs.Empty);
+
+        #endregion Published Events ===========================================================================================
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        protected void ElClipboardConsumer_SelectionChanged(object sender, EventArgs args)
         {
-            // TODO: Check for selection. No selection => No Abilities!
-            return (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut);
+            var clipAbilities = this.GetClipboardAbilities();
+
+            if (this.currentClipboardAbilities != clipAbilities)
+            {
+                this.currentClipboardAbilities = clipAbilities;
+
+                this.OnClipboardAbilitiesChanged();
+            }
         }
 
-        public event EventHandler ClipboardAbilitiesChanged;
+        public ElClipboardAbilities GetClipboardAbilities()
+        {
+            var itemCount = this.explorerBrowserControl.GetItemCount(Shell32.SVGIO.SVGIO_SELECTION);
 
+            return ((itemCount > 0) ? (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut) : ElClipboardAbilities.None);
+        }
 
         /// <summary>
         /// Cut selected files, if any, to the clipboard.
@@ -151,8 +187,10 @@ namespace electrifier.Core.Components.DockContents
         /// Paste FileDropList from the clipboard to this ShellBrowser's current folder.
         /// </summary>
         /// <param name="dropEffect">Either DragDropEffects.Copy or DragDropEffects.Move are allowed. Additional flags will be ignored.</param>
-        /// <param name="operationFlags">Additional operation flags. Default is ShellFileOperations.OperationFlags.AllowUndo.</param>
-        private void PasteFileDropListFromClipboard(DragDropEffects dropEffect, ShellFileOperations.OperationFlags operationFlags = ShellFileOperations.OperationFlags.AllowUndo)
+        /// <param name="operationFlags">Additional operation flags. Defaults to AllowUndo.</param>
+        private void PasteFileDropListFromClipboard(
+            DragDropEffects dropEffect,
+            ShellFileOperations.OperationFlags operationFlags = ShellFileOperations.OperationFlags.AllowUndo)
         {
             AppContext.TraceScope();
 

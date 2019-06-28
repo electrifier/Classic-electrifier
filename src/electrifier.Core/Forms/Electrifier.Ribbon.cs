@@ -20,6 +20,7 @@
 
 using System;
 using System.Windows.Forms;
+using electrifier.Core.Components;
 using Sunburst.WindowsForms.Ribbon.Controls;
 using Vanara.PInvoke;
 using WeifenLuo.WinFormsUI.Docking;
@@ -32,6 +33,16 @@ namespace electrifier.Core.Forms
     /// </summary>
     public partial class Electrifier
     {
+
+        // ==> TODO: 26.06. 12:00: Move Ribbon-stuff into its own sub-class
+
+        #region Fields ========================================================================================================
+
+        private ElClipboardAbilities clipboardAbilities = ElClipboardAbilities.CanCut | ElClipboardAbilities.CanCopy;
+
+        #endregion Fields =====================================================================================================
+
+
         private enum RibbonCommandID : uint
         {
             //
@@ -77,6 +88,8 @@ namespace electrifier.Core.Forms
         }
 
 
+#pragma warning disable IDE0052 // Remove unread private members
+
         // Quick Access Toolbar Commands
 
         private RibbonButton cmdQATOpenNewShellBrowserPane;
@@ -106,6 +119,21 @@ namespace electrifier.Core.Forms
         private RibbonButton cmdBtnOrganizeDelete;
         private RibbonButton cmdBtnOrganizeRename;
 
+#pragma warning restore IDE0052 // Remove unread private members
+
+        protected ElClipboardAbilities ClipboardAbilities {
+            get => this.clipboardAbilities;
+            set {
+                if (this.clipboardAbilities != value)
+                {
+                    this.clipboardAbilities = value;
+
+                    // Update ribbon command button states
+                    this.cmdBtnClipboardCut.Enabled = value.HasFlag(ElClipboardAbilities.CanCut);
+                    this.cmdBtnClipboardCopy.Enabled = value.HasFlag(ElClipboardAbilities.CanCopy);
+                }
+            }
+        }
 
 
 
@@ -203,6 +231,19 @@ namespace electrifier.Core.Forms
                 Enabled = false,
                 //ExecuteEvent += new System.EventHandler<Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs>(this.CmdBtnOrganizeRename_Execute),
             };
+
+
+        }
+
+        /// <summary>
+        /// TODO: https://docs.microsoft.com/de-de/dotnet/api/system.windows.dataobject?view=netframework-4.7.2
+        /// </summary>
+        private void Ribbon_ProcessDockContentChange(IDockContent activatedDockContent)
+        {
+            // In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly
+            this.ClipboardAbilities = (activatedDockContent is IElClipboardConsumer clipboardConsumer) ?
+                clipboardConsumer.GetClipboardAbilities() :
+                ElClipboardAbilities.None;
         }
 
         #region Ribbon event listeners ========================================================================================

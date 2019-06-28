@@ -42,14 +42,16 @@ namespace electrifier.Core.Forms
             DockContent.Activated += this.DockContent_Activated;
             DockContent.FormClosed += this.DockContent_FormClosed;
 
+            // Connect navigation options changed event
             DockContent.NavigationOptionsChanged += this.DockContent_NavigationOptionsChanged;
 
+            // Connect clipboard consumer events
+            if (DockContent is IElClipboardConsumer clipboardConsumer)
+                clipboardConsumer.ClipboardAbilitiesChanged += this.DockContent_ClipboardAbilitiesChanged;
 
             // TODO: Connect events!
-
             //newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
             //newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
-            //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
 
             DockContent.Show(this.dpnDockPanel);    // DockState.Document); // TODO: Previous pane?!?
         }
@@ -72,6 +74,7 @@ namespace electrifier.Core.Forms
             if (!DockContent.IsActivated)
                 DockContent.Activate();
 
+            // Update navigation bar, i.e. its button states
             this.ntsNavigation.ActiveDockContent = DockContent;
         }
 
@@ -114,6 +117,21 @@ namespace electrifier.Core.Forms
 
             if (sender == this.GetActiveDockContent())
                 this.ntsNavigation.UpdateButtonState(sender as ElNavigableDockContent);
+        }
+
+        private void DockContent_ClipboardAbilitiesChanged(object sender, EventArgs e)      // TODO: EventArgs; object will always be an IElClipboardConsumer!
+        {
+            if (sender != this.GetActiveDockContent())
+            {
+                AppContext.TraceWarning("DockContent_ClipboardAbilitiesChanged: sender IS NOT ActiveDockContent!");
+                return;
+            }
+
+            // In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly
+            this.ClipboardAbilities = (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer) ?
+                clipboardConsumer.GetClipboardAbilities() :
+                ElClipboardAbilities.None;          // TODO: Move into extension class?!?
+
         }
 
         #endregion =============================================================================================================
