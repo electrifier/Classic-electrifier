@@ -29,9 +29,10 @@ namespace electrifier.Core.Components
     /// </summary>
     public interface IElNavigationHost
     {
+        ElNavigableDockContent ActiveDockContent { get; }
+
         void AddDockContent(ElNavigableDockContent DockContent);
         void ActivateDockContent(ElNavigableDockContent DockContent);
-        ElNavigableDockContent GetActiveDockContent();
         void RemoveDockContent(ElNavigableDockContent DockContent);
 
         // void DeactivateClient();

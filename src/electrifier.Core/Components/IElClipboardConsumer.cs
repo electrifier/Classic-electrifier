@@ -37,9 +37,10 @@ namespace electrifier.Core.Components
 
         ElClipboardAbilities GetClipboardAbilities();
         /// <summary>
-        /// ClipboardAbilitiesChanged is invoked by IElClipboardConsumer when CanCut or CanCopy have changed, e.g. after selection changed.
+        /// Fires when the clipboard abilities (i.e. <see cref="ElClipboardAbilities.CanCut"/> and / or
+        /// <see cref="ElClipboardAbilities.CanCopy"/>) changed, e.g. after selection has been changed.
         /// </summary>
-        event EventHandler ClipboardAbilitiesChanged; // TODO: CanCut/CopyChanged => ClipboardAbility
+        event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
 
         void CutToClipboard();
         void CopyToClipboard();
@@ -64,4 +65,22 @@ namespace electrifier.Core.Components
         // TODO: Type of clipboard content => GetClipboardPasteTypes();
         void PasteFromClipboard();  // TODO: The clipboard content
     }
+
+    #region EventArgs =========================================================================================================
+
+    /// <summary>
+    /// The event argument for the <see cref="ClipboardAbilitiesChanged"/> event holds the new, current
+    /// <see cref="ElClipboardAbilities"/> of this <see cref="ShellBrowserDockContent"/>.
+    /// </summary>
+    public class ClipboardAbilitiesChangedEventArgs : EventArgs                 // TODO: Move into interface in future revisions of C#/VS
+    {
+        public ClipboardAbilitiesChangedEventArgs(ElClipboardAbilities elClipboardAbilities)
+            => this.NewClipboardAbilities = elClipboardAbilities;
+
+        /// <summary>The new <see cref="ElClipboardAbilities"/> of this <see cref="ShellBrowserDockContent"/>.</summary>
+        public ElClipboardAbilities NewClipboardAbilities { get; }
+    }
+
+    #endregion ================================================================================================================
+
 }

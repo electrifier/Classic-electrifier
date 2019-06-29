@@ -31,7 +31,7 @@ namespace electrifier.Core.Forms
     /// <summary>
     /// The main Window of electrifier application.
     /// </summary>
-    public partial class Electrifier
+    public partial class ElApplicationWindow
     {
 
         // ==> TODO: 26.06. 12:00: Move Ribbon-stuff into its own sub-class

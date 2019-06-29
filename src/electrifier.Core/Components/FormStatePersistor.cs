@@ -106,8 +106,8 @@ namespace electrifier.Core.Components
         /// <summary>
         /// The PropertyKeyPrefix property represents the Prefix that is used when storing the form's individual values.
         /// 
-        /// E.g. when set to "Electrifier", the following key names will be used:
-        /// "Electrifier_WindowLocation", "Electrifier_WindowSize", "Electrifier_WindowState".
+        /// E.g. when set to "ElApplicationWindow", the following key names will be used:
+        /// "ElApplicationWindow_WindowLocation", "ElApplicationWindow_WindowSize", "ElApplicationWindow_WindowState".
         /// </summary>
         /// <value>The PropertyKeyPrefix property represents the Prefix, that is used when storing the form's individual values.
         /// By default, this will be the form's Name.</value>

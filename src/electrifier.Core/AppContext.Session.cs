@@ -38,7 +38,7 @@ namespace electrifier.Core
             #region Properties ====================================================================================================
 
             public string ConfigurationFileName { get { return "Session." + this.SessionName + ".xml"; } }
-            public electrifier.Core.Forms.Electrifier ElectrifierForm { get; private set; }
+            public electrifier.Core.Forms.ElApplicationWindow ElectrifierForm { get; private set; }
 
             #endregion Properties =================================================================================================
 
@@ -51,10 +51,10 @@ namespace electrifier.Core
                     System.Windows.Forms.Application.StartupPath :
                     Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppContext.AssemblyCompany));
 
-                // Create Electrifier Form
+                // Create ElApplicationWindow Form
                 var configFullFileName = Path.Combine(this.ApplicationDataPath, this.ConfigurationFileName);
 
-                this.ElectrifierForm = new electrifier.Core.Forms.Electrifier(AppContext.Icon);
+                this.ElectrifierForm = new electrifier.Core.Forms.ElApplicationWindow(AppContext.Icon);
 
                 // TODO: If file exists, but is invalid (e.g. empty), this will crash...
                 if (File.Exists(configFullFileName))
@@ -65,7 +65,7 @@ namespace electrifier.Core
             }
 
             /// <summary>
-            /// Save Electrifier Form state configuration into XML-file.
+            /// Save ElApplicationWindow Form state configuration into XML-file.
             /// 
             /// Called by AppContext.AppContext_ThreadExit()
             /// </summary>

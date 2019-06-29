@@ -226,19 +226,19 @@
     <Compile Include="Forms\AboutElectrifier.Designer.cs">
       <DependentUpon>AboutElectrifier.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Electrifier.Commands.cs">
+    <Compile Include="Forms\ElApplicationWindow.Commands.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Electrifier.cs">
+    <Compile Include="Forms\ElApplicationWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Electrifier.Designer.cs">
-      <DependentUpon>Electrifier.cs</DependentUpon>
+    <Compile Include="Forms\ElApplicationWindow.Designer.cs">
+      <DependentUpon>ElApplicationWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Electrifier.NavigationHost.cs">
+    <Compile Include="Forms\ElApplicationWindow.NavigationHost.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\Electrifier.Ribbon.cs">
+    <Compile Include="Forms\ElApplicationWindow.Ribbon.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
@@ -285,8 +285,8 @@
     <EmbeddedResource Include="Forms\AboutElectrifier.resx">
       <DependentUpon>AboutElectrifier.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Electrifier.resx">
-      <DependentUpon>Electrifier.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ElApplicationWindow.resx">
+      <DependentUpon>ElApplicationWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -313,7 +313,7 @@
     <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
     <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\DropDown Arrow 16px.png" />
-    <RibbonDefinition Include="Resources\Electrifier.Ribbon.xml">
+    <RibbonDefinition Include="Resources\ElApplicationWindow.Ribbon.xml">
       <SubType>Designer</SubType>
     </RibbonDefinition>
   </ItemGroup>

@@ -163,7 +163,7 @@ namespace electrifier.Core.Components.Controls
         #region EventArgs =====================================================================================================
 
         /// <summary>
-        /// Event argument for The Navigated event
+        /// Event argument for the Navigated event
         /// </summary>
         public class NavigatedEventArgs : EventArgs
         {
@@ -172,7 +172,7 @@ namespace electrifier.Core.Components.Controls
         }
 
         /// <summary>
-        /// Event argument for The Navigating event
+        /// Event argument for the Navigating event
         /// </summary>
         public class NavigatingEventArgs : EventArgs
         {

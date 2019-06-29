@@ -24,6 +24,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using Vanara.PInvoke;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Core.Components;
@@ -35,12 +36,13 @@ namespace electrifier.Core.Forms
     /// <summary>
     /// The main Window of electrifier application.
     /// </summary>
-    public partial class Electrifier
+    public partial class ElApplicationWindow
       : System.Windows.Forms.Form
       , System.Windows.Forms.IWin32Window       // Used for ShellFileOperations
     {
         #region Fields ========================================================================================================
 
+        // TODO: Add Creation timestamp! in debug mode
         private static readonly string formTitle_Affix = $"electrifier v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
 
         #endregion ============================================================================================================
@@ -50,7 +52,7 @@ namespace electrifier.Core.Forms
         public override string Text {
             get { return base.Text; }
             set {
-                base.Text = ((value.Length > 0) ? (value + " - " + Electrifier.formTitle_Affix) : Electrifier.formTitle_Affix);
+                base.Text = ((value.Length > 0) ? (value + " - " + ElApplicationWindow.formTitle_Affix) : ElApplicationWindow.formTitle_Affix);
                 this.FormTitle_AddDebugRemark();
             }
         }
@@ -64,7 +66,7 @@ namespace electrifier.Core.Forms
         #endregion ============================================================================================================
 
 
-        public Electrifier(Icon icon)
+        public ElApplicationWindow(Icon icon)
           : base()
         {
             AppContext.TraceScope();
@@ -174,7 +176,6 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
 
             this.AddDockContent(newShellBrowser = ElDockContentFactory.CreateShellBrowser(this));
-            // TODO: Browse to standard folder...
 
             return newShellBrowser;
         }
@@ -183,15 +184,15 @@ namespace electrifier.Core.Forms
         {
             try
             {
-                this.dpnDockPanel.LoadFromXml(fullFileName, new DeserializeDockContent(
-                    delegate(string persistString)
+                this.dpnDockPanel.LoadFromXml(fullFileName,
+                    new DeserializeDockContent(delegate (string persistString)
                     {
                         return ElDockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
                     }));
             }
             catch (Exception e)
             {
-                MessageBox.Show("Electrifier.cs->LoadConfiguration" +
+                MessageBox.Show("ElApplicationWindow.cs->LoadConfiguration" +
                     "\n\tError loading configuarion file." +
                     "\n\nError description: " + e.Message);
             }
@@ -207,15 +208,5 @@ namespace electrifier.Core.Forms
         {
             this.dpnDockPanel.SaveAsXml(fullFileName);
         }
-
-        //// Issue #21 Refactoring: Remove Windows-API-Code-Pack
-        //private void NewDockContent_NavigationLogChanged(object sender, /*Microsoft.WindowsAPICodePack.Controls.NavigationLogEventArgs*/
-        //        IntPtr e)
-        //{
-        //    //// TODO: Check if this DockContent is (still) the ActiveContent
-        //    //// TODO: Or, Change NavigationLogEventArgs to send the active ShellBrowserDockContent with it
-        //    //this.ntsNavigation.UpdateNavigationLog(e, this.GetActiveShellBrowserDockContent().NavigationLog);
-
-        //}
     }
 }

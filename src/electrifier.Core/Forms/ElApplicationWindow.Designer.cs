@@ -20,7 +20,7 @@
 
 namespace electrifier.Core.Forms
 {
-    partial class Electrifier
+    partial class ElApplicationWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -80,7 +80,7 @@ namespace electrifier.Core.Forms
             this.rbnRibbon.Location = new System.Drawing.Point(0, 0);
             this.rbnRibbon.Minimized = false;
             this.rbnRibbon.Name = "rbnRibbon";
-            this.rbnRibbon.ResourceName = "Electrifier.Ribbon";
+            this.rbnRibbon.ResourceName = "ElApplicationWindow.Ribbon";
             this.rbnRibbon.ShortcutTableResourceName = null;
             this.rbnRibbon.Size = new System.Drawing.Size(782, 122);
             this.rbnRibbon.TabIndex = 3;
@@ -140,9 +140,9 @@ namespace electrifier.Core.Forms
             // fspFormStatePersistor
             // 
             this.fspFormStatePersistor.ClientForm = this;
-            this.fspFormStatePersistor.PropertyKeyPrefix = "Electrifier";
+            this.fspFormStatePersistor.PropertyKeyPrefix = "ElApplicationWindow";
             // 
-            // Electrifier
+            // ElApplicationWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -150,7 +150,7 @@ namespace electrifier.Core.Forms
             this.Controls.Add(this.tscToolStripContainer);
             this.Controls.Add(this.rbnRibbon);
             this.Controls.Add(this.stsStatusStrip);
-            this.Name = "Electrifier";
+            this.Name = "ElApplicationWindow";
             this.stsStatusStrip.ResumeLayout(false);
             this.stsStatusStrip.PerformLayout();
             this.tscToolStripContainer.ContentPanel.ResumeLayout(false);

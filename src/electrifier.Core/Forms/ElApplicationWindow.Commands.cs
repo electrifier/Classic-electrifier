@@ -24,7 +24,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
-    public partial class Electrifier
+    public partial class ElApplicationWindow
     {
         // => https://github.com/dahall/Vanara/blob/master/PInvoke/Shell32/Clipboard.cs ShellClipboardFormat
         //public const string CFStr_Filename = "FileNameW";

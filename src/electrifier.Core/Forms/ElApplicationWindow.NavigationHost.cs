@@ -20,18 +20,19 @@
 
 using System;
 using System.Collections;
-
+using System.Diagnostics;
 using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
 
 
 namespace electrifier.Core.Forms
 {
-    public partial class Electrifier
+    public partial class ElApplicationWindow
       : IElNavigationHost
     {
         protected internal ArrayList dockContentList = new ArrayList();
-        protected internal ElNavigableDockContent activeNavigableDockContent = null;
+        protected internal ElNavigableDockContent activeDockContent = null;
+        public ElNavigableDockContent ActiveDockContent { get => this.activeDockContent; }
 
         public void AddDockContent(ElNavigableDockContent DockContent)
         {
@@ -47,7 +48,7 @@ namespace electrifier.Core.Forms
 
             // Connect clipboard consumer events
             if (DockContent is IElClipboardConsumer clipboardConsumer)
-                clipboardConsumer.ClipboardAbilitiesChanged += this.DockContent_ClipboardAbilitiesChanged;
+                clipboardConsumer.ClipboardAbilitiesChanged += this.ClipboardConsumer_ClipboardAbilitiesChanged;
 
             // TODO: Connect events!
             //newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
@@ -61,14 +62,14 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
 
             // Check if active DockContent has changed at all
-            if (this.GetActiveDockContent() == DockContent)
+            if (this.ActiveDockContent == DockContent)
                 return;
 
             if(!this.dockContentList.Contains(DockContent))
                 throw new ArgumentException("DockContent never has been added to NavigationHost");
 
-            //this.activeNavigableDockContent?.Deactivate();
-            this.activeNavigableDockContent = DockContent;
+            //this.activeDockContent?.Deactivate();
+            this.activeDockContent = DockContent;
 
             // Activate the underlying DockContent if not already active
             if (!DockContent.IsActivated)
@@ -77,8 +78,6 @@ namespace electrifier.Core.Forms
             // Update navigation bar, i.e. its button states
             this.ntsNavigation.ActiveDockContent = DockContent;
         }
-
-        public ElNavigableDockContent GetActiveDockContent() => this.activeNavigableDockContent;
 
         public void RemoveDockContent(ElNavigableDockContent DockContent)
         {
@@ -97,41 +96,34 @@ namespace electrifier.Core.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DockContent_Activated(/* TODO: ElNavigableDockContent */object sender, EventArgs e)
+        private void DockContent_Activated(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
+            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
 
             this.ActivateDockContent(sender as ElNavigableDockContent);
         }
 
-        private void DockContent_FormClosed(/* TODO: ElNavigableDockContent */object sender, System.Windows.Forms.FormClosedEventArgs e)
+        private void DockContent_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
         {
-            AppContext.TraceScope();
+            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
 
             this.RemoveDockContent(sender as ElNavigableDockContent);
         }
 
-        private void DockContent_NavigationOptionsChanged(/* TODO: ElNavigableDockContent */object sender, EventArgs e)
+        private void DockContent_NavigationOptionsChanged(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
+            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
 
-            if (sender == this.GetActiveDockContent())
+            if (sender.Equals(this.ActiveDockContent))
                 this.ntsNavigation.UpdateButtonState(sender as ElNavigableDockContent);
         }
 
-        private void DockContent_ClipboardAbilitiesChanged(object sender, EventArgs e)      // TODO: EventArgs; object will always be an IElClipboardConsumer!
+        private void ClipboardConsumer_ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs e)       // TODO: Move out of this class...
         {
-            if (sender != this.GetActiveDockContent())
-            {
-                AppContext.TraceWarning("DockContent_ClipboardAbilitiesChanged: sender IS NOT ActiveDockContent!");
-                return;
-            }
+            Debug.Assert(sender is IElClipboardConsumer, "sender is not of type IElClipboardConsumer");
 
-            // In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly
-            this.ClipboardAbilities = (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer) ?
-                clipboardConsumer.GetClipboardAbilities() :
-                ElClipboardAbilities.None;          // TODO: Move into extension class?!?
-
+            if (sender.Equals(this.ActiveDockContent))
+                this.ClipboardAbilities = e.NewClipboardAbilities;
         }
 
         #endregion =============================================================================================================

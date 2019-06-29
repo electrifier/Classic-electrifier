@@ -49,14 +49,17 @@ namespace electrifier.Core.Components.DockContents
         /// <summary>
         /// Fires when the clipboard abilities have changed.
         /// </summary>
-        public event EventHandler ClipboardAbilitiesChanged;        // TODO: EventArgs
+        public event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
 
         /// <summary>
-        /// Raises the <see cref="ClipboardAbilitiesChanged"/> event.
+        /// Raises the <see cref="IElClipboardConsumer.ClipboardAbilitiesChanged"/> event.
         /// </summary>
-        protected internal virtual void OnClipboardAbilitiesChanged() => this.ClipboardAbilitiesChanged?.Invoke(this, EventArgs.Empty);
+        protected internal virtual void OnClipboardAbilitiesChanged(ElClipboardAbilities clipboardAbilities)
+        {
+            this.ClipboardAbilitiesChanged?.Invoke(this, new ClipboardAbilitiesChangedEventArgs(clipboardAbilities));
+        }
 
-        #endregion Published Events ===========================================================================================
+        #endregion ============================================================================================================
 
         /// <summary>
         /// 
@@ -69,9 +72,7 @@ namespace electrifier.Core.Components.DockContents
 
             if (this.currentClipboardAbilities != clipAbilities)
             {
-                this.currentClipboardAbilities = clipAbilities;
-
-                this.OnClipboardAbilitiesChanged();
+                this.OnClipboardAbilitiesChanged(this.currentClipboardAbilities = clipAbilities);
             }
         }
 

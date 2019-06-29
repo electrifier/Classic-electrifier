@@ -12,7 +12,7 @@ namespace electrifier.Core.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.8.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.1.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,36 +26,36 @@ namespace electrifier.Core.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0, 0")]
-        public global::System.Drawing.Point Electrifier_WindowLocation {
+        public global::System.Drawing.Point ElApplicationWindow_WindowLocation {
             get {
-                return ((global::System.Drawing.Point)(this["Electrifier_WindowLocation"]));
+                return ((global::System.Drawing.Point)(this["ElApplicationWindow_WindowLocation"]));
             }
             set {
-                this["Electrifier_WindowLocation"] = value;
+                this["ElApplicationWindow_WindowLocation"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("640, 400")]
-        public global::System.Drawing.Size Electrifier_WindowSize {
+        public global::System.Drawing.Size ElApplicationWindow_WindowSize {
             get {
-                return ((global::System.Drawing.Size)(this["Electrifier_WindowSize"]));
+                return ((global::System.Drawing.Size)(this["ElApplicationWindow_WindowSize"]));
             }
             set {
-                this["Electrifier_WindowSize"] = value;
+                this["ElApplicationWindow_WindowSize"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Normal")]
-        public global::System.Windows.Forms.FormWindowState Electrifier_WindowState {
+        public global::System.Windows.Forms.FormWindowState ElApplicationWindow_WindowState {
             get {
-                return ((global::System.Windows.Forms.FormWindowState)(this["Electrifier_WindowState"]));
+                return ((global::System.Windows.Forms.FormWindowState)(this["ElApplicationWindow_WindowState"]));
             }
             set {
-                this["Electrifier_WindowState"] = value;
+                this["ElApplicationWindow_WindowState"] = value;
             }
         }
         

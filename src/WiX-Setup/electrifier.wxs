@@ -69,7 +69,7 @@
     <!-- = Properties controlling the installer GUI including license agreement ============================================ -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
     <UIRef Id="WixUI_InstallDir" />
-    <WixVariable Id="WixUILicenseRtf" Value="..\..\assets\License.rtf" />
+    <WixVariable Id="WixUILicenseRtf" Value="..\..\assets\electrifier - License.rtf" />
 
     <Feature Id="ProductFeature" Title="$(var.gProductName)" Level="1">
       <ComponentGroupRef Id="ProductComponents" />
@@ -113,10 +113,10 @@
   <Fragment>
     <ComponentGroup Id="ResourceFiles">
       <Component Directory="INSTALLFOLDERx64">
-        <File Id="Electrifier.Ribbon.ribbon_x64" Source="$(var.electrifier.Core.TargetDir)\x64\Electrifier.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
+        <File Id="Electrifier.Ribbon.ribbon_x64" Source="$(var.electrifier.Core.TargetDir)\x64\ElApplicationWindow.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
       </Component>
       <Component Directory="INSTALLFOLDERx86">
-        <File Id="Electrifier.Ribbon.ribbon_x86" Source="$(var.electrifier.Core.TargetDir)\x86\Electrifier.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
+        <File Id="Electrifier.Ribbon.ribbon_x86" Source="$(var.electrifier.Core.TargetDir)\x86\ElApplicationWindow.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
       </Component>
     </ComponentGroup>
   </Fragment>
@@ -133,7 +133,7 @@
     </ComponentGroup>
   </Fragment>
 
-  <!-- = 3rd Party Component: Suburst.WindowsForms.Ribbon ================================================================== -->
+  <!-- = 3rd Party Component: Sunburst.WindowsForms.Ribbon ================================================================= -->
   <Fragment>
     <ComponentGroup Id="SunburstWindowsFormsRibbon" Directory="INSTALLFOLDER">
       <Component>
