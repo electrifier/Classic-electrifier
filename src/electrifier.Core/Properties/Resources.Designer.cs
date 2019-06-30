@@ -94,7 +94,7 @@ namespace electrifier.Core.Properties {
         /// </summary>
         public static System.Drawing.Icon ShellBrowserDockContent {
             get {
-                object obj = ResourceManager.GetObject("ShellBrowserDockContent", resourceCulture);
+                object obj = ResourceManager.GetObject("ElShellBrowserDockContent", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

@@ -31,7 +31,7 @@ namespace electrifier.Core.Components
         /// </summary>
         /// <param name="navigationHost"><see cref="IElNavigationHost"/> instance the new DockContent will be added to.</param>
         /// <param name="persistString">The string stored in XML-Files with DockContent type and parameters,
-        ///     e.g "ShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
+        ///     e.g "ElShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
         /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid</returns>
         public static IDockContent Deserialize(IElNavigationHost navigationHost, string persistString)
         {
@@ -47,7 +47,7 @@ namespace electrifier.Core.Components
                 dockContentArguments = persistString.Substring(typeNameSeperatorPos);
             }
 
-            if (nameof(DockContents.ShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
+            if (nameof(DockContents.ElShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
             {
                 dockContent = ElDockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
             }
@@ -55,10 +55,10 @@ namespace electrifier.Core.Components
             return dockContent;
         }
 
-        public static DockContents.ShellBrowserDockContent CreateShellBrowser(IElNavigationHost navigationHost, string persistString = null)
+        public static DockContents.ElShellBrowserDockContent CreateShellBrowser(IElNavigationHost navigationHost, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            DockContents.ShellBrowserDockContent shellBrowser = new DockContents.ShellBrowserDockContent(navigationHost, persistString);
+            DockContents.ElShellBrowserDockContent shellBrowser = new DockContents.ElShellBrowserDockContent(navigationHost, persistString);
 
             navigationHost.AddDockContent(shellBrowser);
 

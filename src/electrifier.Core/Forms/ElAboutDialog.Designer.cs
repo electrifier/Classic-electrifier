@@ -20,7 +20,7 @@
 
 namespace electrifier.Core.Forms
 {
-    partial class AboutElectrifier
+    partial class ElAboutDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -156,7 +156,7 @@ namespace electrifier.Core.Forms
             this.lblVisitElectrifierOrg.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblVisitElectrifierOrg.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LblVisitElectrifierOrg_LinkClicked);
             // 
-            // AboutElectrifier
+            // ElAboutDialog
             // 
             this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -171,7 +171,7 @@ namespace electrifier.Core.Forms
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(700, 580);
-            this.Name = "AboutElectrifier";
+            this.Name = "ElAboutDialog";
             this.Padding = new System.Windows.Forms.Padding(12, 11, 12, 11);
             this.ShowIcon = false;
             this.ShowInTaskbar = false;

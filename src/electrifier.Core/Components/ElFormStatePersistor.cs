@@ -28,7 +28,7 @@ using electrifier.Core.Properties;
 
 namespace electrifier.Core.Components
 {
-    public partial class FormStatePersistor : System.ComponentModel.Component
+    public partial class ElFormStatePersistor : System.ComponentModel.Component
     {
         #region Fields ========================================================================================================
 
@@ -69,7 +69,7 @@ namespace electrifier.Core.Components
                 }
                 else
                 {
-                    throw new InvalidOperationException("FormStatePersistor: ContainerControl can't be re-assigned once it was set. Create another instance for each Form to be persisted.");
+                    throw new InvalidOperationException("ElFormStatePersistor: ContainerControl can't be re-assigned once it was set. Create another instance for each Form to be persisted.");
                 }
             }
         }
@@ -118,17 +118,17 @@ namespace electrifier.Core.Components
 
         #endregion ============================================================================================================
 
-        public FormStatePersistor()
+        public ElFormStatePersistor()
         {
             this.InitializeComponent();
         }
 
-        public FormStatePersistor(IContainer container) : this()
+        public ElFormStatePersistor(IContainer container) : this()
         {
             container.Add(this);
         }
 
-        public FormStatePersistor(ContainerControl parentControl) : this()
+        public ElFormStatePersistor(ContainerControl parentControl) : this()
         {
             this.ClientForm = (Form)parentControl;
         }

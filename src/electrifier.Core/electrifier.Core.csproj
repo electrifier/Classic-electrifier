@@ -187,6 +187,12 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\Controls\ElNavigationToolStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Controls\ElToolStripSpringComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -195,36 +201,33 @@
     </Compile>
     <Compile Include="Components\Controls\Extensions\ElThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\IElThemedControl.cs" />
-    <Compile Include="Components\Controls\NavigationToolStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Components\DockContents\ElNavigableDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Components\DockContents\ElShellBrowserDockContent.ClipboardConsumer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\DockContents\ElShellBrowserDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\DockContents\ElShellBrowserDockContent.NavigableDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Components\DockContents\Extensions\ElNavigableDockContentExtensions.cs" />
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.ClipboardConsumer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.NavigableDockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Components\ElDockContentFactory.cs" />
-    <Compile Include="Components\FormStatePersistor.cs">
+    <Compile Include="Components\ElFormStatePersistor.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\FormStatePersistor.Designer.cs">
-      <DependentUpon>FormStatePersistor.cs</DependentUpon>
+    <Compile Include="Components\ElFormStatePersistor.Designer.cs">
+      <DependentUpon>ElFormStatePersistor.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\IElClipboardConsumer.cs" />
     <Compile Include="Components\IElNavigationHost.cs" />
-    <Compile Include="Forms\AboutElectrifier.cs">
+    <Compile Include="Forms\ElAboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AboutElectrifier.Designer.cs">
-      <DependentUpon>AboutElectrifier.cs</DependentUpon>
+    <Compile Include="Forms\ElAboutDialog.Designer.cs">
+      <DependentUpon>ElAboutDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\ElApplicationWindow.Commands.cs">
       <SubType>Form</SubType>
@@ -252,11 +255,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
-    <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="WindowsShell\ElClipboard.cs" />
-    <Compile Include="WindowsShell\Tools.cs" />
+    <Compile Include="WindowsShell\ElShellTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -271,10 +271,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config">
+    <None Include="App.config" />
+    <None Include="Packages.config">
       <SubType>Designer</SubType>
     </None>
+    <EmbeddedResource Include="Forms\ElAboutDialog.resx">
+      <DependentUpon>ElAboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\License.rtf" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -282,9 +285,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\AboutElectrifier.resx">
-      <DependentUpon>AboutElectrifier.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ElApplicationWindow.resx">
       <DependentUpon>ElApplicationWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -309,9 +309,9 @@
     <Content Include="Resources\Commands\organize_delete.bmp" />
     <Content Include="Resources\Commands\organize_moveto.bmp" />
     <Content Include="Resources\Commands\organize_rename.bmp" />
+    <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
+    <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\ShellBrowserDockContent.ico" />
-    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
-    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\DropDown Arrow 16px.png" />
     <RibbonDefinition Include="Resources\ElApplicationWindow.Ribbon.xml">
       <SubType>Designer</SubType>

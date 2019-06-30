@@ -295,7 +295,7 @@ namespace electrifier.Core.Forms
         //{
         //    AppContext.TraceScope();
 
-        //    var newDockContent = new Components.DockContents.ShellBrowserDockContent();
+        //    var newDockContent = new Components.DockContents.ElShellBrowserDockContent();
         //    var floatWindowBounds = new Rectangle(this.Location, this.Size);
 
         //    floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
@@ -311,9 +311,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            var aboutElectrifier = new AboutElectrifier();
-
-            aboutElectrifier.ShowDialog();
+            new ElAboutDialog().ShowDialog();
         }
 
         private void CmdAppHelpAboutWindows_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)

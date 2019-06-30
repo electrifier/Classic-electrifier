@@ -27,12 +27,12 @@ using Vanara.Windows.Shell;
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
-    /// ShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
+    /// ElShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
     /// 
     /// A reference implementation of a wrapper for ExplorerBrowser can be found
     /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
-    public partial class ShellBrowserDockContent
+    public partial class ElShellBrowserDockContent
     {
         #region Fields ========================================================================================================
 
@@ -73,7 +73,7 @@ namespace electrifier.Core.Components.DockContents
 
         // TODO: Work on Get/Lost Focus in general!
 
-        public ShellBrowserDockContent(IElNavigationHost navigationHost, string persistString = null)
+        public ElShellBrowserDockContent(IElNavigationHost navigationHost, string persistString = null)
           : base(navigationHost)
         {
             this.SuspendLayout();
@@ -122,50 +122,50 @@ namespace electrifier.Core.Components.DockContents
         /// <summary>
         /// Override of WeifenLuo.WinFormsUI.Docking.DockContent.GetPersistString()
         /// </summary>
-        /// <returns>The string describing persistence information. E.g. persistString = "ShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";</returns>
+        /// <returns>The string describing persistence information. E.g. persistString = "ElShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";</returns>
         protected override string GetPersistString()
         {
             var sb = new StringBuilder();
             string paramFmt = " {0}{1}";
 
             // Append class name as identifier
-            sb.Append(nameof(ShellBrowserDockContent));
+            sb.Append(nameof(ElShellBrowserDockContent));
 
             // Append URI of current location
-            sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamURI,
-                WindowsShell.Tools.UrlCreateFromPath(this.explorerBrowserControl.CurrentLocation));
+            sb.AppendFormat(paramFmt, ElShellBrowserDockContent.persistParamURI,
+                WindowsShell.ElShellTools.UrlCreateFromPath(this.explorerBrowserControl.CurrentLocation));
 
             // Append ViewMode
             // TODO: For any reason, this doesn't work... :(
-            //sb.AppendFormat(paramFmt, ShellBrowserDockContent.persistParamViewMode, this.ViewMode);
+            //sb.AppendFormat(paramFmt, ElShellBrowserDockContent.persistParamViewMode, this.ViewMode);
 
             return sb.ToString();
         }
 
         /// <summary>
-        /// Example: persistString = "ShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";
+        /// Example: persistString = "ElShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";
         /// </summary>
         /// <param name="persistString"></param>
         protected void EvaluatePersistString(string persistString)
         {
             try
             {
-                if ((null != persistString) && (persistString.Trim().Length > ShellBrowserDockContent.persistParamURI.Length))
+                if ((null != persistString) && (persistString.Trim().Length > ElShellBrowserDockContent.persistParamURI.Length))
                 {
-                    var args = WindowsShell.Tools.SplitArgumentString(persistString);
+                    var args = WindowsShell.ElShellTools.SplitArgumentString(persistString);
                     string strInitialNavigationTarget = default;
                     string strInitialViewMode = default;
 
                     foreach (string arg in args)
                     {
-                        if (arg.StartsWith(ShellBrowserDockContent.persistParamURI))
+                        if (arg.StartsWith(ElShellBrowserDockContent.persistParamURI))
                         {
-                            strInitialNavigationTarget = WindowsShell.Tools.PathCreateFromUrl(arg.Substring(ShellBrowserDockContent.persistParamURI.Length));
+                            strInitialNavigationTarget = WindowsShell.ElShellTools.PathCreateFromUrl(arg.Substring(ElShellBrowserDockContent.persistParamURI.Length));
                         }
 
-                        if (arg.StartsWith(ShellBrowserDockContent.persistParamViewMode))
+                        if (arg.StartsWith(ElShellBrowserDockContent.persistParamViewMode))
                         {
-                            strInitialViewMode = arg.Substring(ShellBrowserDockContent.persistParamViewMode.Length);
+                            strInitialViewMode = arg.Substring(ElShellBrowserDockContent.persistParamViewMode.Length);
                         }
                     }
 
@@ -184,7 +184,7 @@ namespace electrifier.Core.Components.DockContents
             }
             catch (Exception e)
             {
-                MessageBox.Show("ShellBrowserDockContent.EvaluatePersistString: Error evaluating parameters"
+                MessageBox.Show("ElShellBrowserDockContent.EvaluatePersistString: Error evaluating parameters"
                     + "\n\nParameters: '" + persistString + "'"
                     + "\n\nError description: '" + e.Message + "'"
                     + "\n\nResetting to default values.");

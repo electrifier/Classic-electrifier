@@ -26,7 +26,7 @@ using System.Text;
 
 namespace electrifier.Core.WindowsShell
 {
-    class Tools
+    class ElShellTools
     {
         protected static uint Internet_Max_URL_Length = 2048 + 32 + 3;      // INTERNET_MAX_URL_LENGTH
 
@@ -90,7 +90,7 @@ namespace electrifier.Core.WindowsShell
             uint maxLength = Internet_Max_URL_Length;
             StringBuilder Url = new StringBuilder((int)maxLength);
 
-            Tools.UrlCreateFromPath(FilePath, Url, ref maxLength, 0);
+            ElShellTools.UrlCreateFromPath(FilePath, Url, ref maxLength, 0);
 
             return Url.ToString();
         }
@@ -107,7 +107,7 @@ namespace electrifier.Core.WindowsShell
             uint maxLength = Internet_Max_URL_Length;
             StringBuilder filePath = new StringBuilder((int)maxLength);
 
-            Tools.PathCreateFromUrl(Url, filePath, ref maxLength, 0);
+            ElShellTools.PathCreateFromUrl(Url, filePath, ref maxLength, 0);
 
             return filePath.ToString();
         }

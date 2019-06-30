@@ -25,9 +25,9 @@ using System.Windows.Forms;
 
 namespace electrifier.Core.Forms
 {
-    partial class AboutElectrifier : Form
+    partial class ElAboutDialog : Form
     {
-        public AboutElectrifier()
+        public ElAboutDialog()
         {
             AppContext.TraceScope();
 

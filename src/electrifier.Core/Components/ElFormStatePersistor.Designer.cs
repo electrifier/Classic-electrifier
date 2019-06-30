@@ -20,7 +20,7 @@
 
 namespace electrifier.Core.Components
 {
-    partial class FormStatePersistor
+    partial class ElFormStatePersistor
     {
         /// <summary>
         /// Required designer variable.

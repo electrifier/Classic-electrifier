@@ -24,14 +24,14 @@ using System.Windows.Forms;
 
 namespace electrifier.Core.Components.Controls
 {
-    public class ToolStripSpringComboBox : ToolStripComboBox
+    public class ElToolStripSpringComboBox : ToolStripComboBox
     {
         /// <summary>
         /// <see cref="ToolStripSpringComboBox"/> represents a ToolStripComboBox with ability to extend to full size in its containing toolbar.
         /// 
         /// <seealso href="https://docs.microsoft.com/de-de/dotnet/framework/winforms/controls/stretch-a-toolstriptextbox-to-fill-the-remaining-width-of-a-toolstrip-wf"/>
         /// </summary>
-        public ToolStripSpringComboBox() : base()
+        public ElToolStripSpringComboBox() : base()
         {
         }
 
@@ -61,7 +61,7 @@ namespace electrifier.Core.Components.Controls
                 if (item.IsOnOverflow)
                     continue;
 
-                if (item is ToolStripSpringComboBox)
+                if (item is ElToolStripSpringComboBox)
                 {
                     // For ToolStripSpringTextBox items, increment the count and subtract the margin width from the total available width.
                     springBoxCount++;

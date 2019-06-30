@@ -25,11 +25,11 @@ using Vanara.Windows.Shell;
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
-    /// ShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
+    /// ElShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
     /// 
     /// This partial class file contains the <see cref="ElNavigableDockContent"/> implementation.
     /// </summary>
-    public partial class ShellBrowserDockContent
+    public partial class ElShellBrowserDockContent
       : ElNavigableDockContent
     {
         internal string currentLocation;

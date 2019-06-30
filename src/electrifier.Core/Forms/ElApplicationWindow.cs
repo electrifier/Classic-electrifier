@@ -151,10 +151,10 @@ namespace electrifier.Core.Forms
                     + ", ActivatedContent=" + activeContent
                     + ", ActivatedContentType=" + activatedContentType);
 
-                // ShellBrowserDockContent has been activated.
-                if (typeof(ShellBrowserDockContent).Equals(activatedContentType))
+                // ElShellBrowserDockContent has been activated.
+                if (typeof(ElShellBrowserDockContent).Equals(activatedContentType))
                 {
-                    this.ActivateDockContent(activeContent as ShellBrowserDockContent);
+                    this.ActivateDockContent(activeContent as ElShellBrowserDockContent);
                 }
                 else
                 {
@@ -169,9 +169,9 @@ namespace electrifier.Core.Forms
             base.Text += " [DEBUG]";
         }
 
-        private ShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
+        private ElShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
         {
-            ShellBrowserDockContent newShellBrowser;
+            ElShellBrowserDockContent newShellBrowser;
 
             AppContext.TraceScope();
 

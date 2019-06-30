@@ -27,7 +27,7 @@ using electrifier.Core.Components.DockContents.Extensions;
 
 namespace electrifier.Core.Components.Controls
 {
-    public class NavigationToolStrip
+    public class ElNavigationToolStrip
         : System.Windows.Forms.ToolStrip
         , IElThemedControl
     {
@@ -42,7 +42,7 @@ namespace electrifier.Core.Components.Controls
         private System.Windows.Forms.ToolStripButton btnGoForward;
         private System.Windows.Forms.ToolStripDropDownButton ddnHistoryItems;
         private System.Windows.Forms.ToolStripButton btnGoToParentLocation;
-        private ToolStripSpringComboBox cbbCurrentFolder;
+        private ElToolStripSpringComboBox cbbCurrentFolder;
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripDropDownButton ddnQuickAccessItems;
         private System.Windows.Forms.ToolStripSeparator ssoSeparator;
@@ -94,7 +94,7 @@ namespace electrifier.Core.Components.Controls
 
         #endregion =============================================================================================================
 
-        public NavigationToolStrip()
+        public ElNavigationToolStrip()
         {
             this.InitializeComponent();
             this.UpdateButtonState(null);
@@ -154,7 +154,7 @@ namespace electrifier.Core.Components.Controls
             {
                 // TODO: The following exception is thrown for test purposes only!
                 if (this.ActiveDockContent != navigableDockContent)
-                    throw new ArgumentException("NavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
+                    throw new ArgumentException("ElNavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
 
                 if (null != navigableDockContent)
                 {
@@ -208,7 +208,7 @@ namespace electrifier.Core.Components.Controls
             this.btnGoForward = new System.Windows.Forms.ToolStripButton();
             this.ddnHistoryItems = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnGoToParentLocation = new System.Windows.Forms.ToolStripButton();
-            this.cbbCurrentFolder = new electrifier.Core.Components.Controls.ToolStripSpringComboBox();
+            this.cbbCurrentFolder = new electrifier.Core.Components.Controls.ElToolStripSpringComboBox();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             this.ddnQuickAccessItems = new System.Windows.Forms.ToolStripDropDownButton();
             this.ssoSeparator = new System.Windows.Forms.ToolStripSeparator();
