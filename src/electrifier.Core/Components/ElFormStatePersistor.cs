@@ -21,6 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -69,7 +70,7 @@ namespace electrifier.Core.Components
                 }
                 else
                 {
-                    throw new InvalidOperationException("ElFormStatePersistor: ContainerControl can't be re-assigned once it was set. Create another instance for each Form to be persisted.");
+                    throw new InvalidOperationException("ElFormStatePersistor: 'ClientForm' can't be re-assigned once it was set. Create another instance for each Form to be persisted.");
                 }
             }
         }
@@ -102,7 +103,6 @@ namespace electrifier.Core.Components
             }
         }
 
-
         /// <summary>
         /// The PropertyKeyPrefix property represents the Prefix that is used when storing the form's individual values.
         /// 
@@ -116,11 +116,24 @@ namespace electrifier.Core.Components
             set;
         }
 
+        /// <summary>
+        /// FormToDesktopMargin represents the margin between desktop work area and the form's borders, in case
+        /// the form has to be resized.
+        /// 
+        /// Defaults to <see cref="SystemInformation.IconSpacingSize"/> for each of the four sides.
+        /// </summary>
+        public Size FormToDesktopMargin {
+            get;
+            set;
+        }
+
         #endregion ============================================================================================================
 
         public ElFormStatePersistor()
         {
             this.InitializeComponent();
+
+            this.FormToDesktopMargin = SystemInformation.IconSpacingSize;
         }
 
         public ElFormStatePersistor(IContainer container) : this()
@@ -133,48 +146,71 @@ namespace electrifier.Core.Components
             this.ClientForm = (Form)parentControl;
         }
 
-        public void Load(bool fixWindowState = true)
+        public void Load(bool fixWindowState = true, bool overhaulWindowBounds = true)
         {
             string strWindowLocation = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowLocation;
             string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
             string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
 
-            if (this.SettingExists(strWindowLocation) &&
-                this.SettingExists(strWindowSize) &&
-                this.SettingExists(strWindowState))
-            {
-                this.ClientForm.Location = (System.Drawing.Point)Settings.Default[strWindowLocation];
-                this.ClientForm.Size = (System.Drawing.Size)Settings.Default[strWindowSize];
-                FormWindowState formWindowState = (FormWindowState)Settings.Default[strWindowState]; ;
+            var windowLocation = this.ClientForm.Location;
+            var windowSize = this.ClientForm.Size;
+            var windowState = this.ClientForm.WindowState;
 
-                if (FormWindowState.Normal != formWindowState)
-                {
-                    //if (this.ClientForm.WindowState == FormWindowState.Minimized)             // TODO: Ask to fix WindowState when hidden (using an event!)
-                    //{
-                    //    MessageBox.Show("Window was minimized. Do you want to hide it again?");
-                    //}
-                    //public void Restore()
-                    //{
-                    //    //// Move window into visible screen bounds if outside screen bounds (prevent off-screen hidden windows)
-                    //    //Rectangle screenRect = SystemInformation.VirtualScreen;
-                    //    //if (form.Left < screenRect.Left)
-                    //    //    form.Left = screenRect.Left;
-                    //    //if (form.Top < screenRect.Top)
-                    //    //    form.Top = screenRect.Top;
-                    //    //if (form.Right > screenRect.Right)
-                    //    //    form.Left = screenRect.Right - form.Width;
-                    //    //if (form.Bottom > screenRect.Bottom)
-                    //    //    form.Top = screenRect.Bottom - form.Height;
-                    // if (formstate = hidden) msgbox(form was hidden when closed, keep it hidden again?)
-                    //}
+            // Load setting values describing the last known form state
+            if (this.SettingExists(strWindowLocation))
+                windowLocation = (System.Drawing.Point)Settings.Default[strWindowLocation];
+            if (this.SettingExists(strWindowSize))
+                windowSize = (System.Drawing.Size)Settings.Default[strWindowSize];
+            if (this.SettingExists(strWindowState))
+                windowState = (FormWindowState)Settings.Default[strWindowState];
 
-                    formWindowState = FormWindowState.Normal;
-                }
+            // When fixWindowState is set, adjust window state if not Normal or Maximized
+            if (fixWindowState && (!(windowState == FormWindowState.Normal || windowState == FormWindowState.Maximized)))
+                windowState = FormWindowState.Normal;
 
-                this.ClientForm.WindowState = formWindowState;
-            }
+            // When overhaulWindowBounds is set, recalculate proper bounds to suppress off-screen windows
+            if (overhaulWindowBounds)
+                this.OverhaulWindowBounds(ref windowLocation, ref windowSize);
+
+            // Finally, apply values 
+            this.ClientForm.Location = windowLocation;
+            this.ClientForm.Size = windowSize;
+            this.ClientForm.WindowState = windowState;
         }
 
+        public virtual void OverhaulWindowBounds(ref Point location, ref Size size)
+        {
+            // Get Desktop area of primary screen
+            Rectangle workArea = Screen.GetWorkingArea(this.clientForm);
+
+            // Overhaul window size if necessary
+            if (size.Width > workArea.Width)
+            {
+                size.Width = workArea.Width - this.FormToDesktopMargin.Width * 2;
+                location.X = workArea.X + this.FormToDesktopMargin.Width;
+            }
+
+            if (size.Height > workArea.Height)
+            {
+                size.Height = workArea.Height - this.FormToDesktopMargin.Height * 2;
+                location.Y = workArea.Y + this.FormToDesktopMargin.Height;
+            }
+
+            // Overhaul window position if necessary
+            if (location.X < workArea.X)
+                location.X = workArea.X;
+
+            if (location.X + size.Width > workArea.X + workArea.Width)
+                location.X = workArea.X + workArea.Width - size.Width;
+
+            if (location.Y < workArea.Y)
+                location.Y = workArea.Y;
+
+            if (location.Y + size.Height > workArea.Y + workArea.Height)
+                location.Y = workArea.Y + workArea.Height - size.Height;
+        }
+
+        // TODO: Move SettingExists to AppContext, or to new settings class respectively
         private bool SettingExists(string settingName)
         {
             return Settings.Default.Properties.Cast<System.Configuration.SettingsProperty>().Any(prop => prop.Name == settingName);
@@ -186,6 +222,7 @@ namespace electrifier.Core.Components
             string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
             string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
 
+            // Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
             if (FormWindowState.Normal == this.ClientForm.WindowState)
             {
                 Settings.Default[strWindowLocation] = this.ClientForm.Location;
