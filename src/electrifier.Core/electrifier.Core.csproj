@@ -256,6 +256,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="WindowsShell\ElClipboard.cs" />
+    <Compile Include="WindowsShell\ElShellFileOperations.cs" />
     <Compile Include="WindowsShell\ElShellTools.cs" />
   </ItemGroup>
   <ItemGroup>

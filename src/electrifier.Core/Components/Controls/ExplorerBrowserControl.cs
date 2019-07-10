@@ -97,7 +97,7 @@ namespace electrifier.Core.Components.Controls
         /// </summary>
         [Browsable(false)]
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IReadOnlyList<ShellItem> SelectedItems { get; }
+        public IReadOnlyList<ShellItem> SelectedItems { get; }      // TODO: => Vanara.Collections.EventedList
 
         /// <summary>
         /// Contains the navigation history of the ExplorerBrowser.

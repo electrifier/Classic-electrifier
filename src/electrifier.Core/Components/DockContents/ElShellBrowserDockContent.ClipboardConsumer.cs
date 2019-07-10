@@ -19,8 +19,10 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using Vanara.PInvoke;
@@ -141,12 +143,16 @@ namespace electrifier.Core.Components.DockContents
 
         public void GetSupportedClipboardPasteTypes()
         {
+            // TODO: On virtual folders like 'This PC', we can't paste files... => Ask Shell if target folder can accept files
+
             // TODO: Not implemented yet
             throw new NotImplementedException();
         }
 
         public bool CanPasteFromClipboard()
         {
+            // TODO: On virtual folders like 'This PC', we can't paste files... => Ask Shell if target folder can accept files
+
             if (Clipboard.ContainsFileDropList())
                 return true;
 
@@ -191,7 +197,7 @@ namespace electrifier.Core.Components.DockContents
         /// <param name="operationFlags">Additional operation flags. Defaults to AllowUndo.</param>
         private void PasteFileDropListFromClipboard(
             DragDropEffects dropEffect,
-            ShellFileOperations.OperationFlags operationFlags = ShellFileOperations.OperationFlags.AllowUndo)
+            ShellFileOperations.OperationFlags operationFlags = (ShellFileOperations.OperationFlags.AllowUndo | ShellFileOperations.OperationFlags.NoConfirmMkDir))
         {
             AppContext.TraceScope();
 
@@ -202,40 +208,26 @@ namespace electrifier.Core.Components.DockContents
                 throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
 
             // Get file drop list, return if empty cause nothing to do then
-            var fileDropList = Clipboard.GetFileDropList();
+            StringCollection fileDropList = Clipboard.GetFileDropList();
             if (fileDropList.Count < 1)
                 return;
-
-            // Get the target folder
-            string strTargetFolder = this.explorerBrowserControl.CurrentLocation;
 
             /* TODO:    When files are dropped to their source folder add RenameOnCollision to OperationFlags
              * WARNING: Only if files from the same folder are inserted again, then "RenameOnCollision" is needed when pasting.
              *          Otherwise, files of the same name will be overwritten (on request?)!
              **/
 
-            using (var shTargetFolder = new ShellFolder(strTargetFolder))
+            using (var elShellFileOperations = new ElShellFileOperations(this, operationFlags))
             {
-                using (var shFileOperation = new ShellFileOperations(this))
+                using (var destinationFolder = new ShellFolder(this.explorerBrowserControl.CurrentLocation))
                 {
-                    shFileOperation.Options = operationFlags;
-
                     foreach (var strFullPathName in fileDropList)
                     {
-                        if (dropEffect.HasFlag(DragDropEffects.Move))
-                            shFileOperation.QueueMoveOperation(new ShellItem(strFullPathName), shTargetFolder);
-                        else
-                            shFileOperation.QueueCopyOperation(new ShellItem(strFullPathName), shTargetFolder);
-
                         // TODO: => QueueCopyOperation(IEnumerable[]);
+                        elShellFileOperations.QueueClipboardOperation(strFullPathName, destinationFolder, dropEffect);
                     }
 
-                    shFileOperation.PerformOperations();
-
-                    // TODO: Check if cancelled/aborted!, cause exception will be thrown: "HRESULT: 0x80270000"	System.Runtime.InteropServices.COMException
-                    // https://www.hresult.info/FACILITY_SHELL/0x80270000 => COPYENGINE_E_USER_CANCELLED
-                    // => ShellFileOpEventArgs.RESULT
-
+                    elShellFileOperations.PerformOperations();
                 }
             }
         }
