@@ -296,20 +296,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Commands\app_close.bmp" />
-    <Content Include="Resources\Commands\app_commandprompt.bmp" />
-    <Content Include="Resources\Commands\app_electrifieroptions.bmp" />
-    <Content Include="Resources\Commands\app_folderoptions.bmp" />
-    <Content Include="Resources\Commands\app_help.bmp" />
-    <Content Include="Resources\Commands\app_newelectrifierwindow.bmp" />
-    <Content Include="Resources\Commands\app_newtab.bmp" />
-    <Content Include="Resources\Commands\app_windowspowershell.bmp" />
-    <Content Include="Resources\Commands\clipboard_copy.bmp" />
-    <Content Include="Resources\Commands\clipboard_cut.bmp" />
-    <Content Include="Resources\Commands\clipboard_paste.bmp" />
-    <Content Include="Resources\Commands\organize_delete.bmp" />
-    <Content Include="Resources\Commands\organize_moveto.bmp" />
-    <Content Include="Resources\Commands\organize_rename.bmp" />
     <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
     <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\ShellBrowserDockContent.ico" />

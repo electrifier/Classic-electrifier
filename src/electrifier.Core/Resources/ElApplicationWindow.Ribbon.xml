@@ -205,40 +205,40 @@
       </Command.LargeImages>
     </Command>
 
-    <!-- Command Group: Home -> Organize ================================================================================== -->
+    <!-- Command Group: Home -> Organise ================================================================================== -->
 
-    <Command Name="cmdGrpHomeOrganize"
+    <Command Name="cmdGrpHomeOrganise"
              Id="1200"
-             LabelTitle="Organize">
+             LabelTitle="Organise">
     </Command>
 
-    <Command Name="cmdBtnOrganizeMoveTo"
+    <Command Name="cmdBtnOrganiseMoveTo"
              Id="1201"
              LabelTitle="Move to"
              TooltipTitle="Move selected item(s)"
              TooltipDescription="Move selected item(s)">
       <Command.LargeImages>
-        <Image>Commands/organize_moveto.bmp</Image>
+        <Image>Commands/organise_moveto.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnOrganizeDelete"
+    <Command Name="cmdBtnOrganiseDelete"
              Id="1202"
              LabelTitle="Delete"
              TooltipTitle="Delete selected item(s)"
              TooltipDescription="Delete selected item(s)">
       <Command.LargeImages>
-        <Image>Commands/organize_delete.bmp</Image>
+        <Image>Commands/organise_delete.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnOrganizeRename"
+    <Command Name="cmdBtnOrganiseRename"
              Id="1203"
              LabelTitle="Rename"
              TooltipTitle="Rename selected item(s)"
              TooltipDescription="Rename selected item(s)">
       <Command.LargeImages>
-        <Image>Commands/organize_rename.bmp</Image>
+        <Image>Commands/organise_rename.bmp</Image>
       </Command.LargeImages>
     </Command>
 
@@ -301,10 +301,10 @@
             <Button CommandName="cmdBtnClipboardCopy" />
             <Button CommandName="cmdBtnClipboardPaste" />
           </Group>
-          <Group CommandName="cmdGrpHomeOrganize" SizeDefinition="ThreeButtons">
-            <Button CommandName="cmdBtnOrganizeMoveTo" />
-            <Button CommandName="cmdBtnOrganizeDelete" />
-            <Button CommandName="cmdBtnOrganizeRename" />
+          <Group CommandName="cmdGrpHomeOrganise" SizeDefinition="ThreeButtons">
+            <Button CommandName="cmdBtnOrganiseMoveTo" />
+            <Button CommandName="cmdBtnOrganiseDelete" />
+            <Button CommandName="cmdBtnOrganiseRename" />
           </Group>
         </Tab>
 

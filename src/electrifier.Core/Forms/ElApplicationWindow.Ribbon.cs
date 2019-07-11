@@ -82,12 +82,12 @@ namespace electrifier.Core.Forms
                 cmdClipboardCopy = 1102,
                 cmdClipboardPaste = 1103,
                 //
-                // Command Group: Home -> Organize ============================================================================
+                // Command Group: Home -> Organise ============================================================================
                 //
-                cmdGrpHomeOrganize = 1200,
-                cmdOrganizeMoveTo = 1201,
-                cmdOrganizeDelete = 1202,
-                cmdOrganizeRename = 1203,
+                cmdGrpHomeOrganise = 1200,
+                cmdOrganiseMoveTo = 1201,
+                cmdOrganiseDelete = 1202,
+                cmdOrganiseRename = 1203,
             }
 
             public ElApplicationWindow ApplicationWindow { get; }
@@ -122,10 +122,10 @@ namespace electrifier.Core.Forms
             public RibbonButton CmdBtnClipboardCut { get; }
             public RibbonButton CmdBtnClipboardCopy { get; }
             public RibbonButton CmdBtnClipboardPaste { get; }
-            public RibbonButton CmdGrpHomeOrganize { get; }
-            public RibbonButton CmdBtnOrganizeMoveTo { get; }
-            public RibbonButton CmdBtnOrganizeDelete { get; }
-            public RibbonButton CmdBtnOrganizeRename { get; }
+            public RibbonButton CmdGrpHomeOrganise { get; }
+            public RibbonButton CmdBtnOrganiseMoveTo { get; }
+            public RibbonButton CmdBtnOrganiseDelete { get; }
+            public RibbonButton CmdBtnOrganiseRename { get; }
 
             public ElClipboardAbilities ClipboardAbilities {
                 get => this.clipboardAbilities;
@@ -220,26 +220,26 @@ namespace electrifier.Core.Forms
                 this.CmdBtnClipboardPaste.ExecuteEvent += this.ApplicationWindow.CmdClipboardPaste_ExecuteEvent;
 
                 //
-                // Command Group: Home -> Organize ================================================================================
+                // Command Group: Home -> Organise ================================================================================
                 //
-                this.CmdGrpHomeOrganize = new RibbonButton(this, (uint)RibbonCommandID.cmdGrpHomeOrganize);
+                this.CmdGrpHomeOrganise = new RibbonButton(this, (uint)RibbonCommandID.cmdGrpHomeOrganise);
 
-                this.CmdBtnOrganizeMoveTo = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganizeMoveTo)
+                this.CmdBtnOrganiseMoveTo = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganiseMoveTo)
                 {
                     Enabled = false,
-                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganizeMoveTo_Execute),
+                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseMoveTo_Execute),
                 };
 
-                this.CmdBtnOrganizeDelete = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganizeDelete)
+                this.CmdBtnOrganiseDelete = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganiseDelete)
                 {
                     Enabled = false,
-                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganizeDelete_Execute),
+                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseDelete_Execute),
                 };
 
-                this.CmdBtnOrganizeRename = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganizeRename)
+                this.CmdBtnOrganiseRename = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganiseRename)
                 {
                     Enabled = false,
-                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganizeRename_Execute),
+                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseRename_Execute),
                 };
             }
 
