@@ -48,7 +48,7 @@ namespace electrifier.Core.Forms
 
             // Connect clipboard consumer events
             if (DockContent is IElClipboardConsumer clipboardConsumer)
-                clipboardConsumer.ClipboardAbilitiesChanged += this.ClipboardConsumer_ClipboardAbilitiesChanged;
+                clipboardConsumer.ClipboardAbilitiesChanged += this.rbnRibbon.ClipboardConsumer_ClipboardAbilitiesChanged;
 
             // TODO: Connect events!
             //newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
@@ -116,14 +116,6 @@ namespace electrifier.Core.Forms
 
             if (sender.Equals(this.ActiveDockContent))
                 this.ntsNavigation.UpdateButtonState(sender as ElNavigableDockContent);
-        }
-
-        private void ClipboardConsumer_ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs e)       // TODO: Move out of this class...
-        {
-            Debug.Assert(sender is IElClipboardConsumer, "sender is not of type IElClipboardConsumer");
-
-            if (sender.Equals(this.ActiveDockContent))
-                this.ClipboardAbilities = e.NewClipboardAbilities;
         }
 
         #endregion =============================================================================================================

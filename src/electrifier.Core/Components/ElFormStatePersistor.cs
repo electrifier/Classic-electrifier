@@ -29,7 +29,8 @@ using electrifier.Core.Properties;
 
 namespace electrifier.Core.Components
 {
-    public partial class ElFormStatePersistor : System.ComponentModel.Component
+    public partial class ElFormStatePersistor
+      : System.ComponentModel.Component
     {
         #region Fields ========================================================================================================
 

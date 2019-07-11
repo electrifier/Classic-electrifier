@@ -18,14 +18,113 @@
 **
 */
 
-
 using electrifier.Core.Components;
+using Sunburst.WindowsForms.Ribbon.Controls.Events;
+using System;
+using System.Windows.Forms;
+using Vanara.PInvoke;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
+    /// <summary>
+    /// <see cref="ElApplicationWindow"/> is the Main Window of electrifier application.
+    /// 
+    /// This partial class file contains the implementation of the Ribbon Commands, i.e. the Ribbon Command event listeners.
+    /// </summary>
     public partial class ElApplicationWindow
     {
+        private void CmdAppOpenNewShellBrowserPane_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            this.CreateNewShellBrowser();
+        }
+
+        //private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    this.CreateNewShellBrowser();
+        //}
+
+        //private void TsbNewFileBrowserLeft_Click(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    this.CreateNewShellBrowser(WeifenLuo.WinFormsUI.Docking.DockAlignment.Left);
+        //}
+
+        //private void TsbNewFileBrowserRight_Click(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    this.CreateNewShellBrowser(DockAlignment.Right);
+        //}
+
+        //private void TsbNewFileBrowserTop_Click(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    this.CreateNewShellBrowser(DockAlignment.Top);
+        //}
+
+        //private void TsbNewFileBrowserBottom_Click(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    this.CreateNewShellBrowser(DockAlignment.Bottom);
+        //}
+
+        // TODO 03/02/19: TsbNewFileBrowserFloating_Click has not been used yet
+        //private void TsbNewFileBrowserFloating_Click(object sender, EventArgs e)
+        //{
+        //    AppContext.TraceScope();
+
+        //    var newDockContent = new Components.DockContents.ElShellBrowserDockContent();
+        //    var floatWindowBounds = new Rectangle(this.Location, this.Size);
+
+        //    floatWindowBounds.Offset((this.Width - this.ClientSize.Width), (this.Height - this.ClientSize.Height));
+
+        //    newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
+        //    newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+        //    //newDockContent.NavigationLogChanged += this.NewDockContent_NavigationLogChanged;
+
+        //    newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
+        //}
+
+        private void CmdAppHelpAboutElectrifier_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            new ElAboutDialog().ShowDialog();
+        }
+
+        private void CmdAppHelpAboutWindows_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", AppContext.GetDotNetFrameworkVersion(), AppContext.Icon.Handle);
+        }
+
+
+        private void CmdAppClose_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            AppContext.TraceScope();
+
+            // Close form asynchronously since we are in a ribbon event handler, so the ribbon is still in use, and calling Close 
+            // will eventually call _ribbon.DestroyFramework(), which is a big no-no, if you still use the ribbon.
+            this.BeginInvoke(new MethodInvoker(this.Close));
+        }
+
+
+
+
+        /// <summary>
+        /// TODO: [Moved from ELApplicationWindow.Ribbon.cs#Ribbon_ProcessDockContentChange]
+        /// https://docs.microsoft.com/de-de/dotnet/api/system.windows.dataobject?view=netframework-4.7.2
+        /// </summary>
+
         // => https://github.com/dahall/Vanara/blob/master/PInvoke/Shell32/Clipboard.cs ShellClipboardFormat
         //public const string CFStr_Filename = "FileNameW";
         //public const string CFStr_PreferredDropEffect = "Preferred DropEffect";
@@ -42,7 +141,7 @@ namespace electrifier.Core.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal void CmdClipboardCut_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        internal void CmdClipboardCut_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
             {
@@ -61,7 +160,7 @@ namespace electrifier.Core.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal void CmdClipboardCopy_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        internal void CmdClipboardCopy_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
             {
@@ -80,7 +179,7 @@ namespace electrifier.Core.Forms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal void CmdClipboardPaste_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+        internal void CmdClipboardPaste_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             // Only IElClipboardConsumer can paste data from clipboard
             if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)

@@ -50,7 +50,7 @@ namespace electrifier.Core.Forms
         {
             this.components = new System.ComponentModel.Container();
             this.stsStatusStrip = new System.Windows.Forms.StatusStrip();
-            this.rbnRibbon = new Sunburst.WindowsForms.Ribbon.Ribbon();
+            this.rbnRibbon = new ElApplicationWindowRibbon(this);
             this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this.tslItemCount = new System.Windows.Forms.ToolStripStatusLabel();
@@ -164,7 +164,7 @@ namespace electrifier.Core.Forms
 
         #endregion
 
-        private Sunburst.WindowsForms.Ribbon.Ribbon rbnRibbon;
+        private ElApplicationWindowRibbon rbnRibbon;
         private System.Windows.Forms.StatusStrip stsStatusStrip;
         private Components.ElFormStatePersistor fspFormStatePersistor;
         private System.Windows.Forms.ToolStripContainer tscToolStripContainer;

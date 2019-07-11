@@ -34,7 +34,7 @@ using electrifier.Core.Components.DockContents;
 namespace electrifier.Core.Forms
 {
     /// <summary>
-    /// The main Window of electrifier application.
+    /// <see cref="ElApplicationWindow"/> is the Main Window of electrifier application.
     /// </summary>
     public partial class ElApplicationWindow
       : System.Windows.Forms.Form
@@ -50,7 +50,7 @@ namespace electrifier.Core.Forms
         #region Properties ====================================================================================================
 
         public override string Text {
-            get { return base.Text; }
+            get => base.Text;
             set {
                 base.Text = ((value.Length > 0) ? (value + " - " + ElApplicationWindow.formTitle_Affix) : ElApplicationWindow.formTitle_Affix);
                 this.FormTitle_AddDebugRemark();
@@ -72,10 +72,12 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
 
             this.InitializeComponent();
-            this.InitializeRibbon();
 
-            this.Icon = icon;
+            // Initialize properties
             this.Text = this.Text;          //this.FormTitle_AddDebugRemark(); // TODO: Add formTitleAffix
+
+            // Set Application Icon as form Icon
+            this.Icon = icon;
 
             // Initialize DockPanel
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
@@ -136,7 +138,7 @@ namespace electrifier.Core.Forms
             var activeContent = this.dpnDockPanel.ActiveContent;
 
             // Process Ribbon-part of DockContent-Activation
-            this.Ribbon_ProcessDockContentChange(activeContent);
+            this.rbnRibbon.Ribbon_ProcessDockContentChange(activeContent);      // TODO: Property!
 
             // Process Interface IElNavigationHost-part of DockContent-Activation
             if (null == activeContent)
@@ -171,11 +173,11 @@ namespace electrifier.Core.Forms
 
         private ElShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
         {
-            ElShellBrowserDockContent newShellBrowser;
-
             AppContext.TraceScope();
 
-            this.AddDockContent(newShellBrowser = ElDockContentFactory.CreateShellBrowser(this));
+            ElShellBrowserDockContent newShellBrowser = ElDockContentFactory.CreateShellBrowser(this);
+
+            this.AddDockContent(newShellBrowser);       // TODO => dockAlignment
 
             return newShellBrowser;
         }
