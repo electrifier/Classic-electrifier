@@ -1,4 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ==========================================================================================================================
+/*
+** 
+**  electrifier
+** 
+**  Copyright 2017-19 Thorsten Jung, www.electrifier.org
+**  
+**  Licensed under the Apache License, Version 2.0 (the "License");
+**  you may not use this file except in compliance with the License.
+**  You may obtain a copy of the License at
+**  
+**      http://www.apache.org/licenses/LICENSE-2.0
+**  
+**  Unless required by applicable law or agreed to in writing, software
+**  distributed under the License is distributed on an "AS IS" BASIS,
+**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+**  See the License for the specific language governing permissions and
+**  limitations under the License.
+**
+*/
+=========================================================================================================================== -->
+
 <Application xmlns="http://schemas.microsoft.com/windows/2009/Ribbon">
 
   <Application.Commands>
@@ -7,24 +30,24 @@
     ==== Quick Access Toolbar Commands ========================================================================================
     ======================================================================================================================= -->
 
-    <Command Name="cmdBtnHelp"
+    <Command Name="CmdBtnHelp"
              Id="19999">
     </Command>
 
-    <Command Name="cmdQAT"
+    <Command Name="CmdQAT"
              Id="19901">
     </Command>
 
-    <Command Name="cmdCustomizeQAT"
+    <Command Name="CmdCustomizeQAT"
              Id="19902"
              LabelTitle="Customize">
     </Command>
 
-    <Command Name="cmdBtnQAT_OpenNewShellBrowserPanel"
+    <Command Name="CmdBtnQAT_OpenNewShellBrowserPanel"
              Id="19903"
              LabelTitle="New Panel">
       <Command.LargeImages>
-        <Image>Commands/app_newtab.bmp</Image>
+        <Image>Commands/App_NewTab_32px.bmp</Image>
       </Command.LargeImages>
 
     </Command>
@@ -33,7 +56,7 @@
     ==== Application Menu Commands ============================================================================================
     ======================================================================================================================= -->
 
-    <Command Name="cmdBtnApp_ApplicationMenu"
+    <Command Name="CmdBtnApp_ApplicationMenu"
              Id="100"
              LabelTitle="Application Menu"
              LabelDescription="Open Application Menu"
@@ -41,73 +64,73 @@
              TooltipDescription="Opens Application Menu.">
     </Command>
 
-    <Command Name="cmdBtnApp_OpenNewWindow"
+    <Command Name="CmdBtnApp_OpenNewWindow"
              Id="101"
              LabelTitle="Open &amp;new electrifier Window"
              LabelDescription="Open new window"
              TooltipTitle="New window"
              TooltipDescription="Opens a new window.">
       <Command.LargeImages>
-        <Image>Commands/app_newelectrifierwindow.bmp</Image>
+        <Image>Commands/App_NewElectrifierWindow_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_OpenNewShellBrowserPanel"
+    <Command Name="CmdBtnApp_OpenNewShellBrowserPanel"
              Id="102"
              LabelTitle="New Panel"
              LabelDescription="New Description"
              TooltipTitle="Open new electrifier panel"
              TooltipDescription="Opens a new electrifier panel.">
       <Command.LargeImages>
-        <Image>Commands/app_newtab.bmp</Image>
+        <Image>Commands/App_NewTab_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_OpenCommandPrompt"
+    <Command Name="CmdBtnApp_OpenCommandPrompt"
              Id="103"
              LabelTitle="Open command &amp;prompt"
              LabelDescription="Open Description"
              TooltipTitle="Open"
              TooltipDescription="Open an existing image.">
       <Command.LargeImages>
-        <Image>Commands/app_commandprompt.bmp</Image>
+        <Image>Commands/App_CommandPrompt_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_OpenWindowsPowerShell"
+    <Command Name="CmdBtnApp_OpenWindowsPowerShell"
              Id="104"
              LabelTitle="Open Windows Powe&amp;rShell"
              LabelDescription="Save Description"
              TooltipTitle="Save"
              TooltipDescription="Save the current image.">
       <Command.LargeImages>
-        <Image>Commands/app_windowspowershell.bmp</Image>
+        <Image>Commands/App_WindowsPowerShell_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_ChangeElectrifierOptions"
+    <Command Name="CmdBtnApp_ChangeElectrifierOptions"
              Id="110"
              LabelTitle="Change electrifier options"
              LabelDescription="Change electrifier Description"
              TooltipTitle="electrifier options"
              TooltipDescription="Change electrifier options.">
       <Command.LargeImages>
-        <Image>Commands/app_electrifieroptions.bmp</Image>
+        <Image>Commands/App_ElectrifierOptions_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_ChangeFolderAndSearchOptions"
+    <Command Name="CmdBtnApp_ChangeFolderAndSearchOptions"
              Id="111"
              LabelTitle="Change folder and search options"
              LabelDescription="Change folder and search options Description"
              TooltipTitle="Folder and search options"
              TooltipDescription="Change folder and search options.">
       <Command.LargeImages>
-        <Image>Commands/app_folderoptions.bmp</Image>
+        <Image>Commands/App_FolderOptions_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_HelpMenu"
+    <Command Name="CmdBtnApp_HelpMenu"
              Id="120"
              LabelTitle="Help Menu"
              LabelDescription="Open Help Menu"
@@ -115,47 +138,47 @@
              TooltipDescription="Opens Help Menu.">
     </Command>
 
-    <Command Name="cmdBtnApp_Help"
+    <Command Name="CmdBtnApp_Help"
              Id="121"
              LabelTitle="Help"
              LabelDescription="Help Description"
              TooltipTitle="Help"
              TooltipDescription="Open help.">
       <Command.LargeImages>
-        <Image>Commands/app_help.bmp</Image>
+        <Image>Commands/App_Help_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_Help_AboutElectrifier"
+    <Command Name="CmdBtnApp_Help_AboutElectrifier"
              Id="122"
              LabelTitle="About"
              LabelDescription="About electrifier"
              TooltipTitle="About"
              TooltipDescription="Show information about electrifier.">
       <Command.LargeImages>
-        <Image>Commands/app_help.bmp</Image>
+        <Image>Commands/App_Help_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_Help_AboutWindows"
+    <Command Name="CmdBtnApp_Help_AboutWindows"
              Id="125"
              LabelTitle="Windows info"
              LabelDescription="Show information about Windows"
              TooltipTitle="About"
              TooltipDescription="Show information about Windows.">
       <Command.LargeImages>
-        <Image>Commands/app_help.bmp</Image>
+        <Image>Commands/App_Help_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnApp_Close"
+    <Command Name="CmdBtnApp_Close"
              Id="130"
              LabelTitle="Close"
              LabelDescription="Close Description"
              TooltipTitle="Close"
              TooltipDescription="Close application.">
       <Command.LargeImages>
-        <Image>Commands/app_close.bmp</Image>
+        <Image>Commands/App_Close_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
@@ -163,84 +186,166 @@
     ==== Ribbon Tabs ==========================================================================================================
     ======================================================================================================================= -->
 
-    <Command Name="cmdTabHome"
-             Id="1000"
+    <Command Name="CmdTabHome"
+             Id="10000"
              LabelTitle="Home">
     </Command>
 
+    <Command Name="CmdTabShare"
+             Id="20000"
+             LabelTitle="Share">
+    </Command>
+
+    <Command Name="CmdTabView"
+             Id="30000"
+             LabelTitle="View">
+    </Command>
+
+
     <!-- Command Group: Home -> Clipboard ================================================================================= -->
 
-    <Command Name="cmdGrpHomeClipboard"
+    <Command Name="CmdGrpHomeClipboard"
              Id="1100"
              LabelTitle="Clipboard">
     </Command>
 
-    <Command Name="cmdBtnClipboardCut"
+    <Command Name="CmdBtnClipboardCut"
              Id="1101"
              LabelTitle="Cut"
              TooltipTitle="Cut selected items"
              TooltipDescription="Cut selected items">
       <Command.LargeImages>
-        <Image>Commands/clipboard_cut.bmp</Image>
+        <Image>Commands/Clipboard_Cut_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnClipboardCopy"
+    <Command Name="CmdBtnClipboardCopy"
              Id="1102"
              LabelTitle="Copy"
              TooltipTitle="Copy selected items"
              TooltipDescription="Copy selected items">
       <Command.LargeImages>
-        <Image>Commands/clipboard_copy.bmp</Image>
+        <Image>Commands/Clipboard_Copy_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnClipboardPaste"
+    <Command Name="CmdBtnClipboardPaste"
              Id="1103"
              LabelTitle="Paste"
              TooltipTitle="Paste from clipboard"
              TooltipDescription="Paste from clipboard">
       <Command.LargeImages>
-        <Image>Commands/clipboard_paste.bmp</Image>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
     <!-- Command Group: Home -> Organise ================================================================================== -->
 
-    <Command Name="cmdGrpHomeOrganise"
+    <Command Name="CmdGrpHomeOrganise"
              Id="1200"
              LabelTitle="Organise">
     </Command>
 
-    <Command Name="cmdBtnOrganiseMoveTo"
+    <Command Name="CmdBtnOrganiseMoveTo"
              Id="1201"
              LabelTitle="Move to"
              TooltipTitle="Move selected item(s)"
              TooltipDescription="Move selected item(s)">
       <Command.LargeImages>
-        <Image>Commands/organise_moveto.bmp</Image>
+        <Image>Commands/Organise_MoveTo_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnOrganiseDelete"
+    <Command Name="CmdBtnOrganiseCopyTo"
              Id="1202"
+             LabelTitle="Copy to"
+             TooltipTitle="Copy selected item(s)"
+             TooltipDescription="Copy selected item(s)">
+      <Command.LargeImages>
+        <Image>Commands/Organise_CopyTo_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnOrganiseDelete"
+             Id="1203"
              LabelTitle="Delete"
              TooltipTitle="Delete selected item(s)"
              TooltipDescription="Delete selected item(s)">
       <Command.LargeImages>
-        <Image>Commands/organise_delete.bmp</Image>
+        <Image>Commands/Organise_Delete_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
-    <Command Name="cmdBtnOrganiseRename"
-             Id="1203"
+    <Command Name="CmdBtnOrganiseRename"
+             Id="1204"
              LabelTitle="Rename"
              TooltipTitle="Rename selected item(s)"
              TooltipDescription="Rename selected item(s)">
       <Command.LargeImages>
-        <Image>Commands/organise_rename.bmp</Image>
+        <Image>Commands/Organise_Rename_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
+
+    <!-- Command Group: Home -> New ======================================================================================= -->
+
+    <Command Name="CmdGrpHomeNew"
+             Id="1300"
+             LabelTitle="New">
+    </Command>
+
+    <!-- Command Group: Home -> Open ====================================================================================== -->
+
+    <Command Name="CmdGrpHomeOpen"
+             Id="1400"
+             LabelTitle="Open">
+    </Command>
+
+    <!-- Command Group: Home -> Select ==================================================================================== -->
+
+    <Command Name="CmdGrpHomeSelect"
+             Id="1500"
+             LabelTitle="Select">
+    </Command>
+
+    <Command Name="CmdBtnSelectSelectAll"
+             Id="1501"
+             LabelTitle="Select all"
+             TooltipTitle="Select all items in this view."
+             TooltipDescription="Select all items in this view.">
+      <Command.SmallImages>
+        <Image>Commands/Select_SelectAll_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/Select_SelectAll_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnSelectSelectNone"
+             Id="1502"
+             LabelTitle="Select none"
+             TooltipTitle="Clear all of your selections."
+             TooltipDescription="Clear all of your selections.">
+      <Command.SmallImages>
+        <Image>Commands/Select_SelectNone_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/Select_SelectNone_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnSelectInvertSelection"
+             Id="1503"
+             LabelTitle="Invert selection"
+             TooltipTitle="Reverse the current selection"
+             TooltipDescription="Reverse the current selection">
+      <Command.SmallImages>
+        <Image>Commands/Select_InvertSelection_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/Select_InvertSelection_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
 
   </Application.Commands>
 
@@ -252,61 +357,82 @@
     <Ribbon>
 
       <Ribbon.QuickAccessToolbar>
-        <QuickAccessToolbar CommandName="cmdQAT"
-                            CustomizeCommandName="cmdCustomizeQAT">
+        <QuickAccessToolbar CommandName="CmdQAT"
+                            CustomizeCommandName="CmdCustomizeQAT">
           <QuickAccessToolbar.ApplicationDefaults>
-            <Button CommandName="cmdBtnQAT_OpenNewShellBrowserPanel"/>
+            <Button CommandName="CmdBtnQAT_OpenNewShellBrowserPanel"/>
           </QuickAccessToolbar.ApplicationDefaults>
         </QuickAccessToolbar>
       </Ribbon.QuickAccessToolbar>
 
       <Ribbon.HelpButton>
-        <HelpButton CommandName="cmdBtnHelp" />
+        <HelpButton CommandName="CmdBtnHelp" />
       </Ribbon.HelpButton>
 
       <Ribbon.ApplicationMenu>
-        <ApplicationMenu CommandName="cmdBtnApp_ApplicationMenu">
+        <ApplicationMenu CommandName="CmdBtnApp_ApplicationMenu">
           <MenuGroup>
-            <Button CommandName="cmdBtnApp_OpenNewWindow" />
-            <Button CommandName="cmdBtnApp_OpenNewShellBrowserPanel" />
-            <Button CommandName="cmdBtnApp_OpenCommandPrompt" />
-            <Button CommandName="cmdBtnApp_OpenWindowsPowerShell" />
+            <Button CommandName="CmdBtnApp_OpenNewWindow" />
+            <Button CommandName="CmdBtnApp_OpenNewShellBrowserPanel" />
+            <Button CommandName="CmdBtnApp_OpenCommandPrompt" />
+            <Button CommandName="CmdBtnApp_OpenWindowsPowerShell" />
           </MenuGroup>
           <MenuGroup>
-            <Button CommandName="cmdBtnApp_ChangeElectrifierOptions" />
-            <Button CommandName="cmdBtnApp_ChangeFolderAndSearchOptions" />
-            <SplitButton CommandName="cmdBtnApp_HelpMenu">
+            <Button CommandName="CmdBtnApp_ChangeElectrifierOptions" />
+            <Button CommandName="CmdBtnApp_ChangeFolderAndSearchOptions" />
+            <SplitButton CommandName="CmdBtnApp_HelpMenu">
               <SplitButton.ButtonItem>
-                <Button CommandName="cmdBtnApp_Help" />
+                <Button CommandName="CmdBtnApp_Help" />
               </SplitButton.ButtonItem>
               <SplitButton.MenuGroups>
                 <MenuGroup Class="MajorItems">
-                  <!--<Button CommandName="cmdBtnApp_Help_Help" />-->
-                  <Button CommandName="cmdBtnApp_Help_AboutElectrifier" />
+                  <!--<Button CommandName="CmdBtnApp_Help_Help" />-->
+                  <Button CommandName="CmdBtnApp_Help_AboutElectrifier" />
                 </MenuGroup>
                 <MenuGroup Class="MajorItems">
-                  <Button CommandName="cmdBtnApp_Help_AboutWindows" />
+                  <Button CommandName="CmdBtnApp_Help_AboutWindows" />
                 </MenuGroup>
               </SplitButton.MenuGroups>
             </SplitButton>
-            <Button CommandName="cmdBtnApp_Close" />
+            <Button CommandName="CmdBtnApp_Close" />
           </MenuGroup>
         </ApplicationMenu>
       </Ribbon.ApplicationMenu>
 
       <Ribbon.Tabs>
-        <Tab CommandName="cmdTabHome">
-          <Group CommandName="cmdGrpHomeClipboard" SizeDefinition="ThreeButtons">
-            <Button CommandName="cmdBtnClipboardCut" />
-            <Button CommandName="cmdBtnClipboardCopy" />
-            <Button CommandName="cmdBtnClipboardPaste" />
+        <Tab CommandName="CmdTabHome">
+          <Group CommandName="CmdGrpHomeClipboard" SizeDefinition="ThreeButtons">
+            <Button CommandName="CmdBtnClipboardCut" />
+            <Button CommandName="CmdBtnClipboardCopy" />
+            <Button CommandName="CmdBtnClipboardPaste" />
           </Group>
-          <Group CommandName="cmdGrpHomeOrganise" SizeDefinition="ThreeButtons">
-            <Button CommandName="cmdBtnOrganiseMoveTo" />
-            <Button CommandName="cmdBtnOrganiseDelete" />
-            <Button CommandName="cmdBtnOrganiseRename" />
+          <Group CommandName="CmdGrpHomeOrganise" SizeDefinition="FourButtons">
+            <Button CommandName="CmdBtnOrganiseMoveTo" />
+            <Button CommandName="CmdBtnOrganiseCopyTo" />
+            <Button CommandName="CmdBtnOrganiseDelete" />
+            <Button CommandName="CmdBtnOrganiseRename" />
+          </Group>
+          <Group CommandName="CmdGrpHomeNew">
+            
+          </Group>
+          <Group CommandName="CmdGrpHomeOpen">
+
+          </Group>
+          <Group CommandName="CmdGrpHomeSelect">
+            <Button CommandName="CmdBtnSelectSelectAll" />
+            <Button CommandName="CmdBtnSelectSelectNone" />
+            <Button CommandName="CmdBtnSelectInvertSelection" />
           </Group>
         </Tab>
+
+        <Tab CommandName="CmdTabShare">
+          
+        </Tab>
+
+        <Tab CommandName="CmdTabView">
+
+        </Tab>
+
 
       </Ribbon.Tabs>
 

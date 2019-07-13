@@ -51,43 +51,51 @@ namespace electrifier.Core.Forms
                 //
                 // Quick Access Toolbar Commands ==============================================================================
                 //
-                cmdQATOpenNewShellBrowserPane = 19903,
+                CmdQATOpenNewShellBrowserPane = 19903,
 
                 //
                 // Application Menu Items =====================================================================================
                 //
                 //cmdAppApplicationMenu = 100,
-                cmdAppOpenNewWindow = 101,
-                cmdAppOpenNewShellBrowserPane = 102,
-                cmdAppOpenCommandPrompt = 103,
-                cmdAppOpenWindowsPowerShell = 104,
-                cmdAppChangeElectrifierOptions = 110,
-                cmdAppChangeFolderAndSearchOptions = 111,
+                CmdAppOpenNewWindow = 101,
+                CmdAppOpenNewShellBrowserPane = 102,
+                CmdAppOpenCommandPrompt = 103,
+                CmdAppOpenWindowsPowerShell = 104,
+                CmdAppChangeElectrifierOptions = 110,
+                CmdAppChangeFolderAndSearchOptions = 111,
                 //cmdApp_HelpMenu = 120,
-                cmdAppHelp = 121,
-                cmdAppHelpAboutElectrifier = 122,
-                cmdAppHelpAboutWindows = 125,
-                cmdAppClose = 130,
+                CmdAppHelp = 121,
+                CmdAppHelpAboutElectrifier = 122,
+                CmdAppHelpAboutWindows = 125,
+                CmdAppClose = 130,
                 //
                 // Ribbon tabs ================================================================================================
                 //
-                cmdTabHome = 1000,
-                cmdTabShare = 2000,
-                cmdTabView = 3000,
+                CmdTabHome = 10000,
+                CmdTabShare = 20000,
+                CmdTabView = 30000,
                 //
                 // Command Group: Home -> Clipboard ===========================================================================
                 //
-                cmdGrpHomeClipboard = 1100,
-                cmdClipboardCut = 1101,
-                cmdClipboardCopy = 1102,
-                cmdClipboardPaste = 1103,
+                CmdGrpHomeClipboard = 1100,
+                CmdClipboardCut = 1101,
+                CmdClipboardCopy = 1102,
+                CmdClipboardPaste = 1103,
                 //
                 // Command Group: Home -> Organise ============================================================================
                 //
-                cmdGrpHomeOrganise = 1200,
-                cmdOrganiseMoveTo = 1201,
-                cmdOrganiseDelete = 1202,
-                cmdOrganiseRename = 1203,
+                CmdGrpHomeOrganise = 1200,
+                CmdBtnOrganiseMoveTo = 1201,
+                CmdBtnOrganiseCopyTo = 1202,
+                CmdBtnOrganiseDelete = 1203,
+                CmdBtnOrganiseRename = 1204,
+                //
+                // Command Group: Home -> Select ==============================================================================
+                //
+                CmdGrpHomeSelect = 1500,
+                CmdBtnSelectSelectAll = 1501,
+                CmdBtnSelectSelectNone = 1502,
+                CmdBtnSelectInvertSelection = 1503,
             }
 
             public ElApplicationWindow ApplicationWindow { get; }
@@ -124,8 +132,14 @@ namespace electrifier.Core.Forms
             public RibbonButton CmdBtnClipboardPaste { get; }
             public RibbonButton CmdGrpHomeOrganise { get; }
             public RibbonButton CmdBtnOrganiseMoveTo { get; }
+            public RibbonButton CmdBtnOrganiseCopyTo { get; }
             public RibbonButton CmdBtnOrganiseDelete { get; }
             public RibbonButton CmdBtnOrganiseRename { get; }
+
+            public RibbonButton CmdGrpHomeSelect { get; }
+            public RibbonButton CmdBtnSelectSelectAll { get; }
+            public RibbonButton CmdBtnSelectSelectNone { get; }
+            public RibbonButton CmdBtnSelectInvertSelection { get; }
 
             public ElClipboardAbilities ClipboardAbilities {
                 get => this.clipboardAbilities;
@@ -152,95 +166,109 @@ namespace electrifier.Core.Forms
                 //
                 // Quick Access Toolbar Commands ==================================================================================
                 //
-                this.CmdQATOpenNewShellBrowserPane = new RibbonButton(this, (uint)RibbonCommandID.cmdQATOpenNewShellBrowserPane);
+                this.CmdQATOpenNewShellBrowserPane = new RibbonButton(this, (uint)RibbonCommandID.CmdQATOpenNewShellBrowserPane);
                 this.CmdQATOpenNewShellBrowserPane.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
 
                 //
                 // Application Menu Items =========================================================================================
                 //
-                this.CmdAppOpenNewWindow = new RibbonButton(this, (uint)RibbonCommandID.cmdAppOpenNewWindow)
+                this.CmdAppOpenNewWindow = new RibbonButton(this, (uint)RibbonCommandID.CmdAppOpenNewWindow)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewWindow_Execute),
                 };
 
-                this.CmdAppOpenNewShellBrowserPane = new RibbonButton(this, (uint)RibbonCommandID.cmdAppOpenNewShellBrowserPane);
+                this.CmdAppOpenNewShellBrowserPane = new RibbonButton(this, (uint)RibbonCommandID.CmdAppOpenNewShellBrowserPane);
                 this.CmdAppOpenNewShellBrowserPane.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
 
-                this.CmdAppOpenCommandPrompt = new RibbonButton(this, (uint)RibbonCommandID.cmdAppOpenCommandPrompt)
+                this.CmdAppOpenCommandPrompt = new RibbonButton(this, (uint)RibbonCommandID.CmdAppOpenCommandPrompt)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdAppOpenCommandPrompt_Execute),
                 };
 
-                this.CmdAppOpenWindowsPowerShell = new RibbonButton(this, (uint)RibbonCommandID.cmdAppOpenWindowsPowerShell)
+                this.CmdAppOpenWindowsPowerShell = new RibbonButton(this, (uint)RibbonCommandID.CmdAppOpenWindowsPowerShell)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdAppOpenWindowsPowerShell_Execute),
                 };
 
 
-                this.CmdAppChangeElectrifierOptions = new RibbonButton(this, (uint)RibbonCommandID.cmdAppChangeElectrifierOptions)
+                this.CmdAppChangeElectrifierOptions = new RibbonButton(this, (uint)RibbonCommandID.CmdAppChangeElectrifierOptions)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdAppChangeElectrifierOptions_Execute),
                 };
 
-                this.CmdAppChangeFolderAndSearchOptions = new RibbonButton(this, (uint)RibbonCommandID.cmdAppChangeFolderAndSearchOptions)
+                this.CmdAppChangeFolderAndSearchOptions = new RibbonButton(this, (uint)RibbonCommandID.CmdAppChangeFolderAndSearchOptions)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdAppChangeFolderAndSearchOptions_Execute),
                 };
 
-                this.CmdAppHelp = new RibbonButton(this, (uint)RibbonCommandID.cmdAppHelp);
+                this.CmdAppHelp = new RibbonButton(this, (uint)RibbonCommandID.CmdAppHelp);
                 //this.cmdAppHelp.ExecuteEvent += this.ApplicationWindow.CmdAppHelp_Execute);
 
-                this.CmdAppHelpAboutElectrifier = new RibbonButton(this, (uint)RibbonCommandID.cmdAppHelpAboutElectrifier);
+                this.CmdAppHelpAboutElectrifier = new RibbonButton(this, (uint)RibbonCommandID.CmdAppHelpAboutElectrifier);
                 this.CmdAppHelpAboutElectrifier.ExecuteEvent += this.ApplicationWindow.CmdAppHelpAboutElectrifier_ExecuteEvent;
 
-                this.CmdAppHelpAboutWindows = new RibbonButton(this, (uint)RibbonCommandID.cmdAppHelpAboutWindows);
+                this.CmdAppHelpAboutWindows = new RibbonButton(this, (uint)RibbonCommandID.CmdAppHelpAboutWindows);
                 this.CmdAppHelpAboutWindows.ExecuteEvent += this.ApplicationWindow.CmdAppHelpAboutWindows_ExecuteEvent;
 
-                this.CmdAppClose = new RibbonButton(this, (uint)RibbonCommandID.cmdAppClose);
+                this.CmdAppClose = new RibbonButton(this, (uint)RibbonCommandID.CmdAppClose);
                 this.CmdAppClose.ExecuteEvent += this.ApplicationWindow.CmdAppClose_ExecuteEvent;
 
-                this.CmdTabHome = new RibbonTab(this, (uint)RibbonCommandID.cmdTabHome);
+                this.CmdTabHome = new RibbonTab(this, (uint)RibbonCommandID.CmdTabHome);
                 //
                 // Command Group: Home -> Clipboard ===============================================================================
                 //
-                this.CmdGrpHomeClipboard = new RibbonButton(this, (uint)RibbonCommandID.cmdGrpHomeClipboard);
+                this.CmdGrpHomeClipboard = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpHomeClipboard);
 
-                this.CmdBtnClipboardCut = new RibbonButton(this, (uint)RibbonCommandID.cmdClipboardCut);
+                this.CmdBtnClipboardCut = new RibbonButton(this, (uint)RibbonCommandID.CmdClipboardCut);
                 this.CmdBtnClipboardCut.ExecuteEvent += this.ApplicationWindow.CmdClipboardCut_ExecuteEvent;
 
-                this.CmdBtnClipboardCopy = new RibbonButton(this, (uint)RibbonCommandID.cmdClipboardCopy);
+                this.CmdBtnClipboardCopy = new RibbonButton(this, (uint)RibbonCommandID.CmdClipboardCopy);
                 this.CmdBtnClipboardCopy.ExecuteEvent += this.ApplicationWindow.CmdClipboardCopy_ExecuteEvent;
 
-                this.CmdBtnClipboardPaste = new RibbonButton(this, (uint)RibbonCommandID.cmdClipboardPaste);
+                this.CmdBtnClipboardPaste = new RibbonButton(this, (uint)RibbonCommandID.CmdClipboardPaste);
                 this.CmdBtnClipboardPaste.ExecuteEvent += this.ApplicationWindow.CmdClipboardPaste_ExecuteEvent;
 
                 //
                 // Command Group: Home -> Organise ================================================================================
                 //
-                this.CmdGrpHomeOrganise = new RibbonButton(this, (uint)RibbonCommandID.cmdGrpHomeOrganise);
+                this.CmdGrpHomeOrganise = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpHomeOrganise);
 
-                this.CmdBtnOrganiseMoveTo = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganiseMoveTo)
+                this.CmdBtnOrganiseMoveTo = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnOrganiseMoveTo)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseMoveTo_Execute),
                 };
 
-                this.CmdBtnOrganiseDelete = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganiseDelete)
+                this.CmdBtnOrganiseCopyTo = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnOrganiseCopyTo)
+                {
+                    Enabled = false,
+                    //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseCopyTo_Execute),
+                };
+
+                this.CmdBtnOrganiseDelete = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnOrganiseDelete)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseDelete_Execute),
                 };
 
-                this.CmdBtnOrganiseRename = new RibbonButton(this, (uint)RibbonCommandID.cmdOrganiseRename)
+                this.CmdBtnOrganiseRename = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnOrganiseRename)
                 {
                     Enabled = false,
                     //ExecuteEvent += this.ApplicationWindow.CmdBtnOrganiseRename_Execute),
                 };
+
+                //
+                // Command Group: Home -> Organise ================================================================================
+                //
+                this.CmdGrpHomeSelect = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpHomeSelect);
+                this.CmdBtnSelectSelectAll = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectSelectAll);
+                this.CmdBtnSelectSelectNone = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectSelectNone);
+                this.CmdBtnSelectInvertSelection = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectInvertSelection);
             }
 
             /// <summary>
