@@ -108,7 +108,7 @@ namespace electrifier.Core.Components.Controls
 
         // TODO: Add test for initialization, ante creation reaturn initialnavigationtarget?
         // TODO: Do we need this at all? See ExplorerBrowserControl_Navigated
-        public string CurrentLocation => this.History.CurrentLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteParsing);
+        public string CurrentLocation => this.History.CurrentLocation?.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteParsing);
 
         #endregion ============================================================================================================
 
