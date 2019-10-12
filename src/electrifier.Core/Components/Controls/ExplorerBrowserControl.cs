@@ -121,7 +121,7 @@ namespace electrifier.Core.Components.Controls
         public event EventHandler ItemsChanged;
 
         /// <summary>
-        /// Fires when the ExplorerBorwser view has finished enumerating files.
+        /// Fires when the ExplorerBrowser view has finished enumerating files.
         /// </summary>
         [Category("Behavior"), Description("View is done enumerating files.")]
         public event EventHandler ItemsEnumerated;
@@ -831,7 +831,7 @@ namespace electrifier.Core.Components.Controls
             {
                 // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
                 this.Dispose(true);
-                GC.SuppressFinalize(this);
+                System.GC.SuppressFinalize(this);
             }
 
             #endregion ========================================================================================================

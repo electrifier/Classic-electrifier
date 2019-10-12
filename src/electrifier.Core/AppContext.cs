@@ -251,24 +251,27 @@ namespace electrifier.Core
             const string regSubKey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
             string dotNetVersion;
 
-            using (var ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(regSubKey))
+            using (var regKeyLocalMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             {
-                if (ndpKey != null && ndpKey.GetValue("Release") != null)
+                using (var regKeyNetDeveloperPlatform = regKeyLocalMachine.OpenSubKey(regSubKey))
                 {
-                    dotNetVersion = $".NET Framework Version: {CheckFor45PlusVersion((int)ndpKey.GetValue("Release"))}";
+                    if (regKeyNetDeveloperPlatform?.GetValue("Release") != null)
+                    {
+                        dotNetVersion = $".NET Framework Version: {CheckFor45PlusVersion((int)regKeyNetDeveloperPlatform.GetValue("Release"))}";
 
-                    if (check64Bit)
-                        dotNetVersion += (EnvironmentEx.Is64BitProcess ? " (64 bit)" : " (32 bit)");
-                }
-                else
-                {
-                    dotNetVersion = @".NET Framework Version 4.5 or later is not detected.";
+                        if (check64Bit)
+                            dotNetVersion += (EnvironmentEx.Is64BitProcess ? " (64 bit)" : " (32 bit)");
+                    }
+                    else
+                    {
+                        dotNetVersion = @".NET Framework Version 4.5 or later is not detected.";
+                    }
                 }
             }
 
             return dotNetVersion;
 
-            // Checking the version using >= enables forward compatibility.
+            // Checking the version using for forward compatibility.
             string CheckFor45PlusVersion(int releaseKey)
             {
                 if (releaseKey > 461814)
