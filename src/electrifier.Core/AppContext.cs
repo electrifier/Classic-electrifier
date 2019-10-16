@@ -249,15 +249,16 @@ namespace electrifier.Core
         public static string GetDotNetFrameworkVersion(bool check64Bit = true)
         {
             const string regSubKey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
+            const string regValue = @"Release";
             string dotNetVersion;
 
             using (var regKeyLocalMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             {
                 using (var regKeyNetDeveloperPlatform = regKeyLocalMachine.OpenSubKey(regSubKey))
                 {
-                    if (regKeyNetDeveloperPlatform?.GetValue("Release") != null)
+                    if (regKeyNetDeveloperPlatform?.GetValue(regValue) != null)
                     {
-                        dotNetVersion = $".NET Framework Version: {CheckFor45PlusVersion((int)regKeyNetDeveloperPlatform.GetValue("Release"))}";
+                        dotNetVersion = $".NET Framework Version: {CheckFor45PlusVersion((int)regKeyNetDeveloperPlatform.GetValue(regValue))}";
 
                         if (check64Bit)
                             dotNetVersion += (EnvironmentEx.Is64BitProcess ? " (64 bit)" : " (32 bit)");

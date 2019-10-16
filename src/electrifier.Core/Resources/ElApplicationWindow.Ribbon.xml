@@ -22,6 +22,8 @@
 */
 =========================================================================================================================== -->
 
+<!-- ==== See https://docs.microsoft.com/en-us/windows/win32/windowsribbon/windowsribbon-templates?redirectedfrom=MSDN ==== -->
+
 <Application xmlns="http://schemas.microsoft.com/windows/2009/Ribbon">
 
   <Application.Commands>
@@ -201,6 +203,10 @@
              LabelTitle="View">
     </Command>
 
+    <Command Name="CmdTabDesktop"
+         Id="40000"
+         LabelTitle="Desktop">
+    </Command>
 
     <!-- Command Group: Home -> Clipboard ================================================================================= -->
 
@@ -210,7 +216,7 @@
     </Command>
 
     <Command Name="CmdBtnClipboardCut"
-             Id="1101"
+             Id="1110"
              LabelTitle="Cut"
              TooltipTitle="Cut selected items"
              TooltipDescription="Cut selected items">
@@ -219,21 +225,113 @@
       </Command.LargeImages>
     </Command>
 
+    <Command Name="SplBtnClipboardCopy" />
+
     <Command Name="CmdBtnClipboardCopy"
-             Id="1102"
+             Id="1120"
              LabelTitle="Copy"
-             TooltipTitle="Copy selected items"
-             TooltipDescription="Copy selected items">
+             TooltipTitle="Copy selected items to Clipboard"
+             TooltipDescription="Copy selected items to Clipboard">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Copy_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
 
+    <Command Name="CmdClipboardCopyFullFilePaths"
+             Id="1121"
+             LabelTitle="Copy Full File path"
+             TooltipTitle="Copy Full File path to Clipboard"
+             TooltipDescription="Copy Full File path to Clipboard">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Copy_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Name="CmdClipboardCopyFileNames"
+             Id="1122"
+             LabelTitle="Copy Filename"
+             TooltipTitle="Copy Filename to Clipboard"
+             TooltipDescription="Copy Filename to Clipboard">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Copy_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Name="CmdClipboardCopyDirectoryPaths"
+             Id="1123"
+             LabelTitle="Copy Directory path"
+             TooltipTitle="Copy Directory path to Clipboard"
+             TooltipDescription="Copy Directory path to Clipboard">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Copy_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="SplBtnClipboardPaste" />
+
     <Command Name="CmdBtnClipboardPaste"
-             Id="1103"
+             Id="1130"
              LabelTitle="Paste"
              TooltipTitle="Paste from clipboard"
              TooltipDescription="Paste from clipboard">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnClipboardPasteAsNewFile"
+             Id="1131"
+             LabelTitle="Paste into new File..."
+             TooltipTitle="Paste from Clipboard into new File..."
+             TooltipDescription="Paste from Clipboard into new File...">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnClipboardPasteAsNewTextFile"
+             Id="1132"
+             LabelTitle="Paste into new Text File"
+             TooltipTitle="Paste from Clipboard into new Text File"
+             TooltipDescription="Paste from Clipboard into new Text File">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnClipboardPasteAsNewBMPFile"
+             Id="1133"
+             LabelTitle="Paste into new Bitmap File"
+             TooltipTitle="Paste from Clipboard into new Bitmap File"
+             TooltipDescription="Paste from Clipboard into new Bitmap File">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnClipboardPasteAsNewJPGFile"
+             Id="1134"
+             LabelTitle="Paste into new JPeg File"
+             TooltipTitle="Paste from Clipboard into new JPeg File"
+             TooltipDescription="Paste from Clipboard into new JPeg File">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnClipboardPasteAsNewPNGFile"
+             Id="1135"
+             LabelTitle="Paste into new PNG File"
+             TooltipTitle="Paste from Clipboard into new PNG File"
+             TooltipDescription="Paste from Clipboard into new PNG File">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_Paste_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnClipboardPasteAsNewGIFFile"
+             Id="1136"
+             LabelTitle="Paste into new GIF File"
+             TooltipTitle="Paste from Clipboard into new GIF File"
+             TooltipDescription="Paste from Clipboard into new GIF File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
@@ -347,6 +445,32 @@
     </Command>
 
 
+    <Command Name="CmdGrpDesktopIconLayout"
+             Id="4100"
+             LabelTitle="Icon Layout">
+    </Command>
+
+    <Command Name="CmdBtnDesktopIconLayoutSave"
+             Id="4101"
+             LabelTitle="Save"
+             TooltipTitle="Save Desktop Icon Layout"
+             TooltipDescription="Save Desktop Icon Layout">
+      <Command.LargeImages>
+        <Image>Commands/Organise_MoveTo_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+    <Command Name="CmdBtnDesktopIconLayoutRestore"
+             Id="4102"
+             LabelTitle="Restore"
+             TooltipTitle="Restore Desktop Icon Layout"
+             TooltipDescription="Restore Desktop Icon Layout">
+      <Command.LargeImages>
+        <Image>Commands/Organise_MoveTo_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+
+
   </Application.Commands>
 
   <!-- ========================================================================================================================
@@ -403,21 +527,68 @@
         <Tab CommandName="CmdTabHome">
           <Group CommandName="CmdGrpHomeClipboard" SizeDefinition="ThreeButtons">
             <Button CommandName="CmdBtnClipboardCut" />
-            <Button CommandName="CmdBtnClipboardCopy" />
-            <Button CommandName="CmdBtnClipboardPaste" />
+
+            <SplitButton CommandName="SplBtnClipboardCopy">
+              <SplitButton.ButtonItem>
+                <Button CommandName="CmdBtnClipboardCopy" />
+              </SplitButton.ButtonItem>
+              <!-- TODO: Heading possible? 'Copy Special...' -->
+              <SplitButton.MenuGroups>
+                <MenuGroup Class="MajorItems">
+                  <Button CommandName="CmdBtnClipboardCopy" />
+                </MenuGroup>
+                <MenuGroup Class="StandardItems">
+                  <Button CommandName="CmdClipboardCopyFullFilePaths"/>
+                  <Button CommandName="CmdClipboardCopyFileNames"/>
+                  <Button CommandName="CmdClipboardCopyDirectoryPaths"/>
+                </MenuGroup>
+              </SplitButton.MenuGroups>
+            </SplitButton>
+
+            <SplitButton CommandName="SplBtnClipboardPaste">
+              <SplitButton.ButtonItem>
+                <Button CommandName="CmdBtnClipboardPaste" />
+              </SplitButton.ButtonItem>
+
+              <SplitButton.MenuGroups>
+                <MenuGroup Class="MajorItems">
+                  <Button CommandName="CmdBtnClipboardPaste" />
+                </MenuGroup>
+                <!-- TODO: Heading possible? 'Copy Special...' -->
+                <MenuGroup Class="MajorItems">
+                  <Button CommandName="CmdBtnClipboardPasteAsNewFile" />
+                  <!-- TODO: Silent CheckBox to avoid Dialog-Based 'Paste Into', which will ask for FileName and ImageType etc. ?!? -->
+                </MenuGroup>
+                <MenuGroup Class="StandardItems">
+                  <Button CommandName="CmdBtnClipboardPasteAsNewTextFile"/>
+                </MenuGroup>
+                <MenuGroup Class="StandardItems">
+                  <Button CommandName="CmdBtnClipboardPasteAsNewBMPFile"/>
+                  <Button CommandName="CmdBtnClipboardPasteAsNewJPGFile"/>
+                  <Button CommandName="CmdBtnClipboardPasteAsNewPNGFile"/>
+                  <Button CommandName="CmdBtnClipboardPasteAsNewGIFFile"/>
+                </MenuGroup>
+              </SplitButton.MenuGroups>
+
+            </SplitButton>
           </Group>
+
           <Group CommandName="CmdGrpHomeOrganise" SizeDefinition="FourButtons">
             <Button CommandName="CmdBtnOrganiseMoveTo" />
             <Button CommandName="CmdBtnOrganiseCopyTo" />
+            <!-- TODO: Seperator -->
             <Button CommandName="CmdBtnOrganiseDelete" />
             <Button CommandName="CmdBtnOrganiseRename" />
           </Group>
+
           <Group CommandName="CmdGrpHomeNew">
-            
+
           </Group>
+
           <Group CommandName="CmdGrpHomeOpen">
 
           </Group>
+
           <Group CommandName="CmdGrpHomeSelect">
             <Button CommandName="CmdBtnSelectSelectAll" />
             <Button CommandName="CmdBtnSelectSelectNone" />
@@ -426,13 +597,19 @@
         </Tab>
 
         <Tab CommandName="CmdTabShare">
-          
+
         </Tab>
 
         <Tab CommandName="CmdTabView">
 
         </Tab>
 
+        <Tab CommandName="CmdTabDesktop">
+          <Group CommandName="CmdGrpDesktopIconLayout" SizeDefinition="TwoButtons">
+            <Button CommandName="CmdBtnDesktopIconLayoutSave" />
+            <Button CommandName="CmdBtnDesktopIconLayoutRestore" />
+          </Group>
+        </Tab>
 
       </Ribbon.Tabs>
 

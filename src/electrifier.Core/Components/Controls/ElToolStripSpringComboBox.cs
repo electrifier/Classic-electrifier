@@ -52,7 +52,7 @@ namespace electrifier.Core.Components.Controls
                 width = width - this.Owner.OverflowButton.Width - this.Owner.OverflowButton.Margin.Horizontal;
             }
 
-            // Declare a variable to maintain a count of ToolStripSpringTextBox items currently displayed in the owning ToolStrip. 
+            // Declare a variable to maintain a count of ToolStripSpringTextBox items currently displayed in the owner ToolStrip
             var springBoxCount = 0;
 
             foreach (ToolStripItem item in this.Owner.Items)

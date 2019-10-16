@@ -25,6 +25,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using electrifier.Core.Components;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 
 namespace electrifier.Core.Forms
 {
@@ -74,6 +75,7 @@ namespace electrifier.Core.Forms
                 CmdTabHome = 10000,
                 CmdTabShare = 20000,
                 CmdTabView = 30000,
+                CmdTabDesktop = 40000,
                 //
                 // Command Group: Home -> Clipboard ===========================================================================
                 //
@@ -96,6 +98,16 @@ namespace electrifier.Core.Forms
                 CmdBtnSelectSelectAll = 1501,
                 CmdBtnSelectSelectNone = 1502,
                 CmdBtnSelectInvertSelection = 1503,
+
+                //
+                // Command Group: Desktop -> Icon Layout ======================================================================
+                //
+                CmdGrpDesktopIconLayout = 4100,
+                CmdBtnDesktopIconLayoutSave = 4101,
+                CmdBtnDesktopIconLayoutRestore = 4102,
+
+
+
             }
 
             public ElApplicationWindow ApplicationWindow { get; }
@@ -141,6 +153,15 @@ namespace electrifier.Core.Forms
             public RibbonButton CmdBtnSelectSelectNone { get; }
             public RibbonButton CmdBtnSelectInvertSelection { get; }
 
+            //
+            // Ribbon Tab: Desktop Commands ===================================================================================
+            //
+            public RibbonTab CmdTabDesktop { get; }
+            public RibbonButton CmdGrpDesktopIconLayout { get; }
+            public RibbonButton CmdBtnDesktopIconLayoutSave { get; }
+            public RibbonButton CmdBtnDesktopIconLayoutRestore { get; }
+
+
             public ElClipboardAbilities ClipboardAbilities {
                 get => this.clipboardAbilities;
                 set {
@@ -162,6 +183,9 @@ namespace electrifier.Core.Forms
             public ElApplicationWindowRibbon(ElApplicationWindow elApplicationWindow)
             {
                 this.ApplicationWindow = elApplicationWindow ?? throw new ArgumentNullException(nameof(elApplicationWindow));
+
+
+                //this.SetColors(Color.Wheat, Color.IndianRed, Color.BlueViolet);
 
                 //
                 // Quick Access Toolbar Commands ==================================================================================
@@ -269,15 +293,28 @@ namespace electrifier.Core.Forms
                 this.CmdBtnSelectSelectAll = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectSelectAll);
                 this.CmdBtnSelectSelectNone = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectSelectNone);
                 this.CmdBtnSelectInvertSelection = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectInvertSelection);
-            }
 
-            /// <summary>
-            /// Process <see cref="DockPanel.ActiveContentChanged"/> event.
-            /// 
-            /// In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly.
-            /// </summary>
-            /// <param name="activatedDockContent">The <see cref="IDockContent"/> that has been activated.</param>
-            public void Ribbon_ProcessDockContentChange(IDockContent activatedDockContent)
+
+
+                this.CmdTabDesktop = new RibbonTab(this, (uint)RibbonCommandID.CmdTabDesktop);
+                //
+                // Command Group: Desktop -> Icon Layout ==========================================================================
+                //
+                this.CmdGrpDesktopIconLayout = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpDesktopIconLayout);
+                this.CmdBtnDesktopIconLayoutSave = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnDesktopIconLayoutSave);
+                this.CmdBtnDesktopIconLayoutRestore = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnDesktopIconLayoutRestore);
+
+                // TODO: Iterate through and disable all child elements that have no ExecuteEvent-Handler to get rid of those "Enabled=false"-Statements
+
+        }
+
+        /// <summary>
+        /// Process <see cref="DockPanel.ActiveContentChanged"/> event.
+        /// 
+        /// In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly.
+        /// </summary>
+        /// <param name="activatedDockContent">The <see cref="IDockContent"/> that has been activated.</param>
+        public void Ribbon_ProcessDockContentChange(IDockContent activatedDockContent)
             {
                 // TODO: Move into [property].set()
                 this.ClipboardAbilities = (activatedDockContent is IElClipboardConsumer clipboardConsumer) ?
