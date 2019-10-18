@@ -37,7 +37,6 @@ using System.Windows.Forms;
 
 using Vanara.Extensions;
 using Vanara.PInvoke;
-using static Vanara.PInvoke.User32_Gdi;
 using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Components.Controls
@@ -367,13 +366,13 @@ namespace electrifier.Core.Components.Controls
         /// </remarks>
         protected void ExplorerBrowser_RemoveWindowBorder()
         {
-            var hwnd = FindWindowEx(this.Handle, default, "ExplorerBrowserControl", default);
-            var wndStyle = (WindowStyles)GetWindowLongAuto(hwnd, WindowLongFlags.GWL_STYLE).ToInt32();
+            var hwnd = User32.FindWindowEx(this.Handle, default, "ExplorerBrowserControl", default);
+            var wndStyle = (User32.WindowStyles)User32.GetWindowLongAuto(hwnd, User32.WindowLongFlags.GWL_STYLE).ToInt32();
 
-            SetWindowLong(hwnd, WindowLongFlags.GWL_STYLE,
-                (int)wndStyle.ClearFlags(WindowStyles.WS_CAPTION | WindowStyles.WS_BORDER));
-            SetWindowPos(hwnd, default, 0, 0, 0, 0,
-                (SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE));
+            _ = User32.SetWindowLong(hwnd, User32.WindowLongFlags.GWL_STYLE,
+                (int)wndStyle.ClearFlags(User32.WindowStyles.WS_CAPTION | User32.WindowStyles.WS_BORDER));
+            _ = User32.SetWindowPos(hwnd, default, 0, 0, 0, 0,
+                (User32.SetWindowPosFlags.SWP_FRAMECHANGED | User32.SetWindowPosFlags.SWP_NOMOVE | User32.SetWindowPosFlags.SWP_NOSIZE));
         }
 
         /// <summary>

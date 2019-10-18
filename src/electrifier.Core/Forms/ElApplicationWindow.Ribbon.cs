@@ -102,6 +102,7 @@ namespace electrifier.Core.Forms
                 //
                 // Command Group: Desktop -> Icon Layout ======================================================================
                 //
+                CmdDesktopTabGroup = 40100,
                 CmdGrpDesktopIconLayout = 4100,
                 CmdBtnDesktopIconLayoutSave = 4101,
                 CmdBtnDesktopIconLayoutRestore = 4102,
@@ -156,6 +157,7 @@ namespace electrifier.Core.Forms
             //
             // Ribbon Tab: Desktop Commands ===================================================================================
             //
+            public RibbonTabGroup CmdDesktopTabGroup { get; }
             public RibbonTab CmdTabDesktop { get; }
             public RibbonButton CmdGrpDesktopIconLayout { get; }
             public RibbonButton CmdBtnDesktopIconLayoutSave { get; }
@@ -183,7 +185,6 @@ namespace electrifier.Core.Forms
             public ElApplicationWindowRibbon(ElApplicationWindow elApplicationWindow)
             {
                 this.ApplicationWindow = elApplicationWindow ?? throw new ArgumentNullException(nameof(elApplicationWindow));
-
 
                 //this.SetColors(Color.Wheat, Color.IndianRed, Color.BlueViolet);
 
@@ -294,9 +295,8 @@ namespace electrifier.Core.Forms
                 this.CmdBtnSelectSelectNone = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectSelectNone);
                 this.CmdBtnSelectInvertSelection = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectInvertSelection);
 
-
-
                 this.CmdTabDesktop = new RibbonTab(this, (uint)RibbonCommandID.CmdTabDesktop);
+                this.CmdDesktopTabGroup = new RibbonTabGroup(this, (uint)RibbonCommandID.CmdDesktopTabGroup);
                 //
                 // Command Group: Desktop -> Icon Layout ==========================================================================
                 //
@@ -304,17 +304,21 @@ namespace electrifier.Core.Forms
                 this.CmdBtnDesktopIconLayoutSave = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnDesktopIconLayoutSave);
                 this.CmdBtnDesktopIconLayoutRestore = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnDesktopIconLayoutRestore);
 
+
                 // TODO: Iterate through and disable all child elements that have no ExecuteEvent-Handler to get rid of those "Enabled=false"-Statements
 
-        }
+                // For test purposes, enable all available Contexts
+                this.CmdDesktopTabGroup.ContextAvailable = Sunburst.WindowsForms.Ribbon.Interop.ContextAvailability.Active;
 
-        /// <summary>
-        /// Process <see cref="DockPanel.ActiveContentChanged"/> event.
-        /// 
-        /// In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly.
-        /// </summary>
-        /// <param name="activatedDockContent">The <see cref="IDockContent"/> that has been activated.</param>
-        public void Ribbon_ProcessDockContentChange(IDockContent activatedDockContent)
+            }
+
+            /// <summary>
+            /// Process <see cref="DockPanel.ActiveContentChanged"/> event.
+            /// 
+            /// In case activated DockContent is an IElClipboardConsumer, update the clipboard buttons accordingly.
+            /// </summary>
+            /// <param name="activatedDockContent">The <see cref="IDockContent"/> that has been activated.</param>
+            public void Ribbon_ProcessDockContentChange(IDockContent activatedDockContent)
             {
                 // TODO: Move into [property].set()
                 this.ClipboardAbilities = (activatedDockContent is IElClipboardConsumer clipboardConsumer) ?
