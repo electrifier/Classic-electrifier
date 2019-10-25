@@ -190,6 +190,7 @@
     </Compile>
     <Compile Include="Settings.cs" />
     <Compile Include="WindowsShell\ElClipboard.cs" />
+    <Compile Include="WindowsShell\ElDesktopIconManager.cs" />
     <Compile Include="WindowsShell\ElShellFileOperations.cs" />
     <Compile Include="WindowsShell\ElShellTools.cs" />
   </ItemGroup>
@@ -239,6 +240,11 @@
     <PackageReference Include="DockPanelSuite.ThemeVS2015">
       <Version>3.0.6</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers">
+      <Version>2.9.6</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="Sunburst.WindowsForms.Ribbon">
       <Version>2.1.0</Version>
     </PackageReference>
@@ -246,6 +252,9 @@
       <Version>3.1.1</Version>
     </PackageReference>
     <PackageReference Include="Vanara.PInvoke.Shell32">
+      <Version>3.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Vanara.PInvoke.User32">
       <Version>3.1.1</Version>
     </PackageReference>
     <PackageReference Include="Vanara.Windows.Shell">

@@ -138,14 +138,27 @@ namespace electrifier.Core
 
         private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
-            AppContext.TraceError("Thread Exception:" + e.ToString());
-            MessageBox.Show(e.ToString(), "D'oh! That shouldn't have happened...");
+            // TODO: Use Vanara.Windows.Forms.TaskDialog;
+            string exMessage = $"Thread exception occured: { e.Exception.GetType().FullName }\n" +
+                $"\n{ e.Exception.Message }\n" +
+                $"\n{ e.Exception.StackTrace }\n";
+
+            if (null != e.Exception.InnerException)
+                exMessage += $"\nInner Exception: { e.Exception.InnerException.Message }\n";
+
+            AppContext.TraceError(exMessage);
+            MessageBox.Show(exMessage, "D'oh! That shouldn't have happened...");
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            AppContext.TraceError("Domain Exception:" + e.ToString());
-            MessageBox.Show(e.ToString(), "D'oh! That shouldn't have happened...");
+            // TODO: Use Vanara.Windows.Forms.TaskDialog;
+            string exMessage = $"Domain exception occured: { e.ExceptionObject.GetType().FullName }" +
+                $"\n\n{ e.ExceptionObject.ToString() }\n";
+
+
+            AppContext.TraceError(exMessage);
+            MessageBox.Show(exMessage, "D'oh! That shouldn't have happened...");
         }
 
 

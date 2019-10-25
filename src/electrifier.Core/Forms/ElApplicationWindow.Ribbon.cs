@@ -18,14 +18,16 @@
 **
 */
 
-using Sunburst.WindowsForms.Ribbon.Controls;
-
-using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Core.Components;
+using electrifier.Core.WindowsShell;
+using Sunburst.WindowsForms.Ribbon.Controls;
 using System;
 using System.Diagnostics;
-using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using System.Xml.Serialization;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
@@ -102,10 +104,12 @@ namespace electrifier.Core.Forms
                 //
                 // Command Group: Desktop -> Icon Layout ======================================================================
                 //
-                CmdDesktopTabGroup = 40100,
-                CmdGrpDesktopIconLayout = 4100,
-                CmdBtnDesktopIconLayoutSave = 4101,
-                CmdBtnDesktopIconLayoutRestore = 4102,
+                CmdDesktopToolsTabGroup = 41111,
+                CmdDesktopIconSettingsGroup = 40101,
+                CmdDesktopIconManagementTab = 40000,
+                CmdDesktopIconSettingsSaveLayoutButton = 40102,
+                CmdDesktopIconSettingsRestoreLayoutButton = 40103,
+                CmdBtnDesktopIconLayoutRestore = 40103,
 
 
 
@@ -296,13 +300,15 @@ namespace electrifier.Core.Forms
                 this.CmdBtnSelectInvertSelection = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectInvertSelection);
 
                 this.CmdTabDesktop = new RibbonTab(this, (uint)RibbonCommandID.CmdTabDesktop);
-                this.CmdDesktopTabGroup = new RibbonTabGroup(this, (uint)RibbonCommandID.CmdDesktopTabGroup);
+                this.CmdDesktopTabGroup = new RibbonTabGroup(this, (uint)RibbonCommandID.CmdDesktopToolsTabGroup);
                 //
                 // Command Group: Desktop -> Icon Layout ==========================================================================
                 //
-                this.CmdGrpDesktopIconLayout = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpDesktopIconLayout);
-                this.CmdBtnDesktopIconLayoutSave = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnDesktopIconLayoutSave);
-                this.CmdBtnDesktopIconLayoutRestore = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnDesktopIconLayoutRestore);
+                this.CmdGrpDesktopIconLayout = new RibbonButton(this, (uint)RibbonCommandID.CmdDesktopIconSettingsGroup);
+                this.CmdBtnDesktopIconLayoutSave = new RibbonButton(this, (uint)RibbonCommandID.CmdDesktopIconSettingsSaveLayoutButton);
+                this.CmdBtnDesktopIconLayoutSave.ExecuteEvent += this.CmdBtnDesktopIconLayoutSave_ExecuteEvent;
+                this.CmdBtnDesktopIconLayoutRestore = new RibbonButton(this, (uint)RibbonCommandID.CmdDesktopIconSettingsRestoreLayoutButton);
+                this.CmdBtnDesktopIconLayoutRestore.ExecuteEvent += this.CmdBtnDesktopIconLayoutRestore_ExecuteEvent;
 
 
                 // TODO: Iterate through and disable all child elements that have no ExecuteEvent-Handler to get rid of those "Enabled=false"-Statements
@@ -310,6 +316,21 @@ namespace electrifier.Core.Forms
                 // For test purposes, enable all available Contexts
                 this.CmdDesktopTabGroup.ContextAvailable = Sunburst.WindowsForms.Ribbon.Interop.ContextAvailability.Active;
 
+            }
+
+            private void CmdBtnDesktopIconLayoutSave_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate ()
+                {
+                    ElDesktopIconManager.SaveLayout();
+                }));
+            }
+            private void CmdBtnDesktopIconLayoutRestore_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate ()
+                {
+                    ElDesktopIconManager.RestoreLayout();
+                }));
             }
 
             /// <summary>

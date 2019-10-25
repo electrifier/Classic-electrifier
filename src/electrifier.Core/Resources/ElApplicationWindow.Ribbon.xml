@@ -236,9 +236,9 @@
     <!-- ======================================================================================================================
     ==== Ribbon Tab Group: Desktop Tools ======================================================================================
     ======================================================================================================================= -->
-    <Command Id="40100" Name="CmdDesktopToolsTabGroup" LabelTitle="Desktop Tools" />
+    <Command Id="41111" Name="CmdDesktopToolsTabGroup" LabelTitle="Desktop Tools" />
     <!-- Comment out to force visibilty -->
-    <Command Id="40000" Name="CmdDesktopIconManagementTab" LabelTitle="Icon Management"/>
+    <Command Id="40100" Name="CmdDesktopIconManagementTab" LabelTitle="Icon Management"/>
     <!-- Command Group: Desktop Tools -> Icon Settings ==================================================================== -->
     <Command Id="40101" Name="CmdDesktopIconSettingsGroup" LabelTitle="Icon Settings" />
     <Command Id="40102" Name="CmdDesktopIconSettingsSaveLayoutButton" LabelTitle="Save Layout to File" TooltipTitle="Save Desktop Icon Layout" TooltipDescription="Save Desktop Icon Layout" />
