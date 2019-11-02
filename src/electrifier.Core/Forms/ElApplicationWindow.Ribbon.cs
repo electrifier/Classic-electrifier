@@ -54,7 +54,7 @@ namespace electrifier.Core.Forms
                 //
                 // Quick Access Toolbar Commands ==============================================================================
                 //
-                CmdQATOpenNewShellBrowserPane = 19903,
+                CmdQATOpenNewShellBrowserPane = 59903,
 
                 //
                 // Application Menu Items =====================================================================================
@@ -66,7 +66,7 @@ namespace electrifier.Core.Forms
                 CmdAppOpenWindowsPowerShell = 104,
                 CmdAppChangeElectrifierOptions = 110,
                 CmdAppChangeFolderAndSearchOptions = 111,
-                //cmdApp_HelpMenu = 120,
+                //SplBtnApp_HelpMenu = 120,
                 CmdAppHelp = 121,
                 CmdAppHelpAboutElectrifier = 122,
                 CmdAppHelpAboutWindows = 125,
@@ -74,7 +74,7 @@ namespace electrifier.Core.Forms
                 //
                 // Ribbon tabs ================================================================================================
                 //
-                CmdTabHome = 10000,
+                CmdTabHome = 1000,
                 CmdTabShare = 20000,
                 CmdTabView = 30000,
                 CmdTabDesktop = 40000,
@@ -82,9 +82,10 @@ namespace electrifier.Core.Forms
                 // Command Group: Home -> Clipboard ===========================================================================
                 //
                 CmdGrpHomeClipboard = 1100,
-                CmdClipboardCut = 1101,
-                CmdClipboardCopy = 1102,
-                CmdClipboardPaste = 1103,
+                CmdClipboardCut = 1110,
+                CmdClipboardCopy = 1120,
+                CmdClipboardPaste = 1130,
+                CmdBtnClipboardHistory = 1140,
                 //
                 // Command Group: Home -> Organise ============================================================================
                 //
@@ -97,21 +98,25 @@ namespace electrifier.Core.Forms
                 // Command Group: Home -> Select ==============================================================================
                 //
                 CmdGrpHomeSelect = 1500,
-                CmdBtnSelectSelectAll = 1501,
-                CmdBtnSelectSelectNone = 1502,
-                CmdBtnSelectInvertSelection = 1503,
+                CmdBtnSelectConditional = 1501,
+                CmdBtnSelectSelectAll = 1502,
+                CmdBtnSelectSelectNone = 1503,
+                CmdBtnSelectInvertSelection = 1504,
 
                 //
                 // Command Group: Desktop -> Icon Layout ======================================================================
                 //
                 CmdDesktopToolsTabGroup = 41111,
+                CmdDesktopIconManagementTab = 40100,
                 CmdDesktopIconSettingsGroup = 40101,
-                CmdDesktopIconManagementTab = 40000,
                 CmdDesktopIconSettingsSaveLayoutButton = 40102,
                 CmdDesktopIconSettingsRestoreLayoutButton = 40103,
-                CmdBtnDesktopIconLayoutRestore = 40103,
-
-
+                CmdDesktopIconSettingsLaunchControlPanel = 40104,
+                CbxDesktopIconSettingsSpacingVertical = 40105,
+                CbxDesktopIconSettingsSpacingHorizontal = 40106,
+                CmdDesktopShortcutGroup = 40110,
+                CmdDesktopShortcutCreateDefaults = 40111,
+                CmdDesktopShortcutValidate = 40112,
 
             }
 
@@ -168,7 +173,8 @@ namespace electrifier.Core.Forms
             public RibbonButton CmdBtnDesktopIconLayoutRestore { get; }
 
 
-            public ElClipboardAbilities ClipboardAbilities {
+            public ElClipboardAbilities ClipboardAbilities
+            {
                 get => this.clipboardAbilities;
                 set {
                     if (this.clipboardAbilities != value)

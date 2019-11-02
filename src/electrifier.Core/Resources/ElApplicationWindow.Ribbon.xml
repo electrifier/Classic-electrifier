@@ -94,7 +94,7 @@
     <!-- ======================================================================================================================
     ==== Ribbon Tab: Home =====================================================================================================
     ======================================================================================================================= -->
-    <Command Id="10000" Name="CmdTabHome" LabelTitle="Home" />
+    <Command Id="1000" Name="CmdTabHome" LabelTitle="Home" />
     <!-- Command Group: Home -> Clipboard ================================================================================= -->
     <Command Id="1100" Name="CmdGrpHomeClipboard" LabelTitle="Clipboard" />
     <Command Id="1110" Name="CmdBtnClipboardCut" LabelTitle="Cut" TooltipTitle="Cut selected items" TooltipDescription="Cut selected items">
