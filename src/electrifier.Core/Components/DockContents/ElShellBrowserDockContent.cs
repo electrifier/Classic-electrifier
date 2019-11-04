@@ -21,7 +21,7 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-
+using electrifier.Core.Components.Controls;
 using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Components.DockContents
@@ -36,8 +36,6 @@ namespace electrifier.Core.Components.DockContents
     {
         #region Fields ========================================================================================================
 
-        protected Controls.ExplorerBrowserControl explorerBrowserControl;
-
         protected const string persistParamURI = @"URI=";
         protected const string persistParamViewMode = @"ViewMode=";
 
@@ -51,14 +49,15 @@ namespace electrifier.Core.Components.DockContents
 
         //public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
 
-        public int ItemsCount {
-            //get => this.explorerBrowser.Items.Count; }
-            get => 0;
-        }
-        public int SelectedItemsCount {
-            //get => this.explorerBrowser.SelectedItems.Count; }
-            get => 0;
-        }
+        //public int ItemsCount {
+        //    //get => this.explorerBrowser.Items.Count; }
+        //    get => 0;
+        //}
+        //public int SelectedItemsCount {
+        //    //get => this.explorerBrowser.SelectedItems.Count; }
+        //    get => 0;
+        //}
+        protected ExplorerBrowserControl ExplorerBrowserControl { get; }
 
         //public DockContent AsDockContent { get => this as WeifenLuo.WinFormsUI.Docking.DockContent; }
 
@@ -89,20 +88,20 @@ namespace electrifier.Core.Components.DockContents
                 this.EvaluatePersistString(persistString);
 
                 // Initialize ExplorerBrowser
-                this.explorerBrowserControl = new Controls.ExplorerBrowserControl(this.InitialNaviagtionTarget)
+                this.ExplorerBrowserControl = new Controls.ExplorerBrowserControl(this.InitialNaviagtionTarget)
                 {
                     Dock = DockStyle.Fill,
                 };
 
                 // Connect ExplorerBrowser Events
-                this.explorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
-                this.explorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
-                this.explorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
-                this.explorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
-                this.explorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
-                this.explorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
+                this.ExplorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
+                this.ExplorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
+                this.ExplorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
+                this.ExplorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
+                this.ExplorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
+                this.ExplorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
 
-                this.Controls.Add(this.explorerBrowserControl);
+                this.Controls.Add(this.ExplorerBrowserControl);
             }
             finally
             {
@@ -112,10 +111,27 @@ namespace electrifier.Core.Components.DockContents
 
         protected override void Dispose(bool disposing)
         {
-            // TODO: Dispose EcplorerBrowserControl?!?
+            if (null != this.ExplorerBrowserControl)
+                this.ExplorerBrowserControl.Dispose();
 
             base.Dispose(disposing);
         }
+
+        public void SelectAll()
+        {
+            this.ExplorerBrowserControl.SelectAll();
+        }
+
+        public void SelectNone()
+        {
+            this.ExplorerBrowserControl.SelectNone();
+        }
+
+        public void InvertSelection()
+        {
+            this.ExplorerBrowserControl.InvertSelection();
+        }
+
 
         #region DockContent Persistence Overrides =============================================================================
 
@@ -133,7 +149,7 @@ namespace electrifier.Core.Components.DockContents
 
             // Append URI of current location
             sb.AppendFormat(paramFmt, ElShellBrowserDockContent.persistParamURI,
-                WindowsShell.ElShellTools.UrlCreateFromPath(this.explorerBrowserControl.CurrentLocation));
+                WindowsShell.ElShellTools.UrlCreateFromPath(this.ExplorerBrowserControl.CurrentLocation));
 
             // Append ViewMode
             // TODO: For any reason, this doesn't work... :(
@@ -257,7 +273,7 @@ namespace electrifier.Core.Components.DockContents
 
                 // TODO: Instead of "copying" the HistoryItems, just point to ExplorerBrowserControl's History.Locations
                 // TODO: Convert HistoryItems to ShellItems-Array, add explicit conversion ShellItems->HistoryItems
-                foreach (var location in this.explorerBrowserControl.History.Locations)
+                foreach (var location in this.ExplorerBrowserControl.History.Locations)
                 {
                     this.HistoryItems.AddNewItem(location);
 

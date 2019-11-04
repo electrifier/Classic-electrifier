@@ -34,19 +34,19 @@ namespace electrifier.Core.Components.DockContents
     {
         internal string currentLocation;
 
-        public override bool CanGoBack() => this.explorerBrowserControl.History.CanNavigateBackward;
+        public override bool CanGoBack() => this.ExplorerBrowserControl.History.CanNavigateBackward;
 
         public override void GoBack()
         {
-            this.explorerBrowserControl.History.NavigateLog(
+            this.ExplorerBrowserControl.History.NavigateLog(
                 Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Backward);
         }
 
-        public override bool CanGoForward() => this.explorerBrowserControl.History.CanNavigateForward;
+        public override bool CanGoForward() => this.ExplorerBrowserControl.History.CanNavigateForward;
 
         public override void GoForward()
         {
-            this.explorerBrowserControl.History.NavigateLog(
+            this.ExplorerBrowserControl.History.NavigateLog(
                 Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Forward);
         }
 
@@ -56,7 +56,7 @@ namespace electrifier.Core.Components.DockContents
         public override string CurrentLocation {
             get => this.currentLocation;
             set {
-                this.explorerBrowserControl.NavigateTo(new ShellItem(this.currentLocation = value));
+                this.ExplorerBrowserControl.NavigateTo(new ShellItem(this.currentLocation = value));
             }
         }
 
@@ -97,7 +97,7 @@ namespace electrifier.Core.Components.DockContents
         /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
         ///   TODO: This will be replaced by CurrentLocation(HistoryIndex historyIndex);
         public override bool GoToHistoryItem(int historyIndex)
-            => this.explorerBrowserControl.NavigateToHistoryIndex(historyIndex);
+            => this.ExplorerBrowserControl.NavigateToHistoryIndex(historyIndex);
 
         //protected internal ElNavigableTargetItemCollection recentLocationsList = null;
         //public override ElNavigableTargetItemCollection RecentLocations => base.RecentLocations;

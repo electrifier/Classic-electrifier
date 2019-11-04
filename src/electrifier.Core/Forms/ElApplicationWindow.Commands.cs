@@ -19,6 +19,7 @@
 */
 
 using electrifier.Core.Components;
+using electrifier.Core.Components.DockContents;
 using Sunburst.WindowsForms.Ribbon.Controls.Events;
 using System;
 using System.Windows.Forms;
@@ -186,6 +187,30 @@ namespace electrifier.Core.Forms
             {
                 if (clipboardConsumer.CanPasteFromClipboard())
                     clipboardConsumer.PasteFromClipboard();
+            }
+        }
+
+        internal void CmdSelectAll_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
+            {
+                elShellBrowserDockContent.SelectAll();
+            }
+        }
+
+        internal void CmdSelectNone_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
+            {
+                elShellBrowserDockContent.SelectNone();
+            }
+        }
+
+        internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
+            {
+                elShellBrowserDockContent.InvertSelection();
             }
         }
     }

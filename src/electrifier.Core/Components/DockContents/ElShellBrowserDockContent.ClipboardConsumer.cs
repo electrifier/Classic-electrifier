@@ -80,7 +80,7 @@ namespace electrifier.Core.Components.DockContents
 
         public ElClipboardAbilities GetClipboardAbilities()
         {
-            var itemCount = this.explorerBrowserControl.GetItemCount(Shell32.SVGIO.SVGIO_SELECTION);
+            var itemCount = this.ExplorerBrowserControl.GetItemCount(Shell32.SVGIO.SVGIO_SELECTION);
 
             return ((itemCount > 0) ? (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut) : ElClipboardAbilities.None);
         }
@@ -116,7 +116,7 @@ namespace electrifier.Core.Components.DockContents
             // TODO: IFolderView can return a DataObject, too: https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifolderview-items
 
             // Get collection of selected items, return if empty cause nothing to do then
-            var selItems = this.explorerBrowserControl.SelectedItems;
+            var selItems = this.ExplorerBrowserControl.SelectedItems;
 
             if (selItems.Count < 1)
                 return;
@@ -215,11 +215,13 @@ namespace electrifier.Core.Components.DockContents
             /* TODO:    When files are dropped to their source folder add RenameOnCollision to OperationFlags
              * WARNING: Only if files from the same folder are inserted again, then "RenameOnCollision" is needed when pasting.
              *          Otherwise, files of the same name will be overwritten (on request?)!
+             *          
+             * See 'IFolderView2::IsMoveInSameFolder' for this!
              **/
 
             using (var elShellFileOperations = new ElShellFileOperations(this, operationFlags))
             {
-                using (var destinationFolder = new ShellFolder(this.explorerBrowserControl.CurrentLocation))
+                using (var destinationFolder = new ShellFolder(this.ExplorerBrowserControl.CurrentLocation))
                 {
                     foreach (var strFullPathName in fileDropList)
                     {

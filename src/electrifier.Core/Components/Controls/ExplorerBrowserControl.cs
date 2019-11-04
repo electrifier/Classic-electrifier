@@ -224,6 +224,7 @@ namespace electrifier.Core.Components.Controls
                 new ShellFolder(initialNavigationTarget);
 
             // TODO: Draw background painting on ListView?
+            // TODO: IFolderView.SetText
         }
 
         /// <summary>
@@ -281,6 +282,12 @@ namespace electrifier.Core.Components.Controls
         protected Shell32.IFolderView2 GetFolderView2() => this.explorerBrowser?.GetCurrentView<Shell32.IFolderView2>();
 
         /// <summary>
+        /// Gets the IShellView interface from the explorer browser.
+        /// </summary>
+        /// <returns>An <see cref="Shell32.IShellView"/> instance.</returns>
+        protected Shell32.IShellView GetShellView() => this.explorerBrowser?.GetCurrentView<Shell32.IShellView>();
+
+        /// <summary>
         /// Determines if <see cref="ExplorerBrowserControl"/> is currently able to have a valid item collection.
         /// Doing these checks before requesting a collection prevents from internal exceptions that may be raised.
         /// 
@@ -303,7 +310,7 @@ namespace electrifier.Core.Components.Controls
             if (!this.CanHaveItemCollection())
                 return 0;
 
-            Shell32.IFolderView2 folderView;
+            Shell32.IFolderView2 folderView = null;
             try
             {
                 folderView = this.GetFolderView2();
@@ -315,9 +322,96 @@ namespace electrifier.Core.Components.Controls
             }
             finally
             {
-#pragma warning disable IDE0059 // Value assigned to symbol is never used
-                folderView = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
-#pragma warning restore IDE0059 // Value assigned to symbol is never used
+                if (folderView != null)
+                    Marshal.ReleaseComObject(folderView);
+            }
+        }
+
+        public void SelectAll()
+        {
+            if (!this.CanHaveItemCollection())
+                return;
+
+            Shell32.IFolderView2 folderView = null;
+
+            try
+            {
+                folderView = this.GetFolderView2();
+
+                if (folderView != null)
+                {
+                    int itemCount = folderView.ItemCount(Shell32.SVGIO.SVGIO_ALLVIEW);
+
+                    for (int i = 0; i < itemCount; i++)
+                    {
+                        folderView.SelectItem(i, Shell32.SVSIF.SVSI_SELECT);
+                    }
+                }
+            }
+            finally
+            {
+                if (folderView != null)
+                    Marshal.ReleaseComObject(folderView);
+            }
+        }
+
+        public void SelectNone()
+        {
+            if (!this.CanHaveItemCollection())
+                return;
+
+            Shell32.IFolderView2 folderView = null;
+
+            try
+            {
+                folderView = this.GetFolderView2();
+
+                if (folderView != null)
+                    folderView.SelectItem(-1, Shell32.SVSIF.SVSI_DESELECTOTHERS);
+            }
+            finally
+            {
+                if (folderView != null)
+                    Marshal.ReleaseComObject(folderView);
+            }
+        }
+
+        public void InvertSelection()
+        {
+            if (!this.CanHaveItemCollection())
+                return;
+
+            Shell32.IFolderView2 folderView = null;
+            Shell32.IShellView shellView = null;
+
+            try
+            {
+                folderView = this.GetFolderView2();
+                shellView = this.GetShellView();
+
+                if (folderView != null && shellView != null)
+                {
+                    int itemCount = folderView.ItemCount(Shell32.SVGIO.SVGIO_ALLVIEW);
+
+                    for (int i = 0; i < itemCount; i++)
+                    {
+                        IntPtr nativePidl = folderView.Item(i);
+                        Shell32.SVSIF state = folderView.GetSelectionState(nativePidl);
+
+                        if (state == Shell32.SVSIF.SVSI_DESELECT ||
+                            state == Shell32.SVSIF.SVSI_FOCUSED && state != Shell32.SVSIF.SVSI_SELECT)
+                            shellView.SelectItem(nativePidl, Shell32.SVSIF.SVSI_SELECT);
+                        else
+                            shellView.SelectItem(nativePidl, Shell32.SVSIF.SVSI_DESELECT);
+                    }
+                }
+            }
+            finally
+            {
+                if (shellView != null)
+                    Marshal.ReleaseComObject(shellView);
+                if (folderView != null)
+                    Marshal.ReleaseComObject(folderView);
             }
         }
 
@@ -334,7 +428,8 @@ namespace electrifier.Core.Components.Controls
             if (!this.CanHaveItemCollection())
                 return null;
 
-            Shell32.IFolderView2 folderView;
+            Shell32.IFolderView2 folderView = null;
+
             try
             {
                 folderView = this.GetFolderView2();
@@ -346,9 +441,7 @@ namespace electrifier.Core.Components.Controls
             }
             finally
             {
-#pragma warning disable IDE0059 // Value assigned to symbol is never used
-                folderView = null;        // TODO: Marshal.ReleaseComObject(iFV2); Needed?
-#pragma warning restore IDE0059 // Value assigned to symbol is never used
+                Marshal.ReleaseComObject(folderView);
             }
         }
 
@@ -510,6 +603,7 @@ namespace electrifier.Core.Components.Controls
         /// <returns>True if successful, otherwise false</returns>
         bool IMessageFilter.PreFilterMessage(ref Message msg)
         {
+            // TODO: Is never called!
             return ((this.explorerBrowser as Shell32.IInputObject)?.TranslateAcceleratorIO(
                 new Vanara.PInvoke.MSG {
                     message = (uint)msg.Msg,
@@ -707,8 +801,8 @@ namespace electrifier.Core.Components.Controls
                 internal const int SelectedItemModified = 220;
             }
 
-            protected static Guid IID_IDispatch = new Guid("00020400-0000-0000-c000-000000000046");         // TODO
-            protected static Guid IID_DShellFolderViewEvents = new Guid("62112aa2-ebe4-11cf-a5fb-0020afe7292d");    // TODO
+            protected static Guid IID_IDispatch = new Guid("00020400-0000-0000-c000-000000000046");         // TODO: Use Vanara
+            protected static Guid IID_DShellFolderViewEvents = new Guid("62112aa2-ebe4-11cf-a5fb-0020afe7292d");    // TODO: Use Vanara
 
             #endregion ========================================================================================================
 
