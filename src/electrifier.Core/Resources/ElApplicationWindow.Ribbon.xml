@@ -161,7 +161,11 @@
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1140" Name="CmdBtnClipboardHistory" LabelTitle="Clipboard History" />
+    <Command Id="1140" Name="CmdBtnClipboardHistory" LabelTitle="History">
+      <Command.LargeImages>
+        <Image>Commands/Clipboard_History_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
     <!-- Command Group: Home -> Organise ================================================================================== -->
     <Command Id="1200" Name="CmdGrpHomeOrganise" LabelTitle="Organise" />
     <Command Id="1201" Name="CmdBtnOrganiseMoveTo" LabelTitle="Move to" TooltipTitle="Move selected item(s)" TooltipDescription="Move selected item(s)">
@@ -190,7 +194,11 @@
     <Command Id="1400" Name="CmdGrpHomeOpen" LabelTitle="Open" />
     <!-- Command Group: Home -> Select ==================================================================================== -->
     <Command Id="1500" Name="CmdGrpHomeSelect" LabelTitle="Select" />
-    <Command Id="1501" Name="CmdBtnSelectConditional" LabelTitle="Select Conditional" />
+    <Command Id="1501" Name="CmdBtnSelectConditional" LabelTitle="Select conditional">
+      <Command.LargeImages>
+        <Image>Commands/Select_Conditional_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
     <Command Id="1502" Name="CmdBtnSelectSelectAll" LabelTitle="Select all" TooltipTitle="Select all items in this view." TooltipDescription="Select all items in this view.">
       <Command.SmallImages>
         <Image>Commands/Select_SelectAll_16px.bmp</Image>
@@ -216,15 +224,78 @@
       </Command.LargeImages>
     </Command>
     <Command Id="1600" Name="CmdGrpHomeView" LabelTitle="View" />
-    <Command Id="1610" Name="CmdDdbHomeViewLayout" LabelTitle="Layout" />
-    <Command Id="1611" Name="CmdBtnHomeViewExtraLargeIcons" LabelTitle="Extra large icons" />
-    <Command Id="1612" Name="CmdBtnHomeViewLargeIcons" LabelTitle="Large icons" />
-    <Command Id="1613" Name="CmdBtnHomeViewMediumIcons" LabelTitle="Medium-sized icons" />
-    <Command Id="1614" Name="CmdBtnHomeViewSmallIcons" LabelTitle="Small icons" />
-    <Command Id="1615" Name="CmdBtnHomeViewList" LabelTitle="List" />
-    <Command Id="1616" Name="CmdBtnHomeViewDetails" LabelTitle="Details" />
-    <Command Id="1617" Name="CmdBtnHomeViewTiles" LabelTitle="Tiles" />
-    <Command Id="1618" Name="CmdBtnHomeViewContent" LabelTitle="Content" />
+    <Command Id="1610" Name="CmdDdbHomeViewLayout" LabelTitle="Layout">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_Tiles_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_Tiles_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1611" Name="CmdBtnHomeViewExtraLargeIcons" LabelTitle="Extra large icons">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_ExtraLargeIcons_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_ExtraLargeIcons_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1612" Name="CmdBtnHomeViewLargeIcons" LabelTitle="Large icons">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_LargeIcons_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_LargeIcons_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1613" Name="CmdBtnHomeViewMediumIcons" LabelTitle="Medium-sized icons">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_MediumSizedIcons_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_MediumSizedIcons_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1614" Name="CmdBtnHomeViewSmallIcons" LabelTitle="Small icons">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_SmallIcons_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_SmallIcons_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1615" Name="CmdBtnHomeViewList" LabelTitle="List">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_List_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_List_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1616" Name="CmdBtnHomeViewDetails" LabelTitle="Details">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_Details_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_Details_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1617" Name="CmdBtnHomeViewTiles" LabelTitle="Tiles">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_Tiles_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_Tiles_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="1618" Name="CmdBtnHomeViewContent" LabelTitle="Content">
+      <Command.SmallImages>
+        <Image>Commands/ViewLayout_Content_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/ViewLayout_Content_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
     <!-- ======================================================================================================================
     ==== Ribbon Tab: Share ====================================================================================================
     ======================================================================================================================= -->
@@ -241,9 +312,24 @@
     <Command Id="40100" Name="CmdDesktopIconManagementTab" LabelTitle="Icon Management"/>
     <!-- Command Group: Desktop Tools -> Icon Settings ==================================================================== -->
     <Command Id="40101" Name="CmdDesktopIconSettingsGroup" LabelTitle="Icon Settings" />
-    <Command Id="40102" Name="CmdDesktopIconSettingsSaveLayoutButton" LabelTitle="Save Layout to File" TooltipTitle="Save Desktop Icon Layout" TooltipDescription="Save Desktop Icon Layout" />
-    <Command Id="40103" Name="CmdDesktopIconSettingsRestoreLayoutButton" LabelTitle="Restore Layout from File" TooltipTitle="Restore Desktop Icon Layout" TooltipDescription="Restore Desktop Icon Layout" />
-    <Command Id="40104" Name="CmdDesktopIconSettingsLaunchControlPanel" LabelTitle="Launch &quot;Desktop Icon Settings&quot; Control Panel" />
+    <Command Id="40102" Name="CmdDesktopIconSettingsSaveLayoutButton" LabelTitle="Save Layout to File" TooltipTitle="Save Desktop Icon Layout" TooltipDescription="Save Desktop Icon Layout">
+      <Command.LargeImages>
+        <Image>Commands/IconSettings_Desktop_Save_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="40103" Name="CmdDesktopIconSettingsRestoreLayoutButton" LabelTitle="Restore Layout from File" TooltipTitle="Restore Desktop Icon Layout" TooltipDescription="Restore Desktop Icon Layout">
+      <Command.LargeImages>
+        <Image>Commands/IconSettings_Desktop_Restore_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
+    <Command Id="40104" Name="CmdDesktopIconSettingsLaunchControlPanel" LabelTitle="Launch &quot;Desktop Icon Settings&quot; Control Panel">
+      <Command.SmallImages>
+        <Image>Commands/IconSettings_ControlPanel_Desktop_16px.bmp</Image>
+      </Command.SmallImages>
+      <Command.LargeImages>
+        <Image>Commands/IconSettings_ControlPanel_Desktop_32px.bmp</Image>
+      </Command.LargeImages>
+    </Command>
     <Command Id="40105" Name="CbxDesktopIconSettingsSpacingVertical" LabelTitle="Vertical Icon Spacing:" />
     <Command Id="40106" Name="CbxDesktopIconSettingsSpacingHorizontal" LabelTitle="Horizontal Icon Spacing:" />
     <!-- Command Group: Desktop Tools -> Icon Tools ======================================================================= -->
