@@ -62,6 +62,8 @@ namespace electrifier.Core.Components.Controls
 
         private ShellItem initialNavigationTarget = default;
 
+        private Shell32.FOLDERVIEWMODE viewMode;
+
         /// <summary>
         /// Nested class ViewEvents acts as the connection to IShellView of ExplorerBrowser
         /// </summary>
@@ -108,6 +110,8 @@ namespace electrifier.Core.Components.Controls
         // TODO: Add test for initialization, ante creation reaturn initialnavigationtarget?
         // TODO: Do we need this at all? See ExplorerBrowserControl_Navigated
         public string CurrentLocation => this.History.CurrentLocation?.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteParsing);
+
+        public Shell32.FOLDERVIEWMODE ViewMode { get => this.viewMode; set => this.SetViewMode(value); }
 
         #endregion ============================================================================================================
 
@@ -159,6 +163,8 @@ namespace electrifier.Core.Components.Controls
         [Category("Action"), Description("Selected item has changed.")]
         public event EventHandler SelectedItemModified;
 
+        public event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
+
         #region EventArgs =====================================================================================================
 
         /// <summary>
@@ -204,6 +210,18 @@ namespace electrifier.Core.Components.Controls
 
             /// <summary>Indicates the Locations collection has changed</summary>
             public bool LocationsChanged { get; set; }
+        }
+
+        public class ShellFolderViewModeChangedEventArgs : EventArgs
+        {
+            internal protected ShellFolderViewModeChangedEventArgs(Shell32.FOLDERVIEWMODE oldFolderViewMode, Shell32.FOLDERVIEWMODE newFolderViewMode)
+            {
+                this.OldFolderViewMode = oldFolderViewMode;
+                this.NewFolderViewMode = newFolderViewMode;
+            }
+
+            public Shell32.FOLDERVIEWMODE OldFolderViewMode { get; }
+            public Shell32.FOLDERVIEWMODE NewFolderViewMode { get; }
         }
 
         #endregion ============================================================================================================
@@ -441,9 +459,103 @@ namespace electrifier.Core.Components.Controls
             }
             finally
             {
-                Marshal.ReleaseComObject(folderView);
+                if (null != folderView)
+                    Marshal.ReleaseComObject(folderView);
             }
         }
+
+        protected void ViewModeUpdatePending()
+        {
+            Shell32.IFolderView2 folderView = null;
+
+            try
+            {
+                folderView = this.GetFolderView2();
+
+                if (folderView is null)
+                    throw new NullReferenceException(nameof(folderView));
+
+                Shell32.FOLDERVIEWMODE oldViewMode = this.ViewMode;
+
+                folderView.GetViewModeAndIconSize(out Shell32.FOLDERVIEWMODE newViewMode, out int newImageSize);
+                //AppContext.TraceDebug($"ACTUAL ViewMode_Settings: {newViewMode}, Size: {newImageSize}");
+
+                // tajbender 23/11/19:
+                // TODO: We won't get noticed if only IconSize has changed, but ViewMode stays the same
+                // (e.g. switiching from "Large Icons" to "Extra Large Icons" View).
+
+                //if (newViewMode != oldViewMode)
+                {
+                    this.viewMode = newViewMode;
+
+                    this.ShellFolderViewModeChanged?.Invoke(this, new ShellFolderViewModeChangedEventArgs(oldViewMode, newViewMode));
+                }
+            }
+            finally
+            {
+                if (null != folderView)
+                    Marshal.ReleaseComObject(folderView);
+            }
+        }
+
+        protected virtual void SetViewMode(Shell32.FOLDERVIEWMODE folderViewMode)
+        {
+            Shell32.IFolderView2 folderView = null;
+            Shell32.FOLDERVIEWMODE oldViewMode = this.ViewMode;
+
+            if (oldViewMode == folderViewMode)
+            {
+                AppContext.TraceWarning($"SetViewMode: Old mode equals new mode");
+                return;
+            }
+
+            try
+            {
+                int imageSize;
+
+                switch(folderViewMode)
+                {
+                    case Shell32.FOLDERVIEWMODE.FVM_THUMBNAIL:
+                        imageSize = 256;
+                        break;
+                    case Shell32.FOLDERVIEWMODE.FVM_ICON:
+                        imageSize = 96;
+                        break;
+                    case Shell32.FOLDERVIEWMODE.FVM_THUMBSTRIP:
+                        imageSize = 48;
+                        break;
+                    case Shell32.FOLDERVIEWMODE.FVM_SMALLICON:
+                        imageSize = 16;
+                        break;
+                    default:
+                        imageSize = -1;
+                        break;
+
+                }
+
+
+                // See https://stackoverflow.com/questions/21328334/how-to-get-large-thumbnails-in-hosted-explorer-browser-control
+                //folderView.GetViewModeAndIconSize(out Shell32.FOLDERVIEWMODE puViewMode, out int pImageSize);
+                //AppContext.TraceDebug($"Current ViewMode: {puViewMode}, {pImageSize}");
+
+                folderView = this.GetFolderView2();
+
+                folderView.SetViewModeAndIconSize(folderViewMode, imageSize);
+
+                this.viewMode = folderViewMode;
+
+                this.ShellFolderViewModeChanged?.Invoke(this, new ShellFolderViewModeChangedEventArgs(oldViewMode, folderViewMode));
+            }
+            finally
+            {
+                if (null != folderView)
+                    Marshal.ReleaseComObject(folderView);
+            }
+        }
+
+
+
+
 
         /// <summary>
         /// Find the native control handle, remove its border style, then ask for a redraw.
@@ -471,7 +583,13 @@ namespace electrifier.Core.Components.Controls
         /// <summary>
         /// Raises the <see cref="ItemsChanged"/> event.
         /// </summary>
-        protected internal virtual void OnItemsChanged() => this.ItemsChanged?.Invoke(this, EventArgs.Empty);
+        protected internal virtual void OnItemsChanged()
+        {
+            this.ItemsChanged?.Invoke(this, EventArgs.Empty);
+            // taj 17.11.19: When ViewMode has been changed by the user, the Shell signals this by using ItemChanged-event
+            this.ViewModeUpdatePending();
+//            this.ShellFolderViewModeChanged?.Invoke(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Raises the <see cref="ItemsEnumerated"/> event.
@@ -603,13 +721,15 @@ namespace electrifier.Core.Components.Controls
         /// <returns>True if successful, otherwise false</returns>
         bool IMessageFilter.PreFilterMessage(ref Message msg)
         {
-            // TODO: Is never called!
+            // TODO: Is never called! => Notify?
             return ((this.explorerBrowser as Shell32.IInputObject)?.TranslateAcceleratorIO(
-                new Vanara.PInvoke.MSG {
+                new Vanara.PInvoke.MSG
+                {
                     message = (uint)msg.Msg,
                     hwnd = msg.HWnd,
                     wParam = msg.WParam,
-                    lParam = msg.LParam }).Succeeded ?? false);
+                    lParam = msg.LParam
+                }).Succeeded ?? false);
         }
 
         #region Implemented Interface: IServiceProvider =======================================================================
@@ -677,7 +797,7 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT OnNavigationComplete(IntPtr pidlFolder)
         {
-            //folderSettings.ViewMode = GetCurrentViewMode();       // TODO
+            this.ViewModeUpdatePending();
             this.OnNavigated(new NavigatedEventArgs { NewLocation = new ShellItem(pidlFolder) });
 
             return HRESULT.S_OK;
@@ -724,6 +844,7 @@ namespace electrifier.Core.Components.Controls
         public HRESULT IncludeObject(Shell32.IShellView ppshv, IntPtr pidl)
         {
             // this.OnIncludeObject(); // TODO: When returning false, the item won't get displayed!
+            // See CDB2GVF_NOINCLUDEITEM for this!
             return HRESULT.S_OK;
         }
 
@@ -1151,8 +1272,10 @@ namespace electrifier.Core.Components.Controls
 
             /// <summary>Gets the number of elements in the collection.</summary>
             /// <value>Returns a <see cref="int"/> value.</value>
-            public int Count {
-                get {
+            public int Count
+            {
+                get
+                {
                     var array = this.Array;
 
                     return (array is null ? 0 : (int)array.GetCount());
@@ -1161,8 +1284,10 @@ namespace electrifier.Core.Components.Controls
 
             private Shell32.IShellItemArray Array => this.parentExplorerBrowser.GetItemsArray(this.collectionOption);
 
-            private IEnumerable<Shell32.IShellItem> Items {
-                get {
+            private IEnumerable<Shell32.IShellItem> Items
+            {
+                get
+                {
                     var array = this.Array;
 
                     if (array is null)
@@ -1176,8 +1301,10 @@ namespace electrifier.Core.Components.Controls
             /// <summary>Gets the <see cref="ShellItem"/> at the specified index.</summary>
             /// <value>The <see cref="ShellItem"/>.</value>
             /// <param name="index">The zero-based index of the element to get.</param>
-            public ShellItem this[int index] {
-                get {
+            public ShellItem this[int index]
+            {
+                get
+                {
                     try
                     {
                         return ShellItem.Open(this.Array.GetItemAt((uint)index));

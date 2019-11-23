@@ -18,8 +18,10 @@
 **
 */
 
-using System;
 
+using electrifier.Core.Components.Controls;
+using System;
+using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Components.DockContents
@@ -34,7 +36,7 @@ namespace electrifier.Core.Components.DockContents
     {
         internal string currentLocation;
 
-        public override bool CanGoBack() => this.ExplorerBrowserControl.History.CanNavigateBackward;
+        public override bool CanGoBack => this.ExplorerBrowserControl.History.CanNavigateBackward;
 
         public override void GoBack()
         {
@@ -42,7 +44,7 @@ namespace electrifier.Core.Components.DockContents
                 Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Backward);
         }
 
-        public override bool CanGoForward() => this.ExplorerBrowserControl.History.CanNavigateForward;
+        public override bool CanGoForward => this.ExplorerBrowserControl.History.CanNavigateForward;
 
         public override void GoForward()
         {
@@ -117,5 +119,15 @@ namespace electrifier.Core.Components.DockContents
         {
             this.NavigationOptionsChanged?.Invoke(this, args);
         }
+
+        public override bool HasShellFolderViewMode => true;
+
+        public override Shell32.FOLDERVIEWMODE ShellFolderViewMode
+        {
+            get => this.ViewMode;
+            set => this.ViewMode = value;
+        }
+
+        public override event EventHandler<ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
     }
 }

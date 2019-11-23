@@ -457,14 +457,14 @@
           </Group>
           <Group CommandName="CmdGrpHomeView" SizeDefinition="OneButton">
             <DropDownButton CommandName="CmdDdbHomeViewLayout">
-              <Button CommandName="CmdBtnHomeViewExtraLargeIcons" />
-              <Button CommandName="CmdBtnHomeViewLargeIcons" />
-              <Button CommandName="CmdBtnHomeViewMediumIcons" />
-              <Button CommandName="CmdBtnHomeViewSmallIcons" />
-              <Button CommandName="CmdBtnHomeViewList" />
-              <Button CommandName="CmdBtnHomeViewDetails" />
-              <Button CommandName="CmdBtnHomeViewTiles" />
-              <Button CommandName="CmdBtnHomeViewContent" />
+              <ToggleButton CommandName="CmdBtnHomeViewExtraLargeIcons" />
+              <ToggleButton CommandName="CmdBtnHomeViewLargeIcons" />
+              <ToggleButton CommandName="CmdBtnHomeViewMediumIcons" />
+              <ToggleButton CommandName="CmdBtnHomeViewSmallIcons" />
+              <ToggleButton CommandName="CmdBtnHomeViewList" />
+              <ToggleButton CommandName="CmdBtnHomeViewDetails" />
+              <ToggleButton CommandName="CmdBtnHomeViewTiles" />
+              <ToggleButton CommandName="CmdBtnHomeViewContent" />
             </DropDownButton>
           </Group>
         </Tab>

@@ -158,17 +158,17 @@ namespace electrifier.Core.Components.Controls
 
                 if (null != navigableDockContent)
                 {
-                    this.btnGoBack.Enabled = navigableDockContent.CanGoBack();
-                    this.btnGoForward.Enabled = navigableDockContent.CanGoForward();
-                    this.ddnHistoryItems.Enabled = navigableDockContent.CanHaveHistoryItems();
+                    this.btnGoBack.Enabled = navigableDockContent.CanGoBack;
+                    this.btnGoForward.Enabled = navigableDockContent.CanGoForward;
+                    this.ddnHistoryItems.Enabled = navigableDockContent.CanHaveHistoryItems;
                     this.ddnHistoryItems.DropDownItems.Rebuild(navigableDockContent.HistoryItems, navigableDockContent.OnHistoryItemClick);      // TODO: Only do this when the item collection has changed!
-                    this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation();
+                    this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation;
                     this.cbbCurrentFolder.Enabled = true;
                     this.cbbCurrentFolder.Text = navigableDockContent.CurrentLocation;
-                    this.btnRefresh.Enabled = navigableDockContent.CanRefresh();
-                    this.ddnQuickAccessItems.Enabled = navigableDockContent.CanHaveQuickAccesItems();
-                    this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems();
-                    this.cbbFilterPattern.Enabled = navigableDockContent.CanFilterItems();
+                    this.btnRefresh.Enabled = navigableDockContent.CanRefresh;
+                    this.ddnQuickAccessItems.Enabled = navigableDockContent.CanHaveQuickAccesItems;
+                    this.cbbSearchPattern.Enabled = navigableDockContent.CanSearchItems;
+                    this.cbbFilterPattern.Enabled = navigableDockContent.CanFilterItems;
                 }
                 else
                 {

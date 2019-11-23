@@ -18,12 +18,14 @@
 **
 */
 
+using electrifier.Core.Components.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Windows.Forms;
-
+using Vanara.PInvoke;
 using Vanara.Windows.Shell;
+
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -40,48 +42,52 @@ namespace electrifier.Core.Components.DockContents
           : base()
         {
             this.NavigationHost = navigationHost ??
-                throw new ArgumentNullException("Instantiation of ElNavigableDockContent not allowed without given IElNavigationHost");
+                throw new ArgumentNullException(nameof(navigationHost));
 
             //this.OnActivated TODO: Store previous DockContent for activation chain?
         }
 
-        public virtual bool CanGoBack() { return false; }
+        public virtual bool CanGoBack => false;
         public virtual void GoBack() { throw new NotImplementedException(); }
 
-        public virtual bool CanGoForward() { return false; }
+        public virtual bool CanGoForward => false;
         public virtual void GoForward() { throw new NotImplementedException(); }
 
-        public virtual bool CanHaveHistoryItems() => this.HistoryItems != default;
+        public virtual bool CanHaveHistoryItems => this.HistoryItems != default;
         public virtual ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
         ///   TODO: This will be replaced by SetCurrentLocation(HistoryIndex historyIndex);
         public virtual bool GoToHistoryItem(int historyItemIndex) { throw new NotImplementedException(); }
 
-        public virtual bool HasParentLocation() { return false; }
+        public virtual bool HasParentLocation => false;
         public virtual void GoToParentLocation() { throw new NotImplementedException(); }
 
         public abstract string CurrentLocation { get; set; }
-        public virtual bool CanHaveRecentLocations() => this.RecentLocations != default;
+        public virtual bool CanHaveRecentLocations => this.RecentLocations != default;
         public virtual ElNavigableTargetItemCollection<ElNavigableTargetShellFolder> RecentLocations { get; }
 
-        public virtual bool CanRefresh() { return false; }
+        public virtual bool CanRefresh => false;
         public virtual void DoRefresh() { throw new NotImplementedException(); }
 
         // TODO: QuickAccess => We want to have subfolders in this collection!
-        public virtual bool CanHaveQuickAccesItems() => this.QuickAccessItems != default;
+        public virtual bool CanHaveQuickAccesItems => this.QuickAccessItems != default;
         public virtual ElNavigableTargetItemCollection<ElNavigableTargetShellFolder> QuickAccessItems { get; }
 
-        public virtual bool CanSearchItems() { return false; }
+        public virtual bool CanSearchItems => false;
         public virtual string CurrentSearchPattern { get; set; }
         public virtual void DoSearchItems(string SearchPattern) { throw new NotImplementedException(); }
 
         public abstract event EventHandler /* TODO: ElNavigableDockContent */ NavigationOptionsChanged;
 
+        // TODO: Put ShellFolderViewMode-property into its own interface? => "Classes are fast, interfaces are slow" I've read.
+        public virtual bool HasShellFolderViewMode => false;
+        public virtual Shell32.FOLDERVIEWMODE ShellFolderViewMode { get => Shell32.FOLDERVIEWMODE.FVM_AUTO; set => throw new NotImplementedException(); }
+        public virtual event EventHandler<ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
+
         // TODO: 05/02/19 Search and Filter options will be combined!
         //public virtual ElNavOptionState CanApplyFilter() { return ElNavOptionState.Hidden; }
         //public virtual string CurrentFilterPattern { get; set; }
         //public virtual void DoApplyFilter(string FilterPattern) { throw new NotImplementedException(); }
-        public virtual bool CanFilterItems() { return false; }
-
+        public virtual bool CanFilterItems => false;
 
         public virtual void OnHistoryItemClick(object sender, EventArgs e)
         {

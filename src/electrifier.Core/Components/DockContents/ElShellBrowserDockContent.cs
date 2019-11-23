@@ -22,6 +22,7 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 using electrifier.Core.Components.Controls;
+using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Components.DockContents
@@ -46,6 +47,12 @@ namespace electrifier.Core.Components.DockContents
         #region Properties ====================================================================================================
 
         public ShellItem InitialNaviagtionTarget { get; private set; } = default;
+
+        public Shell32.FOLDERVIEWMODE ViewMode
+        {
+            get => this.ExplorerBrowserControl.ViewMode;
+            set => this.ExplorerBrowserControl.ViewMode = value;
+        }
 
         //public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
 
@@ -99,6 +106,7 @@ namespace electrifier.Core.Components.DockContents
                 this.ExplorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
                 this.ExplorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
                 this.ExplorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
+                this.ExplorerBrowserControl.ShellFolderViewModeChanged += this.ExplorerBrowserControl_ShellFolderViewModeChanged;
                 this.ExplorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
 
                 this.Controls.Add(this.ExplorerBrowserControl);
@@ -107,6 +115,13 @@ namespace electrifier.Core.Components.DockContents
             {
                 this.ResumeLayout();
             }
+        }
+
+        private void ExplorerBrowserControl_ShellFolderViewModeChanged(object sender, ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs e)
+        {
+            AppContext.TraceDebug($"CHANGED ElShellBrowserDockContent.ViewMode: Was {e.OldFolderViewMode}, is now {e.NewFolderViewMode}");
+
+            this.ShellFolderViewModeChanged?.Invoke(this, e);
         }
 
         protected override void Dispose(bool disposing)

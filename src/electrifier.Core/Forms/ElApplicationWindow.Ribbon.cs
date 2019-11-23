@@ -20,6 +20,7 @@
 
 
 using electrifier.Core.Components;
+using electrifier.Core.Components.DockContents;
 using electrifier.Core.WindowsShell;
 using Sunburst.WindowsForms.Ribbon.Controls;
 using System;
@@ -27,6 +28,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using Vanara.PInvoke;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
@@ -45,6 +47,8 @@ namespace electrifier.Core.Forms
             #region Fields ====================================================================================================
 
             private ElClipboardAbilities clipboardAbilities = ElClipboardAbilities.CanCut | ElClipboardAbilities.CanCopy;
+
+            private Shell32.FOLDERVIEWMODE shellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_AUTO;
 
             #endregion Fields =================================================================================================
 
@@ -102,6 +106,20 @@ namespace electrifier.Core.Forms
                 CmdBtnSelectSelectAll = 1502,
                 CmdBtnSelectSelectNone = 1503,
                 CmdBtnSelectInvertSelection = 1504,
+
+                //
+                // Command Group: Home -> View ================================================================================
+                //
+                CmdGrpHomeView = 1600,
+                CmdBtnHomeViewExtraLargeIcons = 1611,
+                CmdBtnHomeViewLargeIcons = 1612,
+                CmdBtnHomeViewMediumIcons = 1613,
+                CmdBtnHomeViewSmallIcons = 1614,
+                CmdBtnHomeViewList = 1615,
+                CmdBtnHomeViewDetails = 1616,
+                CmdBtnHomeViewTiles = 1617,
+                CmdBtnHomeViewContent = 1618,
+
 
                 //
                 // Command Group: Desktop -> Icon Layout ======================================================================
@@ -163,6 +181,16 @@ namespace electrifier.Core.Forms
             public RibbonButton CmdBtnSelectSelectNone { get; }
             public RibbonButton CmdBtnSelectInvertSelection { get; }
 
+            public RibbonButton CmdGrpHomeView { get; }
+            public RibbonToggleButton CmdBtnHomeViewExtraLargeIcons { get; }
+            public RibbonToggleButton CmdBtnHomeViewLargeIcons { get; }
+            public RibbonToggleButton CmdBtnHomeViewMediumIcons { get; }
+            public RibbonToggleButton CmdBtnHomeViewSmallIcons { get; }
+            public RibbonToggleButton CmdBtnHomeViewList { get; }
+            public RibbonToggleButton CmdBtnHomeViewDetails { get; }
+            public RibbonToggleButton CmdBtnHomeViewTiles { get; }
+            public RibbonToggleButton CmdBtnHomeViewContent { get; }
+
             //
             // Ribbon Tab: Desktop Commands ===================================================================================
             //
@@ -185,6 +213,34 @@ namespace electrifier.Core.Forms
                         this.CmdBtnClipboardCut.Enabled = value.HasFlag(ElClipboardAbilities.CanCut);
                         this.CmdBtnClipboardCopy.Enabled = value.HasFlag(ElClipboardAbilities.CanCopy);
                     }
+                }
+            }
+
+            public Shell32.FOLDERVIEWMODE ShellFolderViewMode
+            {
+                get => this.shellFolderViewMode;
+                set
+                {
+                    AppContext.TraceDebug($"Ribbon: ShellFolderViewMode = {value}");
+
+                    if (this.shellFolderViewMode == value)
+                        return;
+
+                    this.BeginInvoke(new MethodInvoker(delegate ()
+                    {
+                        // https://docs.microsoft.com/en-us/windows/win32/windowsribbon/windowsribbon-reference-properties-uipkey-booleanvalue
+                        //this.CmdBtnHomeViewExtraLargeIcons.UpdateProperty(ref "ApplicationDefaults.IsChecked", true, true);
+
+                        this.shellFolderViewMode = value;
+                        this.CmdBtnHomeViewExtraLargeIcons.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_THUMBNAIL);
+                        this.CmdBtnHomeViewLargeIcons.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_ICON);
+                        this.CmdBtnHomeViewMediumIcons.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_THUMBSTRIP);
+                        this.CmdBtnHomeViewSmallIcons.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_SMALLICON);
+                        this.CmdBtnHomeViewList.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_LIST);
+                        this.CmdBtnHomeViewDetails.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_DETAILS);
+                        this.CmdBtnHomeViewTiles.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_TILE);
+                        this.CmdBtnHomeViewContent.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_CONTENT);
+                    }));
                 }
             }
 
@@ -298,7 +354,7 @@ namespace electrifier.Core.Forms
                 };
 
                 //
-                // Command Group: Home -> Organise ================================================================================
+                // Command Group: Home -> Select ==================================================================================
                 //
                 this.CmdGrpHomeSelect = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpHomeSelect);
                 this.CmdBtnSelectSelectAll = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectSelectAll);
@@ -307,6 +363,19 @@ namespace electrifier.Core.Forms
                 this.CmdBtnSelectSelectNone.ExecuteEvent += this.ApplicationWindow.CmdSelectNone_ExecuteEvent;
                 this.CmdBtnSelectInvertSelection = new RibbonButton(this, (uint)RibbonCommandID.CmdBtnSelectInvertSelection);
                 this.CmdBtnSelectInvertSelection.ExecuteEvent += this.ApplicationWindow.CmdInvertSelection_ExecuteEvent;
+                //
+                // Command Group: Home -> Layout ==================================================================================
+                //
+                this.CmdGrpHomeView = new RibbonButton(this, (uint)RibbonCommandID.CmdGrpHomeView);
+                this.CmdBtnHomeViewExtraLargeIcons = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewExtraLargeIcons);
+                this.CmdBtnHomeViewLargeIcons = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewLargeIcons);
+                this.CmdBtnHomeViewMediumIcons = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewMediumIcons);
+                this.CmdBtnHomeViewSmallIcons = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewSmallIcons);
+                this.CmdBtnHomeViewList = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewList);
+                this.CmdBtnHomeViewDetails = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewDetails);
+                this.CmdBtnHomeViewTiles = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewTiles);
+                this.CmdBtnHomeViewContent = new RibbonToggleButton(this, (uint)RibbonCommandID.CmdBtnHomeViewContent);
+
 
                 this.CmdTabDesktop = new RibbonTab(this, (uint)RibbonCommandID.CmdTabDesktop);
                 this.CmdDesktopTabGroup = new RibbonTabGroup(this, (uint)RibbonCommandID.CmdDesktopToolsTabGroup);
@@ -322,9 +391,63 @@ namespace electrifier.Core.Forms
 
                 // TODO: Iterate through and disable all child elements that have no ExecuteEvent-Handler to get rid of those "Enabled=false"-Statements
 
+                this.CmdBtnHomeViewExtraLargeIcons.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewLargeIcons.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewMediumIcons.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewSmallIcons.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewList.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewDetails.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewTiles.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+                this.CmdBtnHomeViewContent.ExecuteEvent += this.CmdBtnHomeView_ExecuteEvent;
+
                 // For test purposes, enable all available Contexts
                 this.CmdDesktopTabGroup.ContextAvailable = Sunburst.WindowsForms.Ribbon.Interop.ContextAvailability.Active;
 
+            }
+
+            private void CmdBtnHomeView_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
+            {
+                Debug.Assert(sender is RibbonToggleButton);
+
+                this.BeginInvoke(new MethodInvoker(delegate ()
+                {
+                    RibbonCommandID ribbonCommandID = (RibbonCommandID)(sender as BaseRibbonControl).CommandID;
+                    Shell32.FOLDERVIEWMODE newShellFolderViewMode;
+
+                    switch (ribbonCommandID)
+                    {
+                        case RibbonCommandID.CmdBtnHomeViewExtraLargeIcons:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_THUMBNAIL;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewLargeIcons:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_ICON;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewMediumIcons:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_THUMBSTRIP;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewSmallIcons:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_SMALLICON;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewList:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_LIST;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewDetails:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_DETAILS;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewTiles:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_TILE;
+                            break;
+                        case RibbonCommandID.CmdBtnHomeViewContent:
+                            newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_CONTENT;
+                            break;
+                        default:
+                            throw new IndexOutOfRangeException(nameof(ribbonCommandID));
+                    }
+
+                    // Finally, apply new ViewMode if ActiveDockContent is of type ElNavigableDockContent
+                    if (this.ApplicationWindow.ActiveDockContent is ElNavigableDockContent navigableDockContent)
+                        navigableDockContent.ShellFolderViewMode = newShellFolderViewMode;
+                }));
             }
 
             private void CmdBtnDesktopIconLayoutSave_ExecuteEvent(object sender, Sunburst.WindowsForms.Ribbon.Controls.Events.ExecuteEventArgs e)
