@@ -413,14 +413,14 @@ namespace electrifier.Core.Components.Controls
 
                     for (int i = 0; i < itemCount; i++)
                     {
-                        IntPtr nativePidl = folderView.Item(i);
-                        Shell32.SVSIF state = folderView.GetSelectionState(nativePidl);
+                        Shell32.PIDL pidl = folderView.Item(i);
+                        Shell32.SVSIF state = folderView.GetSelectionState(pidl);
 
                         if (state == Shell32.SVSIF.SVSI_DESELECT ||
                             state == Shell32.SVSIF.SVSI_FOCUSED && state != Shell32.SVSIF.SVSI_SELECT)
-                            shellView.SelectItem(nativePidl, Shell32.SVSIF.SVSI_SELECT);
+                            shellView.SelectItem((IntPtr)pidl, Shell32.SVSIF.SVSI_SELECT);
                         else
-                            shellView.SelectItem(nativePidl, Shell32.SVSIF.SVSI_DESELECT);
+                            shellView.SelectItem((IntPtr)pidl, Shell32.SVSIF.SVSI_DESELECT);
                     }
                 }
             }
@@ -734,7 +734,7 @@ namespace electrifier.Core.Components.Controls
 
         #region Implemented Interface: IServiceProvider =======================================================================
 
-        public HRESULT QueryService(ref Guid guidService, ref Guid riid, out IntPtr ppvObject)
+        public HRESULT QueryService(in Guid guidService, in Guid riid, out IntPtr ppvObject)
         {
             ppvObject = default;
 

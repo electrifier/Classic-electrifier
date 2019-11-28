@@ -39,9 +39,6 @@ namespace electrifier.Core.WindowsShell
     {
         //// TODO: Nice to have: https://stackoverflow.com/questions/22284718/how-to-get-the-pidl-of-an-open-explorer-window
 
-        public static int CSIDL_DESKTOP = 0x0000;                                                   // TODO: Use Vanara constants, Win32.Shell from "Shlobj.h"
-        public static Guid SID_STopLevelBrowser = new Guid("4C96BE40-915C-11CF-99D3-00AA004AE837"); // TODO: Use Vanara constants, "shobjidl_core.h"
-
 
         [Serializable]
         public class DesktopIconLayout
@@ -166,11 +163,11 @@ namespace electrifier.Core.WindowsShell
                     fileStream.Close();
                 }
             }
-            catch (FileNotFoundException exFnf)
+            catch (FileNotFoundException)
             {
                 throw;
             }
-            catch (DirectoryNotFoundException exDnf)
+            catch (DirectoryNotFoundException)
             {
                 throw;
             }
@@ -200,12 +197,12 @@ namespace electrifier.Core.WindowsShell
                 Shell32.IShellWindows shellWindows = new Shell32.IShellWindows() ??
                     throw new COMException("No IShellWindows");
 
-                if (!(shellWindows.FindWindowSW(new Ole32.PROPVARIANT(CSIDL_DESKTOP), new Ole32.PROPVARIANT(),
+                if (!(shellWindows.FindWindowSW(new Ole32.PROPVARIANT((int)Shell32.CSIDL.CSIDL_DESKTOP), new Ole32.PROPVARIANT(),
                     Shell32.ShellWindowTypeConstants.SWC_DESKTOP, out _, Shell32.ShellWindowFindWindowOptions.SWFO_NEEDDISPATCH)
                     is Shell32.IServiceProvider serviceProvider))
                     throw new COMException("No IServiceProvider");
 
-                serviceProvider.QueryService(SID_STopLevelBrowser, typeof(Shell32.IShellBrowser).GUID, out pShellBrowser).ThrowIfFailed();
+                serviceProvider.QueryService(Shell32.SID_STopLevelBrowser, typeof(Shell32.IShellBrowser).GUID, out pShellBrowser).ThrowIfFailed();
                 Shell32.IShellBrowser shellBrowser = Marshal.GetTypedObjectForIUnknown(pShellBrowser, typeof(Shell32.IShellBrowser)) as Shell32.IShellBrowser;
 
                 Shell32.IShellView shellView = shellBrowser.QueryActiveShellView();
@@ -270,7 +267,7 @@ namespace electrifier.Core.WindowsShell
                 Shell32.IEnumIDList spEnum = folderView2.Items<Shell32.IEnumIDList>(Shell32.SVGIO.SVGIO_ALLVIEW);
                 int maxItemCount = folderView2.ItemCount(Shell32.SVGIO.SVGIO_ALLVIEW);
 
-                IntPtr[] apidl = new IntPtr[maxItemCount];
+                Shell32.PIDL[] apidl = new Shell32.PIDL[maxItemCount];
                 Point[] apoint = new Point[maxItemCount];
 
                 while (spEnum.Next(1, out IntPtr ptrpidl, out uint pceltFetched).Succeeded && pceltFetched == 1)
