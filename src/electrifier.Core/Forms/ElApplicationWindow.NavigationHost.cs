@@ -55,7 +55,7 @@ namespace electrifier.Core.Forms
 
             // Connect clipboard consumer events
             if (dockContent is IElClipboardConsumer clipboardConsumer)
-                clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardConsumer_ClipboardAbilitiesChanged;
+                clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardAbilitiesChanged;
 
 
             // TODO: Connect events!

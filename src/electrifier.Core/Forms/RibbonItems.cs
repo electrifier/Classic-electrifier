@@ -26,6 +26,7 @@ using RibbonLib.Controls.Events;
 using RibbonLib.Interop;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 using Vanara.PInvoke;
 using WeifenLuo.WinFormsUI.Docking;
@@ -91,16 +92,14 @@ namespace RibbonLib.Controls
             get => this.shellFolderViewMode;
             set
             {
-                //                    AppContext.TraceDebug($"Ribbon: ShellFolderViewMode = {value}");
+                //  AppContext.TraceDebug($"Ribbon: ShellFolderViewMode = {value}");
 
                 if (this.shellFolderViewMode == value)
                     return;
 
                 this.ApplicationWindow.BeginInvoke(new MethodInvoker(delegate ()
-                //this.BeginInvoke(new MethodInvoker(delegate ()
                 {
                     // https://docs.microsoft.com/en-us/windows/win32/windowsribbon/windowsribbon-reference-properties-uipkey-booleanvalue
-                    //this.CmdBtnHomeViewExtraLargeIcons.UpdateProperty(ref "ApplicationDefaults.IsChecked", true, true);
 
                     this.shellFolderViewMode = value;
                     this.BtnHomeViewExtraLargeIcons.BooleanValue = (value == Shell32.FOLDERVIEWMODE.FVM_THUMBNAIL);
@@ -125,8 +124,8 @@ namespace RibbonLib.Controls
         {
             this.ApplicationWindow = elApplicationWindow ?? throw new ArgumentNullException(nameof(elApplicationWindow));
 
-            ////this.SetColors(Color.Wheat, Color.IndianRed, Color.BlueViolet);
-            ///
+            //ribbon.LoadSettingsFromStream(str);
+            //ribbon.SetColors(Color.Wheat, Color.IndianRed, Color.BlueViolet);
 
 
             #region Event Handlers ============================================================================================
@@ -139,8 +138,9 @@ namespace RibbonLib.Controls
             //
             // Application Menu Items =========================================================================================
             //
-            this.BtnApp_OpenCommandPrompt.Enabled = false;
+            this.BtnApp_OpenNewWindow.Enabled = false;
             this.BtnApp_OpenNewShellBrowserPanel.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
+            this.BtnApp_OpenCommandPrompt.Enabled = false;
             this.BtnApp_OpenWindowsPowerShell.Enabled = false;
             this.BtnApp_ChangeElectrifierOptions.Enabled = false;
             this.BtnApp_ChangeFolderAndSearchOptions.Enabled = false;
@@ -153,7 +153,16 @@ namespace RibbonLib.Controls
             //
             this.BtnClipboardCut.ExecuteEvent += this.ApplicationWindow.CmdClipboardCut_ExecuteEvent;
             this.BtnClipboardCopy.ExecuteEvent += this.ApplicationWindow.CmdClipboardCopy_ExecuteEvent;
+            this.ClipboardCopyFullFilePaths.Enabled = false;
+            this.ClipboardCopyFileNames.Enabled = false;
+            this.ClipboardCopyDirectoryPaths.Enabled = false;
             this.BtnClipboardPaste.ExecuteEvent += this.ApplicationWindow.CmdClipboardPaste_ExecuteEvent;
+            this.BtnClipboardPasteAsNewFile.Enabled = false;
+            this.BtnClipboardPasteAsNewTextFile.Enabled = false;
+            this.BtnClipboardPasteAsNewBMPFile.Enabled = false;
+            this.BtnClipboardPasteAsNewJPGFile.Enabled = false;
+            this.BtnClipboardPasteAsNewPNGFile.Enabled = false;
+            this.BtnClipboardPasteAsNewGIFFile.Enabled = false;
             this.BtnClipboardHistory.Enabled = false;
 
             //
@@ -189,22 +198,27 @@ namespace RibbonLib.Controls
             //
             this.DesktopIconSettingsSaveLayoutButton.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutSave_ExecuteEvent;
             this.DesktopIconSettingsRestoreLayoutButton.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutRestore_ExecuteEvent;
-
+            this.DesktopIconSettingsLaunchControlPanel.Enabled = false;
+            this.CbxDesktopIconSettingsSpacingVertical.Enabled = false;
+            this.CbxDesktopIconSettingsSpacingHorizontal.Enabled = false;
+            this.DesktopShortcutCreateDefaults.Enabled = false;
+            this.DesktopShortcutValidate.Enabled = false;
 
             #endregion Event Handlers =========================================================================================
 
             //// TODO: Iterate through and disable all child elements that have no ExecuteEvent-Handler to get rid of those "Enabled=false"-Statements
 
 
-            // For test purposes, enable all available Contexts
+            // TODO: For test purposes, enable all available Contexts
             this.DesktopToolsTabGroup.ContextAvailable = ContextAvailability.Active;
-
         }
 
 
-        private void CmdBtnHomeView_ExecuteEvent(object sender, ExecuteEventArgs e)
+        private void CmdBtnHomeView_ExecuteEvent(object sender, ExecuteEventArgs _)
         {
             Debug.Assert(sender is RibbonToggleButton);
+
+            if (sender is null) throw new ArgumentNullException(nameof(sender));
 
             this.ApplicationWindow.BeginInvoke(new MethodInvoker(delegate ()
             {
@@ -254,12 +268,15 @@ namespace RibbonLib.Controls
         /// </summary>
         /// <param name="sender">The <see cref="IElClipboardConsumer"/> that has changed its <see cref="clipboardAbilities"/>.</param>
         /// <param name="e">The <see cref="ClipboardAbilitiesChangedEventArgs"/>.</param>
-        public void ClipboardConsumer_ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs e)
+        public void ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs args)
         {
             Debug.Assert(sender is IElClipboardConsumer, "sender is not of type IElClipboardConsumer");
 
+            if (sender is null) throw new ArgumentNullException(nameof(sender));
+            if (args is null) throw new ArgumentNullException(nameof(args));
+
             if (sender.Equals(this.ApplicationWindow.ActiveDockContent))
-                this.ClipboardAbilities = e.NewClipboardAbilities;
+                this.ClipboardAbilities = args.NewClipboardAbilities;
         }
     }
 }
