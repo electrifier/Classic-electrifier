@@ -20,11 +20,10 @@
 
 using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
-using Sunburst.WindowsForms.Ribbon.Controls.Events;
-using System;
+using electrifier.Core.WindowsShell;
+using RibbonLib.Controls.Events;
 using System.Windows.Forms;
 using Vanara.PInvoke;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
@@ -35,7 +34,7 @@ namespace electrifier.Core.Forms
     /// </summary>
     public partial class ElApplicationWindow
     {
-        private void CmdAppOpenNewShellBrowserPane_ExecuteEvent(object sender, ExecuteEventArgs e)
+        internal void CmdAppOpenNewShellBrowserPane_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             AppContext.TraceScope();
 
@@ -94,14 +93,14 @@ namespace electrifier.Core.Forms
         //    newDockContent.Show(this.dpnDockPanel, floatWindowBounds);
         //}
 
-        private void CmdAppHelpAboutElectrifier_ExecuteEvent(object sender, ExecuteEventArgs e)
+        internal void CmdAppHelpAboutElectrifier_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             AppContext.TraceScope();
 
             new ElAboutDialog().ShowDialog();
         }
 
-        private void CmdAppHelpAboutWindows_ExecuteEvent(object sender, ExecuteEventArgs e)
+        internal void CmdAppHelpAboutWindows_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             AppContext.TraceScope();
 
@@ -109,7 +108,7 @@ namespace electrifier.Core.Forms
         }
 
 
-        private void CmdAppClose_ExecuteEvent(object sender, ExecuteEventArgs e)
+        internal void CmdAppClose_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             AppContext.TraceScope();
 
@@ -192,6 +191,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdSelectAll_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
+            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IElClipboardConsumer to avoid accessing ActiveContent
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.SelectAll();
@@ -200,6 +200,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdSelectNone_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
+            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IElClipboardConsumer to avoid accessing ActiveContent
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.SelectNone();
@@ -208,10 +209,29 @@ namespace electrifier.Core.Forms
 
         internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
+            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IElClipboardConsumer to avoid accessing ActiveContent
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.InvertSelection();
             }
+        }
+
+        internal void CmdBtnDesktopIconLayoutSave_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            // TODO: Error-Handling! cause of call from Ribbon, then remove invoke
+            this.BeginInvoke(new MethodInvoker(delegate ()
+            {
+                ElDesktopIconManager.SaveLayout();
+            }));
+        }
+
+        internal void CmdBtnDesktopIconLayoutRestore_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            // TODO: Error-Handling! cause of call from Ribbon, then remove invoke
+            this.BeginInvoke(new MethodInvoker(delegate ()
+            {
+                ElDesktopIconManager.RestoreLayout();
+            }));
         }
     }
 }

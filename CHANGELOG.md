@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - in case of vulnerabilities.
 
 ## [Unreleased]
-
+### Changed
+- Replaced Sunburst.WindowsForms.Ribbon by https://github.com/harborsiem/WindowsRibbon
 
 ## [0.1.0] - 2017-08-17
 ### Added

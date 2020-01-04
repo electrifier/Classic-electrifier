@@ -1,3 +1,4 @@
+using System.Resources;
 /*
 ** 
 **  electrifier
@@ -26,3 +27,4 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("electrifier.Core.dll")]
 [assembly: Guid("8F2A9E0F-47E0-45D7-9A86-3A58332D4990")]
+[assembly: NeutralResourcesLanguage("en")]

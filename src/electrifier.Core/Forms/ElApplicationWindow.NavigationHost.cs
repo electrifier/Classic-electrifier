@@ -55,7 +55,7 @@ namespace electrifier.Core.Forms
 
             // Connect clipboard consumer events
             if (dockContent is IElClipboardConsumer clipboardConsumer)
-                clipboardConsumer.ClipboardAbilitiesChanged += this.rbnRibbon.ClipboardConsumer_ClipboardAbilitiesChanged;
+                clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardConsumer_ClipboardAbilitiesChanged;
 
 
             // TODO: Connect events!
@@ -89,12 +89,12 @@ namespace electrifier.Core.Forms
 
             if (dockContent is ElShellBrowserDockContent elShellBrowser)
             {
-                this.rbnRibbon.ShellFolderViewMode = elShellBrowser.ViewMode;
+                this.RibbonItems.ShellFolderViewMode = elShellBrowser.ViewMode;
             }
             else
-                this.rbnRibbon.ShellFolderViewMode = /* TODO: None */ Vanara.PInvoke.Shell32.FOLDERVIEWMODE.FVM_AUTO;
+                this.RibbonItems.ShellFolderViewMode = /* TODO: None */ Vanara.PInvoke.Shell32.FOLDERVIEWMODE.FVM_AUTO;
 
-            AppContext.TraceDebug("CHANGED by Activation - NavigationHost - ViewMode: " + this.rbnRibbon.ShellFolderViewMode);
+            AppContext.TraceDebug("CHANGED by Activation - NavigationHost - ViewMode: " + this.RibbonItems.ShellFolderViewMode);
 
             // Update navigation bar, i.e. its button states
             this.ntsNavigation.ActiveDockContent = dockContent;
@@ -152,7 +152,7 @@ namespace electrifier.Core.Forms
             AppContext.TraceDebug("CHANGED by DockContent_ShellFolderViewModeChanged - NavigationHost - ViewMode: " + e.NewFolderViewMode);
 
             if (sender.Equals(this.ActiveDockContent))
-                this.rbnRibbon.ShellFolderViewMode = e.NewFolderViewMode;
+                this.RibbonItems.ShellFolderViewMode = e.NewFolderViewMode;
         }
 
         #endregion =============================================================================================================

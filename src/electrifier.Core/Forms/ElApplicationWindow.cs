@@ -29,7 +29,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
-
+using RibbonLib.Controls;
 
 namespace electrifier.Core.Forms
 {
@@ -44,6 +44,7 @@ namespace electrifier.Core.Forms
 
         // TODO: Add Creation timestamp! in debug mode
         private static readonly string formTitle_Affix = $"electrifier v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
+        public RibbonItems RibbonItems { get; }
 
         #endregion ============================================================================================================
 
@@ -72,6 +73,7 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
 
             this.InitializeComponent();
+            this.RibbonItems = new RibbonItems(this, this.rbnRibbon);
 
             // Initialize properties
             this.Text = this.Text;          //this.FormTitle_AddDebugRemark(); // TODO: Add formTitleAffix
@@ -138,7 +140,7 @@ namespace electrifier.Core.Forms
             var activeContent = this.dpnDockPanel.ActiveContent;
 
             // Process Ribbon-part of DockContent-Activation
-            this.rbnRibbon.Ribbon_ProcessDockContentChange(activeContent);      // TODO: Property!
+            this.RibbonItems.ActiveDockContent = activeContent;
 
             // Process Interface IElNavigationHost-part of DockContent-Activation
             if (null == activeContent)

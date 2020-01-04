@@ -1,6 +1,4 @@
 *.csproj.user
-*.ribbon
-*.RibbonMarkup.log
 *.suo
 /src/*/bin/
 /src/*/obj/
