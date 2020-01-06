@@ -93,7 +93,7 @@ namespace electrifier.Core.WindowsShell
 
         private const string defaultFileName = @"Desktop Icon Layout.eldil";
         private const Environment.SpecialFolder defaultSpecialFolder = Environment.SpecialFolder.MyDocuments;
-//        public static string DefaultFullFileName { get; set; } = @Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"electrifier\Desktop Icon Positions.eldip");      // TODO: AppContext => Property
+//        public static string DefaultFullFileName { get; set; } = @Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), @"electrifier\Desktop Icon Positions.eldip");      // TODO: AppContext => Property for output file directory
 
         public static string DefaultFileName => ElDesktopIconManager.defaultFileName;
         public static string DefaultDirectoryName => Path.Combine(Environment.GetFolderPath(defaultSpecialFolder), "electrifier");
