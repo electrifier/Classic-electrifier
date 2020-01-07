@@ -136,7 +136,7 @@ namespace electrifier.Core.Forms
             this.rbnRibbon.Location = new System.Drawing.Point(0, 0);
             this.rbnRibbon.Minimized = false;
             this.rbnRibbon.Name = "rbnRibbon";
-            this.rbnRibbon.ResourceName = "electrifier.Core.Resources.ElApplicationWindow.Ribbon";
+            this.rbnRibbon.ResourceName = "electrifier.Core.Resources.ElApplicationWindow.Ribbon.ribbon";
             this.rbnRibbon.ShortcutTableResourceName = null;
             this.rbnRibbon.Size = new System.Drawing.Size(782, 122);
             this.rbnRibbon.TabIndex = 6;
