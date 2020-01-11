@@ -231,7 +231,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ElApplicationWindow.Ribbon" />
+    <EmbeddedResource Include="Resources\ElApplicationWindow.Ribbon.ribbon" />
     <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
     <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\ShellBrowserDockContent.ico" />

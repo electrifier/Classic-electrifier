@@ -133,29 +133,29 @@ namespace RibbonLib.Controls
             //
             // Quick Access Toolbar Commands ==================================================================================
             //
-            this.BtnQAT_OpenNewShellBrowserPanel.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
+            this.BtnQATOpenNewShellBrowserPanel.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
 
             //
             // Application Menu Items =========================================================================================
             //
-            this.BtnApp_OpenNewWindow.Enabled = false;
-            this.BtnApp_OpenNewShellBrowserPanel.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
-            this.BtnApp_OpenCommandPrompt.Enabled = false;
-            this.BtnApp_OpenWindowsPowerShell.Enabled = false;
-            this.BtnApp_ChangeElectrifierOptions.Enabled = false;
-            this.BtnApp_ChangeFolderAndSearchOptions.Enabled = false;
-            this.BtnApp_Help_AboutElectrifier.ExecuteEvent += this.ApplicationWindow.CmdAppHelpAboutElectrifier_ExecuteEvent;
-            this.BtnApp_Help_AboutWindows.ExecuteEvent += this.ApplicationWindow.CmdAppHelpAboutWindows_ExecuteEvent;
-            this.BtnApp_Close.ExecuteEvent += this.ApplicationWindow.CmdAppClose_ExecuteEvent;
+            this.BtnAppOpenNewWindow.Enabled = false;
+            this.BtnAppOpenNewShellBrowserPanel.ExecuteEvent += this.ApplicationWindow.CmdAppOpenNewShellBrowserPane_ExecuteEvent;
+            this.BtnAppOpenCommandPrompt.Enabled = false;
+            this.BtnAppOpenWindowsPowerShell.Enabled = false;
+            this.BtnAppChangeElectrifierOptions.Enabled = false;
+            this.BtnAppChangeFolderAndSearchOptions.Enabled = false;
+            this.BtnAppHelp_AboutElectrifier.ExecuteEvent += this.ApplicationWindow.CmdAppHelpAboutElectrifier_ExecuteEvent;
+            this.BtnAppHelp_AboutWindows.ExecuteEvent += this.ApplicationWindow.CmdAppHelpAboutWindows_ExecuteEvent;
+            this.BtnAppClose.ExecuteEvent += this.ApplicationWindow.CmdAppClose_ExecuteEvent;
 
             //
             // Command Group: Home -> Clipboard ===============================================================================
             //
             this.BtnClipboardCut.ExecuteEvent += this.ApplicationWindow.CmdClipboardCut_ExecuteEvent;
             this.BtnClipboardCopy.ExecuteEvent += this.ApplicationWindow.CmdClipboardCopy_ExecuteEvent;
-            this.ClipboardCopyFullFilePaths.Enabled = false;
-            this.ClipboardCopyFileNames.Enabled = false;
-            this.ClipboardCopyDirectoryPaths.Enabled = false;
+            this.BtnClipboardCopyFullFilePaths.Enabled = false;
+            this.BtnClipboardCopyFileNames.Enabled = false;
+            this.BtnClipboardCopyDirectoryPaths.Enabled = false;
             this.BtnClipboardPaste.ExecuteEvent += this.ApplicationWindow.CmdClipboardPaste_ExecuteEvent;
             this.BtnClipboardPasteAsNewFile.Enabled = false;
             this.BtnClipboardPasteAsNewTextFile.Enabled = false;
@@ -196,13 +196,13 @@ namespace RibbonLib.Controls
             //
             // Command Group: Desktop -> Icon Layout ==========================================================================
             //
-            this.DesktopIconSettingsSaveLayoutButton.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutSave_ExecuteEvent;
-            this.DesktopIconSettingsRestoreLayoutButton.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutRestore_ExecuteEvent;
-            this.DesktopIconSettingsLaunchControlPanel.Enabled = false;
+            this.BtnDesktopIconSettingsSaveLayout.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutSave_ExecuteEvent;
+            this.BtnDesktopIconSettingsRestoreLayout.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutRestore_ExecuteEvent;
+            this.BtnDesktopIconSettingsLaunchControlPanel.Enabled = false;
             this.CbxDesktopIconSettingsSpacingVertical.Enabled = false;
             this.CbxDesktopIconSettingsSpacingHorizontal.Enabled = false;
-            this.DesktopShortcutCreateDefaults.Enabled = false;
-            this.DesktopShortcutValidate.Enabled = false;
+            this.BtnDesktopShortcutsDefaults.Enabled = false;
+            this.BtnDesktopShortcutsValidate.Enabled = false;
 
             #endregion Event Handlers =========================================================================================
 
@@ -210,7 +210,7 @@ namespace RibbonLib.Controls
 
 
             // TODO: For test purposes, enable all available Contexts
-            this.DesktopToolsTabGroup.ContextAvailable = ContextAvailability.Active;
+            this.TabGrpDesktopTools.ContextAvailable = ContextAvailability.Active;
         }
 
 
@@ -227,28 +227,28 @@ namespace RibbonLib.Controls
 
                 switch (cmdID)
                 {
-                    case Cmd.CmdBtnHomeViewExtraLargeIcons:
+                    case Cmd.BtnHomeViewExtraLargeIcons:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_THUMBNAIL;
                         break;
-                    case Cmd.CmdBtnHomeViewLargeIcons:
+                    case Cmd.BtnHomeViewLargeIcons:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_ICON;
                         break;
-                    case Cmd.CmdBtnHomeViewMediumIcons:
+                    case Cmd.BtnHomeViewMediumIcons:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_THUMBSTRIP;
                         break;
-                    case Cmd.CmdBtnHomeViewSmallIcons:
+                    case Cmd.BtnHomeViewSmallIcons:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_SMALLICON;
                         break;
-                    case Cmd.CmdBtnHomeViewList:
+                    case Cmd.BtnHomeViewList:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_LIST;
                         break;
-                    case Cmd.CmdBtnHomeViewDetails:
+                    case Cmd.BtnHomeViewDetails:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_DETAILS;
                         break;
-                    case Cmd.CmdBtnHomeViewTiles:
+                    case Cmd.BtnHomeViewTiles:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_TILE;
                         break;
-                    case Cmd.CmdBtnHomeViewContent:
+                    case Cmd.BtnHomeViewContent:
                         newShellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_CONTENT;
                         break;
                     default:

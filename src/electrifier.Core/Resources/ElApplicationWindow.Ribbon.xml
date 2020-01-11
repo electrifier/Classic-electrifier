@@ -28,65 +28,66 @@
     <!-- ======================================================================================================================
     ==== Quick Access Toolbar Commands ========================================================================================
     ======================================================================================================================= -->
-    <Command Id="59900" Name="CmdBtnHelp" />
-    <Command Id="59901" Name="CmdQAT" />
-    <Command Id="59902" Name="CmdCustomizeQAT" LabelTitle="Customize" />
-    <Command Id="59903" Name="CmdBtnQAT_OpenNewShellBrowserPanel" LabelTitle="New Panel">
+
+    <Command Id="59900" Name="QuickAccessToolbar" />
+    <Command Id="59901" Name="BtnQATCustomize" LabelTitle="Customize" />
+    <Command Id="59902" Name="BtnQATOpenNewShellBrowserPanel" LabelTitle="New Panel">
       <Command.LargeImages>
         <Image>Commands/App_NewTab_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
+    <Command Id="59999" Name="BtnQATHelp" />
     <!-- ======================================================================================================================
     ==== Application Menu Commands ============================================================================================
     ======================================================================================================================= -->
-    <Command Id="100" Name="CmdBtnApp_ApplicationMenu" LabelTitle="Application Menu" LabelDescription="Open Application Menu" TooltipTitle="Application Menu" TooltipDescription="Opens Application Menu." />
-    <Command Id="101" Name="CmdBtnApp_OpenNewWindow" LabelTitle="Open &amp;new electrifier Window" LabelDescription="Open new window" TooltipTitle="New window" TooltipDescription="Opens a new window.">
+    <Command Id="100" Name="BtnAppApplicationMenu" LabelTitle="Application Menu" LabelDescription="Open Application Menu" TooltipTitle="Application Menu" TooltipDescription="Opens Application Menu." />
+    <Command Id="101" Name="BtnAppOpenNewWindow" LabelTitle="Open &amp;new electrifier Window" LabelDescription="Open new window" TooltipTitle="New window" TooltipDescription="Opens a new window.">
       <Command.LargeImages>
         <Image>Commands/App_NewElectrifierWindow_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="102" Name="CmdBtnApp_OpenNewShellBrowserPanel" LabelTitle="New Panel" LabelDescription="New Description" TooltipTitle="Open new electrifier panel" TooltipDescription="Opens a new electrifier panel.">
+    <Command Id="102" Name="BtnAppOpenNewShellBrowserPanel" LabelTitle="New Panel" LabelDescription="New Description" TooltipTitle="Open new electrifier panel" TooltipDescription="Opens a new electrifier panel.">
       <Command.LargeImages>
         <Image>Commands/App_NewTab_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="103" Name="CmdBtnApp_OpenCommandPrompt" LabelTitle="Open command &amp;prompt" LabelDescription="Open Description" TooltipTitle="Open" TooltipDescription="Open an existing image.">
+    <Command Id="103" Name="BtnAppOpenCommandPrompt" LabelTitle="Open command &amp;prompt" LabelDescription="Open Description" TooltipTitle="Open" TooltipDescription="Open an existing image.">
       <Command.LargeImages>
         <Image>Commands/App_CommandPrompt_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="104" Name="CmdBtnApp_OpenWindowsPowerShell" LabelTitle="Open Windows Powe&amp;rShell" LabelDescription="Save Description" TooltipTitle="Save" TooltipDescription="Save the current image.">
+    <Command Id="104" Name="BtnAppOpenWindowsPowerShell" LabelTitle="Open Windows Powe&amp;rShell" LabelDescription="Save Description" TooltipTitle="Save" TooltipDescription="Save the current image.">
       <Command.LargeImages>
         <Image>Commands/App_WindowsPowerShell_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="110" Name="CmdBtnApp_ChangeElectrifierOptions" LabelTitle="Change electrifier options" LabelDescription="Change electrifier Description" TooltipTitle="electrifier options" TooltipDescription="Change electrifier options.">
+    <Command Id="110" Name="BtnAppChangeElectrifierOptions" LabelTitle="Change electrifier options" LabelDescription="Change electrifier Description" TooltipTitle="electrifier options" TooltipDescription="Change electrifier options.">
       <Command.LargeImages>
         <Image>Commands/App_ElectrifierOptions_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="111" Name="CmdBtnApp_ChangeFolderAndSearchOptions" LabelTitle="Change folder and search options" LabelDescription="Change folder and search options Description" TooltipTitle="Folder and search options" TooltipDescription="Change folder and search options.">
+    <Command Id="111" Name="BtnAppChangeFolderAndSearchOptions" LabelTitle="Change folder and search options" LabelDescription="Change folder and search options Description" TooltipTitle="Folder and search options" TooltipDescription="Change folder and search options.">
       <Command.LargeImages>
         <Image>Commands/App_FolderOptions_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="120" Name="SplBtnApp_HelpMenu" LabelTitle="Help Menu" LabelDescription="Open Help Menu" TooltipTitle="Help Menu" TooltipDescription="Opens Help Menu." />
-    <Command Id="121" Name="CmdBtnApp_Help" LabelTitle="Help" LabelDescription="Help Description" TooltipTitle="Help" TooltipDescription="Open help.">
+    <Command Id="120" Name="SplAppHelpMenu" LabelTitle="Help Menu" LabelDescription="Open Help Menu" TooltipTitle="Help Menu" TooltipDescription="Opens Help Menu." />
+    <Command Id="121" Name="BtnAppHelp" LabelTitle="Help" LabelDescription="Help Description" TooltipTitle="Help" TooltipDescription="Open help.">
       <Command.LargeImages>
         <Image>Commands/App_Help_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="122" Name="CmdBtnApp_Help_AboutElectrifier" LabelTitle="About" LabelDescription="About electrifier" TooltipTitle="About" TooltipDescription="Show information about electrifier.">
+    <Command Id="122" Name="BtnAppHelp_AboutElectrifier" LabelTitle="About" LabelDescription="About electrifier" TooltipTitle="About" TooltipDescription="Show information about electrifier.">
       <Command.LargeImages>
         <Image>Commands/App_Help_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="125" Name="CmdBtnApp_Help_AboutWindows" LabelTitle="Windows info" LabelDescription="Show information about Windows" TooltipTitle="About" TooltipDescription="Show information about Windows.">
+    <Command Id="125" Name="BtnAppHelp_AboutWindows" LabelTitle="Windows info" LabelDescription="Show information about Windows" TooltipTitle="About" TooltipDescription="Show information about Windows.">
       <Command.LargeImages>
         <Image>Commands/App_Help_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="130" Name="CmdBtnApp_Close" LabelTitle="Close" LabelDescription="Close Description" TooltipTitle="Close" TooltipDescription="Close application.">
+    <Command Id="130" Name="BtnAppClose" LabelTitle="Close" LabelDescription="Close Description" TooltipTitle="Close" TooltipDescription="Close application.">
       <Command.LargeImages>
         <Image>Commands/App_Close_32px.bmp</Image>
       </Command.LargeImages>
@@ -94,112 +95,112 @@
     <!-- ======================================================================================================================
     ==== Ribbon Tab: Home =====================================================================================================
     ======================================================================================================================= -->
-    <Command Id="1000" Name="CmdTabHome" LabelTitle="Home" />
+    <Command Id="1000" Name="TabHome" LabelTitle="Home" />
     <!-- Command Group: Home -> Clipboard ================================================================================= -->
-    <Command Id="1100" Name="CmdGrpHomeClipboard" LabelTitle="Clipboard" />
-    <Command Id="1110" Name="CmdBtnClipboardCut" LabelTitle="Cut" TooltipTitle="Cut selected items" TooltipDescription="Cut selected items">
+    <Command Id="1100" Name="GrpHomeClipboard" LabelTitle="Clipboard" />
+    <Command Id="1110" Name="BtnClipboardCut" LabelTitle="Cut" TooltipTitle="Cut selected items" TooltipDescription="Cut selected items">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Cut_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Name="SplBtnClipboardCopy" />
-    <Command Id="1120" Name="CmdBtnClipboardCopy" LabelTitle="Copy" TooltipTitle="Copy selected items to Clipboard" TooltipDescription="Copy selected items to Clipboard">
+    <Command Name="SplClipboardCopy" />
+    <Command Id="1120" Name="BtnClipboardCopy" LabelTitle="Copy" TooltipTitle="Copy selected items to Clipboard" TooltipDescription="Copy selected items to Clipboard">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Copy_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1121" Name="CmdClipboardCopyFullFilePaths" LabelTitle="Copy Full File path" TooltipTitle="Copy Full File path to Clipboard" TooltipDescription="Copy Full File path to Clipboard">
+    <Command Id="1121" Name="BtnClipboardCopyFullFilePaths" LabelTitle="Copy Full File path" TooltipTitle="Copy Full File path to Clipboard" TooltipDescription="Copy Full File path to Clipboard">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Copy_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1122" Name="CmdClipboardCopyFileNames" LabelTitle="Copy Filename" TooltipTitle="Copy Filename to Clipboard" TooltipDescription="Copy Filename to Clipboard">
+    <Command Id="1122" Name="BtnClipboardCopyFileNames" LabelTitle="Copy Filename" TooltipTitle="Copy Filename to Clipboard" TooltipDescription="Copy Filename to Clipboard">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Copy_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1123" Name="CmdClipboardCopyDirectoryPaths" LabelTitle="Copy Directory path" TooltipTitle="Copy Directory path to Clipboard" TooltipDescription="Copy Directory path to Clipboard">
+    <Command Id="1123" Name="BtnClipboardCopyDirectoryPaths" LabelTitle="Copy Directory path" TooltipTitle="Copy Directory path to Clipboard" TooltipDescription="Copy Directory path to Clipboard">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Copy_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Name="SplBtnClipboardPaste" />
-    <Command Id="1130" Name="CmdBtnClipboardPaste" LabelTitle="Paste" TooltipTitle="Paste from clipboard" TooltipDescription="Paste from clipboard">
+    <Command Name="SplClipboardPaste" />
+    <Command Id="1130" Name="BtnClipboardPaste" LabelTitle="Paste" TooltipTitle="Paste from clipboard" TooltipDescription="Paste from clipboard">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1131" Name="CmdBtnClipboardPasteAsNewFile" LabelTitle="Paste into new File" TooltipTitle="Paste from Clipboard into new File" TooltipDescription="Paste from Clipboard into new File">
+    <Command Id="1131" Name="BtnClipboardPasteAsNewFile" LabelTitle="Paste into new File" TooltipTitle="Paste from Clipboard into new File" TooltipDescription="Paste from Clipboard into new File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="11111" Name="CmdBtnClipboardPasteAsNewText" LabelTitle="Paste into new Text File..."/>
-    <Command Id="1132" Name="CmdBtnClipboardPasteAsNewTextFile" LabelTitle="Text (.txt)" TooltipTitle="Paste from Clipboard into new Text File" TooltipDescription="Paste from Clipboard into new Text File">
+    <Command Id="11111" Name="BtnClipboardPasteAsNewText" LabelTitle="Paste into new Text File..."/>
+    <Command Id="1132" Name="BtnClipboardPasteAsNewTextFile" LabelTitle="Text (.txt)" TooltipTitle="Paste from Clipboard into new Text File" TooltipDescription="Paste from Clipboard into new Text File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="11112" Name="CmdBtnClipboardPasteAsNewImage" LabelTitle="Paste into new Image File..." />
-    <Command Id="1133" Name="CmdBtnClipboardPasteAsNewBMPFile" LabelTitle="Bitmap (.bmp)" TooltipTitle="Paste from Clipboard into new Bitmap File" TooltipDescription="Paste from Clipboard into new Bitmap File">
+    <Command Id="11112" Name="BtnClipboardPasteAsNewImage" LabelTitle="Paste into new Image File..." />
+    <Command Id="1133" Name="BtnClipboardPasteAsNewBMPFile" LabelTitle="Bitmap (.bmp)" TooltipTitle="Paste from Clipboard into new Bitmap File" TooltipDescription="Paste from Clipboard into new Bitmap File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1134" Name="CmdBtnClipboardPasteAsNewJPGFile" LabelTitle="JPeg (.jpg)" TooltipTitle="Paste from Clipboard into new JPeg File" TooltipDescription="Paste from Clipboard into new JPeg File">
+    <Command Id="1134" Name="BtnClipboardPasteAsNewJPGFile" LabelTitle="JPeg (.jpg)" TooltipTitle="Paste from Clipboard into new JPeg File" TooltipDescription="Paste from Clipboard into new JPeg File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1135" Name="CmdBtnClipboardPasteAsNewPNGFile" LabelTitle="PNG (.png)" TooltipTitle="Paste from Clipboard into new PNG File" TooltipDescription="Paste from Clipboard into new PNG File">
+    <Command Id="1135" Name="BtnClipboardPasteAsNewPNGFile" LabelTitle="PNG (.png)" TooltipTitle="Paste from Clipboard into new PNG File" TooltipDescription="Paste from Clipboard into new PNG File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1136" Name="CmdBtnClipboardPasteAsNewGIFFile" LabelTitle="GIF (.gif)" TooltipTitle="Paste from Clipboard into new GIF File" TooltipDescription="Paste from Clipboard into new GIF File">
+    <Command Id="1136" Name="BtnClipboardPasteAsNewGIFFile" LabelTitle="GIF (.gif)" TooltipTitle="Paste from Clipboard into new GIF File" TooltipDescription="Paste from Clipboard into new GIF File">
       <Command.LargeImages>
         <Image>Commands/Clipboard_Paste_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1140" Name="CmdBtnClipboardHistory" LabelTitle="History">
+    <Command Id="1140" Name="BtnClipboardHistory" LabelTitle="History">
       <Command.LargeImages>
         <Image>Commands/Clipboard_History_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
     <!-- Command Group: Home -> Organise ================================================================================== -->
-    <Command Id="1200" Name="CmdGrpHomeOrganise" LabelTitle="Organise" />
-    <Command Id="1201" Name="CmdBtnOrganiseMoveTo" LabelTitle="Move to" TooltipTitle="Move selected item(s)" TooltipDescription="Move selected item(s)">
+    <Command Id="1200" Name="GrpHomeOrganise" LabelTitle="Organise" />
+    <Command Id="1201" Name="BtnOrganiseMoveTo" LabelTitle="Move to" TooltipTitle="Move selected item(s)" TooltipDescription="Move selected item(s)">
       <Command.LargeImages>
         <Image>Commands/Organise_MoveTo_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1202" Name="CmdBtnOrganiseCopyTo" LabelTitle="Copy to" TooltipTitle="Copy selected item(s)" TooltipDescription="Copy selected item(s)">
+    <Command Id="1202" Name="BtnOrganiseCopyTo" LabelTitle="Copy to" TooltipTitle="Copy selected item(s)" TooltipDescription="Copy selected item(s)">
       <Command.LargeImages>
         <Image>Commands/Organise_CopyTo_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1203" Name="CmdBtnOrganiseDelete" LabelTitle="Delete" TooltipTitle="Delete selected item(s)" TooltipDescription="Delete selected item(s)">
+    <Command Id="1203" Name="BtnOrganiseDelete" LabelTitle="Delete" TooltipTitle="Delete selected item(s)" TooltipDescription="Delete selected item(s)">
       <Command.LargeImages>
         <Image>Commands/Organise_Delete_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1204" Name="CmdBtnOrganiseRename" LabelTitle="Rename" TooltipTitle="Rename selected item(s)" TooltipDescription="Rename selected item(s)">
+    <Command Id="1204" Name="BtnOrganiseRename" LabelTitle="Rename" TooltipTitle="Rename selected item(s)" TooltipDescription="Rename selected item(s)">
       <Command.LargeImages>
         <Image>Commands/Organise_Rename_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
     <!-- Command Group: Home -> New ======================================================================================= -->
-    <Command Id="1300" Name="CmdGrpHomeNew" LabelTitle="New" />
+    <Command Id="1300" Name="GrpHomeNew" LabelTitle="New" />
     <!-- Command Group: Home -> Open ====================================================================================== -->
-    <Command Id="1400" Name="CmdGrpHomeOpen" LabelTitle="Open" />
+    <Command Id="1400" Name="GrpHomeOpen" LabelTitle="Open" />
     <!-- Command Group: Home -> Select ==================================================================================== -->
-    <Command Id="1500" Name="CmdGrpHomeSelect" LabelTitle="Select" />
-    <Command Id="1501" Name="CmdBtnSelectConditional" LabelTitle="Select conditional">
+    <Command Id="1500" Name="GrpHomeSelect" LabelTitle="Select" />
+    <Command Id="1501" Name="BtnSelectConditional" LabelTitle="Select conditional">
       <Command.LargeImages>
         <Image>Commands/Select_Conditional_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1502" Name="CmdBtnSelectSelectAll" LabelTitle="Select all" TooltipTitle="Select all items in this view." TooltipDescription="Select all items in this view.">
+    <Command Id="1502" Name="BtnSelectSelectAll" LabelTitle="Select all" TooltipTitle="Select all items in this view." TooltipDescription="Select all items in this view.">
       <Command.SmallImages>
         <Image>Commands/Select_SelectAll_16px.bmp</Image>
       </Command.SmallImages>
@@ -207,7 +208,7 @@
         <Image>Commands/Select_SelectAll_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1503" Name="CmdBtnSelectSelectNone" LabelTitle="Select none" TooltipTitle="Clear all of your selections." TooltipDescription="Clear all of your selections.">
+    <Command Id="1503" Name="BtnSelectSelectNone" LabelTitle="Select none" TooltipTitle="Clear all of your selections." TooltipDescription="Clear all of your selections.">
       <Command.SmallImages>
         <Image>Commands/Select_SelectNone_16px.bmp</Image>
       </Command.SmallImages>
@@ -215,7 +216,7 @@
         <Image>Commands/Select_SelectNone_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1504" Name="CmdBtnSelectInvertSelection" LabelTitle="Invert selection" TooltipTitle="Reverse the current selection" TooltipDescription="Reverse the current selection">
+    <Command Id="1504" Name="BtnSelectInvertSelection" LabelTitle="Invert selection" TooltipTitle="Reverse the current selection" TooltipDescription="Reverse the current selection">
       <Command.SmallImages>
         <Image>Commands/Select_InvertSelection_16px.bmp</Image>
       </Command.SmallImages>
@@ -223,8 +224,8 @@
         <Image>Commands/Select_InvertSelection_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1600" Name="CmdGrpHomeView" LabelTitle="View" />
-    <Command Id="1610" Name="CmdDdbHomeViewLayout" LabelTitle="Layout">
+    <Command Id="1600" Name="GrpHomeView" LabelTitle="View" />
+    <Command Id="1610" Name="DdbHomeViewLayout" LabelTitle="Layout">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_Tiles_16px.bmp</Image>
       </Command.SmallImages>
@@ -232,7 +233,7 @@
         <Image>Commands/ViewLayout_Tiles_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1611" Name="CmdBtnHomeViewExtraLargeIcons" LabelTitle="Extra large icons">
+    <Command Id="1611" Name="BtnHomeViewExtraLargeIcons" LabelTitle="Extra large icons">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_ExtraLargeIcons_16px.bmp</Image>
       </Command.SmallImages>
@@ -240,7 +241,7 @@
         <Image>Commands/ViewLayout_ExtraLargeIcons_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1612" Name="CmdBtnHomeViewLargeIcons" LabelTitle="Large icons">
+    <Command Id="1612" Name="BtnHomeViewLargeIcons" LabelTitle="Large icons">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_LargeIcons_16px.bmp</Image>
       </Command.SmallImages>
@@ -248,7 +249,7 @@
         <Image>Commands/ViewLayout_LargeIcons_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1613" Name="CmdBtnHomeViewMediumIcons" LabelTitle="Medium-sized icons">
+    <Command Id="1613" Name="BtnHomeViewMediumIcons" LabelTitle="Medium-sized icons">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_MediumSizedIcons_16px.bmp</Image>
       </Command.SmallImages>
@@ -256,7 +257,7 @@
         <Image>Commands/ViewLayout_MediumSizedIcons_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1614" Name="CmdBtnHomeViewSmallIcons" LabelTitle="Small icons">
+    <Command Id="1614" Name="BtnHomeViewSmallIcons" LabelTitle="Small icons">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_SmallIcons_16px.bmp</Image>
       </Command.SmallImages>
@@ -264,7 +265,7 @@
         <Image>Commands/ViewLayout_SmallIcons_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1615" Name="CmdBtnHomeViewList" LabelTitle="List">
+    <Command Id="1615" Name="BtnHomeViewList" LabelTitle="List">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_List_16px.bmp</Image>
       </Command.SmallImages>
@@ -272,7 +273,7 @@
         <Image>Commands/ViewLayout_List_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1616" Name="CmdBtnHomeViewDetails" LabelTitle="Details">
+    <Command Id="1616" Name="BtnHomeViewDetails" LabelTitle="Details">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_Details_16px.bmp</Image>
       </Command.SmallImages>
@@ -280,7 +281,7 @@
         <Image>Commands/ViewLayout_Details_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1617" Name="CmdBtnHomeViewTiles" LabelTitle="Tiles">
+    <Command Id="1617" Name="BtnHomeViewTiles" LabelTitle="Tiles">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_Tiles_16px.bmp</Image>
       </Command.SmallImages>
@@ -288,7 +289,7 @@
         <Image>Commands/ViewLayout_Tiles_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="1618" Name="CmdBtnHomeViewContent" LabelTitle="Content">
+    <Command Id="1618" Name="BtnHomeViewContent" LabelTitle="Content">
       <Command.SmallImages>
         <Image>Commands/ViewLayout_Content_16px.bmp</Image>
       </Command.SmallImages>
@@ -299,30 +300,30 @@
     <!-- ======================================================================================================================
     ==== Ribbon Tab: Share ====================================================================================================
     ======================================================================================================================= -->
-    <Command Id="20000" Name="CmdTabShare" LabelTitle="Share" />
+    <Command Id="20000" Name="TabShare" LabelTitle="Share" />
     <!-- ======================================================================================================================
     ==== Ribbon Tab: View =====================================================================================================
     ======================================================================================================================= -->
-    <Command Id="30000" Name="CmdTabView" LabelTitle="View" />
+    <Command Id="30000" Name="TabView" LabelTitle="View" />
     <!-- ======================================================================================================================
     ==== Ribbon Tab Group: Desktop Tools ======================================================================================
     ======================================================================================================================= -->
-    <Command Id="41111" Name="CmdDesktopToolsTabGroup" LabelTitle="Desktop Tools" />
+    <Command Id="41111" Name="TabGrpDesktopTools" LabelTitle="Desktop Tools" />
     <!-- Comment out to force visibilty -->
-    <Command Id="40100" Name="CmdDesktopIconManagementTab" LabelTitle="Icon Management"/>
+    <Command Id="40100" Name="TabDesktopIconManagement" LabelTitle="Icon Management"/>
     <!-- Command Group: Desktop Tools -> Icon Settings ==================================================================== -->
-    <Command Id="40101" Name="CmdDesktopIconSettingsGroup" LabelTitle="Icon Settings" />
-    <Command Id="40102" Name="CmdDesktopIconSettingsSaveLayoutButton" LabelTitle="Save Layout to File" TooltipTitle="Save Desktop Icon Layout" TooltipDescription="Save Desktop Icon Layout">
+    <Command Id="40101" Name="GrpDesktopIconSettings" LabelTitle="Icon Settings" />
+    <Command Id="40102" Name="BtnDesktopIconSettingsSaveLayout" LabelTitle="Save Layout to File" TooltipTitle="Save Desktop Icon Layout" TooltipDescription="Save Desktop Icon Layout">
       <Command.LargeImages>
         <Image>Commands/IconSettings_Desktop_Save_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="40103" Name="CmdDesktopIconSettingsRestoreLayoutButton" LabelTitle="Restore Layout from File" TooltipTitle="Restore Desktop Icon Layout" TooltipDescription="Restore Desktop Icon Layout">
+    <Command Id="40103" Name="BtnDesktopIconSettingsRestoreLayout" LabelTitle="Restore Layout from File" TooltipTitle="Restore Desktop Icon Layout" TooltipDescription="Restore Desktop Icon Layout">
       <Command.LargeImages>
         <Image>Commands/IconSettings_Desktop_Restore_32px.bmp</Image>
       </Command.LargeImages>
     </Command>
-    <Command Id="40104" Name="CmdDesktopIconSettingsLaunchControlPanel" LabelTitle="Launch &quot;Desktop Icon Settings&quot; Control Panel">
+    <Command Id="40104" Name="BtnDesktopIconSettingsLaunchControlPanel" LabelTitle="Launch &quot;Desktop Icon Settings&quot; Control Panel">
       <Command.SmallImages>
         <Image>Commands/IconSettings_ControlPanel_Desktop_16px.bmp</Image>
       </Command.SmallImages>
@@ -333,9 +334,9 @@
     <Command Id="40105" Name="CbxDesktopIconSettingsSpacingVertical" LabelTitle="Vertical Icon Spacing:" />
     <Command Id="40106" Name="CbxDesktopIconSettingsSpacingHorizontal" LabelTitle="Horizontal Icon Spacing:" />
     <!-- Command Group: Desktop Tools -> Icon Tools ======================================================================= -->
-    <Command Id="40110" Name="CmdDesktopShortcutGroup" LabelTitle="Shortcuts" />
-    <Command Id="40111" Name="CmdDesktopShortcutCreateDefaults" LabelTitle="Default Shortcuts" />
-    <Command Id="40112" Name="CmdDesktopShortcutValidate" LabelTitle="Validate" />
+    <Command Id="40110" Name="GrpDesktopShortcuts" LabelTitle="Shortcuts" />
+    <Command Id="40111" Name="BtnDesktopShortcutsDefaults" LabelTitle="Default Shortcuts" />
+    <Command Id="40112" Name="BtnDesktopShortcutsValidate" LabelTitle="Validate" />
   </Application.Commands>
   <!-- ========================================================================================================================
   ==== Application Views ======================================================================================================
@@ -346,44 +347,44 @@
       ==== Quick Access Toolbar ===============================================================================================
       ===================================================================================================================== -->
       <Ribbon.QuickAccessToolbar>
-        <QuickAccessToolbar CommandName="CmdQAT" CustomizeCommandName="CmdCustomizeQAT">
+        <QuickAccessToolbar CommandName="QuickAccessToolbar" CustomizeCommandName="BtnQATCustomize">
           <QuickAccessToolbar.ApplicationDefaults>
-            <Button CommandName="CmdBtnQAT_OpenNewShellBrowserPanel" />
+            <Button CommandName="BtnQATOpenNewShellBrowserPanel" />
           </QuickAccessToolbar.ApplicationDefaults>
         </QuickAccessToolbar>
       </Ribbon.QuickAccessToolbar>
       <Ribbon.HelpButton>
-        <HelpButton CommandName="CmdBtnHelp" />
+        <HelpButton CommandName="BtnQATHelp" />
       </Ribbon.HelpButton>
       <!-- ====================================================================================================================
       ==== Application Menu ===================================================================================================
       ===================================================================================================================== -->
       <Ribbon.ApplicationMenu>
-        <ApplicationMenu CommandName="CmdBtnApp_ApplicationMenu">
+        <ApplicationMenu CommandName="BtnAppApplicationMenu">
           <MenuGroup>
-            <Button CommandName="CmdBtnApp_OpenNewWindow" />
-            <Button CommandName="CmdBtnApp_OpenNewShellBrowserPanel" />
-            <Button CommandName="CmdBtnApp_OpenCommandPrompt" />
-            <Button CommandName="CmdBtnApp_OpenWindowsPowerShell" />
+            <Button CommandName="BtnAppOpenNewWindow" />
+            <Button CommandName="BtnAppOpenNewShellBrowserPanel" />
+            <Button CommandName="BtnAppOpenCommandPrompt" />
+            <Button CommandName="BtnAppOpenWindowsPowerShell" />
           </MenuGroup>
           <MenuGroup>
-            <Button CommandName="CmdBtnApp_ChangeElectrifierOptions" />
-            <Button CommandName="CmdBtnApp_ChangeFolderAndSearchOptions" />
-            <SplitButton CommandName="SplBtnApp_HelpMenu">
+            <Button CommandName="BtnAppChangeElectrifierOptions" />
+            <Button CommandName="BtnAppChangeFolderAndSearchOptions" />
+            <SplitButton CommandName="SplAppHelpMenu">
               <SplitButton.ButtonItem>
-                <Button CommandName="CmdBtnApp_Help" />
+                <Button CommandName="BtnAppHelp" />
               </SplitButton.ButtonItem>
               <SplitButton.MenuGroups>
                 <MenuGroup Class="MajorItems">
-                  <!--<Button CommandName="CmdBtnApp_Help_Help" />-->
-                  <Button CommandName="CmdBtnApp_Help_AboutElectrifier" />
+                  <!--<Button CommandName="BtnAppHelp_Help" />-->
+                  <Button CommandName="BtnAppHelp_AboutElectrifier" />
                 </MenuGroup>
                 <MenuGroup Class="MajorItems">
-                  <Button CommandName="CmdBtnApp_Help_AboutWindows" />
+                  <Button CommandName="BtnAppHelp_AboutWindows" />
                 </MenuGroup>
               </SplitButton.MenuGroups>
             </SplitButton>
-            <Button CommandName="CmdBtnApp_Close" />
+            <Button CommandName="BtnAppClose" />
           </MenuGroup>
         </ApplicationMenu>
       </Ribbon.ApplicationMenu>
@@ -391,106 +392,106 @@
       ==== Ribbon Tabs ========================================================================================================
       ===================================================================================================================== -->
       <Ribbon.Tabs>
-        <Tab CommandName="CmdTabHome">
-          <Group CommandName="CmdGrpHomeClipboard" SizeDefinition="FourButtons">
-            <Button CommandName="CmdBtnClipboardCut" />
-            <SplitButton CommandName="SplBtnClipboardCopy">
+        <Tab CommandName="TabHome">
+          <Group CommandName="GrpHomeClipboard" SizeDefinition="FourButtons">
+            <Button CommandName="BtnClipboardCut" />
+            <SplitButton CommandName="SplClipboardCopy">
               <SplitButton.ButtonItem>
-                <Button CommandName="CmdBtnClipboardCopy" />
+                <Button CommandName="BtnClipboardCopy" />
               </SplitButton.ButtonItem>
               <!-- TODO: Heading possible? 'Copy Special' -->
               <SplitButton.MenuGroups>
                 <MenuGroup Class="MajorItems">
-                  <Button CommandName="CmdBtnClipboardCopy" />
+                  <Button CommandName="BtnClipboardCopy" />
                 </MenuGroup>
                 <MenuGroup Class="StandardItems">
-                  <Button CommandName="CmdClipboardCopyFullFilePaths" />
-                  <Button CommandName="CmdClipboardCopyFileNames" />
-                  <Button CommandName="CmdClipboardCopyDirectoryPaths" />
+                  <Button CommandName="BtnClipboardCopyFullFilePaths" />
+                  <Button CommandName="BtnClipboardCopyFileNames" />
+                  <Button CommandName="BtnClipboardCopyDirectoryPaths" />
                 </MenuGroup>
               </SplitButton.MenuGroups>
             </SplitButton>
-            <SplitButton CommandName="SplBtnClipboardPaste">
+            <SplitButton CommandName="SplClipboardPaste">
               <SplitButton.ButtonItem>
-                <Button CommandName="CmdBtnClipboardPaste" />
+                <Button CommandName="BtnClipboardPaste" />
               </SplitButton.ButtonItem>
               <SplitButton.MenuGroups>
                 <MenuGroup Class="MajorItems">
-                  <Button CommandName="CmdBtnClipboardPaste" />
+                  <Button CommandName="BtnClipboardPaste" />
                 </MenuGroup>
                 <!-- TODO: Heading possible? 'Paste Special' -->
                 <MenuGroup Class="MajorItems">
-                  <Button CommandName="CmdBtnClipboardPasteAsNewFile" />
+                  <Button CommandName="BtnClipboardPasteAsNewFile" />
                   <!-- TODO: Silent CheckBox to avoid Dialog-Based 'Paste Into', which will ask for FileName and ImageType etc. ?!? -->
                 </MenuGroup>
-                <MenuGroup Class="StandardItems" CommandName="CmdBtnClipboardPasteAsNewText">
-                  <Button CommandName="CmdBtnClipboardPasteAsNewTextFile" />
+                <MenuGroup Class="StandardItems" CommandName="BtnClipboardPasteAsNewText">
+                  <Button CommandName="BtnClipboardPasteAsNewTextFile" />
                 </MenuGroup>
-                <MenuGroup Class="StandardItems" CommandName="CmdBtnClipboardPasteAsNewImage">
-                  <Button CommandName="CmdBtnClipboardPasteAsNewBMPFile" />
-                  <Button CommandName="CmdBtnClipboardPasteAsNewJPGFile" />
-                  <Button CommandName="CmdBtnClipboardPasteAsNewPNGFile" />
-                  <Button CommandName="CmdBtnClipboardPasteAsNewGIFFile" />
+                <MenuGroup Class="StandardItems" CommandName="BtnClipboardPasteAsNewImage">
+                  <Button CommandName="BtnClipboardPasteAsNewBMPFile" />
+                  <Button CommandName="BtnClipboardPasteAsNewJPGFile" />
+                  <Button CommandName="BtnClipboardPasteAsNewPNGFile" />
+                  <Button CommandName="BtnClipboardPasteAsNewGIFFile" />
                 </MenuGroup>
               </SplitButton.MenuGroups>
             </SplitButton>
-            <ToggleButton CommandName="CmdBtnClipboardHistory" />
+            <ToggleButton CommandName="BtnClipboardHistory" />
           </Group>
-          <Group CommandName="CmdGrpHomeOrganise" SizeDefinition="FourButtons">
-            <Button CommandName="CmdBtnOrganiseMoveTo" />
-            <Button CommandName="CmdBtnOrganiseCopyTo" />
+          <Group CommandName="GrpHomeOrganise" SizeDefinition="FourButtons">
+            <Button CommandName="BtnOrganiseMoveTo" />
+            <Button CommandName="BtnOrganiseCopyTo" />
             <!-- TODO: Seperator -->
-            <Button CommandName="CmdBtnOrganiseDelete" />
-            <Button CommandName="CmdBtnOrganiseRename" />
+            <Button CommandName="BtnOrganiseDelete" />
+            <Button CommandName="BtnOrganiseRename" />
           </Group>
-          <!--<Group CommandName="CmdGrpHomeNew" />-->
-          <!--<Group CommandName="CmdGrpHomeOpen" />-->
-          <Group CommandName="CmdGrpHomeSelect" SizeDefinition="BigButtonsAndSmallButtonsOrInputs">
+          <!--<Group CommandName="GrpHomeNew" />-->
+          <!--<Group CommandName="GrpHomeOpen" />-->
+          <Group CommandName="GrpHomeSelect" SizeDefinition="BigButtonsAndSmallButtonsOrInputs">
             <ControlGroup>
-              <Button CommandName="CmdBtnSelectConditional" />
+              <Button CommandName="BtnSelectConditional" />
             </ControlGroup>
             <ControlGroup>
-              <Button CommandName="CmdBtnSelectSelectAll" />
-              <Button CommandName="CmdBtnSelectSelectNone" />
-              <Button CommandName="CmdBtnSelectInvertSelection" />
+              <Button CommandName="BtnSelectSelectAll" />
+              <Button CommandName="BtnSelectSelectNone" />
+              <Button CommandName="BtnSelectInvertSelection" />
             </ControlGroup>
           </Group>
-          <Group CommandName="CmdGrpHomeView" SizeDefinition="OneButton">
-            <DropDownButton CommandName="CmdDdbHomeViewLayout">
-              <ToggleButton CommandName="CmdBtnHomeViewExtraLargeIcons" />
-              <ToggleButton CommandName="CmdBtnHomeViewLargeIcons" />
-              <ToggleButton CommandName="CmdBtnHomeViewMediumIcons" />
-              <ToggleButton CommandName="CmdBtnHomeViewSmallIcons" />
-              <ToggleButton CommandName="CmdBtnHomeViewList" />
-              <ToggleButton CommandName="CmdBtnHomeViewDetails" />
-              <ToggleButton CommandName="CmdBtnHomeViewTiles" />
-              <ToggleButton CommandName="CmdBtnHomeViewContent" />
+          <Group CommandName="GrpHomeView" SizeDefinition="OneButton">
+            <DropDownButton CommandName="DdbHomeViewLayout">
+              <ToggleButton CommandName="BtnHomeViewExtraLargeIcons" />
+              <ToggleButton CommandName="BtnHomeViewLargeIcons" />
+              <ToggleButton CommandName="BtnHomeViewMediumIcons" />
+              <ToggleButton CommandName="BtnHomeViewSmallIcons" />
+              <ToggleButton CommandName="BtnHomeViewList" />
+              <ToggleButton CommandName="BtnHomeViewDetails" />
+              <ToggleButton CommandName="BtnHomeViewTiles" />
+              <ToggleButton CommandName="BtnHomeViewContent" />
             </DropDownButton>
           </Group>
         </Tab>
-        <!--TODO: <Tab CommandName="CmdTabShare" />-->
-        <!--TODO: <Tab CommandName="CmdTabView" />-->
+        <!--TODO: <Tab CommandName="TabShare" />-->
+        <!--TODO: <Tab CommandName="TabView" />-->
       </Ribbon.Tabs>
       <!-- ====================================================================================================================
       ==== Ribbon Contextual Tabs =============================================================================================
       ===================================================================================================================== -->
       <Ribbon.ContextualTabs>
-        <TabGroup CommandName="CmdDesktopToolsTabGroup">
-          <Tab CommandName="CmdDesktopIconManagementTab">
-            <Group CommandName="CmdDesktopIconSettingsGroup" SizeDefinition="BigButtonsAndSmallButtonsOrInputs">
+        <TabGroup CommandName="TabGrpDesktopTools">
+          <Tab CommandName="TabDesktopIconManagement">
+            <Group CommandName="GrpDesktopIconSettings" SizeDefinition="BigButtonsAndSmallButtonsOrInputs">
               <ControlGroup>
-                <Button CommandName="CmdDesktopIconSettingsSaveLayoutButton" />
-                <Button CommandName="CmdDesktopIconSettingsRestoreLayoutButton" />
+                <Button CommandName="BtnDesktopIconSettingsSaveLayout" />
+                <Button CommandName="BtnDesktopIconSettingsRestoreLayout" />
               </ControlGroup>
               <ControlGroup>
-                <Button CommandName="CmdDesktopIconSettingsLaunchControlPanel"/>
+                <Button CommandName="BtnDesktopIconSettingsLaunchControlPanel"/>
                 <ComboBox CommandName="CbxDesktopIconSettingsSpacingVertical"/>
                 <ComboBox CommandName="CbxDesktopIconSettingsSpacingHorizontal"/>
               </ControlGroup>
             </Group>
-            <Group CommandName="CmdDesktopShortcutGroup" SizeDefinition="TwoButtons">
-              <Button CommandName="CmdDesktopShortcutCreateDefaults"/>
-              <Button CommandName="CmdDesktopShortcutValidate"/>
+            <Group CommandName="GrpDesktopShortcuts" SizeDefinition="TwoButtons">
+              <Button CommandName="BtnDesktopShortcutsDefaults"/>
+              <Button CommandName="BtnDesktopShortcutsValidate"/>
             </Group>
           </Tab>
         </TabGroup>
