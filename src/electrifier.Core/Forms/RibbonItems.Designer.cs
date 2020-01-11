@@ -19,71 +19,71 @@ namespace RibbonLib.Controls
     {
         private static class Cmd
         {
-            public const uint CmdQAT = 59901;
-            public const uint CmdBtnQAT_OpenNewShellBrowserPanel = 59903;
-            public const uint CmdBtnHelp = 59900;
-            public const uint CmdBtnApp_ApplicationMenu = 100;
-            public const uint CmdBtnApp_OpenNewWindow = 101;
-            public const uint CmdBtnApp_OpenNewShellBrowserPanel = 102;
-            public const uint CmdBtnApp_OpenCommandPrompt = 103;
-            public const uint CmdBtnApp_OpenWindowsPowerShell = 104;
-            public const uint CmdBtnApp_ChangeElectrifierOptions = 110;
-            public const uint CmdBtnApp_ChangeFolderAndSearchOptions = 111;
-            public const uint SplBtnApp_HelpMenu = 120;
-            public const uint CmdBtnApp_Help = 121;
-            public const uint CmdBtnApp_Help_AboutElectrifier = 122;
-            public const uint CmdBtnApp_Help_AboutWindows = 125;
-            public const uint CmdBtnApp_Close = 130;
-            public const uint CmdTabHome = 1000;
-            public const uint CmdGrpHomeClipboard = 1100;
-            public const uint CmdBtnClipboardCut = 1110;
-            public const uint SplBtnClipboardCopy = 2;
-            public const uint CmdBtnClipboardCopy = 1120;
-            public const uint CmdClipboardCopyFullFilePaths = 1121;
-            public const uint CmdClipboardCopyFileNames = 1122;
-            public const uint CmdClipboardCopyDirectoryPaths = 1123;
-            public const uint SplBtnClipboardPaste = 3;
-            public const uint CmdBtnClipboardPaste = 1130;
-            public const uint CmdBtnClipboardPasteAsNewFile = 1131;
-            public const uint CmdBtnClipboardPasteAsNewText = 11111;
-            public const uint CmdBtnClipboardPasteAsNewTextFile = 1132;
-            public const uint CmdBtnClipboardPasteAsNewImage = 11112;
-            public const uint CmdBtnClipboardPasteAsNewBMPFile = 1133;
-            public const uint CmdBtnClipboardPasteAsNewJPGFile = 1134;
-            public const uint CmdBtnClipboardPasteAsNewPNGFile = 1135;
-            public const uint CmdBtnClipboardPasteAsNewGIFFile = 1136;
-            public const uint CmdBtnClipboardHistory = 1140;
-            public const uint CmdGrpHomeOrganise = 1200;
-            public const uint CmdBtnOrganiseMoveTo = 1201;
-            public const uint CmdBtnOrganiseCopyTo = 1202;
-            public const uint CmdBtnOrganiseDelete = 1203;
-            public const uint CmdBtnOrganiseRename = 1204;
-            public const uint CmdGrpHomeSelect = 1500;
-            public const uint CmdBtnSelectConditional = 1501;
-            public const uint CmdBtnSelectSelectAll = 1502;
-            public const uint CmdBtnSelectSelectNone = 1503;
-            public const uint CmdBtnSelectInvertSelection = 1504;
-            public const uint CmdGrpHomeView = 1600;
-            public const uint CmdDdbHomeViewLayout = 1610;
-            public const uint CmdBtnHomeViewExtraLargeIcons = 1611;
-            public const uint CmdBtnHomeViewLargeIcons = 1612;
-            public const uint CmdBtnHomeViewMediumIcons = 1613;
-            public const uint CmdBtnHomeViewSmallIcons = 1614;
-            public const uint CmdBtnHomeViewList = 1615;
-            public const uint CmdBtnHomeViewDetails = 1616;
-            public const uint CmdBtnHomeViewTiles = 1617;
-            public const uint CmdBtnHomeViewContent = 1618;
-            public const uint CmdDesktopToolsTabGroup = 41111;
-            public const uint CmdDesktopIconManagementTab = 40100;
-            public const uint CmdDesktopIconSettingsGroup = 40101;
-            public const uint CmdDesktopIconSettingsSaveLayoutButton = 40102;
-            public const uint CmdDesktopIconSettingsRestoreLayoutButton = 40103;
-            public const uint CmdDesktopIconSettingsLaunchControlPanel = 40104;
+            public const uint QuickAccessToolbar = 59900;
+            public const uint BtnQATOpenNewShellBrowserPanel = 59902;
+            public const uint BtnQATHelp = 59999;
+            public const uint BtnAppApplicationMenu = 100;
+            public const uint BtnAppOpenNewWindow = 101;
+            public const uint BtnAppOpenNewShellBrowserPanel = 102;
+            public const uint BtnAppOpenCommandPrompt = 103;
+            public const uint BtnAppOpenWindowsPowerShell = 104;
+            public const uint BtnAppChangeElectrifierOptions = 110;
+            public const uint BtnAppChangeFolderAndSearchOptions = 111;
+            public const uint SplAppHelpMenu = 120;
+            public const uint BtnAppHelp = 121;
+            public const uint BtnAppHelp_AboutElectrifier = 122;
+            public const uint BtnAppHelp_AboutWindows = 125;
+            public const uint BtnAppClose = 130;
+            public const uint TabHome = 1000;
+            public const uint GrpHomeClipboard = 1100;
+            public const uint BtnClipboardCut = 1110;
+            public const uint SplClipboardCopy = 2;
+            public const uint BtnClipboardCopy = 1120;
+            public const uint BtnClipboardCopyFullFilePaths = 1121;
+            public const uint BtnClipboardCopyFileNames = 1122;
+            public const uint BtnClipboardCopyDirectoryPaths = 1123;
+            public const uint SplClipboardPaste = 3;
+            public const uint BtnClipboardPaste = 1130;
+            public const uint BtnClipboardPasteAsNewFile = 1131;
+            public const uint BtnClipboardPasteAsNewText = 11111;
+            public const uint BtnClipboardPasteAsNewTextFile = 1132;
+            public const uint BtnClipboardPasteAsNewImage = 11112;
+            public const uint BtnClipboardPasteAsNewBMPFile = 1133;
+            public const uint BtnClipboardPasteAsNewJPGFile = 1134;
+            public const uint BtnClipboardPasteAsNewPNGFile = 1135;
+            public const uint BtnClipboardPasteAsNewGIFFile = 1136;
+            public const uint BtnClipboardHistory = 1140;
+            public const uint GrpHomeOrganise = 1200;
+            public const uint BtnOrganiseMoveTo = 1201;
+            public const uint BtnOrganiseCopyTo = 1202;
+            public const uint BtnOrganiseDelete = 1203;
+            public const uint BtnOrganiseRename = 1204;
+            public const uint GrpHomeSelect = 1500;
+            public const uint BtnSelectConditional = 1501;
+            public const uint BtnSelectSelectAll = 1502;
+            public const uint BtnSelectSelectNone = 1503;
+            public const uint BtnSelectInvertSelection = 1504;
+            public const uint GrpHomeView = 1600;
+            public const uint DdbHomeViewLayout = 1610;
+            public const uint BtnHomeViewExtraLargeIcons = 1611;
+            public const uint BtnHomeViewLargeIcons = 1612;
+            public const uint BtnHomeViewMediumIcons = 1613;
+            public const uint BtnHomeViewSmallIcons = 1614;
+            public const uint BtnHomeViewList = 1615;
+            public const uint BtnHomeViewDetails = 1616;
+            public const uint BtnHomeViewTiles = 1617;
+            public const uint BtnHomeViewContent = 1618;
+            public const uint TabGrpDesktopTools = 41111;
+            public const uint TabDesktopIconManagement = 40100;
+            public const uint GrpDesktopIconSettings = 40101;
+            public const uint BtnDesktopIconSettingsSaveLayout = 40102;
+            public const uint BtnDesktopIconSettingsRestoreLayout = 40103;
+            public const uint BtnDesktopIconSettingsLaunchControlPanel = 40104;
             public const uint CbxDesktopIconSettingsSpacingVertical = 40105;
             public const uint CbxDesktopIconSettingsSpacingHorizontal = 40106;
-            public const uint CmdDesktopShortcutGroup = 40110;
-            public const uint CmdDesktopShortcutCreateDefaults = 40111;
-            public const uint CmdDesktopShortcutValidate = 40112;
+            public const uint GrpDesktopShortcuts = 40110;
+            public const uint BtnDesktopShortcutsDefaults = 40111;
+            public const uint BtnDesktopShortcutsValidate = 40112;
         }
 
         // ContextPopup CommandName
@@ -91,30 +91,30 @@ namespace RibbonLib.Controls
         private static bool initialized;
 
         public Ribbon Ribbon { get; private set; }
-        public RibbonQuickAccessToolbar QAT { get; private set; }
-        public RibbonButton BtnQAT_OpenNewShellBrowserPanel { get; private set; }
-        public RibbonHelpButton BtnHelp { get; private set; }
-        public RibbonApplicationMenu BtnApp_ApplicationMenu { get; private set; }
-        public RibbonButton BtnApp_OpenNewWindow { get; private set; }
-        public RibbonButton BtnApp_OpenNewShellBrowserPanel { get; private set; }
-        public RibbonButton BtnApp_OpenCommandPrompt { get; private set; }
-        public RibbonButton BtnApp_OpenWindowsPowerShell { get; private set; }
-        public RibbonButton BtnApp_ChangeElectrifierOptions { get; private set; }
-        public RibbonButton BtnApp_ChangeFolderAndSearchOptions { get; private set; }
-        public RibbonSplitButton SplBtnApp_HelpMenu { get; private set; }
-        public RibbonButton BtnApp_Help { get; private set; }
-        public RibbonButton BtnApp_Help_AboutElectrifier { get; private set; }
-        public RibbonButton BtnApp_Help_AboutWindows { get; private set; }
-        public RibbonButton BtnApp_Close { get; private set; }
+        public RibbonQuickAccessToolbar QuickAccessToolbar { get; private set; }
+        public RibbonButton BtnQATOpenNewShellBrowserPanel { get; private set; }
+        public RibbonHelpButton BtnQATHelp { get; private set; }
+        public RibbonApplicationMenu BtnAppApplicationMenu { get; private set; }
+        public RibbonButton BtnAppOpenNewWindow { get; private set; }
+        public RibbonButton BtnAppOpenNewShellBrowserPanel { get; private set; }
+        public RibbonButton BtnAppOpenCommandPrompt { get; private set; }
+        public RibbonButton BtnAppOpenWindowsPowerShell { get; private set; }
+        public RibbonButton BtnAppChangeElectrifierOptions { get; private set; }
+        public RibbonButton BtnAppChangeFolderAndSearchOptions { get; private set; }
+        public RibbonSplitButton SplAppHelpMenu { get; private set; }
+        public RibbonButton BtnAppHelp { get; private set; }
+        public RibbonButton BtnAppHelp_AboutElectrifier { get; private set; }
+        public RibbonButton BtnAppHelp_AboutWindows { get; private set; }
+        public RibbonButton BtnAppClose { get; private set; }
         public RibbonTab TabHome { get; private set; }
         public RibbonGroup GrpHomeClipboard { get; private set; }
         public RibbonButton BtnClipboardCut { get; private set; }
-        public RibbonSplitButton SplBtnClipboardCopy { get; private set; }
+        public RibbonSplitButton SplClipboardCopy { get; private set; }
         public RibbonButton BtnClipboardCopy { get; private set; }
-        public RibbonButton ClipboardCopyFullFilePaths { get; private set; }
-        public RibbonButton ClipboardCopyFileNames { get; private set; }
-        public RibbonButton ClipboardCopyDirectoryPaths { get; private set; }
-        public RibbonSplitButton SplBtnClipboardPaste { get; private set; }
+        public RibbonButton BtnClipboardCopyFullFilePaths { get; private set; }
+        public RibbonButton BtnClipboardCopyFileNames { get; private set; }
+        public RibbonButton BtnClipboardCopyDirectoryPaths { get; private set; }
+        public RibbonSplitButton SplClipboardPaste { get; private set; }
         public RibbonButton BtnClipboardPaste { get; private set; }
         public RibbonButton BtnClipboardPasteAsNewFile { get; private set; }
         public RibbonMenuGroup BtnClipboardPasteAsNewText { get; private set; }
@@ -145,17 +145,17 @@ namespace RibbonLib.Controls
         public RibbonToggleButton BtnHomeViewDetails { get; private set; }
         public RibbonToggleButton BtnHomeViewTiles { get; private set; }
         public RibbonToggleButton BtnHomeViewContent { get; private set; }
-        public RibbonTabGroup DesktopToolsTabGroup { get; private set; }
-        public RibbonTab DesktopIconManagementTab { get; private set; }
-        public RibbonGroup DesktopIconSettingsGroup { get; private set; }
-        public RibbonButton DesktopIconSettingsSaveLayoutButton { get; private set; }
-        public RibbonButton DesktopIconSettingsRestoreLayoutButton { get; private set; }
-        public RibbonButton DesktopIconSettingsLaunchControlPanel { get; private set; }
+        public RibbonTabGroup TabGrpDesktopTools { get; private set; }
+        public RibbonTab TabDesktopIconManagement { get; private set; }
+        public RibbonGroup GrpDesktopIconSettings { get; private set; }
+        public RibbonButton BtnDesktopIconSettingsSaveLayout { get; private set; }
+        public RibbonButton BtnDesktopIconSettingsRestoreLayout { get; private set; }
+        public RibbonButton BtnDesktopIconSettingsLaunchControlPanel { get; private set; }
         public RibbonComboBox CbxDesktopIconSettingsSpacingVertical { get; private set; }
         public RibbonComboBox CbxDesktopIconSettingsSpacingHorizontal { get; private set; }
-        public RibbonGroup DesktopShortcutGroup { get; private set; }
-        public RibbonButton DesktopShortcutCreateDefaults { get; private set; }
-        public RibbonButton DesktopShortcutValidate { get; private set; }
+        public RibbonGroup GrpDesktopShortcuts { get; private set; }
+        public RibbonButton BtnDesktopShortcutsDefaults { get; private set; }
+        public RibbonButton BtnDesktopShortcutsValidate { get; private set; }
 
         public RibbonItems(Ribbon ribbon)
         {
@@ -164,71 +164,71 @@ namespace RibbonLib.Controls
             if (initialized)
                 return;
             this.Ribbon = ribbon;
-            QAT = new RibbonQuickAccessToolbar(ribbon, Cmd.CmdQAT);
-            BtnQAT_OpenNewShellBrowserPanel = new RibbonButton(ribbon, Cmd.CmdBtnQAT_OpenNewShellBrowserPanel);
-            BtnHelp = new RibbonHelpButton(ribbon, Cmd.CmdBtnHelp);
-            BtnApp_ApplicationMenu = new RibbonApplicationMenu(ribbon, Cmd.CmdBtnApp_ApplicationMenu);
-            BtnApp_OpenNewWindow = new RibbonButton(ribbon, Cmd.CmdBtnApp_OpenNewWindow);
-            BtnApp_OpenNewShellBrowserPanel = new RibbonButton(ribbon, Cmd.CmdBtnApp_OpenNewShellBrowserPanel);
-            BtnApp_OpenCommandPrompt = new RibbonButton(ribbon, Cmd.CmdBtnApp_OpenCommandPrompt);
-            BtnApp_OpenWindowsPowerShell = new RibbonButton(ribbon, Cmd.CmdBtnApp_OpenWindowsPowerShell);
-            BtnApp_ChangeElectrifierOptions = new RibbonButton(ribbon, Cmd.CmdBtnApp_ChangeElectrifierOptions);
-            BtnApp_ChangeFolderAndSearchOptions = new RibbonButton(ribbon, Cmd.CmdBtnApp_ChangeFolderAndSearchOptions);
-            SplBtnApp_HelpMenu = new RibbonSplitButton(ribbon, Cmd.SplBtnApp_HelpMenu);
-            BtnApp_Help = new RibbonButton(ribbon, Cmd.CmdBtnApp_Help);
-            BtnApp_Help_AboutElectrifier = new RibbonButton(ribbon, Cmd.CmdBtnApp_Help_AboutElectrifier);
-            BtnApp_Help_AboutWindows = new RibbonButton(ribbon, Cmd.CmdBtnApp_Help_AboutWindows);
-            BtnApp_Close = new RibbonButton(ribbon, Cmd.CmdBtnApp_Close);
-            TabHome = new RibbonTab(ribbon, Cmd.CmdTabHome);
-            GrpHomeClipboard = new RibbonGroup(ribbon, Cmd.CmdGrpHomeClipboard);
-            BtnClipboardCut = new RibbonButton(ribbon, Cmd.CmdBtnClipboardCut);
-            SplBtnClipboardCopy = new RibbonSplitButton(ribbon, Cmd.SplBtnClipboardCopy);
-            BtnClipboardCopy = new RibbonButton(ribbon, Cmd.CmdBtnClipboardCopy);
-            ClipboardCopyFullFilePaths = new RibbonButton(ribbon, Cmd.CmdClipboardCopyFullFilePaths);
-            ClipboardCopyFileNames = new RibbonButton(ribbon, Cmd.CmdClipboardCopyFileNames);
-            ClipboardCopyDirectoryPaths = new RibbonButton(ribbon, Cmd.CmdClipboardCopyDirectoryPaths);
-            SplBtnClipboardPaste = new RibbonSplitButton(ribbon, Cmd.SplBtnClipboardPaste);
-            BtnClipboardPaste = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPaste);
-            BtnClipboardPasteAsNewFile = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPasteAsNewFile);
-            BtnClipboardPasteAsNewText = new RibbonMenuGroup(ribbon, Cmd.CmdBtnClipboardPasteAsNewText);
-            BtnClipboardPasteAsNewTextFile = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPasteAsNewTextFile);
-            BtnClipboardPasteAsNewImage = new RibbonMenuGroup(ribbon, Cmd.CmdBtnClipboardPasteAsNewImage);
-            BtnClipboardPasteAsNewBMPFile = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPasteAsNewBMPFile);
-            BtnClipboardPasteAsNewJPGFile = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPasteAsNewJPGFile);
-            BtnClipboardPasteAsNewPNGFile = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPasteAsNewPNGFile);
-            BtnClipboardPasteAsNewGIFFile = new RibbonButton(ribbon, Cmd.CmdBtnClipboardPasteAsNewGIFFile);
-            BtnClipboardHistory = new RibbonToggleButton(ribbon, Cmd.CmdBtnClipboardHistory);
-            GrpHomeOrganise = new RibbonGroup(ribbon, Cmd.CmdGrpHomeOrganise);
-            BtnOrganiseMoveTo = new RibbonButton(ribbon, Cmd.CmdBtnOrganiseMoveTo);
-            BtnOrganiseCopyTo = new RibbonButton(ribbon, Cmd.CmdBtnOrganiseCopyTo);
-            BtnOrganiseDelete = new RibbonButton(ribbon, Cmd.CmdBtnOrganiseDelete);
-            BtnOrganiseRename = new RibbonButton(ribbon, Cmd.CmdBtnOrganiseRename);
-            GrpHomeSelect = new RibbonGroup(ribbon, Cmd.CmdGrpHomeSelect);
-            BtnSelectConditional = new RibbonButton(ribbon, Cmd.CmdBtnSelectConditional);
-            BtnSelectSelectAll = new RibbonButton(ribbon, Cmd.CmdBtnSelectSelectAll);
-            BtnSelectSelectNone = new RibbonButton(ribbon, Cmd.CmdBtnSelectSelectNone);
-            BtnSelectInvertSelection = new RibbonButton(ribbon, Cmd.CmdBtnSelectInvertSelection);
-            GrpHomeView = new RibbonGroup(ribbon, Cmd.CmdGrpHomeView);
-            DdbHomeViewLayout = new RibbonDropDownButton(ribbon, Cmd.CmdDdbHomeViewLayout);
-            BtnHomeViewExtraLargeIcons = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewExtraLargeIcons);
-            BtnHomeViewLargeIcons = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewLargeIcons);
-            BtnHomeViewMediumIcons = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewMediumIcons);
-            BtnHomeViewSmallIcons = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewSmallIcons);
-            BtnHomeViewList = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewList);
-            BtnHomeViewDetails = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewDetails);
-            BtnHomeViewTiles = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewTiles);
-            BtnHomeViewContent = new RibbonToggleButton(ribbon, Cmd.CmdBtnHomeViewContent);
-            DesktopToolsTabGroup = new RibbonTabGroup(ribbon, Cmd.CmdDesktopToolsTabGroup);
-            DesktopIconManagementTab = new RibbonTab(ribbon, Cmd.CmdDesktopIconManagementTab);
-            DesktopIconSettingsGroup = new RibbonGroup(ribbon, Cmd.CmdDesktopIconSettingsGroup);
-            DesktopIconSettingsSaveLayoutButton = new RibbonButton(ribbon, Cmd.CmdDesktopIconSettingsSaveLayoutButton);
-            DesktopIconSettingsRestoreLayoutButton = new RibbonButton(ribbon, Cmd.CmdDesktopIconSettingsRestoreLayoutButton);
-            DesktopIconSettingsLaunchControlPanel = new RibbonButton(ribbon, Cmd.CmdDesktopIconSettingsLaunchControlPanel);
+            QuickAccessToolbar = new RibbonQuickAccessToolbar(ribbon, Cmd.QuickAccessToolbar);
+            BtnQATOpenNewShellBrowserPanel = new RibbonButton(ribbon, Cmd.BtnQATOpenNewShellBrowserPanel);
+            BtnQATHelp = new RibbonHelpButton(ribbon, Cmd.BtnQATHelp);
+            BtnAppApplicationMenu = new RibbonApplicationMenu(ribbon, Cmd.BtnAppApplicationMenu);
+            BtnAppOpenNewWindow = new RibbonButton(ribbon, Cmd.BtnAppOpenNewWindow);
+            BtnAppOpenNewShellBrowserPanel = new RibbonButton(ribbon, Cmd.BtnAppOpenNewShellBrowserPanel);
+            BtnAppOpenCommandPrompt = new RibbonButton(ribbon, Cmd.BtnAppOpenCommandPrompt);
+            BtnAppOpenWindowsPowerShell = new RibbonButton(ribbon, Cmd.BtnAppOpenWindowsPowerShell);
+            BtnAppChangeElectrifierOptions = new RibbonButton(ribbon, Cmd.BtnAppChangeElectrifierOptions);
+            BtnAppChangeFolderAndSearchOptions = new RibbonButton(ribbon, Cmd.BtnAppChangeFolderAndSearchOptions);
+            SplAppHelpMenu = new RibbonSplitButton(ribbon, Cmd.SplAppHelpMenu);
+            BtnAppHelp = new RibbonButton(ribbon, Cmd.BtnAppHelp);
+            BtnAppHelp_AboutElectrifier = new RibbonButton(ribbon, Cmd.BtnAppHelp_AboutElectrifier);
+            BtnAppHelp_AboutWindows = new RibbonButton(ribbon, Cmd.BtnAppHelp_AboutWindows);
+            BtnAppClose = new RibbonButton(ribbon, Cmd.BtnAppClose);
+            TabHome = new RibbonTab(ribbon, Cmd.TabHome);
+            GrpHomeClipboard = new RibbonGroup(ribbon, Cmd.GrpHomeClipboard);
+            BtnClipboardCut = new RibbonButton(ribbon, Cmd.BtnClipboardCut);
+            SplClipboardCopy = new RibbonSplitButton(ribbon, Cmd.SplClipboardCopy);
+            BtnClipboardCopy = new RibbonButton(ribbon, Cmd.BtnClipboardCopy);
+            BtnClipboardCopyFullFilePaths = new RibbonButton(ribbon, Cmd.BtnClipboardCopyFullFilePaths);
+            BtnClipboardCopyFileNames = new RibbonButton(ribbon, Cmd.BtnClipboardCopyFileNames);
+            BtnClipboardCopyDirectoryPaths = new RibbonButton(ribbon, Cmd.BtnClipboardCopyDirectoryPaths);
+            SplClipboardPaste = new RibbonSplitButton(ribbon, Cmd.SplClipboardPaste);
+            BtnClipboardPaste = new RibbonButton(ribbon, Cmd.BtnClipboardPaste);
+            BtnClipboardPasteAsNewFile = new RibbonButton(ribbon, Cmd.BtnClipboardPasteAsNewFile);
+            BtnClipboardPasteAsNewText = new RibbonMenuGroup(ribbon, Cmd.BtnClipboardPasteAsNewText);
+            BtnClipboardPasteAsNewTextFile = new RibbonButton(ribbon, Cmd.BtnClipboardPasteAsNewTextFile);
+            BtnClipboardPasteAsNewImage = new RibbonMenuGroup(ribbon, Cmd.BtnClipboardPasteAsNewImage);
+            BtnClipboardPasteAsNewBMPFile = new RibbonButton(ribbon, Cmd.BtnClipboardPasteAsNewBMPFile);
+            BtnClipboardPasteAsNewJPGFile = new RibbonButton(ribbon, Cmd.BtnClipboardPasteAsNewJPGFile);
+            BtnClipboardPasteAsNewPNGFile = new RibbonButton(ribbon, Cmd.BtnClipboardPasteAsNewPNGFile);
+            BtnClipboardPasteAsNewGIFFile = new RibbonButton(ribbon, Cmd.BtnClipboardPasteAsNewGIFFile);
+            BtnClipboardHistory = new RibbonToggleButton(ribbon, Cmd.BtnClipboardHistory);
+            GrpHomeOrganise = new RibbonGroup(ribbon, Cmd.GrpHomeOrganise);
+            BtnOrganiseMoveTo = new RibbonButton(ribbon, Cmd.BtnOrganiseMoveTo);
+            BtnOrganiseCopyTo = new RibbonButton(ribbon, Cmd.BtnOrganiseCopyTo);
+            BtnOrganiseDelete = new RibbonButton(ribbon, Cmd.BtnOrganiseDelete);
+            BtnOrganiseRename = new RibbonButton(ribbon, Cmd.BtnOrganiseRename);
+            GrpHomeSelect = new RibbonGroup(ribbon, Cmd.GrpHomeSelect);
+            BtnSelectConditional = new RibbonButton(ribbon, Cmd.BtnSelectConditional);
+            BtnSelectSelectAll = new RibbonButton(ribbon, Cmd.BtnSelectSelectAll);
+            BtnSelectSelectNone = new RibbonButton(ribbon, Cmd.BtnSelectSelectNone);
+            BtnSelectInvertSelection = new RibbonButton(ribbon, Cmd.BtnSelectInvertSelection);
+            GrpHomeView = new RibbonGroup(ribbon, Cmd.GrpHomeView);
+            DdbHomeViewLayout = new RibbonDropDownButton(ribbon, Cmd.DdbHomeViewLayout);
+            BtnHomeViewExtraLargeIcons = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewExtraLargeIcons);
+            BtnHomeViewLargeIcons = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewLargeIcons);
+            BtnHomeViewMediumIcons = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewMediumIcons);
+            BtnHomeViewSmallIcons = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewSmallIcons);
+            BtnHomeViewList = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewList);
+            BtnHomeViewDetails = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewDetails);
+            BtnHomeViewTiles = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewTiles);
+            BtnHomeViewContent = new RibbonToggleButton(ribbon, Cmd.BtnHomeViewContent);
+            TabGrpDesktopTools = new RibbonTabGroup(ribbon, Cmd.TabGrpDesktopTools);
+            TabDesktopIconManagement = new RibbonTab(ribbon, Cmd.TabDesktopIconManagement);
+            GrpDesktopIconSettings = new RibbonGroup(ribbon, Cmd.GrpDesktopIconSettings);
+            BtnDesktopIconSettingsSaveLayout = new RibbonButton(ribbon, Cmd.BtnDesktopIconSettingsSaveLayout);
+            BtnDesktopIconSettingsRestoreLayout = new RibbonButton(ribbon, Cmd.BtnDesktopIconSettingsRestoreLayout);
+            BtnDesktopIconSettingsLaunchControlPanel = new RibbonButton(ribbon, Cmd.BtnDesktopIconSettingsLaunchControlPanel);
             CbxDesktopIconSettingsSpacingVertical = new RibbonComboBox(ribbon, Cmd.CbxDesktopIconSettingsSpacingVertical);
             CbxDesktopIconSettingsSpacingHorizontal = new RibbonComboBox(ribbon, Cmd.CbxDesktopIconSettingsSpacingHorizontal);
-            DesktopShortcutGroup = new RibbonGroup(ribbon, Cmd.CmdDesktopShortcutGroup);
-            DesktopShortcutCreateDefaults = new RibbonButton(ribbon, Cmd.CmdDesktopShortcutCreateDefaults);
-            DesktopShortcutValidate = new RibbonButton(ribbon, Cmd.CmdDesktopShortcutValidate);
+            GrpDesktopShortcuts = new RibbonGroup(ribbon, Cmd.GrpDesktopShortcuts);
+            BtnDesktopShortcutsDefaults = new RibbonButton(ribbon, Cmd.BtnDesktopShortcutsDefaults);
+            BtnDesktopShortcutsValidate = new RibbonButton(ribbon, Cmd.BtnDesktopShortcutsValidate);
             initialized = true;
         }
 
