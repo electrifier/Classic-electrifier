@@ -272,12 +272,13 @@ namespace EntityLighter
             }
             catch (SqliteException ex)
             {
-                var ext = "SQL - Exception: " + ex.Message;
+                //var ext = "SQL - Exception: " + ex.Message;
 
-                if (null != ex.InnerException)
-                    ext += "\n\nInner: " + ex.InnerException.Message;
+                //if (null != ex.InnerException)
+                //    ext += "\n\nInner: " + ex.InnerException.Message;
 
-                System.Windows.Forms.MessageBox.Show(ext);
+                //System.Windows.Forms.MessageBox.Show(ext);
+                throw;
             }
         }
 
