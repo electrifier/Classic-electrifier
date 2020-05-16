@@ -104,7 +104,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", AppContext.GetDotNetFrameworkVersion(), AppContext.Icon.Handle);
+            Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", AppContext.GetDotNetFrameworkVersion(), this.Icon.Handle);
         }
 
 

@@ -30,6 +30,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
 using RibbonLib.Controls;
+using EntityLighter;
 
 namespace electrifier.Core.Forms
 {
@@ -43,7 +44,7 @@ namespace electrifier.Core.Forms
         #region Fields ========================================================================================================
 
         // TODO: Add Creation timestamp! in debug mode
-        private static readonly string formTitle_Affix = $"electrifier v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}";
+        private static readonly string formTitle_Affix = $"electrifier v{ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version }";
         public RibbonItems RibbonItems { get; }
 
         #endregion ============================================================================================================
@@ -67,7 +68,7 @@ namespace electrifier.Core.Forms
         #endregion ============================================================================================================
 
 
-        public ElApplicationWindow(Icon icon)
+        public ElApplicationWindow(Icon icon/*, SessionEntity session*/)
           : base()
         {
             AppContext.TraceScope();
@@ -76,7 +77,7 @@ namespace electrifier.Core.Forms
             this.RibbonItems = new RibbonItems(this, this.rbnRibbon);
 
             // Initialize properties
-            this.Text = this.Text;          //this.FormTitle_AddDebugRemark(); // TODO: Add formTitleAffix
+            this.Text = "Blubb!";//session.Name;          //this.FormTitle_AddDebugRemark(); // TODO: Add formTitleAffix
 
             // Set Application Icon as form Icon
             this.Icon = icon;
@@ -170,7 +171,7 @@ namespace electrifier.Core.Forms
         [Conditional("DEBUG")]
         private void FormTitle_AddDebugRemark()
         {
-            base.Text += " [DEBUG]";
+            base.Text += " - DEBUG";
         }
 
         private ElShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
@@ -188,11 +189,11 @@ namespace electrifier.Core.Forms
         {
             try
             {
-                this.dpnDockPanel.LoadFromXml(fullFileName,
-                    new DeserializeDockContent(delegate (string persistString)
-                    {
-                        return ElDockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
-                    }));
+                //this.dpnDockPanel.LoadFromXml(fullFileName,
+                //    new DeserializeDockContent(delegate (string persistString)
+                //    {
+                //        return ElDockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
+                //    }));
             }
             catch (Exception e)
             {

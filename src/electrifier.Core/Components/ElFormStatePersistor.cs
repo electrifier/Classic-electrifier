@@ -34,10 +34,10 @@ namespace electrifier.Core.Components
     {
         #region Fields ========================================================================================================
 
-        protected Form clientForm;
-        protected string PropertyKeyAffix_WindowLocation = "_WindowLocation";
-        protected string PropertyKeyAffix_WindowSize = "_WindowSize";
-        protected string PropertyKeyAffix_WindowState = "_WindowState";
+        private Form clientForm;
+        private readonly string PropertyKeyAffix_WindowLocation = "_WindowLocation";
+        private readonly string PropertyKeyAffix_WindowSize = "_WindowSize";
+        private readonly string PropertyKeyAffix_WindowState = "_WindowState";
 
         #endregion ============================================================================================================
 
@@ -139,6 +139,9 @@ namespace electrifier.Core.Components
 
         public ElFormStatePersistor(IContainer container) : this()
         {
+            if (null == container)
+                throw new ArgumentNullException(nameof(container));
+
             container.Add(this);
         }
 
@@ -158,13 +161,14 @@ namespace electrifier.Core.Components
             var windowState = this.ClientForm.WindowState;
 
             // Load setting values describing the last known form state
-            if (this.SettingExists(strWindowLocation))
-                windowLocation = (System.Drawing.Point)Settings.Default[strWindowLocation];
-            if (this.SettingExists(strWindowSize))
-                windowSize = (System.Drawing.Size)Settings.Default[strWindowSize];
-            if (this.SettingExists(strWindowState))
-                windowState = (FormWindowState)Settings.Default[strWindowState];
-
+/* Commented out for Issue #25
+            //if (this.SettingExists(strWindowLocation))
+            //    windowLocation = (System.Drawing.Point)Settings.Default[strWindowLocation];
+            //if (this.SettingExists(strWindowSize))
+            //    windowSize = (System.Drawing.Size)Settings.Default[strWindowSize];
+            //if (this.SettingExists(strWindowState))
+            //    windowState = (FormWindowState)Settings.Default[strWindowState];
+// Commented out for Issue #25 */
             // When fixWindowState is set, adjust window state if not Normal or Maximized
             if (fixWindowState && (!(windowState == FormWindowState.Normal || windowState == FormWindowState.Maximized)))
                 windowState = FormWindowState.Normal;
@@ -214,7 +218,10 @@ namespace electrifier.Core.Components
         // TODO: Move SettingExists to AppContext, or to new settings class respectively
         private bool SettingExists(string settingName)
         {
-            return Settings.Default.Properties.Cast<System.Configuration.SettingsProperty>().Any(prop => prop.Name == settingName);
+            return false;
+/* Commented out for Issue #25
+            //                return Settings.Default.Properties.Cast<System.Configuration.SettingsProperty>().Any(prop => prop.Name == settingName);
+// Commented out for Issue #25 */
         }
 
         public void Store()
@@ -223,20 +230,22 @@ namespace electrifier.Core.Components
             string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
             string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
 
-            // Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
-            if (FormWindowState.Normal == this.ClientForm.WindowState)
-            {
-                Settings.Default[strWindowLocation] = this.ClientForm.Location;
-                Settings.Default[strWindowSize] = this.ClientForm.Size;
-            }
-            else
-            {
-                Settings.Default[strWindowLocation] = this.ClientForm.RestoreBounds.Location;
-                Settings.Default[strWindowSize] = this.ClientForm.RestoreBounds.Size;
-            }
-            Settings.Default[strWindowState] = this.ClientForm.WindowState;
+/* Commented out for Issue #25
+            //// Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
+            //if (FormWindowState.Normal == this.ClientForm.WindowState)
+            //{
+            //    Settings.Default[strWindowLocation] = this.ClientForm.Location;
+            //    Settings.Default[strWindowSize] = this.ClientForm.Size;
+            //}
+            //else
+            //{
+            //    Settings.Default[strWindowLocation] = this.ClientForm.RestoreBounds.Location;
+            //    Settings.Default[strWindowSize] = this.ClientForm.RestoreBounds.Size;
+            //}
+            //Settings.Default[strWindowState] = this.ClientForm.WindowState;
 
-            Settings.Default.Save();
+            //Settings.Default.Save();
+// Commented out for Issue #25 */
         }
     }
 }

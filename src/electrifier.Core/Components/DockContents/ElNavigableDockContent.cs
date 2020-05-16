@@ -19,6 +19,7 @@
 */
 
 using electrifier.Core.Components.Controls;
+//using EntityLighter;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace electrifier.Core.Components.DockContents
     /// </summary>
     public abstract class ElNavigableDockContent
       : WeifenLuo.WinFormsUI.Docking.DockContent
+//      , IDockContentEntity
     {
         public IElNavigationHost NavigationHost { get; private set; }
 
@@ -88,6 +90,15 @@ namespace electrifier.Core.Components.DockContents
         //public virtual string CurrentFilterPattern { get; set; }
         //public virtual void DoApplyFilter(string FilterPattern) { throw new NotImplementedException(); }
         public virtual bool CanFilterItems => false;
+
+        //#region IDockContentEntity ============================================================================================
+
+        //public long Id { get; }
+        //public string DatabaseTableName => "DockContent";
+        //public ElEntityStore DataContext { get; }
+        //public SessionEntity Session { get; }
+
+        //#endregion ============================================================================================================
 
         public virtual void OnHistoryItemClick(object sender, EventArgs e)
         {

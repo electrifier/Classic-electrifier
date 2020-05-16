@@ -121,6 +121,8 @@ namespace electrifier
                 {
                     MessageBox.Show("Error while running electrifier.\n\n" + ex.Message,
                         "electrifier: Runtime Error",
+
+                        // Inner Exception!
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
 
@@ -132,6 +134,8 @@ namespace electrifier
                 MessageBox.Show("Unable to load '" + ElectrifierMainEntryPoint.elCoreDLLFileName + "'.\n\n" +
                     "Please reinstall electrifier application.\n\n" + ex.Message,
                     "electrifier: Critical Startup Error",
+
+                    // Inner Exception!
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
 

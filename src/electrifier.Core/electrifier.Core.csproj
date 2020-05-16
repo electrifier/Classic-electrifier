@@ -186,12 +186,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-    <Compile Include="Settings.cs" />
     <Compile Include="WindowsShell\ElClipboard.cs" />
     <Compile Include="WindowsShell\ElDesktopIconManager.cs" />
     <Compile Include="WindowsShell\ElShellFileOperations.cs" />
@@ -210,15 +204,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <EmbeddedResource Include="Forms\ElAboutDialog.resx">
       <DependentUpon>ElAboutDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\License.rtf" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\ElApplicationWindow.resx">
@@ -261,6 +250,12 @@
     <PackageReference Include="Vanara.Windows.Shell">
       <Version>3.1.6</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EntityLighter\EntityLighter.csproj">
+      <Project>{10c6ea02-55c0-48b9-bc6f-6e7c9c6cf2de}</Project>
+      <Name>EntityLighter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

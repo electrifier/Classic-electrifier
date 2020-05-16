@@ -18,38 +18,43 @@
 **
 */
 
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
-
+using EntityLighter;
 namespace electrifier.Core
 {
-    public sealed partial class AppContext : System.Windows.Forms.ApplicationContext
+    public sealed partial class AppContext
+      : System.Windows.Forms.ApplicationContext
     {
         #region Properties ====================================================================================================
 
-        public static Icon Icon { get; private set; }
-        public Bitmap Logo { get; private set; }
-        public bool IsPortable { get; private set; }
-        public bool IsIncognito { get; private set; }
-        internal AppContextSession Session { get; }
-        public bool IsBetaVersion() { return true; }
+        public Icon Icon { get; } = null;
+        public Bitmap Logo { get; } = null;
+        public bool IsPortable { get; } = false;
+        public bool IsIncognito { get; } = false;
 
-        public static string AssemblyCompany {
-            get {
+        public string BaseDirectory { get; }
+        public DataContext DataContext { get; } = null;
+
+        internal AppContextSession Session { get; } = null;
+
+        public static bool IsBetaVersion() { return true; }
+
+        public static string AssemblyCompany
+        {
+            get
+            {
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCompanyAttribute)attributes[0]).Company;
+                return attributes.Length == 0 ? string.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
 
@@ -64,11 +69,18 @@ namespace electrifier.Core
         /// <param name="appIcon">The icon resource used by this application</param>
         /// <param name="appLogo">The logo resource used by this application</param>
         /// <param name="splashScreenForm">The form representing the logo as splash screen</param>
-        [SecurityPermission(SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlAppDomain)]
-        public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm) : base()
+        [SecurityPermission(SecurityAction.Demand, Flags = SecurityPermissionFlag.ControlAppDomain)]
+        public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm)
+          : base()
         {
-            AppContext.Icon = appIcon;
-            this.Logo = appLogo;
+            if (null == args)
+                throw new ArgumentNullException(nameof(args));
+
+            if (null == splashScreenForm)
+                throw new ArgumentNullException(nameof(splashScreenForm));
+
+            this.Icon = appIcon ?? throw new ArgumentNullException(nameof(appIcon));
+            this.Logo = appLogo; // 22.03.20: This may be null if started with nosplash... So remove this, and use other way to get the bitmap if it's needed // ?? throw new ArgumentNullException(nameof(appLogo));
 
             // Initialize Exception handlers
             Application.ThreadException += this.Application_ThreadException;
@@ -78,11 +90,11 @@ namespace electrifier.Core
             foreach (string arg in args)
             {
                 // Portable: Issue #5: Add "-portable" command switch, storing configuration in application directory instead of "LocalApplicationData"
-                if (arg.ToLower().Equals("/portable"))
+                if (arg.Equals("/portable", StringComparison.OrdinalIgnoreCase))
                     this.IsPortable = true;
 
                 // Incognito: Don't modify configuration file on exit, thus don't make session parameters/changes persistent
-                if (arg.ToLower().Equals("/incognito"))
+                if (arg.Equals("/incognito", StringComparison.OrdinalIgnoreCase))
                     this.IsIncognito = true;
             }
 
@@ -90,50 +102,82 @@ namespace electrifier.Core
             this.InitializeTraceListener();
             AppContext.TraceScope();
 
+            // Add ThreadExit-handler to save configuration when closing
+            this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
+            Application.ApplicationExit += this.Application_ApplicationExit;
+
+            // Initialize EntityLighter.DataContext
+            this.BaseDirectory = AppContext.DetermineBaseDirectory(this.IsPortable);
+
+
+
+
+            // TODO: Incognito? IsPortable?
+
+            this.DataContext = new EntityLighter.DataContext($"{this.BaseDirectory}\\electrifier.config",
+                new Type[] { typeof(AppContextSession) });        // TODO: Add each entity with on its own AFTER creation of DataContext
+
             // Initialize session object
             //
             // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
             //
-            this.Session = new AppContextSession(this.IsPortable);
-            this.MainForm = this.Session.ElectrifierForm;
 
-            // Add ThreadExit-handler to save configuration when closing
-            this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
+            // TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
+            //// TODO: 19/04/20: As long as we don't use a session-selector, use session #1
+            //// ...or select(max(id)) from session...
+            //SessionEntity sessionEntity = new SessionEntity(AppContext.ElEntityStore);
+            this.Session = new AppContextSession(this);
+            this.MainForm = this.Session.ApplicationWindow;
+
+
+
+
 
             // TODO: Implement own MessageBox with "This is ALPHA-sign" and warning-text, perhaps use logo again
-            if (this.IsBetaVersion())
-            {
-                if (false == Properties.Settings.Default.Disable_BETAVersion_Warning)
-                {
-                    // Disable TopMost-property of SplashScreenForm to ensure Beta-Warning is shown in front of it
-                    splashScreenForm.TopMost = false;
+            /* Commented out for Issue #25
+                        if (AppContext.IsBetaVersion())
+                        {
+                            if (false == Properties.Settings.Default.Disable_BETAVersion_Warning)
+                            {
+                                // Disable TopMost-property of SplashScreenForm to ensure Beta-Warning is shown in front of it
+                                splashScreenForm.TopMost = false;
 
-                    string msgText = "Hello and welcome to electrifier!\n\n" +
-                        "Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested " +
-                        "there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!\n\n" +
-                        "No one can be held responsible for any damage that is caused by using this software!\n\n" +
-                        "Use at your own risk. By continuing using this software you show that you understand the implications.\n\n" +
-                        "Click Yes to see this warning again, or No to disable it forever!";
+                                string msgText = "Hello and welcome to electrifier!\n\n" +
+                                    "Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested " +
+                                    "there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!\n\n" +
+                                    "No one can be held responsible for any damage that is caused by using this software!\n\n" +
+                                    "Use at your own risk. By continuing using this software you show that you understand the implications.\n\n" +
+                                    "Click Yes to see this warning again, or No to disable it forever!";
 
-                    if (DialogResult.No == MessageBox.Show(msgText, "electrifier - Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
-                    {
-                        Properties.Settings.Default.Disable_BETAVersion_Warning = true;
-                    }
-                }
-            }
+                                if (DialogResult.No == MessageBox.Show(msgText, "electrifier - Warning!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning))
+                                {
+                                    Properties.Settings.Default.Disable_BETAVersion_Warning = true;
+                                }
+                            }
+                        }
+            // Commented out for Issue #25 */
+
+
+
+
 
             // Finally close splash screen
             splashScreenForm.Close();
             splashScreenForm.Dispose();
         }
 
-        private void AppContext_ThreadExit(object sender, EventArgs e)
+        private void Application_ApplicationExit(object sender, EventArgs e)
         {
             AppContext.TraceScope();
 
-            // Save configuration file
-            if (false == this.IsIncognito)
-                this.Session.SaveConfiguration();
+            //            // Save configuration file
+            //            if (false == this.IsIncognito)
+            //                this.Session.SaveConfiguration();
+        }
+
+        private void AppContext_ThreadExit(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
         }
 
         private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
@@ -154,11 +198,25 @@ namespace electrifier.Core
         {
             // TODO: Use Vanara.Windows.Forms.TaskDialog;
             string exMessage = $"Domain exception occured: { e.ExceptionObject.GetType().FullName }" +
-                $"\n\n{ e.ExceptionObject.ToString() }\n";
-
+                $"\n\n{ e.ExceptionObject }\n";
 
             AppContext.TraceError(exMessage);
             MessageBox.Show(exMessage, "D'oh! That shouldn't have happened...");
+        }
+
+        private static string DetermineBaseDirectory(bool isPortable)
+        {
+            if (isPortable)
+                return Application.StartupPath;
+
+            string baseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                AppContext.AssemblyCompany);
+
+            // Ensure the directory exists
+            if (!Directory.CreateDirectory(baseDirectory).Exists)
+                throw new DirectoryNotFoundException();
+
+            return baseDirectory;
         }
 
 
@@ -302,8 +360,7 @@ namespace electrifier.Core
                     return "4.5.1";
                 if (releaseKey >= 378389)
                     return "4.5";
-                // This code should never execute. A non-null release key should mean
-                // that 4.5 or later is installed.
+                // This code should never execute. A non-null release key should mean that 4.5 or later is installed.
                 return "No 4.5 or later version detected";
             }
         }

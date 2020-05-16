@@ -44,7 +44,7 @@ namespace EntityLighter
     /// <br/>
     /// See <seealso href="https://www.sqlite.org/datatype3.html"/> for further information.
     /// </summary>
-    internal enum DataType
+    public enum DataType
     {
         Integer,
         Real,
@@ -58,7 +58,7 @@ namespace EntityLighter
     /// See <seealso href="https://www.tutorialspoint.com/sqlite/sqlite_constraints.htm"/> for further information.
     /// </summary>
     [Flags]
-    internal enum Constraint
+    public enum Constraint
     {
         None = 0x0,
         NotNull = 0x10,
@@ -85,7 +85,7 @@ namespace EntityLighter
     #region Attributes ========================================================================================================
 
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-    internal sealed class ColumnAttribute : Attribute
+    public sealed class ColumnAttribute : Attribute
     {
         public ColumnAttribute(DataType dataType)
         {
@@ -118,11 +118,11 @@ namespace EntityLighter
 
     #region Interfaces ========================================================================================================
 
-    internal interface IEnumeratedEntity
+    public interface ILightedEntity
     {
-        DataContext EntityStore { get; }
+        DataContext DataContext { get; }
         string DatabaseTableName { get; }           // TODO: 01/05/20 Replace this by an attribute
-        long Id { get; }
+        long Id { get; }        // TODO: Replace this by it's rowid. rowid=null, entity is in creation
     }
 
     #endregion ================================================================================================================
@@ -204,9 +204,12 @@ namespace EntityLighter
         public delegate void SetEntityCreationParamsCallback(SqliteCommand sqliteCommand);
 
 
-        public DataContext(string storage, Type[] types) // CreateIfNotExists-param
+        public DataContext(string storage, Type[] types) // CreateIfNotExists-param // TODO: Move types to AddEntityTable-Method!
         {
             this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
+            if (types is null)
+                throw new ArgumentNullException(nameof(types));
 
             try
             {
@@ -270,7 +273,7 @@ namespace EntityLighter
                 //                SessionEntity sessionEntity = new SessionEntity(this);
 
             }
-            catch (SqliteException ex)
+            catch (SqliteException)
             {
                 //var ext = "SQL - Exception: " + ex.Message;
 
@@ -319,7 +322,7 @@ namespace EntityLighter
             }
         }
 
-        private void CreateEntityModel(Type entityType)  //IEnumeratedEntity enumeratedEntity)
+        private void CreateEntityModel(Type entityType)  //ILightedEntity enumeratedEntity)
         {
 
             // Define the table name for this Entity. If its type name ends with 'Entity', remove this suffix
@@ -328,7 +331,7 @@ namespace EntityLighter
             if (-1 != entityIdx)
                 tableName = tableName.Remove(entityIdx);
 
-            var stmtBuild = new EntityStatementBuilder(tableName);
+            EntityStatementBuilder stmtBuild = new EntityStatementBuilder(tableName);
 
             foreach (var property in entityType.GetProperties())
             {
@@ -354,7 +357,7 @@ namespace EntityLighter
                     // Note that: https://stackoverflow.com/questions/1168535/when-is-a-custom-attributes-constructor-run
                     public SqliteColumnAttribute(string columnName, DataType dataType)
                     {
-                        // TODO: Check if type of (this) is IEnumeratedEntity; Constructor gets called when Entity is examined using reflection
+                        // TODO: Check if type of (this) is ILightedEntity; Constructor gets called when Entity is examined using reflection
                         //var typeOf = this.GetType();
 
                         this.ColumnName = columnName;
@@ -388,7 +391,7 @@ namespace EntityLighter
 
 
 
-        internal long CreateNewEntity(IEnumeratedEntity entity, SetEntityCreationParamsCallback setEntityCreationParams)
+        internal long CreateNewEntity(ILightedEntity entity, SetEntityCreationParamsCallback setEntityCreationParams)
         {
             // TODO: NULL-Checks
             // TODO: Additional fields!
