@@ -121,7 +121,6 @@
     <Compile Include="AppContext.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AppContext.Session.cs" />
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -186,6 +185,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SessionContext.cs" />
     <Compile Include="WindowsShell\ElClipboard.cs" />
     <Compile Include="WindowsShell\ElDesktopIconManager.cs" />
     <Compile Include="WindowsShell\ElShellFileOperations.cs" />
