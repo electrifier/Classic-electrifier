@@ -31,20 +31,16 @@ using System.Windows.Forms;
 using EntityLighter;
 namespace electrifier.Core
 {
-    public sealed partial class AppContext
+    public sealed class AppContext
       : System.Windows.Forms.ApplicationContext
     {
         #region Properties ====================================================================================================
 
-        public Icon Icon { get; } = null;
-        public Bitmap Logo { get; } = null;
-        public bool IsPortable { get; } = false;
-        public bool IsIncognito { get; } = false;
+        public Icon Icon { get; }
+        public Bitmap Logo { get; }
 
-        public string BaseDirectory { get; }
-        public DataContext DataContext { get; } = null;
 
-        internal AppContextSession Session { get; } = null;
+        internal SessionContext Session { get; }
 
         public static bool IsBetaVersion() { return true; }
 
@@ -60,6 +56,8 @@ namespace electrifier.Core
 
         #endregion ============================================================================================================
 
+        // TODO: See new AppContext-class, .net >4.6: https://docs.microsoft.com/en-us/dotnet/api/system.appcontext?view=netcore-3.1
+
         /// <summary>
         /// 
         /// <see cref="AppContext"/> is the main entry point of electrifier Application.
@@ -73,6 +71,8 @@ namespace electrifier.Core
         public AppContext(string[] args, Icon appIcon, Bitmap appLogo, Form splashScreenForm)
           : base()
         {
+            bool isPortable = false, isIncognito = false;
+
             if (null == args)
                 throw new ArgumentNullException(nameof(args));
 
@@ -91,11 +91,11 @@ namespace electrifier.Core
             {
                 // Portable: Issue #5: Add "-portable" command switch, storing configuration in application directory instead of "LocalApplicationData"
                 if (arg.Equals("/portable", StringComparison.OrdinalIgnoreCase))
-                    this.IsPortable = true;
+                    isPortable = true;
 
                 // Incognito: Don't modify configuration file on exit, thus don't make session parameters/changes persistent
                 if (arg.Equals("/incognito", StringComparison.OrdinalIgnoreCase))
-                    this.IsIncognito = true;
+                    isIncognito = true;
             }
 
             // Initialize trace listener
@@ -107,27 +107,31 @@ namespace electrifier.Core
             Application.ApplicationExit += this.Application_ApplicationExit;
 
             // Initialize EntityLighter.DataContext
-            this.BaseDirectory = AppContext.DetermineBaseDirectory(this.IsPortable);
+            //            this.BaseDirectory = AppContext.DetermineBaseDirectory(isPortable);
+
+            SessionContext SessionContext = new SessionContext(AppContext.DetermineBaseDirectory(isPortable), isIncognito);
+            // TODO: Select session to load
+            this.MainForm = SessionContext.InitializeMainForm(this.Icon);
 
 
 
 
-            // TODO: Incognito? IsPortable?
+            //// TODO: Incognito? IsPortable?
 
-            this.DataContext = new EntityLighter.DataContext($"{this.BaseDirectory}\\electrifier.config",
-                new Type[] { typeof(AppContextSession) });        // TODO: Add each entity with on its own AFTER creation of DataContext
+            //this.DataContext = new EntityLighter.DataContext($"{this.BaseDirectory}\\electrifier.config",
+            //    new Type[] { typeof(SessionContext) });        // TODO: Add each entity with on its own AFTER creation of DataContext
 
-            // Initialize session object
-            //
-            // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
-            //
+            //// Initialize session object
+            ////
+            //// TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
+            ////
 
-            // TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
-            //// TODO: 19/04/20: As long as we don't use a session-selector, use session #1
-            //// ...or select(max(id)) from session...
-            //SessionEntity sessionEntity = new SessionEntity(AppContext.ElEntityStore);
-            this.Session = new AppContextSession(this);
-            this.MainForm = this.Session.ApplicationWindow;
+            //// TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
+            ////// TODO: 19/04/20: As long as we don't use a session-selector, use session #1
+            ////// ...or select(max(id)) from session...
+            ////SessionEntity sessionEntity = new SessionEntity(AppContext.ElEntityStore);
+            //this.Session = new SessionContext(this);
+            //this.MainForm = this.Session.ApplicationWindow;
 
 
 

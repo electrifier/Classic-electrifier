@@ -27,6 +27,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Data.Sqlite;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 
 // TODO: 10/05/20: Use events for Error-Handling to enable easy overwriting
@@ -204,12 +205,9 @@ namespace EntityLighter
         public delegate void SetEntityCreationParamsCallback(SqliteCommand sqliteCommand);
 
 
-        public DataContext(string storage, Type[] types) // CreateIfNotExists-param // TODO: Move types to AddEntityTable-Method!
+        public DataContext(string storage) // CreateIfNotExists-param // TODO: Move types to AddEntityTable-Method!
         {
             this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
-
-            if (types is null)
-                throw new ArgumentNullException(nameof(types));
 
             try
             {
@@ -251,9 +249,9 @@ namespace EntityLighter
                 //this.SetPragmaValue("application_id", sqlApplicationID.ToString());
 
                 this.SetPragmaValue("user_version", sqlUserVersionID.ToString(CultureInfo.InvariantCulture));
-                foreach (var type in types)
-                    this.CreateEntityModel(type);
-
+//                //foreach (var type in types)
+//                //    this.CreateEntityModel(type);
+//
                 //this.ExecuteNonQuery(EntityLighter.SqlStmtCreateDatabase);
 
 
@@ -285,6 +283,11 @@ namespace EntityLighter
             }
         }
 
+        //public void CreateEntityModel(ILightedEntity lightedEntity)
+        //{
+        //    this.CreateEntityModel(lightedEntity);
+        //}
+
         public int ExecuteNonQuery(string statement)
         {
             using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
@@ -294,20 +297,12 @@ namespace EntityLighter
             }
         }
 
-        public int ExecuteQuery(string statement)
+        public object ExecuteScalar(string statement)
         {
-            try
+            using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
             {
-                using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
-                {
-                    cmd.CommandText = statement;
-                    return cmd.ExecuteNonQuery();
-                }
-            }
-            catch (SqliteException ex)
-            {
-                Trace.WriteLine($"SQLiteException: { ex.Message }, ErrorCode: { ex.ErrorCode }, InnerException: {ex.InnerException} - SQL-Statement: { statement }");
-                throw;
+                cmd.CommandText = statement;
+                return cmd.ExecuteScalar();
             }
         }
 
@@ -322,14 +317,37 @@ namespace EntityLighter
             }
         }
 
-        private void CreateEntityModel(Type entityType)  //ILightedEntity enumeratedEntity)
+        public bool TableExists(string tableName)
         {
+            object queryResult = this.ExecuteScalar($"SELECT COUNT(*) FROM SQLite_Master WHERE Type='table' AND UPPER(Name)='{ tableName.ToUpperInvariant() }'");
 
+            if (queryResult is long resint)
+                return (1 == resint);
+
+            return false;
+        }
+
+        public bool TableExists(ILightedEntity entity)
+        {
+            return this.TableExists(entity.DatabaseTableName);
+        }
+
+
+
+        public void CreateEntityModel(Type entityType)  //ILightedEntity enumeratedEntity)
+        {
+            
             // Define the table name for this Entity. If its type name ends with 'Entity', remove this suffix
             var tableName = entityType.Name;
             var entityIdx = tableName.LastIndexOf("Entity", StringComparison.OrdinalIgnoreCase);
             if (-1 != entityIdx)
                 tableName = tableName.Remove(entityIdx);
+
+            if (this.TableExists(tableName))
+            {
+                // TODO: Compare table columns!
+                return;
+            }
 
             EntityStatementBuilder stmtBuild = new EntityStatementBuilder(tableName);
 
@@ -374,7 +392,7 @@ namespace EntityLighter
 
 
 
-        }
+         }
 
         #region Session Entities ==============================================================================================
 
@@ -391,7 +409,7 @@ namespace EntityLighter
 
 
 
-        internal long CreateNewEntity(ILightedEntity entity, SetEntityCreationParamsCallback setEntityCreationParams)
+        public long CreateNewEntity(ILightedEntity entity, SetEntityCreationParamsCallback setEntityCreationParams)
         {
             // TODO: NULL-Checks
             // TODO: Additional fields!
