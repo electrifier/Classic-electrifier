@@ -18,16 +18,17 @@
 **
 */
 
-
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Microsoft.Data.Sqlite;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
+
+/// <summary>
+/// <seealso href="https://en.wikipedia.org/wiki/Entity–relationship_model"/>
+/// <seealso href="https://en.wikipedia.org/wiki/Data_modeling"/>
+/// </summary>
 
 
 // TODO: 10/05/20: Use events for Error-Handling to enable easy overwriting
@@ -36,7 +37,7 @@ using System.Runtime.CompilerServices;
 // TODO: We may use INotifyPropertyChanged for updating in real-time
 // TODO: See https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/attribute-based-mapping,
 //           https://docs.microsoft.com/en-us/dotnet/api/system.data.linq.mapping?view=netframework-4.8 for precise object names
-
+// https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/the-linq-to-sql-object-model
 
 namespace EntityLighter
 {
@@ -84,8 +85,19 @@ namespace EntityLighter
 
 
     #region Attributes ========================================================================================================
+    /// <summary>
+    /// <seealso href="https://docs.microsoft.com/en-us/dotnet/api/system.data.linq.mapping.tableattribute?view=netframework-4.8"/>
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public sealed class TableAttribute : Attribute
+    {
+        public TableAttribute() { }
 
-    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+        // Optional, Named Arguments
+        public string Name { get; set; }
+    }
+
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class ColumnAttribute : Attribute
     {
         public ColumnAttribute(DataType dataType)
@@ -162,13 +174,13 @@ namespace EntityLighter
         //    }
         //}
 
-        private class EntityStatementBuilder
+        private class TableStatementBuilder
         {
             public string EntityName { get; }
 
             private readonly List<Tuple<string, ColumnAttribute>> TableColumns = new List<Tuple<string, ColumnAttribute>>();
 
-            public EntityStatementBuilder(string entityName)
+            public TableStatementBuilder(string entityName)
             {
                 this.EntityName = entityName;
             }
@@ -177,6 +189,8 @@ namespace EntityLighter
             {
                 this.TableColumns.Add(new Tuple<string, ColumnAttribute>(columnName, attribute));
             }
+
+            public int AttributeCount => this.TableColumns.Count;
 
             public string ToSQLStatement()
             {
@@ -334,78 +348,39 @@ namespace EntityLighter
 
 
 
-        public void CreateEntityModel(Type entityType)  //ILightedEntity enumeratedEntity)
+        public void CreateEntityModel(Type entityType)
         {
-            
-            // Define the table name for this Entity. If its type name ends with 'Entity', remove this suffix
-            var tableName = entityType.Name;
-            var entityIdx = tableName.LastIndexOf("Entity", StringComparison.OrdinalIgnoreCase);
-            if (-1 != entityIdx)
-                tableName = tableName.Remove(entityIdx);
+            if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
+                throw new ArgumentException("No Table Attribute defined", nameof(entityType));
+
+            TableAttribute table = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
+
+            string tableName = table.Name ?? entityType.Name;
 
             if (this.TableExists(tableName))
             {
-                // TODO: Compare table columns!
+                // TODO: Compare table columns and update model if necessary
                 return;
             }
 
-            EntityStatementBuilder stmtBuild = new EntityStatementBuilder(tableName);
+            TableStatementBuilder tableStatement = new TableStatementBuilder(tableName);
 
+            // Iterate through all properties and process ColumnAttributes
             foreach (var property in entityType.GetProperties())
             {
-                // Iterate through all properties, looking for ColumnAttribute
-
                 if (property.GetCustomAttribute(typeof(ColumnAttribute)) is ColumnAttribute serAttr)
-                    stmtBuild.AddAttribute(property.Name, serAttr);
+                    tableStatement.AddAttribute(property.Name, serAttr);
             }
 
-            this.ExecuteNonQuery(stmtBuild.ToSQLStatement());
-
-
-
-
-
-
-
-
-            /*
-                    public string ColumnName { get; }
-                    public DataType DataType { get; }
-
-                    // Note that: https://stackoverflow.com/questions/1168535/when-is-a-custom-attributes-constructor-run
-                    public SqliteColumnAttribute(string columnName, DataType dataType)
-                    {
-                        // TODO: Check if type of (this) is ILightedEntity; Constructor gets called when Entity is examined using reflection
-                        //var typeOf = this.GetType();
-
-                        this.ColumnName = columnName;
-                        this.DataType = dataType;
-                    }
-
-                    // Named Arguments
-
-                    public bool Nullable { get; set; } = true;
-                    public string Default { get; set; }
-            */
-
-
-
-
-
-         }
+            if (tableStatement.AttributeCount > 0)
+                this.ExecuteNonQuery(tableStatement.ToSQLStatement());
+            else
+                throw new MissingMemberException("No Column Attribute defined on any Property", nameof(entityType));
+        }
 
         #region Session Entities ==============================================================================================
 
-        // TODO: Extension-Methode => object result = sqlCmd.ExecuteScalar("{STMT}");
 
-        // TODO: public long CreateNewEntity( ENUM { Session, Content, Workbench, etc.} !)
-
-        // oder: public long CreateNewEntity(typeof(ElSessionEntity))
-
-        ////////public long CreateNewEntityId(ElSessionEntity newSession)       ==> SubClassing (z.B. ElEntityWithID)  => const TableName = 'Session'; string NewItemName = 'Neue Session!" => SQL-Stmt dynamisch aufbauen!
-        ////////{
-        ////////    return (newSession.Id = this.CreateNewSessionId());
-        ////////}
 
 
 
@@ -446,27 +421,6 @@ namespace EntityLighter
 
 
 
-        /*
-                        // TODO: 29.03: Lock database
-
-                        sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ( 'electrifier session' );";
-                        var rowCount = sqlCmd.ExecuteNonQuery();
-
-                        sqlCmd.CommandText = $"SELECT last_insert_rowid();";
-                        var rowid = sqlCmd.ExecuteScalar();
-
-                        var rawrowid = SQLitePCL.raw.sqlite3_last_insert_rowid(entityStore.SqliteConnection.Handle);       // long
-        */
-
-        //private void LockDatabase()
-        //{
-
-        //}
-
-        //public void UnlockDatabase()
-        //{
-
-        //}
 
         //public void BackupDatabaseToFile()
         //{

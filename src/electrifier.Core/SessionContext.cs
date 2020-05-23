@@ -35,6 +35,7 @@ namespace electrifier.Core
      * This property determines the main Form for this context. This property can change at any time. If OnMainFormClosed is not overridden,
      * the message loop of the thread terminates when the mainForm parameter closes.
      */
+    [Table]
     internal class SessionContext
       : ILightedEntity
     {
@@ -118,8 +119,9 @@ namespace electrifier.Core
             //// TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
             ////
 
-            if (!DataContext.TableExists(this))
-                this.DataContext.CreateEntityModel(typeof(SessionContext));
+//            if (!DataContext.TableExists(this))
+//                this.DataContext.CreateEntityModel(typeof(SessionContext));
+            this.DataContext.CreateEntityModel(typeof(SessionContext));
 
             this.Name = $"Session on {DateTime.Now.DayOfWeek}";         // TODO: Put into config!
 
@@ -133,6 +135,11 @@ namespace electrifier.Core
         {
             this.ApplicationIcon = appIcon;
             this.ApplicationWindow = new Forms.ElApplicationWindow(appIcon);
+
+
+
+
+
 
             // TODO: Create new shellbrowser - for test purposes only
 
