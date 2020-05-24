@@ -74,9 +74,14 @@ namespace EntityLighter
 
     #region Extensions ========================================================================================================
 
-    internal static class EntityStoreExtensions
+    internal static class EntityLighterExtensions
     {
-        public static string ToSQLStatement(this Constraint constraint)
+        /// <summary>
+        /// Convert <see cref="Constraint"/> into SQL-Snippet
+        /// </summary>
+        /// <param name="constraint">The Constraint flags for this table column</param>
+        /// <returns></returns>
+        public static string ToSQLSnippet(this Constraint constraint)
         {
             return (constraint.HasFlag(Constraint.NotNull) ? "NOT NULL " : "")
                 + (constraint.HasFlag(Constraint.Unique) ? "UNIQUE " : "")
@@ -126,7 +131,7 @@ namespace EntityLighter
         /// <returns></returns>
         public string ToSQLSnippet(string columnName)
         {
-            StringBuilder stmt = new StringBuilder($"{ columnName } { this.DataType } { this.Constraints.ToSQLStatement() } ");
+            StringBuilder stmt = new StringBuilder($"{ columnName } { this.DataType } { this.Constraints.ToSQLSnippet() } ");
 
             if (!string.IsNullOrWhiteSpace(this.DefaultValue))
                 stmt.Append($"DEFAULT { this.DefaultValue }");
@@ -387,10 +392,6 @@ namespace EntityLighter
             return table.Name ?? entityType.Name;
         }
 
-        #region Session Entities ==============================================================================================
-
-
-
 
 
         public long CreateNewEntity(Type entityType, SetEntityCreationParamsCallback setEntityCreationParams)
@@ -398,18 +399,21 @@ namespace EntityLighter
             // TODO: NULL-Checks
             // TODO: Additional fields!
             // TODO: SQL-Injection Checks
+            // TODO: 24/05/20: Create the WHOLE statement dynamically!
 
             if (null == setEntityCreationParams)
                 throw new ArgumentNullException(nameof(setEntityCreationParams));
 
             using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
             {
+                // TODO: 24/05/20: Create the WHOLE statement dynamically!
                 setEntityCreationParams(sqlCmd);
 
                 lock (this.databaseLock)
                 {
                     if (1 == sqlCmd.ExecuteNonQuery())
                     {
+                        // Finally fetch the Primary key of the new record
                         sqlCmd.CommandText = $"SELECT Id FROM { this.GetTableName(entityType) } WHERE RowId = Last_Insert_RowId()";
 
                         var entityId = sqlCmd.ExecuteScalar();
@@ -425,7 +429,6 @@ namespace EntityLighter
 
 
 
-        #endregion ============================================================================================================
 
 
 

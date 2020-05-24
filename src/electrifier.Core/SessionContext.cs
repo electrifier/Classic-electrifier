@@ -35,7 +35,7 @@ namespace electrifier.Core
      * This property determines the main Form for this context. This property can change at any time. If OnMainFormClosed is not overridden,
      * the message loop of the thread terminates when the mainForm parameter closes.
      */
-    [Table]
+    [Table(Name = "Session")]
     internal class SessionContext
     {
         #region ILightedEntity ================================================================================================
@@ -127,7 +127,7 @@ namespace electrifier.Core
             this.Name = $"Session on {DateTime.Now.DayOfWeek}";         // TODO: Put into config!
 
             this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) => {
-                sqlCmd.CommandText = $"INSERT INTO SessionContext (Name) VALUES ($Name)";
+                sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
                 sqlCmd.Parameters.AddWithValue("$Name", this.Name);
             });
         }
