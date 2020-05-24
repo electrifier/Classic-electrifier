@@ -37,15 +37,12 @@ namespace electrifier.Core
      */
     [Table]
     internal class SessionContext
-      : ILightedEntity
     {
         #region ILightedEntity ================================================================================================
 
         /// <summary>
         /// TODO: The following implements ILightedEntity
         /// </summary>
-        //public DataContext DataContext { get; }
-        public string DatabaseTableName => "SessionContext";
 
         [Column(DataType.Integer, Constraints = Constraint.PrimaryKey)]
         public long Id { get; }
@@ -64,6 +61,10 @@ namespace electrifier.Core
 
         [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
         public long DateModified { get; }
+
+
+
+        // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
 
         //[Column(DataType.Text)]
         //public string DockPanelLayout { get; }
@@ -125,7 +126,7 @@ namespace electrifier.Core
 
             this.Name = $"Session on {DateTime.Now.DayOfWeek}";         // TODO: Put into config!
 
-            this.Id = this.DataContext.CreateNewEntity(this, (sqlCmd) => {
+            this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) => {
                 sqlCmd.CommandText = $"INSERT INTO SessionContext (Name) VALUES ($Name)";
                 sqlCmd.Parameters.AddWithValue("$Name", this.Name);
             });

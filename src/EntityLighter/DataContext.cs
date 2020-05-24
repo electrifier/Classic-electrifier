@@ -28,6 +28,10 @@ using Microsoft.Data.Sqlite;
 /// <summary>
 /// <seealso href="https://en.wikipedia.org/wiki/Entity–relationship_model"/>
 /// <seealso href="https://en.wikipedia.org/wiki/Data_modeling"/>
+/// <seealso href="https://docs.microsoft.com/en-us/dotnet/api/system.data.linq.mapping.tableattribute?view=netframework-4.8"/>
+/// 
+/// The EntitySet-Class source:
+/// <seealso href="https://referencesource.microsoft.com/#System.Data.Linq/Types.cs,dbc446811fd0241d"/>
 /// </summary>
 
 
@@ -85,8 +89,9 @@ namespace EntityLighter
 
 
     #region Attributes ========================================================================================================
+
     /// <summary>
-    /// <seealso href="https://docs.microsoft.com/en-us/dotnet/api/system.data.linq.mapping.tableattribute?view=netframework-4.8"/>
+    /// TableAttribute
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public sealed class TableAttribute : Attribute
@@ -97,6 +102,9 @@ namespace EntityLighter
         public string Name { get; set; }
     }
 
+    /// <summary>
+    /// ColumnAttribute
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public sealed class ColumnAttribute : Attribute
     {
@@ -129,16 +137,7 @@ namespace EntityLighter
 
     #endregion ================================================================================================================
 
-    #region Interfaces ========================================================================================================
 
-    public interface ILightedEntity
-    {
-        DataContext DataContext { get; }
-        string DatabaseTableName { get; }           // TODO: 01/05/20 Replace this by an attribute
-        long Id { get; }        // TODO: Replace this by it's rowid. rowid=null, entity is in creation
-    }
-
-    #endregion ================================================================================================================
 
     public class DataContext
       : IDisposable
@@ -341,10 +340,10 @@ namespace EntityLighter
             return false;
         }
 
-        public bool TableExists(ILightedEntity entity)
-        {
-            return this.TableExists(entity.DatabaseTableName);
-        }
+        //public bool TableExists(ILightedEntity entity)
+        //{
+        //    return this.TableExists(entity.DatabaseTableName);
+        //}
 
 
 
@@ -378,13 +377,23 @@ namespace EntityLighter
                 throw new MissingMemberException("No Column Attribute defined on any Property", nameof(entityType));
         }
 
+        public string GetTableName(Type entityType)         // Extension-Method?!?
+        {
+            if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
+                throw new ArgumentException("No Table Attribute defined", nameof(entityType));
+
+            TableAttribute table = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
+
+            return table.Name ?? entityType.Name;
+        }
+
         #region Session Entities ==============================================================================================
 
 
 
 
 
-        public long CreateNewEntity(ILightedEntity entity, SetEntityCreationParamsCallback setEntityCreationParams)
+        public long CreateNewEntity(Type entityType, SetEntityCreationParamsCallback setEntityCreationParams)
         {
             // TODO: NULL-Checks
             // TODO: Additional fields!
@@ -401,7 +410,7 @@ namespace EntityLighter
                 {
                     if (1 == sqlCmd.ExecuteNonQuery())
                     {
-                        sqlCmd.CommandText = $"SELECT Id FROM { entity.DatabaseTableName } WHERE RowId = Last_Insert_RowId()";
+                        sqlCmd.CommandText = $"SELECT Id FROM { this.GetTableName(entityType) } WHERE RowId = Last_Insert_RowId()";
 
                         var entityId = sqlCmd.ExecuteScalar();
 
@@ -409,7 +418,7 @@ namespace EntityLighter
                             return (long)entityId;
                     }
 
-                    throw new Exception($"Failed to create new record in database for { entity.GetType().Name }!"); // TODO: Overhault exception handlers!
+                    throw new Exception($"Failed to create new record in database for { entityType }!"); // TODO: Overhault exception handlers!
                 }
             }
         }
