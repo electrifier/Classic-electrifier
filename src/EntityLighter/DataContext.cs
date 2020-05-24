@@ -84,8 +84,7 @@ namespace EntityLighter
         public static string ToSQLSnippet(this Constraint constraint)
         {
             return (constraint.HasFlag(Constraint.NotNull) ? "NOT NULL " : "")
-                + (constraint.HasFlag(Constraint.Unique) ? "UNIQUE " : "")
-                + (constraint.HasFlag(Constraint.PrimaryKey) ? "PRIMARY KEY" : "");
+                 + (constraint.HasFlag(Constraint.Unique)  ? "UNIQUE"    : "");
         }
     }
 
@@ -124,6 +123,7 @@ namespace EntityLighter
         // Optional, Named Arguments
         public Constraint Constraints { get; set; }
         public string DefaultValue { get; set; }
+        public bool IsPrimaryKey { get { return this.Constraints.HasFlag(Constraint.PrimaryKey); } }
 
         /// <summary>
         /// Generate SQL-Snippet describing this property for use in CREATE TABLE-Statement
@@ -189,30 +189,50 @@ namespace EntityLighter
                 this.EntityName = entityName;
             }
 
-            public void AddAttribute(string columnName, ColumnAttribute attribute)
+            public void AddColumn(string columnName, ColumnAttribute attributes)
             {
-                this.TableColumns.Add(new Tuple<string, ColumnAttribute>(columnName, attribute));
+                this.TableColumns.Add(new Tuple<string, ColumnAttribute>(columnName, attributes));
             }
 
             public int AttributeCount => this.TableColumns.Count;
 
             public string ToSQLStatement()
             {
-                int attributeCount = this.TableColumns.Count;
+                int columnCount = this.TableColumns.Count;
 
-                if (attributeCount < 1)
+                if (columnCount < 1)
                     return string.Empty;
 
                 StringBuilder statement = new StringBuilder($"CREATE TABLE IF NOT EXISTS '{ this.EntityName }' ( ");
+                List<string> primaryKey = new List<string>();
 
-                for (int i = 0; i < attributeCount;)
+                // Add Column snippets
+                for (int i = 0; i < columnCount;)
                 {
-                    this.TableColumns[i].Deconstruct(out string columnName, out ColumnAttribute attribute);
+                    this.TableColumns[i].Deconstruct(out string columnName, out ColumnAttribute attributes);
 
-                    statement.Append(attribute.ToSQLSnippet(columnName));
-                    statement.Append(++i < attributeCount ? ", " : ")");
+                    statement.Append(attributes.ToSQLSnippet(columnName));
+
+                    if (attributes.IsPrimaryKey)
+                        primaryKey.Add(columnName);
+
+                    if (++i < columnCount)
+                        statement.Append(", ");
                 }
 
+                // Add Primary Key snippet
+                if (primaryKey.Count > 0)
+                {
+                    statement.Append(", PRIMARY KEY (");
+
+                    for (int i = 0; i < primaryKey.Count;)
+                    {
+                        statement.Append(primaryKey[i]);
+                        statement.Append(++i < primaryKey.Count ? ", " : ")");
+                    }
+                }
+
+                statement.Append(")");
                 return statement.ToString();
             }
         }
@@ -373,7 +393,7 @@ namespace EntityLighter
             foreach (var property in entityType.GetProperties())
             {
                 if (property.GetCustomAttribute(typeof(ColumnAttribute)) is ColumnAttribute serAttr)
-                    tableStatement.AddAttribute(property.Name, serAttr);
+                    tableStatement.AddColumn(property.Name, serAttr);
             }
 
             if (tableStatement.AttributeCount > 0)

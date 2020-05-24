@@ -62,9 +62,18 @@ namespace electrifier.Core
         [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
         public long DateModified { get; }
 
+        /// <summary>
+        /// For correct mapping, see: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
+        /// </summary>
+        //[Association(Storage = "properties", OtherKey = "SessionId")]
+        public List<Property> Properties
+        {
+            get;
+            //set { this.properties.Assign(value); }
+        }
 
 
-        // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
+
 
         //[Column(DataType.Text)]
         //public string DockPanelLayout { get; }
@@ -104,6 +113,22 @@ namespace electrifier.Core
 
         #endregion Fields =====================================================================================================
 
+        #region Subclasses ====================================================================================================
+
+
+        [Table(Name = "SessionProperty")]
+        internal class Property
+        {
+            [Column(DataType.Integer, Constraints = Constraint.PrimaryKey)]
+            public long SessionId { get; }
+            [Column(DataType.Text, Constraints = Constraint.PrimaryKey)]
+            public string Name { get; }
+            [Column(DataType.Text)]
+            public string Value { get; }
+        }
+
+        #endregion Subclasses =================================================================================================
+
 
         public SessionContext(string baseDirectory, bool isIncognito)
         {
@@ -123,6 +148,7 @@ namespace electrifier.Core
 //            if (!DataContext.TableExists(this))
 //                this.DataContext.CreateEntityModel(typeof(SessionContext));
             this.DataContext.CreateEntityModel(typeof(SessionContext));
+            this.DataContext.CreateEntityModel(typeof(Property));
 
             this.Name = $"Session on {DateTime.Now.DayOfWeek}";         // TODO: Put into config!
 
