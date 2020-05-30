@@ -20,7 +20,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Microsoft.Data.Sqlite;
@@ -69,13 +68,72 @@ namespace EntityLighter
         None = 0x0,
         NotNull = 0x10,
         Unique = 0x20,
-        PrimaryKey = 0x40,
+    }
+
+
+    /// <summary>
+    /// TODO: Convert to class! Use overloads and operators heavily :)
+    /// 
+    /// <seealso href="https://sqlite.org/pragma.html"/>
+    /// </summary>
+    public struct SqlitePragma       // TODO: IEquatable
+    {
+        public DataContext DataContext { get; }
+        public string Name { get; }
+        public bool IsReadable { get; }
+        public bool IsWriteable { get; }
+
+        public SqlitePragma(DataContext dataContext, string name, bool isReadable = true, bool isWriteable = true)
+        {
+            this.DataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.IsReadable = isReadable;
+            this.IsWriteable = isWriteable;
+        }
+
+        public object Value
+        {
+            get
+            {
+                if (!this.IsReadable)
+                    throw new AccessViolationException();
+
+                return this.DataContext.ExecuteScalar($"PRAGMA { this.Name }");      // TODO: Convert <object> to long, real, blob, bool?
+            }
+            set
+            {
+                if (!this.IsWriteable)
+                    throw new AccessViolationException();
+
+                // TODO: Check ReturnCode!
+                this.DataContext.ExecuteNonQuery($"PRAGMA { this.Name } = { value }");
+            }
+        }
+
+        public static implicit operator string(SqlitePragma pragma) => pragma.Value.ToString();
+
+        public static explicit operator long(SqlitePragma pragma)
+        {
+            if (pragma.Value is long longResult)
+                return longResult;
+            throw new InvalidCastException();
+        }
     }
 
     #region Extensions ========================================================================================================
 
-    internal static class EntityLighterExtensions
+    internal static class Extensions
     {
+        /// <summary>
+        /// Convert <see cref="DataType"/> into SQL-Snippet
+        /// </summary>
+        /// <param name="dataType">The DataType of this table column</param>
+        /// <returns></returns>
+        public static string ToSQLSnippet(this DataType dataType)
+        {
+            return dataType.ToString().ToUpperInvariant();
+        }
+
         /// <summary>
         /// Convert <see cref="Constraint"/> into SQL-Snippet
         /// </summary>
@@ -86,6 +144,8 @@ namespace EntityLighter
             return (constraint.HasFlag(Constraint.NotNull) ? "NOT NULL " : "")
                  + (constraint.HasFlag(Constraint.Unique)  ? "UNIQUE"    : "");
         }
+
+        
     }
 
     #endregion ================================================================================================================
@@ -106,13 +166,10 @@ namespace EntityLighter
         public string Name { get; set; }
     }
 
-    /// <summary>
-    /// ColumnAttribute
-    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class ColumnAttribute : Attribute
+    public abstract class BaseColumnAttribute : Attribute
     {
-        public ColumnAttribute(DataType dataType)
+        public BaseColumnAttribute(DataType dataType)
         {
             this.DataType = dataType;
         }
@@ -123,7 +180,7 @@ namespace EntityLighter
         // Optional, Named Arguments
         public Constraint Constraints { get; set; }
         public string DefaultValue { get; set; }
-        public bool IsPrimaryKey { get { return this.Constraints.HasFlag(Constraint.PrimaryKey); } }
+        public bool IsPrimaryKey { get; protected set; }
 
         /// <summary>
         /// Generate SQL-Snippet describing this property for use in CREATE TABLE-Statement
@@ -131,7 +188,7 @@ namespace EntityLighter
         /// <returns></returns>
         public string ToSQLSnippet(string columnName)
         {
-            StringBuilder stmt = new StringBuilder($"{ columnName } { this.DataType } { this.Constraints.ToSQLSnippet() } ");
+            StringBuilder stmt = new StringBuilder($"{ columnName } { this.DataType.ToSQLSnippet() } { this.Constraints.ToSQLSnippet() } ");
 
             if (!string.IsNullOrWhiteSpace(this.DefaultValue))
                 stmt.Append($"DEFAULT { this.DefaultValue }");
@@ -140,9 +197,53 @@ namespace EntityLighter
         }
     }
 
+    /// <summary>
+    /// Column-Attribute
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class ColumnAttribute : BaseColumnAttribute
+    {
+        public ColumnAttribute(DataType dataType) : base(dataType)
+        {
+            this.IsPrimaryKey = false;
+        }
+    }
+
+    /// <summary>
+    /// PrimaryKey-Attribute
+    /// </summary>
+    public sealed class PrimaryKeyAttribute : BaseColumnAttribute
+    {
+        public PrimaryKeyAttribute(DataType dataType) : base(dataType)
+        {
+            this.IsPrimaryKey = true;
+        }
+    }
+
+
     #endregion ================================================================================================================
 
-
+    /// <summary>
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// 
+    /// </summary>
 
     public class DataContext
       : IDisposable
@@ -150,10 +251,6 @@ namespace EntityLighter
         #region Fields ========================================================================================================
 
         private readonly object databaseLock = new object();
-
-        private const uint sqlUserVersionID = 0xE1EC0101;
-        // TODO: pragma application_id seems to be unavailable with Microsoft.Data.Sqlite => SQLitePCL.sqlite3_stmt ?!?
-        //        private const uint sqlApplicationID = 0xE1EC781F;
 
         #endregion ============================================================================================================
 
@@ -163,10 +260,17 @@ namespace EntityLighter
 
         public string Storage { get; }
 
+        public SqlitePragma PragmaForeignKeys;       // GET/SET, wohl struct => class
+        public SqlitePragma PragmaUserVersion;
+        public SqlitePragma PragmaApplicationID;
+
+        public bool HasForeignKeySupport { get => ((long)this.PragmaForeignKeys.Value == 1); }      // TODO: BOOL
+
+
         #endregion ============================================================================================================
 
 
-        //public string SQLiteVersionId
+        //public string SQLiteVersion
         //{
         //    get
         //    {
@@ -243,6 +347,7 @@ namespace EntityLighter
         public delegate void SetEntityCreationParamsCallback(SqliteCommand sqliteCommand);
 
 
+
         public DataContext(string storage) // CreateIfNotExists-param // TODO: Move types to AddEntityTable-Method!
         {
             this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
@@ -253,7 +358,7 @@ namespace EntityLighter
                     new SqliteConnectionStringBuilder()
                     {
                         DataSource = this.Storage,
-                        //Mode = SqliteOpenMode.Memory,
+                        Mode = SqliteOpenMode.ReadWrite, //ReadWriteCreate,      //Mode = SqliteOpenMode.Memory,
                     }.ToString()
                 );
 
@@ -263,6 +368,20 @@ namespace EntityLighter
                 //this.SqliteConnection.CreateFunction<>
 
                 this.SqliteConnection.Open();
+
+                // Define PRAGMA helper objects
+
+                this.PragmaUserVersion = new SqlitePragma(this, "USER_VERSION");
+                this.PragmaForeignKeys = new SqlitePragma(this, "FOREIGN_KEYS", isWriteable: false);
+                this.PragmaApplicationID = new SqlitePragma(this, "APPLICATION_ID");
+
+
+                var pappid = new SqlitePragma(this, "application_id");
+                var appid = (long)pappid.Value;
+                pappid.Value = "392";
+                var appid2 = pappid.Value;
+
+
 
                 // Check if Database model already exists
                 using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
@@ -282,14 +401,31 @@ namespace EntityLighter
                  * Create new database model
                  */
 
-                // TODO: pragma application_id seems to be unavailable with Microsoft.Data.Sqlite
-                //       Perhaps give another try with native SQLite
-                //this.SetPragmaValue("application_id", sqlApplicationID.ToString());
+                /// TEST pragmas
+                string userver = this.PragmaUserVersion;
+                this.PragmaUserVersion.Value = "666";
+                string userver2 = this.PragmaUserVersion;
+                long vertest = (long)this.PragmaUserVersion;
+                this.PragmaUserVersion.Value = userver;
 
-                this.SetPragmaValue("user_version", sqlUserVersionID.ToString(CultureInfo.InvariantCulture));
-//                //foreach (var type in types)
-//                //    this.CreateEntityModel(type);
-//
+                var fksupport = this.PragmaForeignKeys.Value;
+
+                /*
+                            if (pragma.Value is long longResult)
+                return longResult;
+            throw new InvalidCastException();
+
+                */
+
+
+                //this.SetPragmaValue("user_version", sqlUserVersionID.ToString(CultureInfo.InvariantCulture));
+
+
+                //this.SetPragmaValue("foreign_keys", "ON");
+
+                //                //foreach (var type in types)
+                //                //    this.CreateEntityModel(type);
+                //
                 //this.ExecuteNonQuery(EntityLighter.SqlStmtCreateDatabase);
 
 

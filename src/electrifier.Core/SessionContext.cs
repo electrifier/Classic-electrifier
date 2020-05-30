@@ -44,7 +44,7 @@ namespace electrifier.Core
         /// TODO: The following implements ILightedEntity
         /// </summary>
 
-        [Column(DataType.Integer, Constraints = Constraint.PrimaryKey)]
+        [PrimaryKey(DataType.Integer)]
         public long Id { get; }
 
 
@@ -119,9 +119,9 @@ namespace electrifier.Core
         [Table(Name = "SessionProperty")]
         internal class Property
         {
-            [Column(DataType.Integer, Constraints = Constraint.PrimaryKey)]
+            [PrimaryKey(DataType.Integer)]
             public long SessionId { get; }
-            [Column(DataType.Text, Constraints = Constraint.PrimaryKey)]
+            [PrimaryKey(DataType.Text)]
             public string Name { get; }
             [Column(DataType.Text)]
             public string Value { get; }
