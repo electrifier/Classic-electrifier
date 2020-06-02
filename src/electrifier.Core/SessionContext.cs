@@ -20,10 +20,11 @@
 
 using electrifier.Core.Components;
 using EntityLighter;
+using Microsoft.Data.Sqlite;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
+using System.Globalization;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace electrifier.Core
@@ -36,7 +37,7 @@ namespace electrifier.Core
      * the message loop of the thread terminates when the mainForm parameter closes.
      */
     [Table(Name = "Session")]
-    internal class SessionContext
+    public class SessionContext
     {
         #region ILightedEntity ================================================================================================
 
@@ -65,12 +66,25 @@ namespace electrifier.Core
         /// <summary>
         /// For correct mapping, see: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
         /// </summary>
-        //[Association(Storage = "properties", OtherKey = "SessionId")]
-        public List<Property> Properties
+        //[Association(Storage = "properties", OtherKey = "SessionID")]
+        [Association(OtherKey = "SessionID")]
+        public EntitySet<SessionProperty> Properties
         {
             get;
-            //set { this.properties.Assign(value); }
+            private set; //set { this.properties.Assign(value); }
         }
+
+
+        /*
+    /*
+        private EntitySet<Order> _Orders;
+        [Association(Storage = "_Orders", OtherKey = "CustomerID")]
+        public EntitySet<Order> Orders
+        {
+            get { return this._Orders; }
+            set { this._Orders.Assign(value); }
+        }
+     * */
 
 
 
@@ -113,21 +127,6 @@ namespace electrifier.Core
 
         #endregion Fields =====================================================================================================
 
-        #region Subclasses ====================================================================================================
-
-
-        [Table(Name = "SessionProperty")]
-        internal class Property
-        {
-            [PrimaryKey(DataType.Integer)]
-            public long SessionId { get; }
-            [PrimaryKey(DataType.Text)]
-            public string Name { get; }
-            [Column(DataType.Text)]
-            public string Value { get; }
-        }
-
-        #endregion Subclasses =================================================================================================
 
 
         public SessionContext(string baseDirectory, bool isIncognito)
@@ -148,14 +147,61 @@ namespace electrifier.Core
 //            if (!DataContext.TableExists(this))
 //                this.DataContext.CreateEntityModel(typeof(SessionContext));
             this.DataContext.CreateEntityModel(typeof(SessionContext));
-            this.DataContext.CreateEntityModel(typeof(Property));
+            this.DataContext.CreateEntityModel(typeof(SessionProperty));
 
-            this.Name = $"Session on {DateTime.Now.DayOfWeek}";         // TODO: Put into config!
+            this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
 
-            this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) => {
+            this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+            {
                 sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
                 sqlCmd.Parameters.AddWithValue("$Name", this.Name);
             });
+
+            ///
+            /// EntitySet<SessionProperty>
+            /// 
+            this.Properties = new EntitySet<SessionProperty>(this.DataContext).Load(
+                $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.Id };", (sqliteDataReader) =>
+            {
+                return new SessionProperty(this, sqliteDataReader);
+            });
+
+
+
+            /////////// Using LINQ
+            this.Properties.Add(new SessionProperty(this, "WindowPosition", "100, 100"));
+            this.Properties.Add(new SessionProperty(this, "WindowSize", "640, 480"));
+
+            //var test = this.Properties.Select("")
+            //var test = this.Properties.Contains("WindowSize");
+
+
+
+
+            #region Test
+            //var newProp = new SessionProperty(this, "WindowPosition", "100, 100");
+            //this.Properties.Add(newProp);
+            //var newProp2 = new SessionProperty(this, "WindowSize", "640, 480");
+            //this.Properties.Add(newProp2);
+
+            //var test1 = newProp.Equals(newProp);
+            //var test2 = newProp.Equals(newProp2);
+            //var test3 = newProp2.Equals(newProp);
+            //var test4 = newProp2.Equals(newProp2);
+
+            //var test5 = this.Properties.Contains(newProp);
+            //var test6 = this.Properties.Contains(newProp2);
+
+            //newProp2.Value = "Very new value!";
+            ////this.Properties.Remove(newProp);
+            ////this.Properties.Remove(newProp2);
+            #endregion
+
+
+
+
+
+
         }
 
         public Form InitializeMainForm(Icon appIcon)        // => RunSession
@@ -223,4 +269,102 @@ namespace electrifier.Core
             //                this.ElectrifierForm.SaveConfiguration(fullFileName);
         }
     }
+
+
+    #region SessionProperty ===================================================================================================
+
+    [Table(Name = "SessionProperty")]
+    public class SessionProperty
+      : IEquatable<SessionProperty>
+    {
+        public DataContext DataContext { get => this.SessionContext?.DataContext; }
+        public SessionContext SessionContext { get; }
+
+        [PrimaryKey(DataType.Integer)]
+        public long Id { get; }
+
+        [Column(DataType.Integer)] // TODO: This is the ForeignKey
+        public long SessionID { get; }
+
+        [Column(DataType.Text)]
+        public string Key { get; }
+
+        private string value;
+        [Column(DataType.Text)]
+        public string Value {
+            get => this.value;
+            set
+            {
+                if (this.value != value)
+                {
+                    // TODO: this.DataContext.UpdateEntity(this, "Value = '{ value }'" WHERE ..."); INCLUDING ERROR-Handling
+                    // TODO: We have to use Transactions in general for Updates
+                    if (1 == this.DataContext.ExecuteNonQuery($"UPDATE SessionProperty SET Value = '{ value }' WHERE Id = '{ this.Id }' AND SessionId = '{ this.SessionID}'"))
+                        this.value = value;
+                    else
+                        throw new Exception("Updating SessionProperty failed!");
+                }
+            }
+        }
+
+        public SessionProperty(SessionContext sessionContext, string name, string value)
+        {
+            this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
+            this.SessionID = sessionContext.Id;
+            this.Key = name;
+            this.value = value;
+
+            this.Id = this.DataContext.CreateNewEntity(typeof(SessionProperty), (sqlCmd) =>
+            {
+                sqlCmd.CommandText = "INSERT INTO SessionProperty (SessionID, Key, Value) Values ($SessionID, $Key, $Value)";
+                sqlCmd.Parameters.AddWithValue("$SessionID", SessionContext.Id);
+                sqlCmd.Parameters.AddWithValue("$Key", name);
+                sqlCmd.Parameters.AddWithValue("$Value", value);
+            });
+        }
+
+        public SessionProperty(SessionContext sessionContext, SqliteDataReader sqliteData)
+        {
+            this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
+            if (null == sqliteData) throw new ArgumentNullException(nameof(sqliteData));
+
+            this.Id = (long)sqliteData[0];
+            this.SessionID = (long)sqliteData[1];
+            this.Key = (string)sqliteData[2];
+            this.Value = (string)sqliteData[3];
+
+        }
+
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <remarks>
+        /// For objects of type <see cref="SessionProperty"/> this means that only their names are compared, not their values.
+        /// </remarks>
+        /// <param name="otherSession">A <see cref="SessionProperty"/> to compare with this object.</param>
+        /// <returns>
+        /// <c>true</c> if the current object is equal to the other parameter; otherwise, <c>false</c>.
+        /// </returns>
+        public bool Equals(SessionProperty otherSession)
+        {
+            if (null == otherSession)
+                return false;
+
+            return (0 == string.Compare(this.Key, otherSession.Key, ignoreCase: true, CultureInfo.InvariantCulture));
+        }
+
+        public override bool Equals(object otherObject)       // This compares System.Object, not System.IEquatable
+        {
+            if ((null == otherObject) || (!(otherObject is SessionProperty otherSession)))
+                return false;
+
+            return this.Equals(otherSession);
+        }
+
+        // TODO: operator == to compare value AND key; CompareTo-Method
+
+        public override int GetHashCode() => this.Key.GetHashCode();
+    }
+
+    #endregion ================================================================================================================
 }

@@ -19,10 +19,14 @@
 */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using Microsoft.Data.Sqlite;
+
+
+// TODO: There is a new MS-Project: https://github.com/linq2db/linq2db :(
 
 /// <summary>
 /// <seealso href="https://en.wikipedia.org/wiki/Entity–relationship_model"/>
@@ -41,6 +45,11 @@ using Microsoft.Data.Sqlite;
 // TODO: See https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/attribute-based-mapping,
 //           https://docs.microsoft.com/en-us/dotnet/api/system.data.linq.mapping?view=netframework-4.8 for precise object names
 // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/the-linq-to-sql-object-model
+// TODO: See https://docs.microsoft.com/en-us/visualstudio/test/unit-test-your-code?view=vs-2019 for Unit-Tests
+
+
+
+// SQLite: Datetime: SELECT datetime('now','localtime');
 
 namespace EntityLighter
 {
@@ -139,13 +148,9 @@ namespace EntityLighter
         /// </summary>
         /// <param name="constraint">The Constraint flags for this table column</param>
         /// <returns></returns>
-        public static string ToSQLSnippet(this Constraint constraint)
-        {
-            return (constraint.HasFlag(Constraint.NotNull) ? "NOT NULL " : "")
-                 + (constraint.HasFlag(Constraint.Unique)  ? "UNIQUE"    : "");
-        }
-
-        
+        public static string ToSQLSnippet(this Constraint constraint) =>
+            $"{(constraint.HasFlag(Constraint.NotNull) ? "NOT NULL " : "")}" +
+            $"{(constraint.HasFlag(Constraint.Unique) ? "UNIQUE" : "")}";
     }
 
     #endregion ================================================================================================================
@@ -166,8 +171,25 @@ namespace EntityLighter
         public string Name { get; set; }
     }
 
+    /// <summary>
+    /// AssociationAttribute
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public abstract class BaseColumnAttribute : Attribute
+    public sealed class AssociationAttribute
+      : Attribute
+    {
+        public AssociationAttribute() { }
+
+        // Optional, Named Arguments
+        public string OtherKey { get; set; }
+    }
+
+    /// <summary>
+    /// BaseColumnAttribute
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public abstract class BaseColumnAttribute
+      : Attribute
     {
         public BaseColumnAttribute(DataType dataType)
         {
@@ -188,20 +210,21 @@ namespace EntityLighter
         /// <returns></returns>
         public string ToSQLSnippet(string columnName)
         {
-            StringBuilder stmt = new StringBuilder($"{ columnName } { this.DataType.ToSQLSnippet() } { this.Constraints.ToSQLSnippet() } ");
+            StringBuilder snippet = new StringBuilder($"{ columnName } { this.DataType.ToSQLSnippet() } { this.Constraints.ToSQLSnippet() } ");
 
             if (!string.IsNullOrWhiteSpace(this.DefaultValue))
-                stmt.Append($"DEFAULT { this.DefaultValue }");
+                snippet.Append($"DEFAULT { this.DefaultValue }");
 
-            return stmt.ToString();
+            return snippet.ToString();
         }
     }
 
     /// <summary>
-    /// Column-Attribute
+    /// ColumnAttribute
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public sealed class ColumnAttribute : BaseColumnAttribute
+    public sealed class ColumnAttribute
+      : BaseColumnAttribute
     {
         public ColumnAttribute(DataType dataType) : base(dataType)
         {
@@ -210,9 +233,11 @@ namespace EntityLighter
     }
 
     /// <summary>
-    /// PrimaryKey-Attribute
+    /// PrimaryKeyAttribute
     /// </summary>
-    public sealed class PrimaryKeyAttribute : BaseColumnAttribute
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public sealed class PrimaryKeyAttribute
+      : BaseColumnAttribute
     {
         public PrimaryKeyAttribute(DataType dataType) : base(dataType)
         {
@@ -256,46 +281,39 @@ namespace EntityLighter
 
         #region Properties ====================================================================================================
 
-        public SqliteConnection SqliteConnection { get; private set; }
 
         public string Storage { get; }
+        public SqliteConnection SqliteConnection { get; private set; }
 
-        public SqlitePragma PragmaForeignKeys;       // GET/SET, wohl struct => class
+        public SqlitePragma PragmaForeignKeys;       // Implement GET/SET by Converting struct => class
         public SqlitePragma PragmaUserVersion;
         public SqlitePragma PragmaApplicationID;
 
         public bool HasForeignKeySupport { get => ((long)this.PragmaForeignKeys.Value == 1); }      // TODO: BOOL
 
+        public string SQLiteVersion => this.ExecuteScalar("SELECT SQLite_Version()").ToString();
+        public string SQLiteUserVersion
+        {
+            get => this.PragmaUserVersion;
+            set => this.PragmaUserVersion.Value = value;
+        }
 
         #endregion ============================================================================================================
-
-
-        //public string SQLiteVersion
-        //{
-        //    get
-        //    {
-        //        SqliteCommand sqliteCommand = this.SqliteConnection.CreateCommand();
-
-        //        sqliteCommand.CommandText = "SELECT 'SQLite v' || SQLite_Version()";
-
-        //        return sqliteCommand.ExecuteScalar().ToString();
-        //    }
-        //}
 
         private class TableStatementBuilder
         {
             public string EntityName { get; }
 
-            private readonly List<Tuple<string, ColumnAttribute>> TableColumns = new List<Tuple<string, ColumnAttribute>>();
+            private readonly List<Tuple<string, BaseColumnAttribute>> TableColumns = new List<Tuple<string, BaseColumnAttribute>>();
 
             public TableStatementBuilder(string entityName)
             {
                 this.EntityName = entityName;
             }
 
-            public void AddColumn(string columnName, ColumnAttribute attributes)
+            public void AddColumn(string columnName, BaseColumnAttribute attributes)
             {
-                this.TableColumns.Add(new Tuple<string, ColumnAttribute>(columnName, attributes));
+                this.TableColumns.Add(new Tuple<string, BaseColumnAttribute>(columnName, attributes));
             }
 
             public int AttributeCount => this.TableColumns.Count;
@@ -313,7 +331,7 @@ namespace EntityLighter
                 // Add Column snippets
                 for (int i = 0; i < columnCount;)
                 {
-                    this.TableColumns[i].Deconstruct(out string columnName, out ColumnAttribute attributes);
+                    this.TableColumns[i].Deconstruct(out string columnName, out BaseColumnAttribute attributes);
 
                     statement.Append(attributes.ToSQLSnippet(columnName));
 
@@ -375,20 +393,12 @@ namespace EntityLighter
                 this.PragmaForeignKeys = new SqlitePragma(this, "FOREIGN_KEYS", isWriteable: false);
                 this.PragmaApplicationID = new SqlitePragma(this, "APPLICATION_ID");
 
-
-                var pappid = new SqlitePragma(this, "application_id");
-                var appid = (long)pappid.Value;
-                pappid.Value = "392";
-                var appid2 = pappid.Value;
-
-
-
                 // Check if Database model already exists
                 using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
                 {
                     // TODO: TEST-Code!
+                    // TODO: Put into OnVerifyTableModel
 
-                    // TODO: May use  'sqlite_master' table for stuff like this!
 
                     sqlCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='Session';"; // TODO: name in ('Session', 'Workbench', ... put all tables into it); AND verify UserVersionID!
                     var res = sqlCmd.ExecuteReader();
@@ -398,10 +408,8 @@ namespace EntityLighter
                 }
 
                 /*
-                 * Create new database model
+                 * TEST PRAGMAS => Unit-Test
                  */
-
-                /// TEST pragmas
                 string userver = this.PragmaUserVersion;
                 this.PragmaUserVersion.Value = "666";
                 string userver2 = this.PragmaUserVersion;
@@ -457,11 +465,6 @@ namespace EntityLighter
             }
         }
 
-        //public void CreateEntityModel(ILightedEntity lightedEntity)
-        //{
-        //    this.CreateEntityModel(lightedEntity);
-        //}
-
         public int ExecuteNonQuery(string statement)
         {
             using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
@@ -501,13 +504,6 @@ namespace EntityLighter
             return false;
         }
 
-        //public bool TableExists(ILightedEntity entity)
-        //{
-        //    return this.TableExists(entity.DatabaseTableName);
-        //}
-
-
-
         public void CreateEntityModel(Type entityType)
         {
             if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
@@ -528,7 +524,7 @@ namespace EntityLighter
             // Iterate through all properties and process ColumnAttributes
             foreach (var property in entityType.GetProperties())
             {
-                if (property.GetCustomAttribute(typeof(ColumnAttribute)) is ColumnAttribute serAttr)
+                if (property.GetCustomAttribute(typeof(BaseColumnAttribute)) is BaseColumnAttribute serAttr)
                     tableStatement.AddColumn(property.Name, serAttr);
             }
 
@@ -648,5 +644,248 @@ namespace EntityLighter
         }
 
         #endregion
+    }
+
+    // ========================================================================================================================
+    //
+    #region CLASS: EntitySet<TEntity> =========================================================================================
+    //
+    // ========================================================================================================================
+
+
+    /// <summary>
+    /// 
+    /// For IListSource, see:
+    /// <seealso href="https://books.google.de/books?id=VGnQPbG7vKwC&pg=PT127&lpg=PT127&dq=ilistsource&source=bl&ots=myckzCQmSW&sig=ACfU3U2RDvbZBJKgUC-SJWd-N0PUO0DTJw&hl=de&sa=X&ved=2ahUKEwiQisLlstzpAhWnUhUIHQ2WA2IQ6AEwCHoECAcQAQ#v=onepage&q=ilistsource&f=false"/>
+    /// </summary>
+    /// <typeparam name="TEntity"></typeparam>
+    public class EntitySet<TEntity>
+      : IList<TEntity> where TEntity : class
+    {
+        public DataContext DataContext { get; }
+        private ItemList<TEntity> entities;
+
+        public EntitySet(DataContext dataContext)
+        {
+            this.DataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+        }
+
+        TEntity IList<TEntity>.this[int index] {
+            get => throw new NotImplementedException();
+            set => throw new NotImplementedException();
+        }
+
+        #region ICollection-Interface
+
+        public int Count => this.entities.Count;
+
+        public bool IsReadOnly => throw new NotImplementedException();
+
+        public void Add(TEntity item)
+        {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
+            this.entities.Add(item);
+        }
+        public bool Remove(TEntity item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Contains(TEntity item) => this.IndexOf(item) >= 0;
+
+        public void CopyTo(TEntity[] array, int arrayIndex)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IEnumerable-Interface
+
+        IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region IList<TEntity>-Interface
+
+        public int IndexOf(TEntity item) => this.entities.IndexOf(item);
+
+        public void Insert(int index, TEntity item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        public delegate TEntity LoadEntityCallback(SqliteDataReader sqliteDataReader);
+
+        public EntitySet<TEntity> Load(string commandText, LoadEntityCallback loadEntityCallback)
+        {
+            ItemList<TEntity> loadedItems = new ItemList<TEntity>();
+
+            using (SqliteCommand cmd = this.DataContext.SqliteConnection.CreateCommand())
+            {
+                cmd.CommandText = commandText;
+
+                using (SqliteDataReader dataReader = cmd.ExecuteReader())
+                {
+                    // NOTE: Removed "if (dataReader.HasRows)"
+                    while (dataReader.Read())
+                        loadedItems.Add(loadEntityCallback(dataReader));
+                }
+            }
+
+            // Finally, replace our Entity List with the loaded one
+            // TODO: Consider disposing the old list
+            this.entities = loadedItems;
+
+            return this;        // TODO: Return the instance for for LINQ-statement concatenation, right?
+        }
+    }
+
+    #endregion CLASS: EntitySet<TEntity> ======================================================================================
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+
+    public struct ItemList<T> where T : class
+    {
+        T[] items;
+
+        public int Count { get; private set; }
+
+        public T[] Items => this.items;
+
+        public T this[int index]
+        {
+            get { return this.items[index]; }
+            //set { this.items[index] = value; }
+        }
+
+        public void Add(T item)
+        {
+            if (this.items == null || this.items.Length == Count)
+                this.GrowItems();
+
+            this.items[this.Count] = item;
+            this.Count++;
+        }
+
+        public bool Contains(T item) => this.IndexOf(item) >= 0;
+
+        public Enumerator GetEnumerator()
+        {
+            Enumerator e;           // TODO: Overload constructor
+            e.items = this.items;
+            e.index = -1;
+            e.endIndex = this.Count - 1;
+            return e;
+        }
+
+        public bool Include(T item)
+        {
+            if (this.LastIndexOf(item) >= 0)
+                return false;
+
+            this.Add(item);
+            return true;
+        }
+
+        public int IndexOf(T item)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (this.items[i] == item)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public void Insert(int index, T item)
+        {
+            if (this.items == null || this.items.Length == this.Count)
+                this.GrowItems();
+
+            if (index < this.Count)
+                Array.Copy(this.items, index, items, index + 1, Count - index);
+
+            this.items[index] = item;
+            this.Count++;
+        }
+
+        public int LastIndexOf(T item)
+        {
+            int i = this.Count;
+
+            while (i > 0)
+            {
+                --i;
+                if (this.items[i] == item)
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public bool Remove(T item)
+        {
+            int i = this.IndexOf(item);
+            if (i < 0)
+                return false;
+
+            this.RemoveAt(i);
+            return true;
+        }
+
+        public void RemoveAt(int index)
+        {
+            this.Count--;
+            if (index < this.Count)
+                Array.Copy(this.items, index + 1, this.items, index, this.Count - index);
+            this.items[this.Count] = default;
+        }
+
+        void GrowItems() => Array.Resize(ref this.items, this.Count == 0 ? 4 : this.Count * 2);
+
+        public struct Enumerator
+        {
+            internal T[] items;
+            internal int index;
+            internal int endIndex;
+
+            public bool MoveNext()
+            {
+                if (this.index == this.endIndex)
+                    return false;
+
+                this.index++;
+                return true;
+            }
+
+            public T Current => this.items[index];
+        }
     }
 }
