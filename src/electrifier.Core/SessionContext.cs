@@ -168,14 +168,6 @@ namespace electrifier.Core
 
 
 
-            /////////// Using LINQ
-            this.Properties.Add(new SessionProperty(this, "WindowPosition", "100, 100"));
-            this.Properties.Add(new SessionProperty(this, "WindowSize", "640, 480"));
-
-            //var test = this.Properties.Select("")
-            //var test = this.Properties.Contains("WindowSize");
-
-
 
 
             #region Test
@@ -208,6 +200,12 @@ namespace electrifier.Core
         {
             this.ApplicationIcon = appIcon;
             this.ApplicationWindow = new Forms.ElApplicationWindow(appIcon);
+
+            this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
+            this.AddSessionProperty("WindowSize", "800, 600");
+
+
+
 
 
 
@@ -268,7 +266,10 @@ namespace electrifier.Core
             //
             //                this.ElectrifierForm.SaveConfiguration(fullFileName);
         }
+
+        protected void AddSessionProperty(string name, string value) => this.Properties.Add(new SessionProperty(this, name, value));
     }
+
 
 
     #region SessionProperty ===================================================================================================
@@ -326,13 +327,13 @@ namespace electrifier.Core
         public SessionProperty(SessionContext sessionContext, SqliteDataReader sqliteData)
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
-            if (null == sqliteData) throw new ArgumentNullException(nameof(sqliteData));
+            if (null == sqliteData)
+                throw new ArgumentNullException(nameof(sqliteData));
 
             this.Id = (long)sqliteData[0];
             this.SessionID = (long)sqliteData[1];
             this.Key = (string)sqliteData[2];
             this.Value = (string)sqliteData[3];
-
         }
 
         /// <summary>

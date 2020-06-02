@@ -664,13 +664,15 @@ namespace EntityLighter
     {
         public DataContext DataContext { get; }
         private ItemList<TEntity> entities;
+        //int version;      // TODO: Implement version counter
 
         public EntitySet(DataContext dataContext)
         {
             this.DataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
         }
 
-        TEntity IList<TEntity>.this[int index] {
+        TEntity IList<TEntity>.this[int index]
+        {
             get => throw new NotImplementedException();
             set => throw new NotImplementedException();
         }
@@ -688,6 +690,7 @@ namespace EntityLighter
 
             this.entities.Add(item);
         }
+
         public bool Remove(TEntity item)
         {
             throw new NotImplementedException();
@@ -711,7 +714,7 @@ namespace EntityLighter
 
         IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Enumerator(this);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -761,6 +764,54 @@ namespace EntityLighter
 
             return this;        // TODO: Return the instance for for LINQ-statement concatenation, right?
         }
+
+        /// <summary>
+        /// Subclass EntitySet<TEntity>.Enumerator
+        /// </summary>
+        class Enumerator : IEnumerator<TEntity>
+        {
+            public EntitySet<TEntity> EntitySet { get; }
+            public TEntity[] Items { get; }
+
+            public int Index { get; set; }
+            private int EndIndex { get; }
+            private int Version { get; }
+
+            public Enumerator(EntitySet<TEntity> entitySet)
+            {
+                this.EntitySet = entitySet;
+                this.Items = entitySet.entities.Items;
+                this.Index = -1;
+                this.EndIndex = entitySet.entities.Count - 1;
+                //this.version = entitySet.version;
+            }
+
+            public void Dispose() => GC.SuppressFinalize(this);
+
+            public bool MoveNext()
+            {
+                //if (version != entitySet.version)
+                //    throw new Exception("Entity Set modified while enumerating");
+
+                if (this.Index == this.EndIndex)
+                    return false;
+
+                this.Index++;
+                return true;
+            }
+
+            public TEntity Current => this.Items[Index];
+
+            object IEnumerator.Current => this.Items[Index];
+
+            void IEnumerator.Reset()
+            {
+                //if (version != entitySet.version)
+                //    throw new Exception("Entity Set modified while enumerating");
+
+                this.Index = -1;
+            }
+        }
     }
 
     #endregion CLASS: EntitySet<TEntity> ======================================================================================
@@ -769,7 +820,6 @@ namespace EntityLighter
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-
     public struct ItemList<T> where T : class
     {
         T[] items;
@@ -795,14 +845,7 @@ namespace EntityLighter
 
         public bool Contains(T item) => this.IndexOf(item) >= 0;
 
-        public Enumerator GetEnumerator()
-        {
-            Enumerator e;           // TODO: Overload constructor
-            e.items = this.items;
-            e.index = -1;
-            e.endIndex = this.Count - 1;
-            return e;
-        }
+        public Enumerator GetEnumerator() => new Enumerator(this.items, endIndex: this.Count - 1);
 
         public bool Include(T item)
         {
@@ -872,9 +915,16 @@ namespace EntityLighter
 
         public struct Enumerator
         {
-            internal T[] items;
-            internal int index;
-            internal int endIndex;
+            private readonly T[] items;
+            private readonly int endIndex;
+            private int index;
+
+            public Enumerator(T[] items, int endIndex, int startIndex = -1)
+            {
+                this.items = items;
+                this.index = startIndex;
+                this.endIndex = endIndex;
+            }
 
             public bool MoveNext()
             {
