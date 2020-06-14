@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** 
 **  electrifier
 ** 
@@ -27,8 +27,8 @@ using System.Reflection;
 using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
+using System.Linq;
 
-using EntityLighter;
 namespace electrifier.Core
 {
     public sealed class AppContext
@@ -53,6 +53,8 @@ namespace electrifier.Core
                 return attributes.Length == 0 ? string.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
+
+        public static Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
         #endregion ============================================================================================================
 
@@ -109,9 +111,25 @@ namespace electrifier.Core
             // Initialize EntityLighter.DataContext
             //            this.BaseDirectory = AppContext.DetermineBaseDirectory(isPortable);
 
-            SessionContext SessionContext = new SessionContext(AppContext.DetermineBaseDirectory(isPortable), isIncognito);
-            // TODO: Select session to load
-            this.MainForm = SessionContext.InitializeMainForm(this.Icon);
+            SessionContext SessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
+
+
+            // Ablauf: 07/06/20, 23:18:
+            // SessionContext erzeugen(wie jetzt)
+            // SessionContext.PreviousSessions => Liste der bekannten, bisherigen Sessions
+            // SessionContext.Resume(SessionEntity sessionToResume) ODER SessionContext.Induce() ODER (SessionContext.Run(SessionEntity sessionToResume => may be null, => neue Session)
+
+            var sescnt = SessionContext.PreviousSessions.Count;
+
+            // Currently, select the session with the highest id. In the future, take the session from the session selector or the last used session
+            // Another idea is: Use a callback for selecting a session object
+            SessionEntity session = SessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
+            //else SessionEntity session = SessionEntity.NewSession();
+
+            this.MainForm = SessionContext.Run(session);
+
+
+
 
 
 
@@ -169,6 +187,9 @@ namespace electrifier.Core
             splashScreenForm.Close();
             splashScreenForm.Dispose();
         }
+
+        [Conditional("DEBUG")]
+        public static void AddDebugRemark(ref string targetString) => targetString = string.Concat(targetString, " ‖ DEBUG ☻");
 
         private void Application_ApplicationExit(object sender, EventArgs e)
         {

@@ -19,16 +19,76 @@
 */
 
 using electrifier.Core.Components;
+using electrifier.Core.Forms;
 using EntityLighter;
 using Microsoft.Data.Sqlite;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using Vanara.Extensions.Reflection;
 
 namespace electrifier.Core
 {
+    [Table(Name = "Session")]
+    public class SessionEntity
+    {
+        [PrimaryKey(DataType.Integer)]
+        public long Id { get; protected set; }
+
+        [Column(DataType.Text, Constraints = Constraint.NotNull)]
+        public string Name { get; protected set; }
+
+        [Column(DataType.Text)]
+        public string Description { get; protected set; }
+
+        [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
+        public long DateCreated { get; protected set; }
+
+        [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
+        public long DateModified { get; protected set; }
+
+
+        //public SessionEntity(long id, string name, string description, long dateCreated, long dateModified)
+        //{
+        //    this.Id = id;
+        //    this.Name = name;
+        //    this.Description = description;
+        //    this.DateCreated = dateCreated;
+        //    this.DateModified = dateModified;
+        //}
+
+        private SessionEntity(DataContext dataContext, SqliteDataReader sqliteData)
+        {
+            this.Id = (long)sqliteData[0];
+            this.Name = (string)sqliteData[1];
+            this.Description = (sqliteData[2] is DBNull ? string.Empty : (string)sqliteData[2]);
+            this.DateCreated = long.Parse((string)sqliteData[3]);
+            this.DateModified = long.Parse((string)sqliteData[4]);
+
+            //this.Properties = new PropertyCollection(dataContext);
+        }
+
+        public static EntitySet<SessionEntity> LoadStoredSessions(DataContext dataContext)
+        {
+            return new EntitySet<SessionEntity>(dataContext).Load(
+                $"SELECT Id, Name, Description, STRFTIME('%s', DateCreated), STRFTIME('%s', DateModified) FROM Session",
+                (sqliteDataReader) =>
+                {
+                    return new SessionEntity(dataContext, sqliteDataReader);
+                });
+        }
+
+        //public PropertyCollection Properties
+        //{
+        //    get;
+        //    private set; //set { this.properties.Assign(value); }
+        //}
+    }
+
     /*
      * In case we want to provide multi-window-support in the future, see this:
      * 
@@ -36,65 +96,42 @@ namespace electrifier.Core
      * This property determines the main Form for this context. This property can change at any time. If OnMainFormClosed is not overridden,
      * the message loop of the thread terminates when the mainForm parameter closes.
      */
-    [Table(Name = "Session")]
+    
+    //[Table(Name = "Session")]
     public class SessionContext
     {
-        #region ILightedEntity ================================================================================================
 
-        /// <summary>
-        /// TODO: The following implements ILightedEntity
-        /// </summary>
-
-        [PrimaryKey(DataType.Integer)]
-        public long Id { get; }
-
-
-        // ===========
-
-        [Column(DataType.Text, Constraints = Constraint.NotNull)]
-        public string Name { get; }
-
-        [Column(DataType.Text)]
-        public string Description { get; }
-
-        [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
-        public long DateCreated { get; }
-
-        [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
-        public long DateModified { get; }
-
-        /// <summary>
-        /// For correct mapping, see: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
-        /// </summary>
-        //[Association(Storage = "properties", OtherKey = "SessionID")]
-        [Association(OtherKey = "SessionID")]
-        public EntitySet<SessionProperty> Properties
-        {
-            get;
-            private set; //set { this.properties.Assign(value); }
-        }
+    //    /// <summary>
+    //    /// For correct mapping, see: https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/how-to-map-database-relationships
+    //    /// </summary>
+    //    //[Association(Storage = "properties", OtherKey = "SessionID")]
+    //    [Association(OtherKey = "SessionID")]
+    //    public EntitySet<SessionProperty> Properties
+    //    {
+    //        get;
+    //        private set; //set { this.properties.Assign(value); }
+    //    }
 
 
-        /*
-    /*
-        private EntitySet<Order> _Orders;
-        [Association(Storage = "_Orders", OtherKey = "CustomerID")]
-        public EntitySet<Order> Orders
-        {
-            get { return this._Orders; }
-            set { this._Orders.Assign(value); }
-        }
-     * */
+    //    /*
+    ///*
+    //    private EntitySet<Order> _Orders;
+    //    [Association(Storage = "_Orders", OtherKey = "CustomerID")]
+    //    public EntitySet<Order> Orders
+    //    {
+    //        get { return this._Orders; }
+    //        set { this._Orders.Assign(value); }
+    //    }
+    // * */
 
 
 
 
-        //[Column(DataType.Text)]
-        //public string DockPanelLayout { get; }
-        // -- OR, BETTER --
-        //internal IDockContentEntity[] DockContents { get; }     // TODO: So in etwa?
+    //    //[Column(DataType.Text)]
+    //    //public string DockPanelLayout { get; }
+    //    // -- OR, BETTER --
+    //    //internal IDockContentEntity[] DockContents { get; }     // TODO: So in etwa?
 
-        #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
 
@@ -110,27 +147,38 @@ namespace electrifier.Core
 
 
         public Icon ApplicationIcon { get; private set; }
-        public Forms.ElApplicationWindow ApplicationWindow { get; private set; }
+        public ElApplicationWindow ApplicationWindow { get; private set; }
+
+        public long Id => this.Session.Id;
+        public string Name => this.Session.Name;
+
+        public SessionEntity Session => this.session ?? throw new InvalidOperationException("Currently No Session set");
+        public bool HasSession { get => this.session != null; }
 
 
+        public EntitySet<SessionEntity> PreviousSessions => SessionEntity.LoadStoredSessions(this.DataContext);
+
+        public PropertyCollection Properties
+        {
+            get;
+            private set; //set { this.properties.Assign(value); }
+        }
 
 
-        ///// <summary>
-        ///// Neuer kot, 17.05.2020
-        ///// </summary>
-        //public readonly List<SessionContext> KnownSessions;
 
         #endregion ============================================================================================================
 
         #region Fields ========================================================================================================
 
+        private SessionEntity session;
 
         #endregion Fields =====================================================================================================
 
 
 
-        public SessionContext(string baseDirectory, bool isIncognito)
+        public SessionContext(Icon appIcon, string baseDirectory, bool isIncognito)
         {
+            this.ApplicationIcon = appIcon;
             this.BaseDirectory = baseDirectory;
             this.IsIncognito = isIncognito;
 
@@ -139,32 +187,153 @@ namespace electrifier.Core
             // TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
             this.DataContext = new EntityLighter.DataContext(this.DataContextStorage);
 
-            //// Initialize session object
-            ////
-            //// TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
-            ////
-
-//            if (!DataContext.TableExists(this))
-//                this.DataContext.CreateEntityModel(typeof(SessionContext));
-            this.DataContext.CreateEntityModel(typeof(SessionContext));
+            this.DataContext.CreateEntityModel(typeof(SessionEntity));
             this.DataContext.CreateEntityModel(typeof(SessionProperty));
+        }
 
-            this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
 
-            this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
-            {
-                sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
-                sqlCmd.Parameters.AddWithValue("$Name", this.Name);
-            });
+        public ElApplicationWindow Run(SessionEntity session)
+        {
+            this.session = session;
 
+            // Create main Application Window
+            this.ApplicationWindow = new ElApplicationWindow(this);
+
+            // Set default properties for this session
+            this.Properties = new PropertyCollection(this);
+
+
+
+            TypeConverter pointConverter = TypeDescriptor.GetConverter(typeof(Point));
+            Point windowPos = (Point)pointConverter.ConvertFromString(this.Properties.SyncProperty("WindowPos", "0, 0"));
+            this.ApplicationWindow.Location = windowPos;
+
+            TypeConverter sizeConverter = TypeDescriptor.GetConverter(typeof(Size));
+            Size windowSize = (Size)sizeConverter.ConvertFromString(this.Properties.SyncProperty("WindowSize", "800, 600"));
+            this.ApplicationWindow.Size = windowSize;
+
+
+            // Initialize session object
+            //
+            // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
+            //
+            // TODO: Create new default shellbrowser - for test purposes only
+            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+
+
+
+
+
+            //////var windowPos = this.Properties.SyncProperty("WindowPos", "0, 0");
+            //////var windowSize = this.Properties.SyncProperty("WindowSize", "800, 600");
+
+            //////char[] delimiterChars = { ' ', ',' };
+            //////var values = windowPos.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+
+            //////this.ApplicationWindow.StartPosition = FormStartPosition.Manual;
+            //////this.ApplicationWindow.Location = new PointConverter()
+
+            /*
+                // Create the PointConverter.
+                System.ComponentModel.TypeConverter converter = 
+                    System.ComponentModel.TypeDescriptor.GetConverter(typeof(Point));
+
+                Point point1 = (Point) converter.ConvertFromString("200, 200");
+
+                // Use the subtraction operator to get a second point.
+                Point point2 = point1 - new Size(190, 190);
+
+                // Draw a line between the two points.
+                e.Graphics.DrawLine(Pens.Black, point1, point2);
+            */
+
+
+
+
+            //// Set default properties for this session
+
+            //this.Properties.Add(new SessionProperty(this, "WindowPosition", "10, 10"));
+
+            //this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
+            //this.AddSessionProperty("WindowSize", "800, 600");
+
+
+            /* Unit-Test
+                        var test1 = this.Properties.SyncProperty("WindowPosition", "0, 0");
+                        var test2 = this.Properties.SyncProperty("Pos", "0, 0");
+                        this.Properties.SafeSetProperty("Pos", "-10, -10");
+                        var test3 = this.Properties.SyncProperty("Pos", "10, 10");
+                        this.Properties.SafeSetProperty("Pos", "-20, -20");
+                        var test4 = this.Properties.SyncProperty("Pos", "20, 20");
+                        this.Properties.SafeSetProperty("Pos", "-30, -30");
+                        var test5 = this.Properties.SyncProperty("Pos", "30, 30");
+            */
+
+
+
+            //            var test = this.Session.Properties.Where(property => property.Key == "WindowPosition");
+            //var test4 = this.Session.Properties.Contains("WindowPosition"); // comparer: //IEqualityComparer )
+            //var test1 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("Windowzosition", StringComparison.InvariantCultureIgnoreCase));
+            //var test2 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition", StringComparison.InvariantCultureIgnoreCase));
+            //var test3 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("Windowposition", StringComparison.InvariantCultureIgnoreCase));
+
+            ////            var test = this.Properties.Where(property => property.Key == "WindowPosition");
+            ////            var test2 = this.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition2", StringComparison.InvariantCulture));
             ///
-            /// EntitySet<SessionProperty>
-            /// 
-            this.Properties = new EntitySet<SessionProperty>(this.DataContext).Load(
-                $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.Id };", (sqliteDataReader) =>
-            {
-                return new SessionProperty(this, sqliteDataReader);
-            });
+
+
+
+
+            //var test = this.GetSessionProperty("WindowPosition");
+
+
+            //if (GetPropertyCount("WindowPosition") > 0)
+            //{
+            //    var prop = this.GetSessionProperty("WindowPosition");
+            //}
+            //else
+            //{
+            //    var prop = new SessionProperty(this, "WindowPosition", "0, 0");
+            //    //this.Session.Properties.Add(new SessionProperty("WindowPosition", ))
+            //}
+
+
+
+            //SessionProperty propWindowPosition = new SessionProperty(this, "WindowPosition", "0, 0");
+
+
+
+
+
+
+
+
+
+
+
+            //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
+
+            //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+            //{
+            //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
+            //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
+            //});
+
+            //// Initialize properties
+            //this.Properties = new EntitySet<SessionProperty>(this.DataContext).Load(
+            //    $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.Id }", (sqliteDataReader) =>
+            //    {
+            //        return new SessionProperty(this, sqliteDataReader);
+            //    });
+
+            //// Set default properties for this session
+            //this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
+            //this.AddSessionProperty("WindowSize", "800, 600");
+
+
+
+
+
 
 
 
@@ -189,69 +358,72 @@ namespace electrifier.Core
             ////this.Properties.Remove(newProp2);
             #endregion
 
-
-
-
-
-
-        }
-
-        public Form InitializeMainForm(Icon appIcon)        // => RunSession
-        {
-            this.ApplicationIcon = appIcon;
-            this.ApplicationWindow = new Forms.ElApplicationWindow(appIcon);
-
-            this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
-            this.AddSessionProperty("WindowSize", "800, 600");
-
-
-
-
-
-
-
-
-
-            // TODO: Create new shellbrowser - for test purposes only
-
-            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
-
-            // TODO: Load default values for session:
-            // TODO: Test-Code:
-            // TODO: Über die DockContentFactory erzeugen!
-            //DockContentEntity dockContent = new DockContentEntity(this /* ContentType ShellBrowser als type */);
-
-            // TODO: Zuletzt geänderte Session - nicht die zuletzt angelegte! - als Default
-
-
-            // TODO: 19/04/20: As long as we don't use a session-selector, use session #1
-            // ...or select(max(id)) from session...
-            //                SessionEntity sessionEntity = new SessionEntity(AppContext.ElEntityStore);
-
-
-
-
-
-            // TODO: If file exists, but is invalid (e.g. empty), this will crash...
-            //                if (File.Exists(configFullFileName))
-            //                    this.ElectrifierForm.LoadConfiguration(configFullFileName);
-            //
-            // TODO: 23/03/20: Using the Default-Session actually results in a file named 'Session.Default.xml',
-            //                 which holds the DockPanelSuite-Configuration.
-            // TODO:           We will remove this file, and use SQLite instead for storing this configuration.
-            //                 Opening an electrifier window results in a Session-Object.
-            // TODO:           Each Workbench can have multiple Sessions, but a Session doesn't need to have a Workbench
-            //                 (i.e. the Default Workbench, which means a new, aka an empty Workbench).
-            // TODO:           Sessions on the other side can derive from multiple Workbenches; thus, a Workbench is just
-            //                 a kind of "Session-Template": e.g. The Workbench named "Listen to music" is a ShellBrowser
-            //                 navigating to "Music", the Workbench "View my Pictures" to "Pictures",
-            //                 "Work on Documents" to "Documents" etc...
-            // TODO:           A running session can also import (aka add) another Workbench with ease.
-
-
             return this.ApplicationWindow;
         }
 
+
+
+
+        //        public Form InitializeMainForm(Icon appIcon)        // => RunSession
+        //        {
+        //            this.ApplicationIcon = appIcon;
+        //            this.ApplicationWindow = new Forms.ElApplicationWindow(this, appIcon);
+        //
+        //            //this.ApplicationWindow.Size = new Size();
+        //            //this.ApplicationWindow.Location = new Point();
+        //
+        ////            var test = this.Properties.Where(property => property.Key == "WindowPosition");
+        ////            var test2 = this.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition2", StringComparison.InvariantCulture));
+        //
+        //                //< "WindowPosition" >;
+        //
+        //
+        //
+        //            // TODO: Create new shellbrowser - for test purposes only
+        //            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //            // TODO: Load default values for session:
+        //            // TODO: Test-Code:
+        //
+        //
+        //            // TODO: Zuletzt geänderte Session - nicht die zuletzt angelegte! - als Default
+        //
+        //
+        //            // TODO: 19/04/20: As long as we don't use a session-selector, use session #1
+        //            // ...or select(max(id)) from session...
+        //            //                SessionEntity sessionEntity = new SessionEntity(AppContext.ElEntityStore);
+        //
+        //
+        //
+        //
+        //
+        //            // TODO: If file exists, but is invalid (e.g. empty), this will crash...
+        //            //                if (File.Exists(configFullFileName))
+        //            //                    this.ElectrifierForm.LoadConfiguration(configFullFileName);
+        //            //
+        //            // TODO: 23/03/20: Using the Default-Session actually results in a file named 'Session.Default.xml',
+        //            //                 which holds the DockPanelSuite-Configuration.
+        //            // TODO:           We will remove this file, and use SQLite instead for storing this configuration.
+        //            //                 Opening an electrifier window results in a Session-Object.
+        //            // TODO:           Each Workbench can have multiple Sessions, but a Session doesn't need to have a Workbench
+        //            //                 (i.e. the Default Workbench, which means a new, aka an empty Workbench).
+        //            // TODO:           Sessions on the other side can derive from multiple Workbenches; thus, a Workbench is just
+        //            //                 a kind of "Session-Template": e.g. The Workbench named "Listen to music" is a ShellBrowser
+        //            //                 navigating to "Music", the Workbench "View my Pictures" to "Pictures",
+        //            //                 "Work on Documents" to "Documents" etc...
+        //            // TODO:           A running session can also import (aka add) another Workbench with ease.
+        //
+        //
+        //            return this.ApplicationWindow;
+        //        }
+        //
         /// <summary>
         /// Save ElApplicationWindow Form state configuration into XML-file.
         /// 
@@ -266,8 +438,6 @@ namespace electrifier.Core
             //
             //                this.ElectrifierForm.SaveConfiguration(fullFileName);
         }
-
-        protected void AddSessionProperty(string name, string value) => this.Properties.Add(new SessionProperty(this, name, value));
     }
 
 
@@ -342,16 +512,16 @@ namespace electrifier.Core
         /// <remarks>
         /// For objects of type <see cref="SessionProperty"/> this means that only their names are compared, not their values.
         /// </remarks>
-        /// <param name="otherSession">A <see cref="SessionProperty"/> to compare with this object.</param>
+        /// <param name="otherProperty">A <see cref="SessionProperty"/> to compare with this object.</param>
         /// <returns>
         /// <c>true</c> if the current object is equal to the other parameter; otherwise, <c>false</c>.
         /// </returns>
-        public bool Equals(SessionProperty otherSession)
+        public bool Equals(SessionProperty otherProperty)
         {
-            if (null == otherSession)
+            if (null == otherProperty)
                 return false;
 
-            return (0 == string.Compare(this.Key, otherSession.Key, ignoreCase: true, CultureInfo.InvariantCulture));
+            return (0 == string.Compare(this.Key, otherProperty.Key, ignoreCase: true, CultureInfo.InvariantCulture));
         }
 
         public override bool Equals(object otherObject)       // This compares System.Object, not System.IEquatable
@@ -365,6 +535,73 @@ namespace electrifier.Core
         // TODO: operator == to compare value AND key; CompareTo-Method
 
         public override int GetHashCode() => this.Key.GetHashCode();
+    }
+
+    /// <summary>
+    /// PropertyCollection
+    /// </summary>
+    public class PropertyCollection
+      : EntitySet<SessionProperty>
+    {
+        public SessionContext SessionContext { get; }
+        public StringComparison StringComparison { get; set; } = StringComparison.InvariantCultureIgnoreCase;
+
+        public PropertyCollection(SessionContext sessionContext)
+          : base(sessionContext?.DataContext ?? throw new ArgumentNullException(nameof(sessionContext)))
+        {
+            this.SessionContext = sessionContext;
+
+            this.Load(
+                $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.SessionContext.Id }",
+                (sqliteDataReader) =>
+                {
+                    return new SessionProperty(this.SessionContext, sqliteDataReader);
+                });
+        }
+
+
+        public bool Contains(string propertyKey) => this.IndexOf(propertyKey) >= 0;
+
+        public int IndexOf(string propertyKey)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (entities[i].Key.Equals(propertyKey, this.StringComparison))
+                    return i;
+            }
+
+            return -1;
+        }
+
+        public string SyncProperty(string propertyKey, string defaultValue)
+        {
+            int index = this.IndexOf(propertyKey);
+
+            if (index >= 0)
+            {
+                return this.entities[index].Value;
+            }
+            else
+            {
+                this.Add(new SessionProperty(this.SessionContext, propertyKey, defaultValue));
+
+                return defaultValue;
+            }
+        }
+
+        public void SafeSetProperty(string propertyKey, string value)
+        {
+            int index = this.IndexOf(propertyKey);
+
+            if (index >= 0)
+            {
+                this.entities[index].Value = value;
+            }
+            else
+            {
+                this.Add(new SessionProperty(this.SessionContext, propertyKey, value));
+            }
+        }
     }
 
     #endregion ================================================================================================================

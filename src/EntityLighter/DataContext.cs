@@ -663,7 +663,7 @@ namespace EntityLighter
       : IList<TEntity> where TEntity : class
     {
         public DataContext DataContext { get; }
-        private ItemList<TEntity> entities;
+        protected ItemList<TEntity> entities;
         //int version;      // TODO: Implement version counter
 
         public EntitySet(DataContext dataContext)
@@ -705,7 +705,8 @@ namespace EntityLighter
 
         public void CopyTo(TEntity[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            if (this.entities.Count > 0)
+                Array.Copy(this.entities.Items, 0, array, arrayIndex, this.entities.Count);
         }
 
         #endregion

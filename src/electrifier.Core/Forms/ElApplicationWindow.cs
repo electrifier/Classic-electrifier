@@ -44,18 +44,29 @@ namespace electrifier.Core.Forms
         #region Fields ========================================================================================================
 
         // TODO: Add Creation timestamp! in debug mode
-        private static readonly string formTitle_Affix = $"electrifier v{ System.Reflection.Assembly.GetExecutingAssembly().GetName().Version }";
+        private static readonly string formTitle_Affix = $"electrifier { AppContext.AssemblyVersion.ToString(3) }";
         public RibbonItems RibbonItems { get; }
 
         #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
 
-        public override string Text {
+        public SessionContext SessionContext { get; }
+
+        public override string Text
+        {
             get => base.Text;
-            set {
-                base.Text = ((value.Length > 0) ? (value + " - " + ElApplicationWindow.formTitle_Affix) : ElApplicationWindow.formTitle_Affix);
-                this.FormTitle_AddDebugRemark();
+            set
+            {
+                if (null == value)
+                    throw new ArgumentNullException(nameof(this.Text));
+
+                if (!value.Equals(this.Text, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    string newText = ((value.Length > 0) ? (value + " - " + formTitle_Affix) : formTitle_Affix);
+                    AppContext.AddDebugRemark(ref newText);
+                    base.Text = newText;
+                }
             }
         }
 
@@ -68,19 +79,21 @@ namespace electrifier.Core.Forms
         #endregion ============================================================================================================
 
 
-        public ElApplicationWindow(Icon icon/*, SessionEntity session*/)
+        public ElApplicationWindow(SessionContext sessionContext)
           : base()
         {
+            this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
+
             AppContext.TraceScope();
 
             this.InitializeComponent();
             this.RibbonItems = new RibbonItems(this, this.rbnRibbon);
 
             // Initialize properties
-            this.Text = "Blubb!";//session.Name;          //this.FormTitle_AddDebugRemark(); // TODO: Add formTitleAffix
+            this.Text = this.SessionContext.Name;
 
             // Set Application Icon as form Icon
-            this.Icon = icon;
+            this.Icon = this.SessionContext.ApplicationIcon;
 
             // Initialize DockPanel
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
@@ -166,12 +179,6 @@ namespace electrifier.Core.Forms
                     AppContext.TraceWarning("DpnDockPanel_ActiveContentChanged => Unknwon ActiveContent");
                 }
             }
-        }
-
-        [Conditional("DEBUG")]
-        private void FormTitle_AddDebugRemark()
-        {
-            base.Text += " - DEBUG";
         }
 
         private ElShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
