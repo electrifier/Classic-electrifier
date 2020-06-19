@@ -31,6 +31,7 @@ using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
 using RibbonLib.Controls;
 using EntityLighter;
+using System.ComponentModel;
 
 namespace electrifier.Core.Forms
 {
@@ -219,6 +220,33 @@ namespace electrifier.Core.Forms
         public void SaveConfiguration(string fullFileName)
         {
             this.dpnDockPanel.SaveAsXml(fullFileName);
+        }
+
+        private void fspFormStatePersistor_LoadingFormState(object sender, FormStatePersistorEventArgs args)
+        {
+            TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
+            TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
+            TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
+
+            // NULL-Check!
+
+            // TODO: Put Converters into EntityLighter!
+            args.Location = (Point)pointConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Location", "0,0"));
+            args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Size", "800, 600"));
+            args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.WindowState", "Normal"));
+
+            //args.Cancel = false;
+        }
+
+        private void FormStatePersistor_SavingFormState(object sender, FormStatePersistorEventArgs args)
+        {
+            TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
+            TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
+            TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
+
+            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);
+            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Size", sizeConvert.ConvertTo(args.Size, typeof(string)) as string);
+            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.WindowState", stateConvert.ConvertTo(args.WindowState, typeof(string)) as string);
         }
     }
 }

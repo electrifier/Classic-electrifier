@@ -22,31 +22,81 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-
-using electrifier.Core.Properties;
 
 namespace electrifier.Core.Components
 {
-    public partial class ElFormStatePersistor
-      : System.ComponentModel.Component
+    #region EventArgs =====================================================================================================
+
+    /// <summary>
+    /// <see cref="FormStatePersistorEventArgs"/> is used for data exchange when raising
+    /// <see cref="ElFormStatePersistor.LoadingFormState"/> and
+    /// <see cref="ElFormStatePersistor.SavingFormState"/> events.
+    /// </summary>
+    public class FormStatePersistorEventArgs : EventArgs
+    {
+        public FormStatePersistorEventArgs(Form form)
+        {
+            if (form is null)
+                throw new ArgumentNullException(nameof(form));
+
+            this.Location = form.Location;
+            this.Size = form.Size;
+            this.WindowState = form.WindowState;
+        }
+
+        public Point Location { get; set; }
+        public Size Size { get; set; }
+        public FormWindowState WindowState { get; set; }
+
+        /// <summary>
+        /// Set to 'True' to cancel the operation.
+        /// </summary>
+        public bool Cancel { get; set; } = false;
+    }
+
+    #endregion ============================================================================================================
+
+    /// <summary>
+    /// <see cref="ElFormStatePersistor"/> class.
+    /// </summary>
+    public class ElFormStatePersistor
+      : Component
     {
         #region Fields ========================================================================================================
 
         private Form clientForm;
-        private readonly string PropertyKeyAffix_WindowLocation = "_WindowLocation";
-        private readonly string PropertyKeyAffix_WindowSize = "_WindowSize";
-        private readonly string PropertyKeyAffix_WindowState = "_WindowState";
 
         #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
 
-        public System.Windows.Forms.Form ClientForm {
+        /// <summary>
+        /// If set to true, <see cref="ElFormStatePersistor"/> will force the windows state to restore its last <i>Normal</i>
+        /// Bounds and state instead of being <i>Maximized</i> or <i>Minimized</i> initially.
+        /// 
+        /// Defaults to <b>true</b>.
+        /// </summary>
+        public bool FixWindowState { get; set; } = true;
+
+        /// <summary>
+        /// FormToDesktopMargin represents the margin between desktop work area and the form's borders, in case
+        /// the form has to be resized.
+        /// 
+        /// Defaults to <see cref="SystemInformation.IconSpacingSize"/> for each of the four sides.
+        /// </summary>
+        public Size FormToDesktopMargin
+        {
+            get;
+            set;
+        }
+
+        public Form ClientForm
+        {
             get => this.clientForm;
 
-            set {
+            set
+            {
                 if (null == value)
                     return;
 
@@ -57,16 +107,47 @@ namespace electrifier.Core.Components
                 {
                     this.clientForm = value;
 
-                    // Add anonymous handler for client Load-event
-                    this.ClientForm.Load += (sender, e) =>
+                    //
+                    // Add anonymous handler for client's Load-event
+                    //
+                    this.ClientForm.Load += (sender, e) =>          // TODO: Put into non-anonymous handler
                     {
-                        this.Load();
+                        if (this.LoadingFormState != null)
+                        {
+                            FormStatePersistorEventArgs args = new FormStatePersistorEventArgs(this.ClientForm);
+
+                            this.LoadingFormState.Invoke(this, args);
+
+                            if (!args.Cancel)
+                            {
+                                // TODO: Fix Window State
+                                // TODO: OverhaulWindowBounds
+
+                                this.ClientForm.Location = args.Location;
+                                this.ClientForm.Size = args.Size;
+                                this.ClientForm.WindowState = args.WindowState;
+                            }
+                        }
                     };
 
-                    // Add anonymous handler for client FormClosing-event
-                    this.ClientForm.FormClosing += (sender, e) =>
+                    //
+                    // Add anonymous handler for client's FormClosing-event
+                    //
+                    this.ClientForm.FormClosing += (sender, e) =>       // TODO: Put into non-anonymous handler
                     {
-                        this.Store();
+                        if (this.SavingFormState != null)
+                        {
+                            FormStatePersistorEventArgs args = new FormStatePersistorEventArgs(this.ClientForm);
+
+                            // Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
+                            if (FormWindowState.Normal != args.WindowState)
+                            {
+                                args.Location = this.ClientForm.RestoreBounds.Location;
+                                args.Size = this.ClientForm.RestoreBounds.Size;
+                            }
+
+                            this.SavingFormState.Invoke(this, args);
+                        }
                     };
                 }
                 else
@@ -78,14 +159,17 @@ namespace electrifier.Core.Components
 
         /// <summary>
         /// The site property is set in design time by the Form Designer.
-        /// 
-        /// Let's use this behaviour to find out on which form the component was dropped onto.
-        /// 
-        /// See <href="https://social.msdn.microsoft.com/Forums/windows/en-US/d5ccfe1d-e579-41a0-b8fb-614cff5abf54/how-to-get-a-reference-to-the-parent-form-from-the-compontent-container?forum=winforms"/>
+        /// <br/>
+        /// This behaviour is used to find out on which form the component was dropped onto.
+        /// <br/>
+        /// See also: <see href="https://social.msdn.microsoft.com/Forums/windows/en-US/d5ccfe1d-e579-41a0-b8fb-614cff5abf54/how-to-get-a-reference-to-the-parent-form-from-the-compontent-container?forum=winforms"/>
         /// </summary>
-        public override ISite Site {
+        public override ISite Site
+        {
             get => base.Site;
-            set {
+
+            set
+            {
                 base.Site = value;
 
                 if (value == null)
@@ -95,38 +179,30 @@ namespace electrifier.Core.Components
                 {
                     IComponent componentHost = designerHost.RootComponent;
 
-                    if (componentHost is Form)
-                    {
-                        this.clientForm = (Form)componentHost;
-                        this.PropertyKeyPrefix = ((Form)componentHost).Name;
-                    }
+                    if (componentHost is Form designerForm)
+                        this.clientForm = designerForm;
                 }
             }
         }
 
-        /// <summary>
-        /// The PropertyKeyPrefix property represents the Prefix that is used when storing the form's individual values.
-        /// 
-        /// E.g. when set to "ElApplicationWindow", the following key names will be used:
-        /// "ElApplicationWindow_WindowLocation", "ElApplicationWindow_WindowSize", "ElApplicationWindow_WindowState".
-        /// </summary>
-        /// <value>The PropertyKeyPrefix property represents the Prefix, that is used when storing the form's individual values.
-        /// By default, this will be the form's Name.</value>
-        public string PropertyKeyPrefix {
-            get;
-            set;
-        }
+        #endregion ============================================================================================================
+
+
+        #region Published Events ==============================================================================================
 
         /// <summary>
-        /// FormToDesktopMargin represents the margin between desktop work area and the form's borders, in case
-        /// the form has to be resized.
-        /// 
-        /// Defaults to <see cref="SystemInformation.IconSpacingSize"/> for each of the four sides.
+        /// Fires while the form is loading and <see cref="ElFormStatePersistor"/> has to retrieve
+        /// its values from Application's persistence layer.
         /// </summary>
-        public Size FormToDesktopMargin {
-            get;
-            set;
-        }
+        [Category("Action"), Description("Retrieve Form state from Application's persistence layer while being loaded.")]
+        public event EventHandler<FormStatePersistorEventArgs> LoadingFormState;
+
+        /// <summary>
+        /// Fires while the form is closing and <see cref="ElFormStatePersistor"/> has to store
+        /// its values into Application's persistence layer.
+        /// </summary>
+        [Category("Action"), Description("Saving Form state into Application's persistence layer while being closed.")]
+        public event EventHandler<FormStatePersistorEventArgs> SavingFormState;
 
         #endregion ============================================================================================================
 
@@ -137,7 +213,8 @@ namespace electrifier.Core.Components
             this.FormToDesktopMargin = SystemInformation.IconSpacingSize;
         }
 
-        public ElFormStatePersistor(IContainer container) : this()
+        public ElFormStatePersistor(IContainer container)
+          : this()
         {
             if (null == container)
                 throw new ArgumentNullException(nameof(container));
@@ -145,43 +222,44 @@ namespace electrifier.Core.Components
             container.Add(this);
         }
 
-        public ElFormStatePersistor(ContainerControl parentControl) : this()
+        public ElFormStatePersistor(ContainerControl parentControl)
+          : this()
         {
             this.ClientForm = (Form)parentControl;
         }
 
-        public void Load(bool fixWindowState = true, bool overhaulWindowBounds = true)
-        {
-            string strWindowLocation = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowLocation;
-            string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
-            string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
+//        public void Load(bool fixWindowState = true, bool overhaulWindowBounds = true)
+//        {
+//            string strWindowLocation = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowLocation;
+//            string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
+//            string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
 
-            var windowLocation = this.ClientForm.Location;
-            var windowSize = this.ClientForm.Size;
-            var windowState = this.ClientForm.WindowState;
+//            var windowLocation = this.ClientForm.Location;
+//            var windowSize = this.ClientForm.Size;
+//            var windowState = this.ClientForm.WindowState;
 
-            // Load setting values describing the last known form state
-/* Commented out for Issue #25
-            //if (this.SettingExists(strWindowLocation))
-            //    windowLocation = (System.Drawing.Point)Settings.Default[strWindowLocation];
-            //if (this.SettingExists(strWindowSize))
-            //    windowSize = (System.Drawing.Size)Settings.Default[strWindowSize];
-            //if (this.SettingExists(strWindowState))
-            //    windowState = (FormWindowState)Settings.Default[strWindowState];
-// Commented out for Issue #25 */
-            // When fixWindowState is set, adjust window state if not Normal or Maximized
-            if (fixWindowState && (!(windowState == FormWindowState.Normal || windowState == FormWindowState.Maximized)))
-                windowState = FormWindowState.Normal;
+//            // Load setting values describing the last known form state
+///* Commented out for Issue #25
+//            //if (this.SettingExists(strWindowLocation))
+//            //    windowLocation = (System.Drawing.Point)Settings.Default[strWindowLocation];
+//            //if (this.SettingExists(strWindowSize))
+//            //    windowSize = (System.Drawing.Size)Settings.Default[strWindowSize];
+//            //if (this.SettingExists(strWindowState))
+//            //    windowState = (FormWindowState)Settings.Default[strWindowState];
+//// Commented out for Issue #25 */
+//            // When fixWindowState is set, adjust window state if not Normal or Maximized
+//            if (fixWindowState && (!(windowState == FormWindowState.Normal || windowState == FormWindowState.Maximized)))
+//                windowState = FormWindowState.Normal;
 
-            // When overhaulWindowBounds is set, recalculate proper bounds to suppress off-screen windows
-            if (overhaulWindowBounds)
-                this.OverhaulWindowBounds(ref windowLocation, ref windowSize);
+//            // When overhaulWindowBounds is set, recalculate proper bounds to suppress off-screen windows
+//            if (overhaulWindowBounds)
+//                this.OverhaulWindowBounds(ref windowLocation, ref windowSize);
 
-            // Finally, apply values 
-            this.ClientForm.Location = windowLocation;
-            this.ClientForm.Size = windowSize;
-            this.ClientForm.WindowState = windowState;
-        }
+//            // Finally, apply values 
+//            this.ClientForm.Location = windowLocation;
+//            this.ClientForm.Size = windowSize;
+//            this.ClientForm.WindowState = windowState;
+//        }
 
         public virtual void OverhaulWindowBounds(ref Point location, ref Size size)
         {
@@ -215,37 +293,63 @@ namespace electrifier.Core.Components
                 location.Y = workArea.Y + workArea.Height - size.Height;
         }
 
-        // TODO: Move SettingExists to AppContext, or to new settings class respectively
-        private bool SettingExists(string settingName)
+//        public void Store()
+//        {
+//            string strWindowLocation = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowLocation;
+//            string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
+//            string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
+
+///* Commented out for Issue #25
+//            //// Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
+//            //if (FormWindowState.Normal == this.ClientForm.WindowState)
+//            //{
+//            //    Settings.Default[strWindowLocation] = this.ClientForm.Location;
+//            //    Settings.Default[strWindowSize] = this.ClientForm.Size;
+//            //}
+//            //else
+//            //{
+//            //    Settings.Default[strWindowLocation] = this.ClientForm.RestoreBounds.Location;
+//            //    Settings.Default[strWindowSize] = this.ClientForm.RestoreBounds.Size;
+//            //}
+//            //Settings.Default[strWindowState] = this.ClientForm.WindowState;
+
+//            //Settings.Default.Save();
+//// Commented out for Issue #25 */
+//        }
+
+        #region ElFormStatePersistor.Designer.cs
+
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary> 
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
         {
-            return false;
-/* Commented out for Issue #25
-            //                return Settings.Default.Properties.Cast<System.Configuration.SettingsProperty>().Any(prop => prop.Name == settingName);
-// Commented out for Issue #25 */
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
         }
 
-        public void Store()
+        #region Component Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
         {
-            string strWindowLocation = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowLocation;
-            string strWindowSize = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowSize;
-            string strWindowState = this.PropertyKeyPrefix + this.PropertyKeyAffix_WindowState;
-
-/* Commented out for Issue #25
-            //// Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
-            //if (FormWindowState.Normal == this.ClientForm.WindowState)
-            //{
-            //    Settings.Default[strWindowLocation] = this.ClientForm.Location;
-            //    Settings.Default[strWindowSize] = this.ClientForm.Size;
-            //}
-            //else
-            //{
-            //    Settings.Default[strWindowLocation] = this.ClientForm.RestoreBounds.Location;
-            //    Settings.Default[strWindowSize] = this.ClientForm.RestoreBounds.Size;
-            //}
-            //Settings.Default[strWindowState] = this.ClientForm.WindowState;
-
-            //Settings.Default.Save();
-// Commented out for Issue #25 */
+            components = new System.ComponentModel.Container();
         }
+
+        #endregion
+
+        #endregion ElFormStatePersistor.Designer.cs
     }
 }

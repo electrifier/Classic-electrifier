@@ -152,12 +152,7 @@
     </Compile>
     <Compile Include="Components\DockContents\Extensions\ElNavigableDockContentExtensions.cs" />
     <Compile Include="Components\ElDockContentFactory.cs" />
-    <Compile Include="Components\ElFormStatePersistor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ElFormStatePersistor.Designer.cs">
-      <DependentUpon>ElFormStatePersistor.cs</DependentUpon>
-    </Compile>
+    <Compile Include="Components\ElFormStatePersistor.cs" />
     <Compile Include="Components\IElClipboardConsumer.cs" />
     <Compile Include="Components\IElNavigationHost.cs" />
     <Compile Include="Forms\ElAboutDialog.cs">

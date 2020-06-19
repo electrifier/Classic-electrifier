@@ -124,7 +124,20 @@ namespace electrifier.Core
             // Currently, select the session with the highest id. In the future, take the session from the session selector or the last used session
             // Another idea is: Use a callback for selecting a session object
             SessionEntity session = SessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
-            //else SessionEntity session = SessionEntity.NewSession();
+
+            if (session is null)
+            {
+                // TODO: Create new session object!
+                //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
+
+                //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+                //{
+                //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
+                //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
+                //});
+
+            }
+
 
             this.MainForm = SessionContext.Run(session);
 

@@ -204,13 +204,13 @@ namespace electrifier.Core
 
 
 
-            TypeConverter pointConverter = TypeDescriptor.GetConverter(typeof(Point));
-            Point windowPos = (Point)pointConverter.ConvertFromString(this.Properties.SyncProperty("WindowPos", "0, 0"));
-            this.ApplicationWindow.Location = windowPos;
+            //TypeConverter pointConverter = TypeDescriptor.GetConverter(typeof(Point));
+            //Point windowPos = (Point)pointConverter.ConvertFromString(this.Properties.SyncProperty("WindowPos", "0, 0"));
+            //this.ApplicationWindow.Location = windowPos;
 
-            TypeConverter sizeConverter = TypeDescriptor.GetConverter(typeof(Size));
-            Size windowSize = (Size)sizeConverter.ConvertFromString(this.Properties.SyncProperty("WindowSize", "800, 600"));
-            this.ApplicationWindow.Size = windowSize;
+            //TypeConverter sizeConverter = TypeDescriptor.GetConverter(typeof(Size));
+            //Size windowSize = (Size)sizeConverter.ConvertFromString(this.Properties.SyncProperty("WindowSize", "800, 600"));
+            //this.ApplicationWindow.Size = windowSize;
 
 
             // Initialize session object

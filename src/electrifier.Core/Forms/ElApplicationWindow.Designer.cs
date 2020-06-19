@@ -144,8 +144,10 @@ namespace electrifier.Core.Forms
             // fspFormStatePersistor
             // 
             this.fspFormStatePersistor.ClientForm = this;
+            this.fspFormStatePersistor.FixWindowState = true;
             this.fspFormStatePersistor.FormToDesktopMargin = new System.Drawing.Size(94, 94);
-            this.fspFormStatePersistor.PropertyKeyPrefix = "ElApplicationWindow";
+            this.fspFormStatePersistor.LoadingFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.fspFormStatePersistor_LoadingFormState);
+            this.fspFormStatePersistor.SavingFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_SavingFormState);
             // 
             // ElApplicationWindow
             // 
