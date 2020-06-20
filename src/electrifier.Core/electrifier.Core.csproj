@@ -175,6 +175,12 @@
     </Compile>
     <Compile Include="Forms\RibbonItems.cs" />
     <Compile Include="Forms\RibbonItems.Designer.cs" />
+    <Compile Include="Forms\SessionSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SessionSelector.Designer.cs">
+      <DependentUpon>SessionSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -201,6 +207,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\ElAboutDialog.resx">
       <DependentUpon>ElAboutDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SessionSelector.resx">
+      <DependentUpon>SessionSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\License.rtf" />
   </ItemGroup>

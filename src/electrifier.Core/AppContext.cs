@@ -113,6 +113,8 @@ namespace electrifier.Core
 
             SessionContext SessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
 
+            var ssf = new Forms.SessionSelector();
+            ssf.ShowDialog();
 
             // Ablauf: 07/06/20, 23:18:
             // SessionContext erzeugen(wie jetzt)
