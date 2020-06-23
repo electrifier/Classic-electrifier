@@ -47,125 +47,126 @@ namespace electrifier.Core.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnOk = new System.Windows.Forms.Button();
-            this.tctTabControl = new System.Windows.Forms.TabControl();
-            this.tpgVersion = new System.Windows.Forms.TabPage();
-            this.lblCopyright = new System.Windows.Forms.Label();
-            this.lblProductVersion = new System.Windows.Forms.Label();
-            this.tbgLicense = new System.Windows.Forms.TabPage();
-            this.rtbLicense = new System.Windows.Forms.RichTextBox();
-            this.lblVisitElectrifierOrg = new System.Windows.Forms.LinkLabel();
-            this.tctTabControl.SuspendLayout();
-            this.tpgVersion.SuspendLayout();
-            this.tbgLicense.SuspendLayout();
+            this.DialogOkButton = new System.Windows.Forms.Button();
+            this.Version_LicenseTabControl = new System.Windows.Forms.TabControl();
+            this.VersionTabPage = new System.Windows.Forms.TabPage();
+            this.CopyrightLabel = new System.Windows.Forms.Label();
+            this.ProductVersionLabel = new System.Windows.Forms.Label();
+            this.LicenseTabPage = new System.Windows.Forms.TabPage();
+            this.LicenseRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.VisitElectrifierOrgLabel = new System.Windows.Forms.LinkLabel();
+            this.Version_LicenseTabControl.SuspendLayout();
+            this.VersionTabPage.SuspendLayout();
+            this.LicenseTabPage.SuspendLayout();
             this.SuspendLayout();
             // 
-            // btnOk
+            // DialogOkButton
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(566, 511);
-            this.btnOk.Margin = new System.Windows.Forms.Padding(4);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(100, 27);
-            this.btnOk.TabIndex = 30;
-            this.btnOk.Text = "&OK";
+            this.DialogOkButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.DialogOkButton.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogOkButton.Location = new System.Drawing.Point(566, 511);
+            this.DialogOkButton.Margin = new System.Windows.Forms.Padding(4);
+            this.DialogOkButton.Name = "DialogOkButton";
+            this.DialogOkButton.Size = new System.Drawing.Size(100, 27);
+            this.DialogOkButton.TabIndex = 30;
+            this.DialogOkButton.Text = "&OK";
             // 
-            // tctTabControl
+            // Version_LicenseTabControl
             // 
-            this.tctTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.Version_LicenseTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tctTabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
-            this.tctTabControl.Controls.Add(this.tpgVersion);
-            this.tctTabControl.Controls.Add(this.tbgLicense);
-            this.tctTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tctTabControl.Location = new System.Drawing.Point(15, 14);
-            this.tctTabControl.Name = "tctTabControl";
-            this.tctTabControl.SelectedIndex = 0;
-            this.tctTabControl.Size = new System.Drawing.Size(660, 490);
-            this.tctTabControl.TabIndex = 32;
+            this.Version_LicenseTabControl.Appearance = System.Windows.Forms.TabAppearance.FlatButtons;
+            this.Version_LicenseTabControl.Controls.Add(this.VersionTabPage);
+            this.Version_LicenseTabControl.Controls.Add(this.LicenseTabPage);
+            this.Version_LicenseTabControl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Version_LicenseTabControl.Location = new System.Drawing.Point(15, 14);
+            this.Version_LicenseTabControl.Name = "Version_LicenseTabControl";
+            this.Version_LicenseTabControl.SelectedIndex = 0;
+            this.Version_LicenseTabControl.Size = new System.Drawing.Size(660, 490);
+            this.Version_LicenseTabControl.TabIndex = 32;
             // 
-            // tpgVersion
+            // VersionTabPage
             // 
-            this.tpgVersion.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.tpgVersion.Controls.Add(this.lblCopyright);
-            this.tpgVersion.Controls.Add(this.lblProductVersion);
-            this.tpgVersion.Location = new System.Drawing.Point(4, 37);
-            this.tpgVersion.Name = "tpgVersion";
-            this.tpgVersion.Padding = new System.Windows.Forms.Padding(3);
-            this.tpgVersion.Size = new System.Drawing.Size(652, 449);
-            this.tpgVersion.TabIndex = 0;
-            this.tpgVersion.Text = "Version";
+            this.VersionTabPage.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.VersionTabPage.Controls.Add(this.CopyrightLabel);
+            this.VersionTabPage.Controls.Add(this.ProductVersionLabel);
+            this.VersionTabPage.Location = new System.Drawing.Point(4, 37);
+            this.VersionTabPage.Name = "VersionTabPage";
+            this.VersionTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.VersionTabPage.Size = new System.Drawing.Size(652, 449);
+            this.VersionTabPage.TabIndex = 0;
+            this.VersionTabPage.Text = "Version";
             // 
-            // lblCopyright
+            // CopyrightLabel
             // 
-            this.lblCopyright.BackColor = System.Drawing.Color.Transparent;
-            this.lblCopyright.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.lblCopyright.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCopyright.Location = new System.Drawing.Point(3, 423);
-            this.lblCopyright.Margin = new System.Windows.Forms.Padding(0);
-            this.lblCopyright.Name = "lblCopyright";
-            this.lblCopyright.Size = new System.Drawing.Size(646, 23);
-            this.lblCopyright.TabIndex = 28;
-            this.lblCopyright.TextAlign = System.Drawing.ContentAlignment.BottomRight;
+            this.CopyrightLabel.BackColor = System.Drawing.Color.Transparent;
+            this.CopyrightLabel.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.CopyrightLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyrightLabel.Location = new System.Drawing.Point(3, 423);
+            this.CopyrightLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.CopyrightLabel.Name = "CopyrightLabel";
+            this.CopyrightLabel.Size = new System.Drawing.Size(646, 23);
+            this.CopyrightLabel.TabIndex = 28;
+            this.CopyrightLabel.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
-            // lblProductVersion
+            // ProductVersionLabel
             // 
-            this.lblProductVersion.BackColor = System.Drawing.Color.Transparent;
-            this.lblProductVersion.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblProductVersion.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblProductVersion.Location = new System.Drawing.Point(3, 3);
-            this.lblProductVersion.Margin = new System.Windows.Forms.Padding(0);
-            this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(646, 23);
-            this.lblProductVersion.TabIndex = 2;
+            this.ProductVersionLabel.BackColor = System.Drawing.Color.Transparent;
+            this.ProductVersionLabel.Dock = System.Windows.Forms.DockStyle.Top;
+            this.ProductVersionLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProductVersionLabel.Location = new System.Drawing.Point(3, 3);
+            this.ProductVersionLabel.Margin = new System.Windows.Forms.Padding(0);
+            this.ProductVersionLabel.Name = "ProductVersionLabel";
+            this.ProductVersionLabel.Size = new System.Drawing.Size(646, 23);
+            this.ProductVersionLabel.TabIndex = 2;
             // 
-            // tbgLicense
+            // LicenseTabPage
             // 
-            this.tbgLicense.Controls.Add(this.rtbLicense);
-            this.tbgLicense.Location = new System.Drawing.Point(4, 37);
-            this.tbgLicense.Name = "tbgLicense";
-            this.tbgLicense.Padding = new System.Windows.Forms.Padding(3);
-            this.tbgLicense.Size = new System.Drawing.Size(652, 449);
-            this.tbgLicense.TabIndex = 1;
-            this.tbgLicense.Text = "License";
+            this.LicenseTabPage.Controls.Add(this.LicenseRichTextBox);
+            this.LicenseTabPage.Location = new System.Drawing.Point(4, 37);
+            this.LicenseTabPage.Name = "LicenseTabPage";
+            this.LicenseTabPage.Padding = new System.Windows.Forms.Padding(3);
+            this.LicenseTabPage.Size = new System.Drawing.Size(652, 449);
+            this.LicenseTabPage.TabIndex = 1;
+            this.LicenseTabPage.Text = "License";
             // 
-            // rtbLicense
+            // LicenseRichTextBox
             // 
-            this.rtbLicense.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.rtbLicense.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.rtbLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.rtbLicense.Location = new System.Drawing.Point(3, 3);
-            this.rtbLicense.Name = "rtbLicense";
-            this.rtbLicense.ReadOnly = true;
-            this.rtbLicense.Size = new System.Drawing.Size(646, 443);
-            this.rtbLicense.TabIndex = 2;
-            this.rtbLicense.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.RtbLicense_LinkClicked);
+            this.LicenseRichTextBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.LicenseRichTextBox.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.LicenseRichTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LicenseRichTextBox.Location = new System.Drawing.Point(3, 3);
+            this.LicenseRichTextBox.Name = "LicenseRichTextBox";
+            this.LicenseRichTextBox.ReadOnly = true;
+            this.LicenseRichTextBox.Size = new System.Drawing.Size(646, 443);
+            this.LicenseRichTextBox.TabIndex = 2;
+            this.LicenseRichTextBox.Text = "";
+            this.LicenseRichTextBox.LinkClicked += new System.Windows.Forms.LinkClickedEventHandler(this.LicenseRichTextBox_LinkClicked);
             // 
-            // lblVisitElectrifierOrg
+            // VisitElectrifierOrgLabel
             // 
-            this.lblVisitElectrifierOrg.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lblVisitElectrifierOrg.AutoSize = true;
-            this.lblVisitElectrifierOrg.Location = new System.Drawing.Point(16, 516);
-            this.lblVisitElectrifierOrg.Name = "lblVisitElectrifierOrg";
-            this.lblVisitElectrifierOrg.Size = new System.Drawing.Size(164, 17);
-            this.lblVisitElectrifierOrg.TabIndex = 33;
-            this.lblVisitElectrifierOrg.TabStop = true;
-            this.lblVisitElectrifierOrg.Text = "Visit www.electrifier.org...";
-            this.lblVisitElectrifierOrg.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.lblVisitElectrifierOrg.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LblVisitElectrifierOrg_LinkClicked);
+            this.VisitElectrifierOrgLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.VisitElectrifierOrgLabel.AutoSize = true;
+            this.VisitElectrifierOrgLabel.Location = new System.Drawing.Point(16, 516);
+            this.VisitElectrifierOrgLabel.Name = "VisitElectrifierOrgLabel";
+            this.VisitElectrifierOrgLabel.Size = new System.Drawing.Size(164, 17);
+            this.VisitElectrifierOrgLabel.TabIndex = 33;
+            this.VisitElectrifierOrgLabel.TabStop = true;
+            this.VisitElectrifierOrgLabel.Text = "Visit www.electrifier.org...";
+            this.VisitElectrifierOrgLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.VisitElectrifierOrgLabel.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.VisitElectrifierOrgLabel_LinkClicked);
             // 
             // ElAboutDialog
             // 
-            this.AcceptButton = this.btnOk;
+            this.AcceptButton = this.DialogOkButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.btnOk;
+            this.CancelButton = this.DialogOkButton;
             this.ClientSize = new System.Drawing.Size(682, 553);
-            this.Controls.Add(this.lblVisitElectrifierOrg);
-            this.Controls.Add(this.tctTabControl);
-            this.Controls.Add(this.btnOk);
+            this.Controls.Add(this.VisitElectrifierOrgLabel);
+            this.Controls.Add(this.Version_LicenseTabControl);
+            this.Controls.Add(this.DialogOkButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
@@ -177,9 +178,9 @@ namespace electrifier.Core.Forms
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "About electrifier";
-            this.tctTabControl.ResumeLayout(false);
-            this.tpgVersion.ResumeLayout(false);
-            this.tbgLicense.ResumeLayout(false);
+            this.Version_LicenseTabControl.ResumeLayout(false);
+            this.VersionTabPage.ResumeLayout(false);
+            this.LicenseTabPage.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -187,13 +188,13 @@ namespace electrifier.Core.Forms
 
         #endregion
 
-        private System.Windows.Forms.Button btnOk;
-        private System.Windows.Forms.TabControl tctTabControl;
-        private System.Windows.Forms.TabPage tpgVersion;
-        private System.Windows.Forms.TabPage tbgLicense;
-        private System.Windows.Forms.Label lblProductVersion;
-        private System.Windows.Forms.Label lblCopyright;
-        private System.Windows.Forms.RichTextBox rtbLicense;
-        private System.Windows.Forms.LinkLabel lblVisitElectrifierOrg;
+        private System.Windows.Forms.Button DialogOkButton;
+        private System.Windows.Forms.TabControl Version_LicenseTabControl;
+        private System.Windows.Forms.TabPage VersionTabPage;
+        private System.Windows.Forms.TabPage LicenseTabPage;
+        private System.Windows.Forms.Label ProductVersionLabel;
+        private System.Windows.Forms.Label CopyrightLabel;
+        private System.Windows.Forms.RichTextBox LicenseRichTextBox;
+        private System.Windows.Forms.LinkLabel VisitElectrifierOrgLabel;
     }
 }

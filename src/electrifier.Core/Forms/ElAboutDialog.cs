@@ -18,14 +18,16 @@
 **
 */
 
-using System;
+using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Reflection;
 using System.Windows.Forms;
 
 namespace electrifier.Core.Forms
 {
-    partial class ElAboutDialog : Form
+    partial class ElAboutDialog
+      : Form
     {
         public ElAboutDialog()
         {
@@ -34,101 +36,29 @@ namespace electrifier.Core.Forms
             this.InitializeComponent();
 
             // Load background image of version tab from electrifier.exe embedded resource
-            this.tpgVersion.BackgroundImage = new Bitmap(Assembly.GetEntryAssembly().
+            this.VersionTabPage.BackgroundImage = new Bitmap(Assembly.GetEntryAssembly().
                 GetManifestResourceStream(@"electrifier.SplashScreenForm.png"));
 
             // Load license document from electrifier.Core.dll embedded resource
-            this.rtbLicense.Rtf = Properties.Resources.License.ToString();
+            this.LicenseRichTextBox.Rtf = Properties.Resources.License.ToString(CultureInfo.InvariantCulture);
 
-            this.lblProductVersion.Text = String.Format("{0} v{1}", this.AssemblyProduct, this.AssemblyVersion);
-            this.lblCopyright.Text = this.AssemblyCopyright;
+            // Show additional Assembly Informations
+            this.ProductVersionLabel.Text = $"{AppContext.AssemblyProduct} v{AppContext.AssemblyVersion}";
+            this.CopyrightLabel.Text = AppContext.AssemblyCopyright;
         }
 
-        private void LblVisitElectrifierOrg_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void VisitElectrifierOrgLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             AppContext.TraceScope();
 
-            System.Diagnostics.Process.Start("http://www.electrifier.org");
+            Process.Start("http://www.electrifier.org");
         }
 
-        private void RtbLicense_LinkClicked(object sender, LinkClickedEventArgs e)
+        private void LicenseRichTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
         {
             AppContext.TraceScope();
 
-            System.Diagnostics.Process.Start(e.LinkText);
+            Process.Start(e.LinkText);
         }
-
-        #region Assembly Attribute Accessors
-
-        public string AssemblyTitle {
-            get {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
-
-                if (attributes.Length > 0)
-                {
-                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
-                    if (titleAttribute.Title != "")
-                    {
-                        return titleAttribute.Title;
-                    }
-                }
-                return System.IO.Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
-            }
-        }
-
-        public string AssemblyVersion {
-            get {
-                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-        }
-
-        public string AssemblyDescription {
-            get {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
-
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyDescriptionAttribute)attributes[0]).Description;
-            }
-        }
-
-        public string AssemblyProduct {
-            get {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyProductAttribute)attributes[0]).Product;
-            }
-        }
-
-        public string AssemblyCopyright {
-            get {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-            }
-        }
-
-        public string AssemblyCompany {
-            get {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCompanyAttribute)attributes[0]).Company;
-            }
-        }
-        #endregion
     }
 }

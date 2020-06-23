@@ -45,7 +45,7 @@ namespace electrifier.Core.Forms
         #region Fields ========================================================================================================
 
         // TODO: Add Creation timestamp! in debug mode
-        private static readonly string formTitle_Affix = $"electrifier { AppContext.AssemblyVersion.ToString(3) }";
+        //private static readonly string formTitle_Affix = $"electrifier { AppContext.AssemblyVersion.ToString(3) }";
         public RibbonItems RibbonItems { get; }
 
         #endregion ============================================================================================================
@@ -57,18 +57,7 @@ namespace electrifier.Core.Forms
         public override string Text
         {
             get => base.Text;
-            set
-            {
-                if (null == value)
-                    throw new ArgumentNullException(nameof(this.Text));
-
-                if (!value.Equals(this.Text, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    string newText = ((value.Length > 0) ? (value + " - " + formTitle_Affix) : formTitle_Affix);
-                    AppContext.AddDebugRemark(ref newText);
-                    base.Text = newText;
-                }
-            }
+            set => base.Text = AppContext.BuildDefaultFormText(value);
         }
 
         #endregion ============================================================================================================

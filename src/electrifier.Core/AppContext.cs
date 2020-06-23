@@ -28,6 +28,7 @@ using System.Security.Permissions;
 using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
+using electrifier.Core.Forms;
 
 namespace electrifier.Core
 {
@@ -38,11 +39,63 @@ namespace electrifier.Core
 
         public Icon Icon { get; }
         public Bitmap Logo { get; }
+        public static bool IsBetaVersion => true;
+        public static string FormTitleAffix => $"electrifier { AssemblyVersion.ToString(3) }";
+
+        #endregion ============================================================================================================
+
+        #region Static Assembly Attribute Accessors ===========================================================================
+
+        public static Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
+
+        public static string AssemblyTitle
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+
+                if (attributes.Length > 0)
+                {
+                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+
+                    if (!string.IsNullOrWhiteSpace(titleAttribute.Title))
+                        return titleAttribute.Title;
+                }
+
+                return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().CodeBase);
+            }
+        }
+
+        public static string AssemblyDescription
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+
+                return (attributes.Length == 0) ? string.Empty : ((AssemblyDescriptionAttribute)attributes[0]).Description;
+            }
+        }
 
 
-        internal SessionContext Session { get; }
+        public static string AssemblyProduct
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 
-        public static bool IsBetaVersion() { return true; }
+                return (attributes.Length == 0) ? string.Empty : ((AssemblyProductAttribute)attributes[0]).Product;
+            }
+        }
+
+        public static string AssemblyCopyright
+        {
+            get
+            {
+                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+
+                return (attributes.Length == 0) ? string.Empty : ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
+            }
+        }
 
         public static string AssemblyCompany
         {
@@ -50,11 +103,9 @@ namespace electrifier.Core
             {
                 object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 
-                return attributes.Length == 0 ? string.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
+                return (attributes.Length == 0) ? string.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
         }
-
-        public static Version AssemblyVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
         #endregion ============================================================================================================
 
@@ -108,40 +159,95 @@ namespace electrifier.Core
             this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
             Application.ApplicationExit += this.Application_ApplicationExit;
 
-            // Initialize EntityLighter.DataContext
-            //            this.BaseDirectory = AppContext.DetermineBaseDirectory(isPortable);
-
-            SessionContext SessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
-
-            var ssf = new Forms.SessionSelector();
-            ssf.ShowDialog();
-
-            // Ablauf: 07/06/20, 23:18:
-            // SessionContext erzeugen(wie jetzt)
-            // SessionContext.PreviousSessions => Liste der bekannten, bisherigen Sessions
-            // SessionContext.Resume(SessionEntity sessionToResume) ODER SessionContext.Induce() ODER (SessionContext.Run(SessionEntity sessionToResume => may be null, => neue Session)
-
-            var sescnt = SessionContext.PreviousSessions.Count;
-
-            // Currently, select the session with the highest id. In the future, take the session from the session selector or the last used session
-            // Another idea is: Use a callback for selecting a session object
-            SessionEntity session = SessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
-
-            if (session is null)
+            // Create Session Context, including Database Context, and show SessionSelector Screen
+            try
             {
-                // TODO: Create new session object!
-                //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
+                // TODO: Store sessioncontext?!?
+                SessionContext sessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
 
-                //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+
+                // TODO: Hide Splash Screen!!!
+
+
+                SessionSelector sessionSelector = new SessionSelector(sessionContext);
+                DialogResult result = sessionSelector.ShowDialog();
+
+
+
+                AppContext.TraceDebug($"SessionSelector result: { result.ToString() } ");
+
+                //if (result == DialogResult.OK)
+                {
+                    // Ablauf: 07/06/20, 23:18:
+                    // SessionContext erzeugen(wie jetzt)
+                    // SessionContext.PreviousSessions => Liste der bekannten, bisherigen Sessions
+                    // SessionContext.Resume(SessionEntity sessionToResume) ODER SessionContext.Induce() ODER (SessionContext.Run(SessionEntity sessionToResume => may be null, => neue Session)
+
+                    var sescnt = sessionContext.PreviousSessions.Count;
+
+                    // Currently, select the session with the highest id. In the future, take the session from the session selector or the last used session
+                    // Another idea is: Use a callback for selecting a session object
+                    SessionEntity session = sessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
+
+                    if (session is null)
+                    {
+                        // TODO: Create new session object!
+                        //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
+
+                        //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+                        //{
+                        //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
+                        //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
+                        //});
+
+                    }
+
+                    sessionSelector.Dispose();
+
+                    this.MainForm = sessionContext.Run(session);
+                }
+
+
+                //// Ablauf: 07/06/20, 23:18:
+                //// SessionContext erzeugen(wie jetzt)
+                //// SessionContext.PreviousSessions => Liste der bekannten, bisherigen Sessions
+                //// SessionContext.Resume(SessionEntity sessionToResume) ODER SessionContext.Induce() ODER (SessionContext.Run(SessionEntity sessionToResume => may be null, => neue Session)
+
+                //var sescnt = SessionContext.PreviousSessions.Count;
+
+                //// Currently, select the session with the highest id. In the future, take the session from the session selector or the last used session
+                //// Another idea is: Use a callback for selecting a session object
+                //SessionEntity session = SessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
+
+                //if (session is null)
                 //{
-                //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
-                //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
-                //});
+                //    // TODO: Create new session object!
+                //    //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
 
+                //    //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+                //    //{
+                //    //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
+                //    //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
+                //    //});
+
+                //}
+
+
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
 
 
-            this.MainForm = SessionContext.Run(session);
+
+            //DialogResult dialogResult
+
+
+
+
+
+
 
 
 
@@ -205,6 +311,19 @@ namespace electrifier.Core
 
         [Conditional("DEBUG")]
         public static void AddDebugRemark(ref string targetString) => targetString = string.Concat(targetString, " ‖ DEBUG ☻");
+
+        public static string BuildDefaultFormText(string value)
+        {
+            string text = string.IsNullOrWhiteSpace(value) ?
+                FormTitleAffix :
+                $"{value} - {FormTitleAffix}";
+
+            AddDebugRemark(ref text);
+
+            return text;
+        }
+
+        // ====================================================================================================================
 
         private void Application_ApplicationExit(object sender, EventArgs e)
         {
