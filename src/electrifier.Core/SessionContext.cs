@@ -244,76 +244,12 @@ namespace electrifier.Core
             }
             else
             {
-                //this.IsSessionSelecting = true;
-
                 this.SessionSelector = new SessionSelector(this);
                 this.SessionSelector.ContinueSession += this.SessionSelector_ContinueSession;
                 this.SessionSelector.StartNewSession += this.SessionSelector_StartNewSession;
 
                 this.OnMainFormChange(this.SessionSelector);
-
-
-
-                /*
-                                using (SessionSelector sessionSelector = new SessionSelector(this.SessionContext))
-                                {
-                                    long? sessionId = null;
-
-                                    // Re-Position SessionSelector
-                                    //sessionSelector.StartPosition = FormStartPosition.Manual;
-                                    //var sessionSelectorPos = this.Location;
-                                    //sessionSelectorPos.Offset(32, 32);
-                                    //sessionSelector.Location = sessionSelectorPos;
-
-                                    switch (sessionSelector.ShowDialog())
-                                    {
-                                        case DialogResult.Ignore:
-                                            string name = sessionSelector.SessionCreationName;
-                                            string description = sessionSelector.SessionCreationDescription;
-
-                                            AppContext.TraceDebug($"Creating new session '{ name }'");
-
-                                            // TODO: Check those SQL-Values!
-
-                                            sessionId = this.SessionContext.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
-                                            {
-                                                sqlCmd.CommandText = $"INSERT INTO Session (Name, Description) VALUES ($Name, $Description)";
-                                                sqlCmd.Parameters.AddWithValue("$Name", name);
-                                                sqlCmd.Parameters.AddWithValue("$Description", description);
-                                            });
-                                            break;
-                                        case DialogResult.OK:
-                                            sessionId = sessionSelector.SessionContinuingId;
-                                            break;
-                                        default:
-                                            sessionSelector.Close();
-                                            this.Close();
-                                            return;
-                                    }
-
-                                    if (null != sessionId)
-                                    {
-                                        // TODO: Load session here!
-                                        //this.session = SessionEntity.LoadStoredSingleSession(DataContext, (long)sessionId);
-                                    }
-                                    else
-                                    {
-
-                                    }
-                                }
-
-                */
-
             }
-
-
-            //this.SessionSelectorForm = new SessionSelector(this, appContext);
-            //this.SessionSelectorForm.FormClosed += this.SessionSelectorForm_FormClosed;
-
-            ////form.FormClosing += this.Form_FormClosing;
-
-
-            //return this.SessionSelectorForm;
         }
 
         private void SessionSelector_StartNewSession(object sender, StartNewSessionEventArgs args)
@@ -334,7 +270,7 @@ namespace electrifier.Core
 
             this.Session = SessionEntity.LoadStoredSingleSession(this.DataContext, sessionId);
 
-            var mainForm = new ElApplicationWindow(this);       // Invoke()?!?
+            var mainForm = new ElApplicationWindow(this);       // Invoke()?!?  // TODO: Dispose?
             this.OnMainFormChange(mainForm);
             mainForm.Show();
 
@@ -352,223 +288,174 @@ namespace electrifier.Core
         }
 
 
-
-
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        //public SessionEntity LoadSession(AppContext appContext)
+        //public ElApplicationWindow Run(SessionEntity session)
         //{
-        //    // TODO: First check if there is a default selection for new session dialog
+        //    this.session = session;
 
-        //    using (SessionSelector sessionSelector = new SessionSelector(this, appContext))
-        //    {
-        //        long? sessionId = null;
+        //    // Create main Application Window
+        //    this.ApplicationWindow = new ElApplicationWindow(this);
 
-        //        switch(sessionSelector.ShowDialog())
-        //        {
-        //            case DialogResult.Ignore:
-        //                string name = sessionSelector.SessionCreationName;
-        //                string description = sessionSelector.SessionCreationDescription;
+        //    // Set default properties for this session
+        //    this.Properties = new PropertyCollection(this);
 
-        //                AppContext.TraceDebug($"Creating new session '{ name }'");
 
-        //                // TODO: Check those SQL-Values!
 
-        //                sessionId = this.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
-        //                {
-        //                    sqlCmd.CommandText = $"INSERT INTO Session (Name, Description) VALUES ($Name, $Description)";
-        //                    sqlCmd.Parameters.AddWithValue("$Name", name);
-        //                    sqlCmd.Parameters.AddWithValue("$Description", description);
-        //                });
-        //                break;
-        //            case DialogResult.OK:
-        //                sessionId = sessionSelector.SessionContinuingId;
-        //                break;
-        //            default:
-        //                return null;
-        //        }
+        //    //TypeConverter pointConverter = TypeDescriptor.GetConverter(typeof(Point));
+        //    //Point windowPos = (Point)pointConverter.ConvertFromString(this.Properties.SyncProperty("WindowPos", "0, 0"));
+        //    //this.ApplicationWindow.Location = windowPos;
 
-        //        if (null != sessionId)
-        //        {
-        //            this.session = SessionEntity.LoadStoredSingleSession(DataContext, (long)sessionId);
-        //        }
-        //    }
+        //    //TypeConverter sizeConverter = TypeDescriptor.GetConverter(typeof(Size));
+        //    //Size windowSize = (Size)sizeConverter.ConvertFromString(this.Properties.SyncProperty("WindowSize", "800, 600"));
+        //    //this.ApplicationWindow.Size = windowSize;
 
-        //    return this.Session;
+
+        //    // Initialize session object
+        //    //
+        //    // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
+        //    //
+        //    // TODO: Create new default shellbrowser - for test purposes only
+        //    ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+
+
+
+
+
+        //    //////var windowPos = this.Properties.SyncProperty("WindowPos", "0, 0");
+        //    //////var windowSize = this.Properties.SyncProperty("WindowSize", "800, 600");
+
+        //    //////char[] delimiterChars = { ' ', ',' };
+        //    //////var values = windowPos.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
+
+        //    //////this.ApplicationWindow.StartPosition = FormStartPosition.Manual;
+        //    //////this.ApplicationWindow.Location = new PointConverter()
+
+        //    /*
+        //        // Create the PointConverter.
+        //        System.ComponentModel.TypeConverter converter = 
+        //            System.ComponentModel.TypeDescriptor.GetConverter(typeof(Point));
+
+        //        Point point1 = (Point) converter.ConvertFromString("200, 200");
+
+        //        // Use the subtraction operator to get a second point.
+        //        Point point2 = point1 - new Size(190, 190);
+
+        //        // Draw a line between the two points.
+        //        e.Graphics.DrawLine(Pens.Black, point1, point2);
+        //    */
+
+
+
+
+        //    //// Set default properties for this session
+
+        //    //this.Properties.Add(new SessionProperty(this, "WindowPosition", "10, 10"));
+
+        //    //this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
+        //    //this.AddSessionProperty("WindowSize", "800, 600");
+
+
+        //    /* Unit-Test
+        //                var test1 = this.Properties.SyncProperty("WindowPosition", "0, 0");
+        //                var test2 = this.Properties.SyncProperty("Pos", "0, 0");
+        //                this.Properties.SafeSetProperty("Pos", "-10, -10");
+        //                var test3 = this.Properties.SyncProperty("Pos", "10, 10");
+        //                this.Properties.SafeSetProperty("Pos", "-20, -20");
+        //                var test4 = this.Properties.SyncProperty("Pos", "20, 20");
+        //                this.Properties.SafeSetProperty("Pos", "-30, -30");
+        //                var test5 = this.Properties.SyncProperty("Pos", "30, 30");
+        //    */
+
+
+
+        //    //            var test = this.Session.Properties.Where(property => property.Key == "WindowPosition");
+        //    //var test4 = this.Session.Properties.Contains("WindowPosition"); // comparer: //IEqualityComparer )
+        //    //var test1 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("Windowzosition", StringComparison.InvariantCultureIgnoreCase));
+        //    //var test2 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition", StringComparison.InvariantCultureIgnoreCase));
+        //    //var test3 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("Windowposition", StringComparison.InvariantCultureIgnoreCase));
+
+        //    ////            var test = this.Properties.Where(property => property.Key == "WindowPosition");
+        //    ////            var test2 = this.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition2", StringComparison.InvariantCulture));
+        //    ///
+
+
+
+
+        //    //var test = this.GetSessionProperty("WindowPosition");
+
+
+        //    //if (GetPropertyCount("WindowPosition") > 0)
+        //    //{
+        //    //    var prop = this.GetSessionProperty("WindowPosition");
+        //    //}
+        //    //else
+        //    //{
+        //    //    var prop = new SessionProperty(this, "WindowPosition", "0, 0");
+        //    //    //this.Session.Properties.Add(new SessionProperty("WindowPosition", ))
+        //    //}
+
+
+
+        //    //SessionProperty propWindowPosition = new SessionProperty(this, "WindowPosition", "0, 0");
+
+
+
+
+
+
+
+
+
+
+
+        //    //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
+
+        //    //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+        //    //{
+        //    //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
+        //    //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
+        //    //});
+
+        //    //// Initialize properties
+        //    //this.Properties = new EntitySet<SessionProperty>(this.DataContext).Load(
+        //    //    $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.Id }", (sqliteDataReader) =>
+        //    //    {
+        //    //        return new SessionProperty(this, sqliteDataReader);
+        //    //    });
+
+        //    //// Set default properties for this session
+        //    //this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
+        //    //this.AddSessionProperty("WindowSize", "800, 600");
+
+
+
+
+
+
+
+
+
+
+        //    #region Test
+        //    //var newProp = new SessionProperty(this, "WindowPosition", "100, 100");
+        //    //this.Properties.Add(newProp);
+        //    //var newProp2 = new SessionProperty(this, "WindowSize", "640, 480");
+        //    //this.Properties.Add(newProp2);
+
+        //    //var test1 = newProp.Equals(newProp);
+        //    //var test2 = newProp.Equals(newProp2);
+        //    //var test3 = newProp2.Equals(newProp);
+        //    //var test4 = newProp2.Equals(newProp2);
+
+        //    //var test5 = this.Properties.Contains(newProp);
+        //    //var test6 = this.Properties.Contains(newProp2);
+
+        //    //newProp2.Value = "Very new value!";
+        //    ////this.Properties.Remove(newProp);
+        //    ////this.Properties.Remove(newProp2);
+        //    #endregion
+
+        //    return this.ApplicationWindow;
         //}
-
-
-        public ElApplicationWindow Run(SessionEntity session)
-        {
-            this.session = session;
-
-            // Create main Application Window
-            this.ApplicationWindow = new ElApplicationWindow(this);
-
-            // Set default properties for this session
-            this.Properties = new PropertyCollection(this);
-
-
-
-            //TypeConverter pointConverter = TypeDescriptor.GetConverter(typeof(Point));
-            //Point windowPos = (Point)pointConverter.ConvertFromString(this.Properties.SyncProperty("WindowPos", "0, 0"));
-            //this.ApplicationWindow.Location = windowPos;
-
-            //TypeConverter sizeConverter = TypeDescriptor.GetConverter(typeof(Size));
-            //Size windowSize = (Size)sizeConverter.ConvertFromString(this.Properties.SyncProperty("WindowSize", "800, 600"));
-            //this.ApplicationWindow.Size = windowSize;
-
-
-            // Initialize session object
-            //
-            // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
-            //
-            // TODO: Create new default shellbrowser - for test purposes only
-            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
-
-
-
-
-
-            //////var windowPos = this.Properties.SyncProperty("WindowPos", "0, 0");
-            //////var windowSize = this.Properties.SyncProperty("WindowSize", "800, 600");
-
-            //////char[] delimiterChars = { ' ', ',' };
-            //////var values = windowPos.Split(delimiterChars, StringSplitOptions.RemoveEmptyEntries);
-
-            //////this.ApplicationWindow.StartPosition = FormStartPosition.Manual;
-            //////this.ApplicationWindow.Location = new PointConverter()
-
-            /*
-                // Create the PointConverter.
-                System.ComponentModel.TypeConverter converter = 
-                    System.ComponentModel.TypeDescriptor.GetConverter(typeof(Point));
-
-                Point point1 = (Point) converter.ConvertFromString("200, 200");
-
-                // Use the subtraction operator to get a second point.
-                Point point2 = point1 - new Size(190, 190);
-
-                // Draw a line between the two points.
-                e.Graphics.DrawLine(Pens.Black, point1, point2);
-            */
-
-
-
-
-            //// Set default properties for this session
-
-            //this.Properties.Add(new SessionProperty(this, "WindowPosition", "10, 10"));
-
-            //this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
-            //this.AddSessionProperty("WindowSize", "800, 600");
-
-
-            /* Unit-Test
-                        var test1 = this.Properties.SyncProperty("WindowPosition", "0, 0");
-                        var test2 = this.Properties.SyncProperty("Pos", "0, 0");
-                        this.Properties.SafeSetProperty("Pos", "-10, -10");
-                        var test3 = this.Properties.SyncProperty("Pos", "10, 10");
-                        this.Properties.SafeSetProperty("Pos", "-20, -20");
-                        var test4 = this.Properties.SyncProperty("Pos", "20, 20");
-                        this.Properties.SafeSetProperty("Pos", "-30, -30");
-                        var test5 = this.Properties.SyncProperty("Pos", "30, 30");
-            */
-
-
-
-            //            var test = this.Session.Properties.Where(property => property.Key == "WindowPosition");
-            //var test4 = this.Session.Properties.Contains("WindowPosition"); // comparer: //IEqualityComparer )
-            //var test1 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("Windowzosition", StringComparison.InvariantCultureIgnoreCase));
-            //var test2 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition", StringComparison.InvariantCultureIgnoreCase));
-            //var test3 = this.Session.Properties.SingleOrDefault(p => p.Key.Equals("Windowposition", StringComparison.InvariantCultureIgnoreCase));
-
-            ////            var test = this.Properties.Where(property => property.Key == "WindowPosition");
-            ////            var test2 = this.Properties.SingleOrDefault(p => p.Key.Equals("WindowPosition2", StringComparison.InvariantCulture));
-            ///
-
-
-
-
-            //var test = this.GetSessionProperty("WindowPosition");
-
-
-            //if (GetPropertyCount("WindowPosition") > 0)
-            //{
-            //    var prop = this.GetSessionProperty("WindowPosition");
-            //}
-            //else
-            //{
-            //    var prop = new SessionProperty(this, "WindowPosition", "0, 0");
-            //    //this.Session.Properties.Add(new SessionProperty("WindowPosition", ))
-            //}
-
-
-
-            //SessionProperty propWindowPosition = new SessionProperty(this, "WindowPosition", "0, 0");
-
-
-
-
-
-
-
-
-
-
-
-            //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
-
-            //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
-            //{
-            //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
-            //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
-            //});
-
-            //// Initialize properties
-            //this.Properties = new EntitySet<SessionProperty>(this.DataContext).Load(
-            //    $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.Id }", (sqliteDataReader) =>
-            //    {
-            //        return new SessionProperty(this, sqliteDataReader);
-            //    });
-
-            //// Set default properties for this session
-            //this.AddSessionProperty("WindowPosition", "0, 0");      // TODO: "CenterScreen", etc...
-            //this.AddSessionProperty("WindowSize", "800, 600");
-
-
-
-
-
-
-
-
-
-
-            #region Test
-            //var newProp = new SessionProperty(this, "WindowPosition", "100, 100");
-            //this.Properties.Add(newProp);
-            //var newProp2 = new SessionProperty(this, "WindowSize", "640, 480");
-            //this.Properties.Add(newProp2);
-
-            //var test1 = newProp.Equals(newProp);
-            //var test2 = newProp.Equals(newProp2);
-            //var test3 = newProp2.Equals(newProp);
-            //var test4 = newProp2.Equals(newProp2);
-
-            //var test5 = this.Properties.Contains(newProp);
-            //var test6 = this.Properties.Contains(newProp2);
-
-            //newProp2.Value = "Very new value!";
-            ////this.Properties.Remove(newProp);
-            ////this.Properties.Remove(newProp2);
-            #endregion
-
-            return this.ApplicationWindow;
-        }
 
 
 
