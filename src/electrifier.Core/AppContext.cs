@@ -29,6 +29,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Linq;
 using electrifier.Core.Forms;
+using System.Runtime.CompilerServices;
 
 namespace electrifier.Core
 {
@@ -75,7 +76,6 @@ namespace electrifier.Core
                 return (attributes.Length == 0) ? string.Empty : ((AssemblyDescriptionAttribute)attributes[0]).Description;
             }
         }
-
 
         public static string AssemblyProduct
         {
@@ -164,17 +164,26 @@ namespace electrifier.Core
             {
                 // TODO: Store sessioncontext?!?
                 SessionContext sessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
+                sessionContext.MainFormChange += this.SessionContext_MainFormChange;
+                sessionContext.CreateInitialForm(this);
+
+                // Finally close splash screen...
+                //TODO: Fade it out :)
+                splashScreenForm.Close();
+                splashScreenForm.Dispose();
 
 
-                // TODO: Hide Splash Screen!!!
-
-
-                SessionSelector sessionSelector = new SessionSelector(sessionContext);
-                DialogResult result = sessionSelector.ShowDialog();
 
 
 
-                AppContext.TraceDebug($"SessionSelector result: { result.ToString() } ");
+
+
+
+
+
+
+
+
 
                 //if (result == DialogResult.OK)
                 {
@@ -183,28 +192,28 @@ namespace electrifier.Core
                     // SessionContext.PreviousSessions => Liste der bekannten, bisherigen Sessions
                     // SessionContext.Resume(SessionEntity sessionToResume) ODER SessionContext.Induce() ODER (SessionContext.Run(SessionEntity sessionToResume => may be null, => neue Session)
 
-                    var sescnt = sessionContext.PreviousSessions.Count;
+//                    var sescnt = sessionContext.PreviousSessions.Count;
 
                     // Currently, select the session with the highest id. In the future, take the session from the session selector or the last used session
                     // Another idea is: Use a callback for selecting a session object
-                    SessionEntity session = sessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
+//                    SessionEntity session = sessionContext.PreviousSessions.OrderByDescending(i => i.Id).FirstOrDefault();
 
-                    if (session is null)
-                    {
-                        // TODO: Create new session object!
-                        //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
+                    //if (session is null)
+                    //{
+                    //    // TODO: Create new session object!
+                    //    //this.Name = $"Session on { DateTime.Now.DayOfWeek }";         // TODO: Put into config!
 
-                        //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
-                        //{
-                        //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
-                        //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
-                        //});
+                    //    //this.Id = this.DataContext.CreateNewEntity(typeof(SessionContext), (sqlCmd) =>
+                    //    //{
+                    //    //    sqlCmd.CommandText = $"INSERT INTO Session (Name) VALUES ($Name)";
+                    //    //    sqlCmd.Parameters.AddWithValue("$Name", this.Name);
+                    //    //});
 
-                    }
+                    //}
 
-                    sessionSelector.Dispose();
+                    //sessionSelector.Dispose();
 
-                    this.MainForm = sessionContext.Run(session);
+//                    this.MainForm = sessionContext.Run(session);
                 }
 
 
@@ -238,20 +247,6 @@ namespace electrifier.Core
             {
                 throw;
             }
-
-
-
-            //DialogResult dialogResult
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -304,19 +299,23 @@ namespace electrifier.Core
 
 
 
-            // Finally close splash screen
-            splashScreenForm.Close();
-            splashScreenForm.Dispose();
+
+        }
+
+        private void SessionContext_MainFormChange(object sender, MainFormChangeEventArgs args)
+        {
+            //if(sender != this.sessionContext)
+            this.MainForm = args.NewMainForm;
         }
 
         [Conditional("DEBUG")]
         public static void AddDebugRemark(ref string targetString) => targetString = string.Concat(targetString, " ‖ DEBUG ☻");
 
-        public static string BuildDefaultFormText(string value)
+        public static string BuildDefaultFormText(string baseFormText = null)
         {
-            string text = string.IsNullOrWhiteSpace(value) ?
+            string text = string.IsNullOrWhiteSpace(baseFormText) ?
                 FormTitleAffix :
-                $"{value} - {FormTitleAffix}";
+                $"{baseFormText} - {FormTitleAffix}";
 
             AddDebugRemark(ref text);
 

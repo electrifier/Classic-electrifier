@@ -53,6 +53,7 @@ namespace electrifier.Core.Forms
         #region Properties ====================================================================================================
 
         public SessionContext SessionContext { get; }
+        public SessionEntity Session => this.SessionContext.Session;
 
         public override string Text
         {
@@ -79,10 +80,8 @@ namespace electrifier.Core.Forms
             this.InitializeComponent();
             this.RibbonItems = new RibbonItems(this, this.rbnRibbon);
 
-            // Initialize properties
-            this.Text = this.SessionContext.Name;
-
-            // Set Application Icon as form Icon
+            // Initialize form's Icon and Title
+            this.Text = this.Session.Name;
             this.Icon = this.SessionContext.ApplicationIcon;
 
             // Initialize DockPanel
@@ -93,6 +92,7 @@ namespace electrifier.Core.Forms
             // Add this window to clipboard format listener list, i.e. register for clipboard changes
             AppContext.TraceDebug("AddClipboardFormatListener");
             User32.AddClipboardFormatListener(this.Handle);
+
             this.FormClosed += this.Electrifier_FormClosed;
         }
 
@@ -220,9 +220,9 @@ namespace electrifier.Core.Forms
             // NULL-Check!
 
             // TODO: Put Converters into EntityLighter!
-            args.Location = (Point)pointConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Location", "0,0"));
-            args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Size", "800, 600"));
-            args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.WindowState", "Normal"));
+//            args.Location = (Point)pointConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Location", "0,0"));
+//            args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Size", "800, 600"));
+//            args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.WindowState", "Normal"));
 
             //args.Cancel = false;
         }
@@ -233,9 +233,9 @@ namespace electrifier.Core.Forms
             TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
             TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
 
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Size", sizeConvert.ConvertTo(args.Size, typeof(string)) as string);
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.WindowState", stateConvert.ConvertTo(args.WindowState, typeof(string)) as string);
+//            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);
+//            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Size", sizeConvert.ConvertTo(args.Size, typeof(string)) as string);
+//            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.WindowState", stateConvert.ConvertTo(args.WindowState, typeof(string)) as string);
         }
     }
 }

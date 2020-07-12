@@ -558,7 +558,7 @@ namespace EntityLighter
 
             using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
             {
-                // TODO: 24/05/20: Create the WHOLE statement dynamically!
+                // TODO: 24/05/20: Create the WHOLE statement dynamically!; Use Tables attributes for dynamic binding
                 setEntityCreationParams(sqlCmd);
 
                 lock (this.databaseLock)
@@ -578,9 +578,6 @@ namespace EntityLighter
                 }
             }
         }
-
-
-
 
 
 
@@ -673,7 +670,14 @@ namespace EntityLighter
 
         TEntity IList<TEntity>.this[int index]
         {
-            get => throw new NotImplementedException();
+            get
+            {
+                if ((index < 0) || (index >= this.entities.Count))
+                    throw new ArgumentOutOfRangeException(nameof(index));
+
+                return this.entities[index];
+            }
+
             set => throw new NotImplementedException();
         }
 

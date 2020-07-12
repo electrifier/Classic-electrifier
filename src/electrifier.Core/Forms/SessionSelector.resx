@@ -174,6 +174,13 @@
   <metadata name="BetaWarningRichTextBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="BetaWarningRichTextBox.Text" xml:space="preserve">
+    <value>Hello and welcome to electrifier!
+Please be aware that this is beta software and you should not use it in productive environments. Although carefully tested there will be bugs, which may result in data loss, crashes, system instability and / or rage attacks!
+No one can be held responsible for any damage that is caused by using this software!
+
+Use at your own risk. By continuing using this software you show that you understand the implications.</value>
+  </data>
   <metadata name="BetaWarningPictureBox.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

@@ -23,13 +23,12 @@ using electrifier.Core.Forms;
 using EntityLighter;
 using Microsoft.Data.Sqlite;
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using System.Windows.Forms;
-using Vanara.Extensions.Reflection;
 
 namespace electrifier.Core
 {
@@ -52,34 +51,39 @@ namespace electrifier.Core
         public long DateModified { get; protected set; }
 
 
-        //public SessionEntity(long id, string name, string description, long dateCreated, long dateModified)
-        //{
-        //    this.Id = id;
-        //    this.Name = name;
-        //    this.Description = description;
-        //    this.DateCreated = dateCreated;
-        //    this.DateModified = dateModified;
-        //}
+        public static SessionEntity LoadStoredSingleSession(DataContext dataContext, long id)
+        {
+            EntitySet<SessionEntity> entities = LoadStoredSessions(dataContext, whereClause: $"Id = { id }");
+
+            if (1 == entities.Count)
+                return entities.First();
+
+            return null;        // TODO: Remove, throw exception
+        }
+
+        public static EntitySet<SessionEntity> LoadStoredSessions(DataContext dataContext, string whereClause = null)
+        {
+            string statement = $"SELECT Id, Name, Description, STRFTIME('%s', DateCreated), STRFTIME('%s', DateModified) FROM Session";
+
+            if (!string.IsNullOrWhiteSpace(whereClause))
+                statement += " WHERE " + whereClause;
+
+            return new EntitySet<SessionEntity>(dataContext).Load(statement,
+                (sqliteDataReader) =>
+                {
+                    return new SessionEntity(dataContext, sqliteDataReader);
+                });
+        }
 
         private SessionEntity(DataContext dataContext, SqliteDataReader sqliteData)
         {
-            this.Id = (long)sqliteData[0];
+            this.Id = (long)sqliteData[0];              // TODO: Use column names instead of ids
             this.Name = (string)sqliteData[1];
             this.Description = (sqliteData[2] is DBNull ? string.Empty : (string)sqliteData[2]);
             this.DateCreated = long.Parse((string)sqliteData[3]);
             this.DateModified = long.Parse((string)sqliteData[4]);
 
             //this.Properties = new PropertyCollection(dataContext);
-        }
-
-        public static EntitySet<SessionEntity> LoadStoredSessions(DataContext dataContext)
-        {
-            return new EntitySet<SessionEntity>(dataContext).Load(
-                $"SELECT Id, Name, Description, STRFTIME('%s', DateCreated), STRFTIME('%s', DateModified) FROM Session",
-                (sqliteDataReader) =>
-                {
-                    return new SessionEntity(dataContext, sqliteDataReader);
-                });
         }
 
         //public PropertyCollection Properties
@@ -96,8 +100,7 @@ namespace electrifier.Core
      * This property determines the main Form for this context. This property can change at any time. If OnMainFormClosed is not overridden,
      * the message loop of the thread terminates when the mainForm parameter closes.
      */
-    
-    //[Table(Name = "Session")]
+
     public class SessionContext
     {
 
@@ -142,18 +145,28 @@ namespace electrifier.Core
         public string DataContextStorage { get { return $"{ this.BaseDirectory }\\electrifier.config"; } }
         public DataContext DataContext { get; }
 
-
-
-
-
         public Icon ApplicationIcon { get; private set; }
         public ElApplicationWindow ApplicationWindow { get; private set; }
 
         public long Id => this.Session.Id;
         public string Name => this.Session.Name;
 
-        public SessionEntity Session => this.session ?? throw new InvalidOperationException("Currently No Session set");
-        public bool HasSession { get => this.session != null; }
+        private SessionEntity session;      // Property backing field
+
+        public SessionEntity Session
+        {
+            get
+            {
+                return this.session ?? throw new InvalidOperationException("Currently No Session set");
+            }
+            private set
+            {
+                if (this.session != null)
+                    throw new InvalidOperationException("Session already set and must not be reassigned!");
+                this.session = value;
+            }
+        }
+        public bool HasSession => this.session != null;
 
 
         public EntitySet<SessionEntity> PreviousSessions => SessionEntity.LoadStoredSessions(this.DataContext);
@@ -164,15 +177,41 @@ namespace electrifier.Core
             private set; //set { this.properties.Assign(value); }
         }
 
+        public SessionSelector SessionSelector { get; private set; } = null;
+        public bool IsSessionSelecting => this.SessionSelector != null;
+
+
 
 
         #endregion ============================================================================================================
 
         #region Fields ========================================================================================================
 
-        private SessionEntity session;
+
+        private Form currentMainForm;
 
         #endregion Fields =====================================================================================================
+
+        #region Events ========================================================================================================
+
+        /// <summary>
+        /// </summary>
+        public event EventHandler<MainFormChangeEventArgs> MainFormChange;
+
+        private void OnMainFormChange(Form newMainForm)
+        {
+            if (this.currentMainForm != newMainForm)
+            {
+                AppContext.TraceScope();
+
+                this.MainFormChange?.Invoke(this, new MainFormChangeEventArgs(this.currentMainForm, newMainForm));
+
+                this.currentMainForm = newMainForm;
+            }
+        }
+
+        #endregion ============================================================================================================
+
 
 
 
@@ -190,6 +229,176 @@ namespace electrifier.Core
             this.DataContext.CreateEntityModel(typeof(SessionEntity));
             this.DataContext.CreateEntityModel(typeof(SessionProperty));
         }
+
+
+        public void CreateInitialForm(AppContext appContext)
+        {
+            // TODO: First check if there is a default selection for new session dialog, then directly create ElApplicationWindow
+
+            if (this.HasSession)
+            {
+                // Load session, return main window
+                this.ApplicationWindow = new ElApplicationWindow(this);
+
+                this.OnMainFormChange(this.ApplicationWindow);
+            }
+            else
+            {
+                //this.IsSessionSelecting = true;
+
+                this.SessionSelector = new SessionSelector(this);
+                this.SessionSelector.ContinueSession += this.SessionSelector_ContinueSession;
+                this.SessionSelector.StartNewSession += this.SessionSelector_StartNewSession;
+
+                this.OnMainFormChange(this.SessionSelector);
+
+
+
+                /*
+                                using (SessionSelector sessionSelector = new SessionSelector(this.SessionContext))
+                                {
+                                    long? sessionId = null;
+
+                                    // Re-Position SessionSelector
+                                    //sessionSelector.StartPosition = FormStartPosition.Manual;
+                                    //var sessionSelectorPos = this.Location;
+                                    //sessionSelectorPos.Offset(32, 32);
+                                    //sessionSelector.Location = sessionSelectorPos;
+
+                                    switch (sessionSelector.ShowDialog())
+                                    {
+                                        case DialogResult.Ignore:
+                                            string name = sessionSelector.SessionCreationName;
+                                            string description = sessionSelector.SessionCreationDescription;
+
+                                            AppContext.TraceDebug($"Creating new session '{ name }'");
+
+                                            // TODO: Check those SQL-Values!
+
+                                            sessionId = this.SessionContext.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
+                                            {
+                                                sqlCmd.CommandText = $"INSERT INTO Session (Name, Description) VALUES ($Name, $Description)";
+                                                sqlCmd.Parameters.AddWithValue("$Name", name);
+                                                sqlCmd.Parameters.AddWithValue("$Description", description);
+                                            });
+                                            break;
+                                        case DialogResult.OK:
+                                            sessionId = sessionSelector.SessionContinuingId;
+                                            break;
+                                        default:
+                                            sessionSelector.Close();
+                                            this.Close();
+                                            return;
+                                    }
+
+                                    if (null != sessionId)
+                                    {
+                                        // TODO: Load session here!
+                                        //this.session = SessionEntity.LoadStoredSingleSession(DataContext, (long)sessionId);
+                                    }
+                                    else
+                                    {
+
+                                    }
+                                }
+
+                */
+
+            }
+
+
+            //this.SessionSelectorForm = new SessionSelector(this, appContext);
+            //this.SessionSelectorForm.FormClosed += this.SessionSelectorForm_FormClosed;
+
+            ////form.FormClosing += this.Form_FormClosing;
+
+
+            //return this.SessionSelectorForm;
+        }
+
+        private void SessionSelector_StartNewSession(object sender, StartNewSessionEventArgs args)
+        {
+            if (args is null)
+                throw new ArgumentNullException(nameof(args));
+
+            AppContext.TraceDebug($"Creating new session {args.Name}: '{args.Description}'");
+
+            // TODO: Check those SQL-Values!
+
+            long sessionId = this.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
+            {
+                sqlCmd.CommandText = $"INSERT INTO Session (Name, Description) VALUES ($Name, $Description)";
+                sqlCmd.Parameters.AddWithValue("$Name", args.Name);
+                sqlCmd.Parameters.AddWithValue("$Description", args.Description);
+            });
+
+            this.Session = SessionEntity.LoadStoredSingleSession(this.DataContext, sessionId);
+
+            var mainForm = new ElApplicationWindow(this);       // Invoke()?!?
+            this.OnMainFormChange(mainForm);
+            mainForm.Show();
+
+            //this.OnMainFormChange(new ElApplicationWindow(this));
+            // TODO: SessionSelector.Dispose();
+        }
+
+        private void SessionSelector_ContinueSession(object sender, ContinueSessionEventArgs e)
+        {
+            this.Session = SessionEntity.LoadStoredSingleSession(this.DataContext, e.SessionId);
+
+            var mainForm = new ElApplicationWindow(this);
+            this.OnMainFormChange(mainForm);
+            mainForm.Show();
+        }
+
+
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        //public SessionEntity LoadSession(AppContext appContext)
+        //{
+        //    // TODO: First check if there is a default selection for new session dialog
+
+        //    using (SessionSelector sessionSelector = new SessionSelector(this, appContext))
+        //    {
+        //        long? sessionId = null;
+
+        //        switch(sessionSelector.ShowDialog())
+        //        {
+        //            case DialogResult.Ignore:
+        //                string name = sessionSelector.SessionCreationName;
+        //                string description = sessionSelector.SessionCreationDescription;
+
+        //                AppContext.TraceDebug($"Creating new session '{ name }'");
+
+        //                // TODO: Check those SQL-Values!
+
+        //                sessionId = this.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
+        //                {
+        //                    sqlCmd.CommandText = $"INSERT INTO Session (Name, Description) VALUES ($Name, $Description)";
+        //                    sqlCmd.Parameters.AddWithValue("$Name", name);
+        //                    sqlCmd.Parameters.AddWithValue("$Description", description);
+        //                });
+        //                break;
+        //            case DialogResult.OK:
+        //                sessionId = sessionSelector.SessionContinuingId;
+        //                break;
+        //            default:
+        //                return null;
+        //        }
+
+        //        if (null != sessionId)
+        //        {
+        //            this.session = SessionEntity.LoadStoredSingleSession(DataContext, (long)sessionId);
+        //        }
+        //    }
+
+        //    return this.Session;
+        //}
 
 
         public ElApplicationWindow Run(SessionEntity session)
@@ -439,6 +648,25 @@ namespace electrifier.Core
             //                this.ElectrifierForm.SaveConfiguration(fullFileName);
         }
     }
+
+    #region EventArgs =========================================================================================================
+
+    /// <summary>
+    /// Event argument for the <see cref="SessionSelector.StartNewSession"/> event.
+    /// </summary>
+    public class MainFormChangeEventArgs : EventArgs
+    {
+        public MainFormChangeEventArgs(Form oldMainForm, Form newMainForm)
+        {
+            this.OldMainForm = oldMainForm;
+            this.NewMainForm = newMainForm;
+        }
+
+        public Form OldMainForm { get; }
+        public Form NewMainForm { get; }
+    }
+
+    #endregion ================================================================================================================
 
 
 

@@ -132,7 +132,6 @@
             this.CreateSessionDescriptionTextBox.Name = "CreateSessionDescriptionTextBox";
             this.CreateSessionDescriptionTextBox.Size = new System.Drawing.Size(318, 22);
             this.CreateSessionDescriptionTextBox.TabIndex = 5;
-            this.CreateSessionDescriptionTextBox.TextChanged += new System.EventHandler(this.CreateSessionNameOrDescriptionTextBox_TextChanged);
             // 
             // CreateSessionNameTextBox
             // 
@@ -143,7 +142,6 @@
             this.CreateSessionNameTextBox.Name = "CreateSessionNameTextBox";
             this.CreateSessionNameTextBox.Size = new System.Drawing.Size(318, 22);
             this.CreateSessionNameTextBox.TabIndex = 4;
-            this.CreateSessionNameTextBox.TextChanged += new System.EventHandler(this.CreateSessionNameOrDescriptionTextBox_TextChanged);
             // 
             // ContinueSessionListView
             // 
@@ -305,7 +303,7 @@
             this.BetaWarningRichTextBox.Size = new System.Drawing.Size(557, 135);
             this.BetaWarningRichTextBox.TabIndex = 0;
             this.BetaWarningRichTextBox.TabStop = false;
-            this.BetaWarningRichTextBox.Text = "Warning!";
+            this.BetaWarningRichTextBox.Text = resources.GetString("BetaWarningRichTextBox.Text");
             // 
             // BetaWarningPictureBox
             // 
@@ -333,7 +331,6 @@
             this.Name = "SessionSelector";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "What do you want to electrify today?";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SessionSelector_FormClosing);
             this.Session_WorkbenchSplitContainer.Panel1.ResumeLayout(false);
             this.Session_WorkbenchSplitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.Session_WorkbenchSplitContainer)).EndInit();

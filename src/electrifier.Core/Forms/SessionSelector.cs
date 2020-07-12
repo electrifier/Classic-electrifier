@@ -19,16 +19,13 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
 namespace electrifier.Core.Forms
 {
     /// <summary>
-    /// OK          == > Session ausgewählt und GO!
-    /// Ignore      == > Neue Session
-    /// Cancel      == > Abbruch, electrifier schliessen
     /// </summary>
     public partial class SessionSelector
       : Form
@@ -37,11 +34,12 @@ namespace electrifier.Core.Forms
 
         public enum SessionCreationMode
         {
-            Create,
+            StartNew,
             Continue,
         }
 
-        private SessionCreationMode creationMode = SessionCreationMode.Create;
+        private SessionCreationMode creationMode = SessionCreationMode.StartNew;
+//        private int ContinueSessionListView_LastSelectedItem = -1;
 
         #endregion ============================================================================================================
 
@@ -58,17 +56,22 @@ namespace electrifier.Core.Forms
                 {
                     this.creationMode = value;
 
-                    if (this.CreationMode == SessionCreationMode.Create)
+                    if (this.CreationMode == SessionCreationMode.StartNew)
                     {
                         this.CreateSessionRadioButton.Checked = true;
+
+                        //ContinueSessionListView_LastSelectedItem = this.ContinueSessionListView.SelectedIndices;      // TODO: Restore last selected session when changing from StartNew to Continue again!
                         this.ContinueSessionListView.SelectedItems.Clear();
                     }
                     else
                     {
+                        if (this.ContinueSessionListView.SelectedItems.Count == 0)
+                        {
+                            this.ContinueSessionListView.Items[0].Selected = true;
+                        }
+
                         this.ContinueSessionRadioButton.Checked = true;
                     }
-
-                    this.DialogOkButton.DialogResult = SessionCreationMode.Create == value ? DialogResult.Ignore : DialogResult.OK;
                 }
             }
         }
@@ -81,7 +84,47 @@ namespace electrifier.Core.Forms
             set => base.Text = AppContext.BuildDefaultFormText(value);
         }
 
+        public string SessionCreationName => this.CreateSessionNameTextBox.Text;
+        public string SessionCreationDescription => this.CreateSessionDescriptionTextBox.Text;
+
+        public long? SessionContinuingId
+        {
+            get
+            {
+                ListView.SelectedListViewItemCollection listViewItems = this.ContinueSessionListView.SelectedItems;
+
+                if (1 == listViewItems.Count)
+                {
+                    var item = listViewItems[0] as SessionSelectorListViewItem;
+
+                    return item?.Session.Id;
+                }
+
+                return null;
+            }
+        }
+
         #endregion ============================================================================================================
+
+        #region Published Events ==============================================================================================
+
+        /// <summary>
+        /// Fires when this dialog gets confirmed by using the <b>Ok</b> button
+        /// and <see cref="SessionCreationMode"/> is <i>StartNew</i>.
+        /// </summary>
+        [Category("Action"), Description("User wants to start a new session.")]
+        public event EventHandler<StartNewSessionEventArgs> StartNewSession;
+
+        /// <summary>
+        /// Fires when this dialog gets confirmed by using the <b>Ok</b> button
+        /// and <see cref="SessionCreationMode"/> is <i>Continue</i>.
+        /// </summary>
+        [Category("Action"), Description("User wants to continue an existing session.")]
+        public event EventHandler<ContinueSessionEventArgs> ContinueSession;
+
+        #endregion ============================================================================================================
+
+        #region Subclass: SessionSelectorListViewItem =========================================================================
 
         protected class SessionSelectorListViewItem
           : ListViewItem
@@ -100,7 +143,9 @@ namespace electrifier.Core.Forms
             }
         }
 
-        public SessionSelector(SessionContext sessionContext)
+        #endregion ============================================================================================================
+
+        public SessionSelector(SessionContext sessionContext/*, AppContext appContext*/)
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
 
@@ -108,6 +153,8 @@ namespace electrifier.Core.Forms
 
             this.InitializeComponent();
             this.Icon = sessionContext.ApplicationIcon;
+
+            this.DialogOkButton.Click += this.DialogOkButton_Click;
 
             // Set initial User Interface values
             this.CreateSessionNameTextBox.Text = "New Session";
@@ -123,33 +170,53 @@ namespace electrifier.Core.Forms
             }
         }
 
-        private void SessionSelector_FormClosing(object sender, FormClosingEventArgs e)
+        private void DialogOkButton_Click(object sender, EventArgs e)
         {
             AppContext.TraceScope();
             Debug.Assert(this.CreateSessionRadioButton.Checked != this.ContinueSessionRadioButton.Checked);
 
-            this.DialogResult = this.creationMode == SessionCreationMode.Create ?
-                DialogResult.Ignore :
-                DialogResult.OK;
+            if (SessionCreationMode.StartNew == this.CreationMode)
+            {
+                StartNewSessionEventArgs args = new StartNewSessionEventArgs(
+                    this.CreateSessionNameTextBox.Text,
+                    this.CreateSessionDescriptionTextBox.Text);
+
+                this.StartNewSession.Invoke(this, args);
+            }
+            else if (SessionCreationMode.Continue == this.CreationMode)
+            {
+                ListView.SelectedListViewItemCollection items = this.ContinueSessionListView.SelectedItems;
+
+                if (items.Count > 1)
+                    throw new InvalidOperationException("SessionSelector: More than one session selected!");
+                else if (items.Count < 1)
+                    throw new InvalidOperationException("SessionSelector: No session selected!");
+
+                SessionSelectorListViewItem listViewItem = items[0] as SessionSelectorListViewItem;
+
+                this.ContinueSession.Invoke(this, new ContinueSessionEventArgs(listViewItem.Session.Id));
+            }
+
+            this.Close();
         }
 
         private void CreateSessionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             this.CreationMode = this.CreateSessionRadioButton.Checked ?
-                SessionCreationMode.Create :
+                SessionCreationMode.StartNew :
                 SessionCreationMode.Continue;
         }
 
         private void CreateSessionNameOrDescriptionTextBox_TextChanged(object sender, EventArgs e)
         {
-            this.CreationMode = SessionCreationMode.Create;
+            this.CreationMode = SessionCreationMode.StartNew;
         }
 
         private void ContinueSessionRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             this.CreationMode = this.ContinueSessionRadioButton.Checked ?
                 SessionCreationMode.Continue :
-                SessionCreationMode.Create;
+                SessionCreationMode.StartNew;
         }
 
         private void ContinueSessionListView_SelectedIndexChanged(object sender, EventArgs e)
@@ -159,28 +226,39 @@ namespace electrifier.Core.Forms
 
             this.CreationMode = selectedCount == 1 ?
                 SessionCreationMode.Continue :
-                SessionCreationMode.Create;
+                SessionCreationMode.StartNew;
+        }
+    }
+
+    #region EventArgs =========================================================================================================
+
+    /// <summary>
+    /// Event argument for the <see cref="SessionSelector.StartNewSession"/> event.
+    /// </summary>
+    public class StartNewSessionEventArgs : EventArgs
+    {
+        public StartNewSessionEventArgs(string name, string description)
+        {
+            this.Name = name;
+            this.Description = description;
         }
 
-        //private void SessionStartRadioButton_CheckedChanged(object sender, EventArgs e)
-        //{
-        //    if (this.CreateSessionRadioButton.Checked)
-        //    {
-        //        this.DialogOkButton.DialogResult = DialogResult.Ignore;
-        //    }
-        //    else if (this.ContinueSessionRadioButton.Checked)
-        //    {
-        //        var selectedCount = this.ContinueSessionListView.SelectedItems.Count;
-        //        Debug.Assert(2 > selectedCount);
-
-        //        if (0 == selectedCount)
-        //        {   // TODO: Liste könnte auch leer sein!
-        //            Debug.Assert(this.ContinueSessionListView.Items[0] != null);
-        //            this.ContinueSessionListView.Items[0].Selected = true;
-        //        }
-
-        //        this.DialogOkButton.DialogResult = DialogResult.OK;
-        //    }
-        //}
+        public string Name { get; }
+        public string Description { get; }
     }
+
+    /// <summary>
+    /// Event argument for the <see cref="SessionSelector.ContinueSession"/> event.
+    /// </summary>
+    public class ContinueSessionEventArgs : EventArgs
+    {
+        public ContinueSessionEventArgs(long sessionId)
+        {
+            this.SessionId = sessionId;
+        }
+
+        public long SessionId { get; }
+    }
+
+    #endregion ================================================================================================================
 }
