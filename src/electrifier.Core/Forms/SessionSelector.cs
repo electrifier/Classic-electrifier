@@ -175,13 +175,13 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
             Debug.Assert(this.CreateSessionRadioButton.Checked != this.ContinueSessionRadioButton.Checked);
 
+            this.Cursor = Cursors.WaitCursor;
+
             if (SessionCreationMode.StartNew == this.CreationMode)
             {
-                StartNewSessionEventArgs args = new StartNewSessionEventArgs(
+                this.StartNewSession.Invoke(this, new StartNewSessionEventArgs(
                     this.CreateSessionNameTextBox.Text,
-                    this.CreateSessionDescriptionTextBox.Text);
-
-                this.StartNewSession.Invoke(this, args);
+                    this.CreateSessionDescriptionTextBox.Text));
             }
             else if (SessionCreationMode.Continue == this.CreationMode)
             {

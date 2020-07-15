@@ -21,8 +21,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
 
 
@@ -577,6 +579,15 @@ namespace EntityLighter
                     throw new Exception($"Failed to create new record in database for { entityType }!"); // TODO: Overhault exception handlers!
                 }
             }
+        }
+
+        public static DateTime ConvertToDateTime(string datetimeString)
+        {
+            // TODO: Put this into an default type converting place SQLite <-> C#-Entities, see also ElApplicationWindow.fspFormStatePersistor_LoadingFormState
+            if (DateTime.TryParse(datetimeString, out DateTime result))
+                return result;
+
+            return default;
         }
 
 
