@@ -165,6 +165,7 @@
             this.ContinueSessionListView.UseCompatibleStateImageBehavior = false;
             this.ContinueSessionListView.View = System.Windows.Forms.View.Details;
             this.ContinueSessionListView.SelectedIndexChanged += new System.EventHandler(this.ContinueSessionListView_SelectedIndexChanged);
+            this.ContinueSessionListView.DoubleClick += new System.EventHandler(this.ContinueSessionListView_DoubleClick);
             // 
             // SessionNameColumnHeader
             // 
@@ -264,6 +265,7 @@
             this.DialogOkButton.TabIndex = 6;
             this.DialogOkButton.Text = "&Ok";
             this.DialogOkButton.UseVisualStyleBackColor = true;
+            this.DialogOkButton.Click += new System.EventHandler(this.DialogOkButton_Click);
             // 
             // DialogRememberChoiceCheckBox
             // 

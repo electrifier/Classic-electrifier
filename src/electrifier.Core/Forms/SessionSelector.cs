@@ -145,7 +145,7 @@ namespace electrifier.Core.Forms
 
         #endregion ============================================================================================================
 
-        public SessionSelector(SessionContext sessionContext/*, AppContext appContext*/)
+        public SessionSelector(SessionContext sessionContext)
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
 
@@ -154,7 +154,7 @@ namespace electrifier.Core.Forms
             this.InitializeComponent();
             this.Icon = sessionContext.ApplicationIcon;
 
-            this.DialogOkButton.Click += this.DialogOkButton_Click;
+            //this.DialogOkButton.Click += this.DialogOkButton_Click;
 
             // Set initial User Interface values
             this.CreateSessionNameTextBox.Text = "New Session";
@@ -170,7 +170,7 @@ namespace electrifier.Core.Forms
             }
         }
 
-        private void DialogOkButton_Click(object sender, EventArgs e)
+        private void DialogOkButton_Click(object sender, EventArgs args)
         {
             AppContext.TraceScope();
             Debug.Assert(this.CreateSessionRadioButton.Checked != this.ContinueSessionRadioButton.Checked);
@@ -200,26 +200,26 @@ namespace electrifier.Core.Forms
             this.Close();
         }
 
-        private void CreateSessionRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void CreateSessionRadioButton_CheckedChanged(object sender, EventArgs args)
         {
             this.CreationMode = this.CreateSessionRadioButton.Checked ?
                 SessionCreationMode.StartNew :
                 SessionCreationMode.Continue;
         }
 
-        private void CreateSessionNameOrDescriptionTextBox_TextChanged(object sender, EventArgs e)
+        private void CreateSessionNameOrDescriptionTextBox_TextChanged(object sender, EventArgs args)
         {
             this.CreationMode = SessionCreationMode.StartNew;
         }
 
-        private void ContinueSessionRadioButton_CheckedChanged(object sender, EventArgs e)
+        private void ContinueSessionRadioButton_CheckedChanged(object sender, EventArgs args)
         {
             this.CreationMode = this.ContinueSessionRadioButton.Checked ?
                 SessionCreationMode.Continue :
                 SessionCreationMode.StartNew;
         }
 
-        private void ContinueSessionListView_SelectedIndexChanged(object sender, EventArgs e)
+        private void ContinueSessionListView_SelectedIndexChanged(object sender, EventArgs args)
         {
             int selectedCount = this.ContinueSessionListView.SelectedItems.Count;
             Debug.Assert(2 > selectedCount);
@@ -227,6 +227,13 @@ namespace electrifier.Core.Forms
             this.CreationMode = selectedCount == 1 ?
                 SessionCreationMode.Continue :
                 SessionCreationMode.StartNew;
+        }
+
+        private void ContinueSessionListView_DoubleClick(object sender, EventArgs args)
+        {
+            Debug.Assert(1 == this.ContinueSessionListView.SelectedItems.Count);
+
+            this.DialogOkButton_Click(this, args);
         }
     }
 
@@ -252,10 +259,7 @@ namespace electrifier.Core.Forms
     /// </summary>
     public class ContinueSessionEventArgs : EventArgs
     {
-        public ContinueSessionEventArgs(long sessionId)
-        {
-            this.SessionId = sessionId;
-        }
+        public ContinueSessionEventArgs(long sessionId) => this.SessionId = sessionId;
 
         public long SessionId { get; }
     }

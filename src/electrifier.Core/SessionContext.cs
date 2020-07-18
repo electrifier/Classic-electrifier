@@ -18,6 +18,7 @@
 **
 */
 
+using electrifier.Core.Components;
 using electrifier.Core.Forms;
 using EntityLighter;
 using Microsoft.Data.Sqlite;
@@ -237,6 +238,8 @@ namespace electrifier.Core
                 //this.OnMainFormChange(this.ApplicationWindow);
                 long defaultSessionId = -1;     // TODO: Get default session id!
                 this.LoadSession(defaultSessionId);
+
+                this.ApplicationWindow.Show();
             }
             else
             {
@@ -262,7 +265,7 @@ namespace electrifier.Core
 
             this.ApplicationWindow = new ElApplicationWindow(this);       // Invoke()?!?  // TODO: Dispose?
             this.OnMainFormChange(this.ApplicationWindow);
-            this.ApplicationWindow.Show();
+            //this.ApplicationWindow.Show();
 
             if (this.HasSessionSelector)
             {
@@ -289,11 +292,18 @@ namespace electrifier.Core
             });
 
             this.LoadSession(sessionId);
+
+            // Initialize new Session: Create default DockContentWindows
+            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+
+            this.ApplicationWindow.Show();
         }
 
         private void SessionSelector_ContinueSession(object sender, ContinueSessionEventArgs args)
         {
             this.LoadSession(args.SessionId);
+
+            this.ApplicationWindow.Show();
         }
 
 
