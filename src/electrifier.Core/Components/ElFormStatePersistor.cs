@@ -98,7 +98,11 @@ namespace electrifier.Core.Components
             set
             {
                 if (null == value)
+                {
+                    // TODO: Remove Event Handlers?!?
+
                     return;
+                }
 
                 if (this.ClientForm == value)
                     return;
@@ -108,47 +112,15 @@ namespace electrifier.Core.Components
                     this.clientForm = value;
 
                     //
-                    // Add anonymous handler for client's Load-event
+                    // Add handler for client's Load-event
                     //
-                    this.ClientForm.Load += (sender, e) =>          // TODO: Put into non-anonymous handler
-                    {
-                        if (this.LoadingFormState != null)
-                        {
-                            FormStatePersistorEventArgs args = new FormStatePersistorEventArgs(this.ClientForm);
+                    this.ClientForm.Load += this.ClientFormLoadEventHandler;
 
-                            this.LoadingFormState.Invoke(this, args);
-
-                            if (!args.Cancel)
-                            {
-                                // TODO: Fix Window State
-                                // TODO: OverhaulWindowBounds
-
-                                this.ClientForm.Location = args.Location;
-                                this.ClientForm.Size = args.Size;
-                                this.ClientForm.WindowState = args.WindowState;
-                            }
-                        }
-                    };
 
                     //
-                    // Add anonymous handler for client's FormClosing-event
+                    // Add handler for client's FormClosing-event
                     //
-                    this.ClientForm.FormClosing += (sender, e) =>       // TODO: Put into non-anonymous handler
-                    {
-                        if (this.SavingFormState != null)
-                        {
-                            FormStatePersistorEventArgs args = new FormStatePersistorEventArgs(this.ClientForm);
-
-                            // Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
-                            if (FormWindowState.Normal != args.WindowState)
-                            {
-                                args.Location = this.ClientForm.RestoreBounds.Location;
-                                args.Size = this.ClientForm.RestoreBounds.Size;
-                            }
-
-                            this.SavingFormState.Invoke(this, args);
-                        }
-                    };
+                    this.clientForm.FormClosing += this.ClientFormFormClosingEventHandler;
                 }
                 else
                 {
@@ -261,6 +233,26 @@ namespace electrifier.Core.Components
 //            this.ClientForm.WindowState = windowState;
 //        }
 
+        public void ClientFormLoadEventHandler(object sender, EventArgs args)
+        {
+            if (this.LoadingFormState != null)
+            {
+                FormStatePersistorEventArgs formStatePersistorEventArgs = new FormStatePersistorEventArgs(this.ClientForm);
+
+                this.LoadingFormState.Invoke(this, formStatePersistorEventArgs);
+
+                if (!formStatePersistorEventArgs.Cancel)
+                {
+                    // TODO: Fix Window State
+                    // TODO: OverhaulWindowBounds
+
+                    this.ClientForm.Location = formStatePersistorEventArgs.Location;
+                    this.ClientForm.Size = formStatePersistorEventArgs.Size;
+                    this.ClientForm.WindowState = formStatePersistorEventArgs.WindowState;
+                }
+            }
+        }
+
         public virtual void OverhaulWindowBounds(ref Point location, ref Size size)
         {
             // Get Desktop area of primary screen
@@ -316,6 +308,24 @@ namespace electrifier.Core.Components
 //            //Settings.Default.Save();
 //// Commented out for Issue #25 */
 //        }
+
+        public void ClientFormFormClosingEventHandler(object sender, EventArgs args)
+        {
+            if (this.SavingFormState != null)
+            {
+                FormStatePersistorEventArgs formStatePersistorEventArgs = new FormStatePersistorEventArgs(this.ClientForm);
+
+                // Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
+                if (FormWindowState.Normal != formStatePersistorEventArgs.WindowState)
+                {
+                    formStatePersistorEventArgs.Location = this.ClientForm.RestoreBounds.Location;
+                    formStatePersistorEventArgs.Size = this.ClientForm.RestoreBounds.Size;
+                }
+
+                this.SavingFormState.Invoke(this, formStatePersistorEventArgs);
+            }
+        }
+
 
         #region ElFormStatePersistor.Designer.cs
 
