@@ -124,10 +124,10 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Controls\ElNavigationToolStrip.cs">
+    <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\Controls\ElToolStripSpringComboBox.cs">
+    <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
@@ -136,25 +136,25 @@
     <Compile Include="Components\Controls\ExplorerBrowserControl.Designer.cs">
       <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\Controls\Extensions\ElThemedControlExtensions.cs" />
-    <Compile Include="Components\Controls\IElThemedControl.cs" />
-    <Compile Include="Components\DockContents\ElNavigableDockContent.cs">
+    <Compile Include="Components\Controls\Extensions\ThemedControlExtensions.cs" />
+    <Compile Include="Components\Controls\IThemedControl.cs" />
+    <Compile Include="Components\DockContents\NavigableDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\ElShellBrowserDockContent.ClipboardConsumer.cs">
+    <Compile Include="Components\DockContents\ShellBrowserDockContent.ClipboardConsumer.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\ElShellBrowserDockContent.cs">
+    <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\ElShellBrowserDockContent.NavigableDockContent.cs">
+    <Compile Include="Components\DockContents\ShellBrowserDockContent.NavigableDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\Extensions\ElNavigableDockContentExtensions.cs" />
-    <Compile Include="Components\ElDockContentFactory.cs" />
-    <Compile Include="Components\ElFormStatePersistor.cs" />
-    <Compile Include="Components\IElClipboardConsumer.cs" />
-    <Compile Include="Components\IElNavigationHost.cs" />
+    <Compile Include="Components\DockContents\Extensions\NavigableDockContentExtensions.cs" />
+    <Compile Include="Components\DockContentFactory.cs" />
+    <Compile Include="Components\FormStatePersistor.cs" />
+    <Compile Include="Components\IClipboardConsumer.cs" />
+    <Compile Include="Components\INavigationHost.cs" />
     <Compile Include="Forms\ElAboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -187,10 +187,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SessionContext.cs" />
-    <Compile Include="WindowsShell\ElClipboard.cs" />
-    <Compile Include="WindowsShell\ElDesktopIconManager.cs" />
-    <Compile Include="WindowsShell\ElShellFileOperations.cs" />
-    <Compile Include="WindowsShell\ElShellTools.cs" />
+    <Compile Include="WindowsShell\Clipboard.cs" />
+    <Compile Include="WindowsShell\DesktopIconManager.cs" />
+    <Compile Include="WindowsShell\ShellFileOperations.cs" />
+    <Compile Include="WindowsShell\ShellTools.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -225,8 +225,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ElApplicationWindow.Ribbon.ribbon" />
-    <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
-    <EmbeddedResource Include="Resources\Themes\ElNavigationToolStrip.Microsoft Windows %2824px%29.png" />
+    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
+    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\ShellBrowserDockContent.ico" />
     <None Include="Resources\DropDown Arrow 16px.png" />
     <Content Include="Resources\ElApplicationWindow.Ribbon.xml">
