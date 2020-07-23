@@ -32,7 +32,7 @@ namespace electrifier.Core.Components.Controls.Extensions
     /// Static class that provides the most common Extension Methods used in conjunction with Interface
     /// <see cref="IElThemedControl"/>.
     /// </summary>
-    public static class ElThemedControlExtensions
+    public static class ThemedControlExtensions
     {
         public static string ThemeFileExtension = ".png";
 
@@ -45,7 +45,7 @@ namespace electrifier.Core.Components.Controls.Extensions
         /// Search all embedded resources in this assembly for images that can be used as themes for an IElThemedControl.
         /// 
         /// Their namespace has to match the following pattern:
-        ///   "[IElThemedControl.ThemeResourceNamespace].THEMENAME.[ElThemedControlExtensions.ThemeFileExtension]"
+        ///   "[IThemedControl.ThemeResourceNamespace].THEMENAME.[ThemedControlExtensions.ThemeFileExtension]"
         /// </summary>
         /// <param name="control">The control that implements IElThemedControl interface.</param>
         /// <returns>An IEnumerable collection of the available themes.</returns>
@@ -53,12 +53,12 @@ namespace electrifier.Core.Components.Controls.Extensions
         {
             IEnumerable<string> resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(Name =>
                 Name.StartsWith(control.ThemeResourceNamespace, StringComparison.InvariantCultureIgnoreCase) &&
-                Name.EndsWith(ElThemedControlExtensions.ThemeFileExtension, StringComparison.InvariantCultureIgnoreCase));
+                Name.EndsWith(ThemedControlExtensions.ThemeFileExtension, StringComparison.InvariantCultureIgnoreCase));
 
             foreach (var currentName in resourceNames)
             {
                 yield return currentName.Substring(control.ThemeResourceNamespace.Length,
-                    (currentName.Length - control.ThemeResourceNamespace.Length - ElThemedControlExtensions.ThemeFileExtension.Length));
+                    (currentName.Length - control.ThemeResourceNamespace.Length - ThemedControlExtensions.ThemeFileExtension.Length));
             }
         }
 
@@ -80,7 +80,7 @@ namespace electrifier.Core.Components.Controls.Extensions
                 };
 
                 using (Stream bmpStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    control.ThemeResourceNamespace + themeName + ElThemedControlExtensions.ThemeFileExtension))
+                    control.ThemeResourceNamespace + themeName + ThemedControlExtensions.ThemeFileExtension))
                 {
                     var bitmap = new Bitmap(bmpStream);
 

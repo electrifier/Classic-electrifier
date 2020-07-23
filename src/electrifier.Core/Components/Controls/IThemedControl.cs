@@ -26,7 +26,7 @@ namespace electrifier.Core.Components.Controls
     /// This interface aids when adding theme functionality to existing controls.
     /// 
     /// The most common default implementations are provided via Extension Methods in
-    /// <see cref="Extensions.ElThemedControlExtensions"/>.
+    /// <see cref="Extensions.ThemedControlExtensions"/>.
     /// </summary>
     public interface IElThemedControl
     {

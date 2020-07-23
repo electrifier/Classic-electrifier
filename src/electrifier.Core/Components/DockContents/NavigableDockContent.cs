@@ -161,7 +161,7 @@ namespace electrifier.Core.Components.DockContents
 
         public void Clear() => this.items.Clear();
 
-        // TODO: Add link to ToolStripDropDownButton, i.e. ElNavigationToolStrip
+        // TODO: Add link to ToolStripDropDownButton, i.e. NavigationToolStrip
         // TODO: 27.04. 08:32:: Als Eigenschaft deklarieren, beim Zuweisen DropDownItems bauen "LinkedToolStripDropDownButton"
         // => So kann auch "doppeltes" Einsetzen in zwei verschiedene ToolStripDropDownButtons verhindert werden ;)
 

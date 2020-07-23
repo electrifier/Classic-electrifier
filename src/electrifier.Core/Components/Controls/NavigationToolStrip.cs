@@ -27,7 +27,7 @@ using electrifier.Core.Components.DockContents.Extensions;
 
 namespace electrifier.Core.Components.Controls
 {
-    public class ElNavigationToolStrip
+    public class NavigationToolStrip
         : System.Windows.Forms.ToolStrip
         , IElThemedControl
     {
@@ -87,14 +87,14 @@ namespace electrifier.Core.Components.Controls
         public string CurrentTheme {
             get => this.currentTheme;
             set {
-                this.ImageList = this.LoadThemeImageListFromResource(this.currentTheme = value);
+                this.ImageList = this.LoadThemeImageListFromResource(this.currentTheme = value);        // TODO: Gets called twice!
                 this.ImageScalingSize = this.ImageList.ImageSize;
             }
         }
 
         #endregion =============================================================================================================
 
-        public ElNavigationToolStrip()
+        public NavigationToolStrip()
         {
             this.InitializeComponent();
             this.UpdateButtonState(null);
@@ -154,7 +154,7 @@ namespace electrifier.Core.Components.Controls
             {
                 // TODO: The following exception is thrown for test purposes only!
                 if (this.ActiveDockContent != navigableDockContent)
-                    throw new ArgumentException("ElNavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
+                    throw new ArgumentException("NavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
 
                 if (null != navigableDockContent)
                 {
