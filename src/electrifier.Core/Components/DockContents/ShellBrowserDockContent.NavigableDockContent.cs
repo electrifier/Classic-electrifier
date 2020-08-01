@@ -35,31 +35,30 @@ namespace electrifier.Core.Components.DockContents
       : ElNavigableDockContent
     {
         internal string currentLocation;
+/* CR13
+        //public override bool CanGoBack => this.ExplorerBrowserControl.History.CanNavigateBackward;
 
-        public override bool CanGoBack => this.ExplorerBrowserControl.History.CanNavigateBackward;
+        //public override void GoBack()
+        //{
+        //    this.ExplorerBrowserControl.History.NavigateLog(
+        //        Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Backward);
+        //}
 
-        public override void GoBack()
+        //public override bool CanGoForward => this.ExplorerBrowserControl.History.CanNavigateForward;
+
+        //public override void GoForward()
+        //{
+        //    this.ExplorerBrowserControl.History.NavigateLog(
+        //        Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Forward);
+        //}
+
+        //public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
+*/
+
+        public override string CurrentLocation
         {
-            this.ExplorerBrowserControl.History.NavigateLog(
-                Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Backward);
-        }
-
-        public override bool CanGoForward => this.ExplorerBrowserControl.History.CanNavigateForward;
-
-        public override void GoForward()
-        {
-            this.ExplorerBrowserControl.History.NavigateLog(
-                Components.Controls.ExplorerBrowserControl.NavigationLogDirection.Forward);
-        }
-
-        public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
-
-
-        public override string CurrentLocation {
             get => this.currentLocation;
-            set {
-                this.ExplorerBrowserControl.NavigateTo(new ShellItem(this.currentLocation = value));
-            }
+            set => this.currentLocation = value;
         }
 
         // TODO: Currently obsolete as of 28/04/19. But in the future, this will open a new DockContent of approriate type,
@@ -98,8 +97,8 @@ namespace electrifier.Core.Components.DockContents
         /// <param name="historyIndex">An index into the navigation logs Locations collection.</param>
         /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
         ///   TODO: This will be replaced by CurrentLocation(HistoryIndex historyIndex);
-        public override bool GoToHistoryItem(int historyIndex)
-            => this.ExplorerBrowserControl.NavigateToHistoryIndex(historyIndex);
+        //public override bool GoToHistoryItem(int historyIndex)
+        //    => this.ExplorerBrowserControl.NavigateToHistoryIndex(historyIndex);
 
         //protected internal ElNavigableTargetItemCollection recentLocationsList = null;
         //public override ElNavigableTargetItemCollection RecentLocations => base.RecentLocations;
@@ -128,6 +127,6 @@ namespace electrifier.Core.Components.DockContents
             set => this.ViewMode = value;
         }
 
-        public override event EventHandler<ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
+        public override event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
     }
 }

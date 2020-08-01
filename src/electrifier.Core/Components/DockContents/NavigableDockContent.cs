@@ -83,13 +83,15 @@ namespace electrifier.Core.Components.DockContents
         // TODO: Put ShellFolderViewMode-property into its own interface? => "Classes are fast, interfaces are slow" I've read.
         public virtual bool HasShellFolderViewMode => false;
         public virtual Shell32.FOLDERVIEWMODE ShellFolderViewMode { get => Shell32.FOLDERVIEWMODE.FVM_AUTO; set => throw new NotImplementedException(); }
-        public virtual event EventHandler<ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
+        public virtual event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
 
         // TODO: 05/02/19 Search and Filter options will be combined!
         //public virtual ElNavOptionState CanApplyFilter() { return ElNavOptionState.Hidden; }
         //public virtual string CurrentFilterPattern { get; set; }
         //public virtual void DoApplyFilter(string FilterPattern) { throw new NotImplementedException(); }
         public virtual bool CanFilterItems => false;
+
+
 
         //#region IDockContentEntity ============================================================================================
 
@@ -222,5 +224,18 @@ namespace electrifier.Core.Components.DockContents
       : ElNavigableTargetItem
     {
         public ElNavigableTargetNavigationLogIndex() { }
+    }
+
+
+    public class ShellFolderViewModeChangedEventArgs : EventArgs
+    {
+        internal protected ShellFolderViewModeChangedEventArgs(Shell32.FOLDERVIEWMODE oldFolderViewMode, Shell32.FOLDERVIEWMODE newFolderViewMode)
+        {
+            this.OldFolderViewMode = oldFolderViewMode;
+            this.NewFolderViewMode = newFolderViewMode;
+        }
+
+        public Shell32.FOLDERVIEWMODE OldFolderViewMode { get; }
+        public Shell32.FOLDERVIEWMODE NewFolderViewMode { get; }
     }
 }

@@ -130,12 +130,6 @@
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\Controls\ExplorerBrowserControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Components\Controls\ExplorerBrowserControl.Designer.cs">
-      <DependentUpon>ExplorerBrowserControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Components\Controls\Extensions\ThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\IThemedControl.cs" />
     <Compile Include="Components\DockContents\NavigableDockContent.cs">
@@ -243,16 +237,19 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Vanara.Core">
-      <Version>3.1.6</Version>
+      <Version>3.2.13</Version>
     </PackageReference>
     <PackageReference Include="Vanara.PInvoke.Shell32">
-      <Version>3.1.6</Version>
+      <Version>3.2.13</Version>
     </PackageReference>
     <PackageReference Include="Vanara.PInvoke.User32">
-      <Version>3.1.6</Version>
+      <Version>3.2.13</Version>
+    </PackageReference>
+    <PackageReference Include="Vanara.Windows.Forms">
+      <Version>3.2.13</Version>
     </PackageReference>
     <PackageReference Include="Vanara.Windows.Shell">
-      <Version>3.1.6</Version>
+      <Version>3.2.13</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

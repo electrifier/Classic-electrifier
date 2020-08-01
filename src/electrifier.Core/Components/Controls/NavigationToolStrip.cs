@@ -161,7 +161,7 @@ namespace electrifier.Core.Components.Controls
                     this.btnGoBack.Enabled = navigableDockContent.CanGoBack;
                     this.btnGoForward.Enabled = navigableDockContent.CanGoForward;
                     this.ddnHistoryItems.Enabled = navigableDockContent.CanHaveHistoryItems;
-                    this.ddnHistoryItems.DropDownItems.Rebuild(navigableDockContent.HistoryItems, navigableDockContent.OnHistoryItemClick);      // TODO: Only do this when the item collection has changed!
+// CR13                   this.ddnHistoryItems.DropDownItems.Rebuild(navigableDockContent.HistoryItems, navigableDockContent.OnHistoryItemClick);      // TODO: Only do this when the item collection has changed!
                     this.btnGoToParentLocation.Enabled = navigableDockContent.HasParentLocation;
                     this.cbbCurrentFolder.Enabled = true;
                     this.cbbCurrentFolder.Text = navigableDockContent.CurrentLocation;

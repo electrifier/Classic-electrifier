@@ -50,8 +50,8 @@ namespace electrifier.Core.Components.DockContents
 
         public Shell32.FOLDERVIEWMODE ViewMode
         {
-            get => this.ExplorerBrowserControl.ViewMode;
-            set => this.ExplorerBrowserControl.ViewMode = value;
+            get => Shell32.FOLDERVIEWMODE.FVM_AUTO; //this.ExplorerBrowserControl.ViewMode;
+            set => value = value; //this.ExplorerBrowserControl.ViewMode = value;
         }
 
         //public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
@@ -64,7 +64,7 @@ namespace electrifier.Core.Components.DockContents
         //    //get => this.explorerBrowser.SelectedItems.Count; }
         //    get => 0;
         //}
-        protected ExplorerBrowserControl ExplorerBrowserControl { get; }
+//        protected ExplorerBrowserControl ExplorerBrowserControl { get; }
 
         //public DockContent AsDockContent { get => this as WeifenLuo.WinFormsUI.Docking.DockContent; }
 
@@ -89,27 +89,27 @@ namespace electrifier.Core.Components.DockContents
                 this.Icon = Properties.Resources.ShellBrowserDockContent;
 
                 // Initialize ElNavigableDockContent backing fields
-                this.HistoryItems = new ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex>(this);
+//  CR13                this.HistoryItems = new ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex>(this);
 
                 // Evaluate persistString
                 this.EvaluatePersistString(persistString);
 
                 // Initialize ExplorerBrowser
-                this.ExplorerBrowserControl = new Controls.ExplorerBrowserControl(this.InitialNaviagtionTarget)
-                {
-                    Dock = DockStyle.Fill,
-                };
-
-                // Connect ExplorerBrowser Events
-                this.ExplorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
-                this.ExplorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
-                this.ExplorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
-                this.ExplorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
-                this.ExplorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
-                this.ExplorerBrowserControl.ShellFolderViewModeChanged += this.ExplorerBrowserControl_ShellFolderViewModeChanged;
-                this.ExplorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
-
-                this.Controls.Add(this.ExplorerBrowserControl);
+//                this.ExplorerBrowserControl = new Controls.ExplorerBrowserControl(this.InitialNaviagtionTarget)
+//                {
+//                    Dock = DockStyle.Fill,
+//                };
+//
+//                // Connect ExplorerBrowser Events
+//                this.ExplorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
+//                this.ExplorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
+//                this.ExplorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
+//                this.ExplorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
+//                this.ExplorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
+//                this.ExplorerBrowserControl.ShellFolderViewModeChanged += this.ExplorerBrowserControl_ShellFolderViewModeChanged;
+//                this.ExplorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
+//
+//                this.Controls.Add(this.ExplorerBrowserControl);
             }
             finally
             {
@@ -117,34 +117,34 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
-        private void ExplorerBrowserControl_ShellFolderViewModeChanged(object sender, ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs e)
-        {
-            AppContext.TraceDebug($"CHANGED ElShellBrowserDockContent.ViewMode: Was {e.OldFolderViewMode}, is now {e.NewFolderViewMode}");
-
-            this.ShellFolderViewModeChanged?.Invoke(this, e);
-        }
+//        private void ExplorerBrowserControl_ShellFolderViewModeChanged(object sender, ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs e)
+//        {
+//            AppContext.TraceDebug($"CHANGED ElShellBrowserDockContent.ViewMode: Was {e.OldFolderViewMode}, is now {e.NewFolderViewMode}");
+//
+//            this.ShellFolderViewModeChanged?.Invoke(this, e);
+//        }
 
         protected override void Dispose(bool disposing)
         {
-            if (null != this.ExplorerBrowserControl)
-                this.ExplorerBrowserControl.Dispose();
-
+//            if (null != this.ExplorerBrowserControl)
+//                this.ExplorerBrowserControl.Dispose();
+//
             base.Dispose(disposing);
         }
 
         public void SelectAll()
         {
-            this.ExplorerBrowserControl.SelectAll();
+//            this.ExplorerBrowserControl.SelectAll();
         }
 
         public void SelectNone()
         {
-            this.ExplorerBrowserControl.SelectNone();
+//            this.ExplorerBrowserControl.SelectNone();
         }
 
         public void InvertSelection()
         {
-            this.ExplorerBrowserControl.InvertSelection();
+//            this.ExplorerBrowserControl.InvertSelection();
         }
 
 
@@ -163,9 +163,9 @@ namespace electrifier.Core.Components.DockContents
             sb.Append(nameof(ElShellBrowserDockContent));
 
             // Append URI of current location
-            sb.AppendFormat(paramFmt, ElShellBrowserDockContent.persistParamURI,
-                WindowsShell.ElShellTools.UrlCreateFromPath(this.ExplorerBrowserControl.CurrentLocation));
-
+//            sb.AppendFormat(paramFmt, ElShellBrowserDockContent.persistParamURI,
+//                WindowsShell.ElShellTools.UrlCreateFromPath(this.ExplorerBrowserControl.CurrentLocation));
+//
             // Append ViewMode
             // TODO: For any reason, this doesn't work... :(
             //sb.AppendFormat(paramFmt, ElShellBrowserDockContent.persistParamViewMode, this.ViewMode);
@@ -244,63 +244,63 @@ namespace electrifier.Core.Components.DockContents
         #endregion DockContent Event Handler ==================================================================================
 
 
-        #region ExplorerBrowser Internal Events Handler ========================================================================
-
-        protected void ExplorerBrowserControl_Navigating(object sender, Controls.ExplorerBrowserControl.NavigatingEventArgs args)
-        {
-        }
-
-
-        protected void ExplorerBrowserControl_Navigated(object sender, Controls.ExplorerBrowserControl.NavigatedEventArgs args)
-        {
-            AppContext.TraceDebug("Firing of ExplorerBrowserControl_Navigated event.");
-
-            this.BeginInvoke(new MethodInvoker(delegate ()
-            {
-                this.Text = args.NewLocation.Name;
-                this.currentLocation = args.NewLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
-
-                //args.NewLocation.ViewInExplorer(); // TODO: Nice to have :) However, shows parent with item selected
-                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;     // TODO: Icon-Property seems not to be thread-safe
-
-                this.OnNavigationOptionsChanged(null);  // TODO: Set some args
-
-            }));
-        }
-
-        protected void ExplorerBrowserControl_NavigationFailed(object sender, Controls.ExplorerBrowserControl.NavigationFailedEventArgs args)
-        {
-            AppContext.TraceError("Firing of ExplorerBrowserControl_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
-        }
-
-        protected void ExplorerBrowserControl_ItemsEnumerated(object sender, EventArgs args)
-        {
-            AppContext.TraceDebug("Firing of ExplorerBrowserControl_ItemsEnumerated event.");
-        }
-
-        private void ExplorerBrowserControl_History_NavigationLogChanged(object sender, Controls.ExplorerBrowserControl.NavigationLogEventArgs args)
-        {
-            // HACK: args.CanNavigateBackwardChanged / args.CanNavigateForwardChanged is currently ignored...
-
-            if (args.LocationsChanged)
-            {
-                this.HistoryItems.Clear();
-
-                // TODO: Instead of "copying" the HistoryItems, just point to ExplorerBrowserControl's History.Locations
-                // TODO: Convert HistoryItems to ShellItems-Array, add explicit conversion ShellItems->HistoryItems
-                foreach (var location in this.ExplorerBrowserControl.History.Locations)
-                {
-                    this.HistoryItems.AddNewItem(location);
-
-                    // TODO: delete the follwoing check and its warning
-                    if (!location.IsFolder)
-                        AppContext.TraceWarning("History.Location is not a folder!");
-                }
-
-                // TODO: Update ToolStripDropDownButton!
-            }
-        }
-
-        #endregion =============================================================================================================
+//        #region ExplorerBrowser Internal Events Handler ========================================================================
+//
+//        protected void ExplorerBrowserControl_Navigating(object sender, Controls.ExplorerBrowserControl.NavigatingEventArgs args)
+//        {
+//        }
+//
+//
+//        protected void ExplorerBrowserControl_Navigated(object sender, Controls.ExplorerBrowserControl.NavigatedEventArgs args)
+//        {
+//            AppContext.TraceDebug("Firing of ExplorerBrowserControl_Navigated event.");
+//
+//            this.BeginInvoke(new MethodInvoker(delegate ()
+//            {
+//                this.Text = args.NewLocation.Name;
+//                this.currentLocation = args.NewLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
+//
+//                //args.NewLocation.ViewInExplorer(); // TODO: Nice to have :) However, shows parent with item selected
+//                //this.Icon = args.NewLocation.Thumbnail.SmallIcon;     // TODO: Icon-Property seems not to be thread-safe
+//
+//                this.OnNavigationOptionsChanged(null);  // TODO: Set some args
+//
+//            }));
+//        }
+//
+//        protected void ExplorerBrowserControl_NavigationFailed(object sender, Controls.ExplorerBrowserControl.NavigationFailedEventArgs args)
+//        {
+//            AppContext.TraceError("Firing of ExplorerBrowserControl_NavigationFailed event: " + args.FailedLocation.ParsingName + args.ToString());
+//        }
+//
+//        protected void ExplorerBrowserControl_ItemsEnumerated(object sender, EventArgs args)
+//        {
+//            AppContext.TraceDebug("Firing of ExplorerBrowserControl_ItemsEnumerated event.");
+//        }
+//
+//        private void ExplorerBrowserControl_History_NavigationLogChanged(object sender, Controls.ExplorerBrowserControl.NavigationLogEventArgs args)
+//        {
+//            // HACK: args.CanNavigateBackwardChanged / args.CanNavigateForwardChanged is currently ignored...
+//
+//            if (args.LocationsChanged)
+//            {
+//                this.HistoryItems.Clear();
+//
+//                // TODO: Instead of "copying" the HistoryItems, just point to ExplorerBrowserControl's History.Locations
+//                // TODO: Convert HistoryItems to ShellItems-Array, add explicit conversion ShellItems->HistoryItems
+//                foreach (var location in this.ExplorerBrowserControl.History.Locations)
+//                {
+//                    this.HistoryItems.AddNewItem(location);
+//
+//                    // TODO: delete the follwoing check and its warning
+//                    if (!location.IsFolder)
+//                        AppContext.TraceWarning("History.Location is not a folder!");
+//                }
+//
+//                // TODO: Update ToolStripDropDownButton!
+//            }
+//        }
+//
+//        #endregion =============================================================================================================
     }
 }

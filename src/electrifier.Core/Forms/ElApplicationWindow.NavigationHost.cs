@@ -145,7 +145,7 @@ namespace electrifier.Core.Forms
         }
 
         // TODO: 18/11/19: ShellFolderViewMode should be placed into its own Interface => Class are fast, interfaces are slow!
-        private void DockContent_ShellFolderViewModeChanged(object sender, ExplorerBrowserControl.ShellFolderViewModeChangedEventArgs e)
+        private void DockContent_ShellFolderViewModeChanged(object sender, ShellFolderViewModeChangedEventArgs e)
         {
             Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
 

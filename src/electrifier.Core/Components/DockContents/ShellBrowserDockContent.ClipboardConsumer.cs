@@ -80,7 +80,7 @@ namespace electrifier.Core.Components.DockContents
 
         public ElClipboardAbilities GetClipboardAbilities()
         {
-            var itemCount = this.ExplorerBrowserControl.GetItemCount(Shell32.SVGIO.SVGIO_SELECTION);
+            var itemCount = 0; //this.ExplorerBrowserControl.GetItemCount(Shell32.SVGIO.SVGIO_SELECTION);
 
             return ((itemCount > 0) ? (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut) : ElClipboardAbilities.None);
         }
@@ -106,39 +106,40 @@ namespace electrifier.Core.Components.DockContents
         private void PlaceFileDropListOnClipboard(DragDropEffects dropEffect)
         {
             AppContext.TraceScope();
-
-            if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
-                throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
-
-            if (dropEffect.HasFlag(DragDropEffects.Copy) && dropEffect.HasFlag(DragDropEffects.Move))
-                throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
-
-            // TODO: IFolderView can return a DataObject, too: https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifolderview-items
-
-            // Get collection of selected items, return if empty cause nothing to do then
-            var selItems = this.ExplorerBrowserControl.SelectedItems;
-
-            if (selItems.Count < 1)
-                return;
-
-            // Build file drop list
-            StringCollection scFileDropList = new StringCollection();
-            foreach (var selectedItem in selItems)
-            {
-                scFileDropList.Add(selectedItem.ParsingName);
-            }
-
-            // Build the data object, including the DropEffect, and place it on the clipboard
-            DataObject dataObject = new DataObject();
-            byte[] baDropEffect = new byte[] { (byte)dropEffect, 0, 0, 0 };
-            MemoryStream msDropEffect = new MemoryStream();
-            msDropEffect.Write(baDropEffect, 0, baDropEffect.Length);
-
-            dataObject.SetFileDropList(scFileDropList);
-            dataObject.SetData("Preferred DropEffect", msDropEffect);       // TODO: Use Vanaras constant
-
-            //Clipboard.Clear();        // TODO: Do we have to call Clear before placing data on the clipboard?
-            Clipboard.SetDataObject(dataObject, true);
+/* CR13
+//            if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
+//                throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
+//
+//            if (dropEffect.HasFlag(DragDropEffects.Copy) && dropEffect.HasFlag(DragDropEffects.Move))
+//                throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
+//
+//            // TODO: IFolderView can return a DataObject, too: https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifolderview-items
+//
+//            // Get collection of selected items, return if empty cause nothing to do then
+//            var selItems = this.ExplorerBrowserControl.SelectedItems;
+//
+//            if (selItems.Count < 1)
+//                return;
+//
+//            // Build file drop list
+//            StringCollection scFileDropList = new StringCollection();
+//            foreach (var selectedItem in selItems)
+//            {
+//                scFileDropList.Add(selectedItem.ParsingName);
+//            }
+//
+//            // Build the data object, including the DropEffect, and place it on the clipboard
+//            DataObject dataObject = new DataObject();
+//            byte[] baDropEffect = new byte[] { (byte)dropEffect, 0, 0, 0 };
+//            MemoryStream msDropEffect = new MemoryStream();
+//            msDropEffect.Write(baDropEffect, 0, baDropEffect.Length);
+//
+//            dataObject.SetFileDropList(scFileDropList);
+//            dataObject.SetData("Preferred DropEffect", msDropEffect);       // TODO: Use Vanaras constant
+//
+//            //Clipboard.Clear();        // TODO: Do we have to call Clear before placing data on the clipboard?
+//            Clipboard.SetDataObject(dataObject, true);
+*/
         }
 
         public void GetSupportedClipboardPasteTypes()
@@ -218,20 +219,20 @@ namespace electrifier.Core.Components.DockContents
              *          
              * See 'IFolderView2::IsMoveInSameFolder' for this!
              **/
-
-            using (var elShellFileOperations = new ElShellFileOperations(this, operationFlags))
-            {
-                using (var destinationFolder = new ShellFolder(this.ExplorerBrowserControl.CurrentLocation))
-                {
-                    foreach (var strFullPathName in fileDropList)
-                    {
-                        // TODO: => QueueCopyOperation(IEnumerable[]);
-                        elShellFileOperations.QueueClipboardOperation(strFullPathName, destinationFolder, dropEffect);
-                    }
-
-                    elShellFileOperations.PerformOperations();
-                }
-            }
+/* CR13
+//            using (var elShellFileOperations = new ElShellFileOperations(this, operationFlags))
+//            {
+//                using (var destinationFolder = new ShellFolder(this.ExplorerBrowserControl.CurrentLocation))
+//                {
+//                    foreach (var strFullPathName in fileDropList)
+//                    {
+//                        // TODO: => QueueCopyOperation(IEnumerable[]);
+//                        elShellFileOperations.QueueClipboardOperation(strFullPathName, destinationFolder, dropEffect);
+//                    }
+//
+//                    elShellFileOperations.PerformOperations();
+//                }
+//            } */
         }
 
 
