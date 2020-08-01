@@ -23,10 +23,11 @@ using electrifier.Core.Components.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 using Vanara.PInvoke;
 using Vanara.Windows.Shell;
-
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -34,6 +35,8 @@ namespace electrifier.Core.Components.DockContents
     /// Abstract class <see cref="NavigableDockContent"/> is the skeleton for navigation clients that
     /// are controlled by an implementer of the <see cref="IElNavigationHost"/> interface.
     /// </summary>
+    /// 
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<NavigableDockContent, DockContent>))]
     public abstract class NavigableDockContent
       : WeifenLuo.WinFormsUI.Docking.DockContent
 //      , IDockContentEntity

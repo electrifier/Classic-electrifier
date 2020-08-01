@@ -124,6 +124,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Components\Controls\AbstractControlDescriptionProvider.cs" />
     <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -146,6 +147,9 @@
     </Compile>
     <Compile Include="Components\DockContents\Extensions\NavigableDockContentExtensions.cs" />
     <Compile Include="Components\DockContentFactory.cs" />
+    <Compile Include="Components\DockContents\ShellFolderDockContent.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Components\FormStatePersistor.cs" />
     <Compile Include="Components\IClipboardConsumer.cs" />
     <Compile Include="Components\INavigationHost.cs" />
