@@ -23,17 +23,17 @@ using electrifier.Core.Components.DockContents;
 namespace electrifier.Core.Components
 {
     /// <summary>
-    /// The interface hosts of <see cref="ElNavigableDockContent"/>'s have to provide to communicate.
+    /// The interface hosts of <see cref="NavigableDockContent"/>'s have to provide to communicate.
     /// 
     /// Currently only <see cref="Forms.Electrifier"/> implements this interface
     /// </summary>
     public interface IElNavigationHost
     {
-        ElNavigableDockContent ActiveDockContent { get; }
+        NavigableDockContent ActiveDockContent { get; }
 
-        void AddDockContent(ElNavigableDockContent DockContent);
-        void ActivateDockContent(ElNavigableDockContent DockContent);
-        void RemoveDockContent(ElNavigableDockContent DockContent);
+        void AddDockContent(NavigableDockContent DockContent);
+        void ActivateDockContent(NavigableDockContent DockContent);
+        void RemoveDockContent(NavigableDockContent DockContent);
 
         // void DeactivateClient();
 

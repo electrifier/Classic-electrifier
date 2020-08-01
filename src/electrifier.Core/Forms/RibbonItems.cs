@@ -256,7 +256,7 @@ namespace RibbonLib.Controls
                 }
 
                 // Finally, apply new ViewMode if ActiveDockContent is of type ElNavigableDockContent
-                if (this.ApplicationWindow.ActiveDockContent is ElNavigableDockContent navigableDockContent)
+                if (this.ApplicationWindow.ActiveDockContent is NavigableDockContent navigableDockContent)
                     navigableDockContent.ShellFolderViewMode = newShellFolderViewMode;
             }));
         }

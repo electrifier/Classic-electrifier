@@ -33,6 +33,7 @@ namespace electrifier.Core.Components.DockContents
     /// A reference implementation of a wrapper for ExplorerBrowser can be found
     /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
+    [Obsolete("Use ShellFolderDockContent instead")]
     public partial class ElShellBrowserDockContent
     {
         #region Fields ========================================================================================================

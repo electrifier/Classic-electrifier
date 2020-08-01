@@ -29,10 +29,10 @@ namespace electrifier.Core.Components.DockContents
     /// <summary>
     /// ElShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
     /// 
-    /// This partial class file contains the <see cref="ElNavigableDockContent"/> implementation.
+    /// This partial class file contains the <see cref="NavigableDockContent"/> implementation.
     /// </summary>
     public partial class ElShellBrowserDockContent
-      : ElNavigableDockContent
+      : NavigableDockContent
     {
         internal string currentLocation;
 /* CR13

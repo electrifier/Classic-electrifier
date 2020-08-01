@@ -31,16 +31,16 @@ using Vanara.Windows.Shell;
 namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
-    /// Abstract class <see cref="ElNavigableDockContent"/> is the skeleton for navigation clients that
+    /// Abstract class <see cref="NavigableDockContent"/> is the skeleton for navigation clients that
     /// are controlled by an implementer of the <see cref="IElNavigationHost"/> interface.
     /// </summary>
-    public abstract class ElNavigableDockContent
+    public abstract class NavigableDockContent
       : WeifenLuo.WinFormsUI.Docking.DockContent
 //      , IDockContentEntity
     {
         public IElNavigationHost NavigationHost { get; private set; }
 
-        public ElNavigableDockContent(IElNavigationHost navigationHost)
+        public NavigableDockContent(IElNavigationHost navigationHost)
           : base()
         {
             this.NavigationHost = navigationHost ??
@@ -124,23 +124,23 @@ namespace electrifier.Core.Components.DockContents
     }
 
     /// <summary>
-    /// Represents a collection of <see cref="ElNavigableTargetItem"/>s, which is used by <see cref="ElNavigableDockContent"/>
-    /// for <see cref="ElNavigableDockContent.HistoryItems"/>, <see cref="ElNavigableDockContent.RecentLocations"/> and
-    /// <see cref="ElNavigableDockContent.QuickAccessItems"/>.
+    /// Represents a collection of <see cref="ElNavigableTargetItem"/>s, which is used by <see cref="NavigableDockContent"/>
+    /// for <see cref="NavigableDockContent.HistoryItems"/>, <see cref="NavigableDockContent.RecentLocations"/> and
+    /// <see cref="NavigableDockContent.QuickAccessItems"/>.
     /// </summary>
     public class ElNavigableTargetItemCollection<T>
       : IReadOnlyList<T>
         where T : ElNavigableTargetItem, new()
     {
-        public ElNavigableDockContent Owner { get; private set; }
+        public NavigableDockContent Owner { get; private set; }
 
         private readonly List<T> items = new List<T>();
 
-        public ElNavigableTargetItemCollection(ElNavigableDockContent owner)
+        public ElNavigableTargetItemCollection(NavigableDockContent owner)
           : base()
         {
             this.Owner = owner ??
-                throw new ArgumentNullException("Instantiation of ElNavigableTargetItemCollection not allowed without given ElNavigableDockContent");
+                throw new ArgumentNullException("Instantiation of ElNavigableTargetItemCollection not allowed without given NavigableDockContent");
         }
 
         /// <summary>

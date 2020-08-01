@@ -33,10 +33,10 @@ namespace electrifier.Core.Forms
       : IElNavigationHost
     {
         protected internal ArrayList dockContentList = new ArrayList();
-        protected internal ElNavigableDockContent activeDockContent = null;
-        public ElNavigableDockContent ActiveDockContent { get => this.activeDockContent; }
+        protected internal NavigableDockContent activeDockContent = null;
+        public NavigableDockContent ActiveDockContent { get => this.activeDockContent; }
 
-        public void AddDockContent(ElNavigableDockContent dockContent)
+        public void AddDockContent(NavigableDockContent dockContent)
         {
             AppContext.TraceScope();
 
@@ -65,7 +65,7 @@ namespace electrifier.Core.Forms
             dockContent.Show(this.dpnDockPanel);    // DockState.Document); // TODO: Previous pane?!?
         }
 
-        public void ActivateDockContent(ElNavigableDockContent dockContent)
+        public void ActivateDockContent(NavigableDockContent dockContent)
         {
             AppContext.TraceScope();
 
@@ -100,7 +100,7 @@ namespace electrifier.Core.Forms
             this.ntsNavigation.ActiveDockContent = dockContent;
         }
 
-        public void RemoveDockContent(ElNavigableDockContent dockContent)
+        public void RemoveDockContent(NavigableDockContent dockContent)
         {
             AppContext.TraceScope();
 
@@ -124,30 +124,30 @@ namespace electrifier.Core.Forms
         /// <param name="e"></param>
         private void DockContent_Activated(object sender, EventArgs e)
         {
-            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
+            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
-            this.ActivateDockContent(sender as ElNavigableDockContent);
+            this.ActivateDockContent(sender as NavigableDockContent);
         }
 
         private void DockContent_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
         {
-            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
+            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
-            this.RemoveDockContent(sender as ElNavigableDockContent);
+            this.RemoveDockContent(sender as NavigableDockContent);
         }
 
         private void DockContent_NavigationOptionsChanged(object sender, EventArgs e)
         {
-            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
+            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
             if (sender.Equals(this.ActiveDockContent))
-                this.ntsNavigation.UpdateButtonState(sender as ElNavigableDockContent);
+                this.ntsNavigation.UpdateButtonState(sender as NavigableDockContent);
         }
 
         // TODO: 18/11/19: ShellFolderViewMode should be placed into its own Interface => Class are fast, interfaces are slow!
         private void DockContent_ShellFolderViewModeChanged(object sender, ShellFolderViewModeChangedEventArgs e)
         {
-            Debug.Assert(sender is ElNavigableDockContent, "sender is not of type ElNavigableDockContent");
+            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
             AppContext.TraceDebug("CHANGED by DockContent_ShellFolderViewModeChanged - NavigationHost - ViewMode: " + e.NewFolderViewMode);
 

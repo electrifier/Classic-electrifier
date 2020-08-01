@@ -64,9 +64,9 @@ namespace electrifier.Core.Components.Controls
 
         #region Properties =====================================================================================================
 
-        private ElNavigableDockContent activeDockContent = null;
+        private NavigableDockContent activeDockContent = null;
 
-        public ElNavigableDockContent ActiveDockContent {
+        public NavigableDockContent ActiveDockContent {
             get => this.activeDockContent;
             set => this.UpdateButtonState(this.activeDockContent = value);
         }
@@ -146,7 +146,7 @@ namespace electrifier.Core.Components.Controls
         }
 
         // TODO: Replace this whole procedure through appropriate event handlers!!!!! 28.04.19
-        public void UpdateButtonState(ElNavigableDockContent navigableDockContent)
+        public void UpdateButtonState(NavigableDockContent navigableDockContent)
         {
             this.SuspendLayout();
 
