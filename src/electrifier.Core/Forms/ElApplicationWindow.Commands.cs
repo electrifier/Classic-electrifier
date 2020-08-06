@@ -38,7 +38,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            this.CreateNewShellBrowser();
+            this.CreateShellFolderDockContent();
         }
 
         //private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
@@ -97,7 +97,10 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            new ElAboutDialog().ShowDialog();
+            using (ElAboutDialog aboutDialog = new ElAboutDialog())
+            {
+                aboutDialog.ShowDialog();
+            }
         }
 
         internal void CmdAppHelpAboutWindows_ExecuteEvent(object sender, ExecuteEventArgs e)

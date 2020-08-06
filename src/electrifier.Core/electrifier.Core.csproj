@@ -128,6 +128,7 @@
     <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Components\Controls\ShellBrowser.cs" />
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -203,6 +204,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Components\DockContents\ShellFolderDockContent.resx">
+      <DependentUpon>ShellFolderDockContent.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ElAboutDialog.resx">
       <DependentUpon>ElAboutDialog.cs</DependentUpon>
     </EmbeddedResource>

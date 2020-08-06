@@ -32,6 +32,7 @@ using electrifier.Core.Components.DockContents;
 using RibbonLib.Controls;
 using EntityLighter;
 using System.ComponentModel;
+using Vanara.Windows.Shell;
 
 namespace electrifier.Core.Forms
 {
@@ -171,16 +172,17 @@ namespace electrifier.Core.Forms
             }
         }
 
-        private ElShellBrowserDockContent CreateNewShellBrowser(DockAlignment? dockAlignment = null)
+        private ShellFolderDockContent CreateShellFolderDockContent(DockAlignment? dockAlignment = null)
         {
             AppContext.TraceScope();
 
-            ElShellBrowserDockContent newShellBrowser = ElDockContentFactory.CreateShellBrowser(this);
+            ShellFolderDockContent shellFolderDockContent = ElDockContentFactory.CreateShellFolderDockContent(this);
 
-            this.AddDockContent(newShellBrowser);       // TODO => dockAlignment
+            this.AddDockContent(shellFolderDockContent);       // TODO => dockAlignment
 
-            return newShellBrowser;
+            return shellFolderDockContent;
         }
+
 
         public bool LoadConfiguration(string fullFileName)
         {

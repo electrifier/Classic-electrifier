@@ -18,6 +18,7 @@
 **
 */
 
+using electrifier.Core.Components.DockContents;
 using System;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -63,6 +64,15 @@ namespace electrifier.Core.Components
             navigationHost.AddDockContent(shellBrowser);
 
             return shellBrowser;
+        }
+
+        public static ShellFolderDockContent CreateShellFolderDockContent(IElNavigationHost navigationHost, string persistString = null)
+        {
+            ShellFolderDockContent dockContent = new ShellFolderDockContent(navigationHost, persistString);
+
+            navigationHost.AddDockContent(dockContent);
+
+            return dockContent;
         }
     }
 }
