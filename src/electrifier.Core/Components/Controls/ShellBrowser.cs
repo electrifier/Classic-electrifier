@@ -111,8 +111,6 @@ namespace electrifier.Core.Components.Controls
         {
             this.InitializeComponent();
 
-
-
             this.Load += this.ShellBrowser_Load;
             this.Resize += this.ShellBrowser_Resize;
         }
@@ -143,16 +141,15 @@ namespace electrifier.Core.Components.Controls
 
         public void SetCurrentFolder(ShellFolder shellFolder)
         {
+            // Note: The Designer will set shellFolder to NULL
+            if ((this.DesignMode) || (shellFolder is null))
+                return;
+
             // TODO: Release current folder
-
-
-            if (shellFolder is null) return;    // TODO: Designer setzt den Folder auf null!
 
             this.currentFolder = shellFolder;
 
             this.BrowseObject((IntPtr)this.CurrentFolder.PIDL, Shell32.SBSP.SBSP_ABSOLUTE);
-
-
         }
 
         protected ShellFolder GetShellView(Shell32.PIDL pidl)
@@ -360,7 +357,10 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT OnStateChange(Shell32.IShellView ppshv, Shell32.CDBOSC uChange)
         {
-            return HRESULT.E_NOTIMPL;
+            if (uChange == Shell32.CDBOSC.CDBOSC_SELCHANGE)
+                AppContext.TraceDebug("ICommDlgBrowser3: Selection changed");
+
+            return HRESULT.S_OK;
         }
 
         public HRESULT IncludeObject(Shell32.IShellView ppshv, IntPtr pidl)
@@ -406,30 +406,25 @@ namespace electrifier.Core.Components.Controls
 
         #region IServiceProvider interface ====================================================================================
 
-        public HRESULT QueryService(in Guid guidService, in Guid riid, out object ppvObject)
+        public HRESULT QueryService(in Guid guidService, in Guid riid, out IntPtr ppvObject)
         {
             if (riid.Equals(this.IID_IShellBrowser))
             {
-                // Wenn folgendes Marshalling durchgeführt wird, dann geht der "Doppelklick" nicht mehr  :(
-                // ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
-                ppvObject = this;
+                ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
 
                 return HRESULT.S_OK;
             }
 
-            //if (guidService.Equals(this.IID_ICommDlgBrowser))
-            //{
-            //    if (riid.Equals(this.IID_ICommDlgBrowser) || riid.Equals(this.IID_ICommDlgBrowser3))
-            //    {
-            //        ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.ICommDlgBrowser3));
+            if (riid.Equals(this.IID_ICommDlgBrowser) || riid.Equals(this.IID_ICommDlgBrowser3))
+            {
+                ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.ICommDlgBrowser3));
 
-            //        return HRESULT.S_OK;
-            //    }
-            //}
+                return HRESULT.S_OK;
+            }
 
-            AppContext.TraceDebug($"QueryService: {guidService}, riid: {riid}");
+            //AppContext.TraceDebug($"QueryService: {guidService}, riid: {riid}");
 
-            ppvObject = null;
+            ppvObject = IntPtr.Zero;
 
             return HRESULT.E_NOINTERFACE;
         }

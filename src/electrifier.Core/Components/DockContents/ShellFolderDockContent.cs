@@ -31,7 +31,9 @@ namespace electrifier.Core.Components.DockContents
     public class ShellFolderDockContent
       : NavigableDockContent
     {
-        private ShellBrowser shellBrowser;
+        private System.Windows.Forms.Splitter splitter1;
+        private ShellBrowser shellBrowser1;
+        private System.Windows.Forms.StatusStrip statusStrip1;
         private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
 
         public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
@@ -56,34 +58,56 @@ namespace electrifier.Core.Components.DockContents
         private void InitializeComponent()
         {
             this.shellNamespaceTree = new Vanara.Windows.Forms.ShellNamespaceTreeControl();
-            this.shellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
+            this.splitter1 = new System.Windows.Forms.Splitter();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.shellBrowser1 = new electrifier.Core.Components.Controls.ShellBrowser();
             this.SuspendLayout();
             // 
             // shellNamespaceTree
             // 
+            this.shellNamespaceTree.Dock = System.Windows.Forms.DockStyle.Left;
             this.shellNamespaceTree.Location = new System.Drawing.Point(0, 0);
             this.shellNamespaceTree.Name = "shellNamespaceTree";
-            this.shellNamespaceTree.Size = new System.Drawing.Size(320, 864);
+            this.shellNamespaceTree.Size = new System.Drawing.Size(320, 876);
             this.shellNamespaceTree.TabIndex = 1;
             // 
-            // shellBrowser
+            // splitter1
             // 
-            this.shellBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.shellBrowser.Location = new System.Drawing.Point(336, 12);
-            this.shellBrowser.Name = "shellBrowser";
-            this.shellBrowser.Size = new System.Drawing.Size(813, 852);
-            this.shellBrowser.TabIndex = 2;
+            this.splitter1.Location = new System.Drawing.Point(320, 0);
+            this.splitter1.Name = "splitter1";
+            this.splitter1.Size = new System.Drawing.Size(6, 876);
+            this.splitter1.TabIndex = 4;
+            this.splitter1.TabStop = false;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip1.Location = new System.Drawing.Point(326, 854);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(835, 22);
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.TabIndex = 6;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // shellBrowser1
+            // 
+            this.shellBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shellBrowser1.Location = new System.Drawing.Point(326, 0);
+            this.shellBrowser1.Name = "shellBrowser1";
+            this.shellBrowser1.Size = new System.Drawing.Size(835, 876);
+            this.shellBrowser1.TabIndex = 5;
             // 
             // ShellFolderDockContent
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
-            this.Controls.Add(this.shellBrowser);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.shellBrowser1);
+            this.Controls.Add(this.splitter1);
             this.Controls.Add(this.shellNamespaceTree);
             this.Name = "ShellFolderDockContent";
             this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
