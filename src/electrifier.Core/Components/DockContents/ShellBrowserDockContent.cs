@@ -21,9 +21,9 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-using electrifier.Core.Components.Controls;
 using Vanara.PInvoke;
 using Vanara.Windows.Shell;
+using Vanara.Windows.Forms;
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -33,7 +33,8 @@ namespace electrifier.Core.Components.DockContents
     /// A reference implementation of a wrapper for ExplorerBrowser can be found
     /// <a href="https://github.com/aybe/Windows-API-Code-Pack-1.1/blob/master/source/Samples/ExplorerBrowser/CS/WinForms/ExplorerBrowserTestForm.cs">here</a>.
     /// </summary>
-    [Obsolete("Use ShellFolderDockContent instead")]
+
+// [Obsolete("Use ShellFolderDockContent instead")]
     public partial class ElShellBrowserDockContent
     {
         #region Fields ========================================================================================================
@@ -52,7 +53,10 @@ namespace electrifier.Core.Components.DockContents
         public Shell32.FOLDERVIEWMODE ViewMode
         {
             get => Shell32.FOLDERVIEWMODE.FVM_AUTO; //this.ExplorerBrowserControl.ViewMode;
-            set => value = value; //this.ExplorerBrowserControl.ViewMode = value;
+            set
+            {
+                ; //this.ExplorerBrowserControl.ViewMode = value;
+            }
         }
 
         //public ExplorerBrowserViewMode ViewMode { get => this.explorerBrowser.ContentOptions.ViewMode; set => this.explorerBrowser.ContentOptions.ViewMode = value; }
@@ -65,7 +69,7 @@ namespace electrifier.Core.Components.DockContents
         //    //get => this.explorerBrowser.SelectedItems.Count; }
         //    get => 0;
         //}
-//        protected ExplorerBrowserControl ExplorerBrowserControl { get; }
+        protected ExplorerBrowser ExplorerBrowserControl { get; }
 
         //public DockContent AsDockContent { get => this as WeifenLuo.WinFormsUI.Docking.DockContent; }
 
@@ -96,21 +100,23 @@ namespace electrifier.Core.Components.DockContents
                 this.EvaluatePersistString(persistString);
 
                 // Initialize ExplorerBrowser
-//                this.ExplorerBrowserControl = new Controls.ExplorerBrowserControl(this.InitialNaviagtionTarget)
-//                {
-//                    Dock = DockStyle.Fill,
-//                };
-//
-//                // Connect ExplorerBrowser Events
-//                this.ExplorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
-//                this.ExplorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
-//                this.ExplorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
-//                this.ExplorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
-//                this.ExplorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
-//                this.ExplorerBrowserControl.ShellFolderViewModeChanged += this.ExplorerBrowserControl_ShellFolderViewModeChanged;
-//                this.ExplorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
-//
-//                this.Controls.Add(this.ExplorerBrowserControl);
+                this.ExplorerBrowserControl = new ExplorerBrowser() //this.InitialNaviagtionTarget)
+                {
+                    Dock = DockStyle.Fill,
+                };
+                //
+                //                // Connect ExplorerBrowser Events
+                //                this.ExplorerBrowserControl.SelectionChanged += this.ElClipboardConsumer_SelectionChanged;
+                //                this.ExplorerBrowserControl.Navigating += this.ExplorerBrowserControl_Navigating;
+                //                this.ExplorerBrowserControl.Navigated += this.ExplorerBrowserControl_Navigated;
+                //                this.ExplorerBrowserControl.NavigationFailed += this.ExplorerBrowserControl_NavigationFailed;
+                //                this.ExplorerBrowserControl.ItemsEnumerated += this.ExplorerBrowserControl_ItemsEnumerated;
+                //                this.ExplorerBrowserControl.ShellFolderViewModeChanged += this.ExplorerBrowserControl_ShellFolderViewModeChanged;
+                //                this.ExplorerBrowserControl.History.NavigationLogChanged += this.ExplorerBrowserControl_History_NavigationLogChanged;
+                //
+                this.Controls.Add(this.ExplorerBrowserControl);
+
+                this.ExplorerBrowserControl.Navigate(new ShellItem(@"C:\"));
             }
             finally
             {
@@ -158,7 +164,7 @@ namespace electrifier.Core.Components.DockContents
         protected override string GetPersistString()
         {
             var sb = new StringBuilder();
-            string paramFmt = " {0}{1}";
+            //string paramFmt = " {0}{1}";
 
             // Append class name as identifier
             sb.Append(nameof(ElShellBrowserDockContent));

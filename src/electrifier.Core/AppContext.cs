@@ -243,7 +243,7 @@ namespace electrifier.Core
 
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -400,7 +400,11 @@ namespace electrifier.Core
                 LogFileName = filePath
             };
 
-            defaultTraceListener.WriteLine("\nNEW SESSION STARTED...\n");
+            string fullMessage = "\n\nNew Session started on ";
+            fullMessage += DateTime.Now.ToString("F");
+            fullMessage += "\n\n";
+
+            defaultTraceListener.WriteLine(fullMessage);
 
             Trace.Listeners.Clear();
             Trace.Listeners.Add(defaultTraceListener);
@@ -414,7 +418,7 @@ namespace electrifier.Core
         {
             string fullMessage = DateTime.Now.ToString("HH:mm:ss");
             fullMessage += " Enter Scope of Member " + memberName;
-            fullMessage += " @ '" + filePath;
+            fullMessage += " @ '" + filePath + "'";
 
             Trace.WriteLine(fullMessage, "Scope");
         }

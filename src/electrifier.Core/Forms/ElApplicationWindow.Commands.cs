@@ -39,6 +39,7 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
 
             this.CreateShellFolderDockContent();
+            //ElDockContentFactory.CreateShellBrowser(this, null);
         }
 
         //private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)

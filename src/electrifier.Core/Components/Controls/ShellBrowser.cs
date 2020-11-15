@@ -19,6 +19,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -35,6 +36,16 @@ using Vanara.Windows.Shell;
 namespace electrifier.Core.Components.Controls
 {
 
+    public class ShellBrowserNavigationCompleteEventArgs : EventArgs
+    {
+        public ShellFolder CurrentFolder { get; }
+
+        public ShellBrowserNavigationCompleteEventArgs(ShellFolder currentFolder)
+        {
+            this.CurrentFolder = currentFolder ?? throw new ArgumentNullException(nameof(currentFolder));
+        }
+    }
+
     /////// <summary>
     /////// https://carsten.familie-schumann.info/blog/einfaches-invoke-in-c/
     /////// </summary>
@@ -43,26 +54,41 @@ namespace electrifier.Core.Components.Controls
     {
         static public void UIThreadAsync(this Control control, Action code)
         {
+            if (null == control)
+                throw new ArgumentNullException(nameof(control));
+
+            if (null == code)
+                throw new ArgumentNullException(nameof(code));
+
             if (control.InvokeRequired)
             {
                 control.BeginInvoke(code);
+
                 return;
             }
-            code.Invoke();
+            else
+                code.Invoke();
         }
 
         static public void UIThreadSync(this Control control, Action code)
         {
+            if (null == control)
+                throw new ArgumentNullException(nameof(control));
+
+            if (null == code)
+                throw new ArgumentNullException(nameof(code));
+
             if (control.InvokeRequired)
             {
                 control.Invoke(code);
+
                 return;
             }
             code.Invoke();
         }
     }
 
-
+    // TODO: Rename to ShellBrowserPanel
 
     /// <summary>
     /// https://www.codeproject.com/Articles/28961/Full-implementation-of-IShellBrowser
@@ -121,14 +147,13 @@ namespace electrifier.Core.Components.Controls
         protected override void OnHandleCreated(EventArgs e)
         {
             base.OnHandleCreated(e);
-
-
         }
 
         private void ShellBrowser_Load(object sender, EventArgs e)
         {
-            this.SetCurrentFolder(ShellFolder.Desktop);
-            // SHCreateShellFolderView?!?
+            var startFolder = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
+            this.SetCurrentFolder(startFolder);
+            // TODO: SHCreateShellFolderView?!?
         }
 
         private void ShellBrowser_Resize(object sender, EventArgs e)
@@ -139,18 +164,49 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
-        public void SetCurrentFolder(ShellFolder shellFolder)
+        public void SetCurrentFolder(ShellFolder newCurrentFolder)
         {
             // Note: The Designer will set shellFolder to NULL
-            if ((this.DesignMode) || (shellFolder is null))
+            if (this.DesignMode || (newCurrentFolder is null))
                 return;
 
-            // TODO: Release current folder
+            if (null != this.currentFolder)
+            {
+                //if (Shell32.PIDLUtil.Equals(this.currentFolder.PIDL, shellFolder.PIDL))
+                //{
+                //    AppContext.TraceWarning("SetCurrentFolder already set!");
+                //    return;
+                //}
 
-            this.currentFolder = shellFolder;
+                this.currentFolder.Dispose();
+            }
+
+            this.currentFolder = newCurrentFolder;
 
             this.BrowseObject((IntPtr)this.CurrentFolder.PIDL, Shell32.SBSP.SBSP_ABSOLUTE);
         }
+
+
+        #region Published Events ==============================================================================================
+
+
+        [Category("Shell Event"), Description("ShellBowser has navigated to a new folder.")]
+        public event EventHandler<ShellBrowserNavigationCompleteEventArgs> NavigationComplete;
+
+        #endregion ============================================================================================================
+
+
+        protected void OnNavigationComplete(ShellFolder shellFolder)
+        {
+            if (null != this.NavigationComplete)
+            {
+                ShellBrowserNavigationCompleteEventArgs eventArgs = new ShellBrowserNavigationCompleteEventArgs(shellFolder);
+
+                this.NavigationComplete.Invoke(this, eventArgs);
+            }
+        }
+
+
 
         protected ShellFolder GetShellView(Shell32.PIDL pidl)
         {
@@ -159,6 +215,8 @@ namespace electrifier.Core.Components.Controls
                                 return ShellFolder.Desktop.iShellFolder;
                             return (IShellFolder)ShellFolder.Desktop.iShellFolder.BindToObject(PIDL, null, typeof(IShellFolder).GUID);
             */
+
+            // TODO: SHCreateShellFolderView?!?
 
             try
             {
@@ -184,6 +242,8 @@ namespace electrifier.Core.Components.Controls
             return null;
         }
 
+
+
         protected override void WndProc(ref Message m)
         {
             if (WM_GETISHELLBROWSER == m.Msg)
@@ -194,53 +254,62 @@ namespace electrifier.Core.Components.Controls
 
         #region IShellBrowser interface =======================================================================================
 
-        public HWND GetWindow()
+        public HRESULT GetWindow(out HWND phwnd)
         {
-            AppContext.TraceDebug("GetWindow");
+            //AppContext.TraceDebug("IShellBrowser.GetWindow()");
 
-            return this.Handle;
+            phwnd = this.Handle;
+
+            return HRESULT.S_OK;
         }
 
-        public void ContextSensitiveHelp(bool fEnterMode)
+        public HRESULT ContextSensitiveHelp(bool fEnterMode)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void InsertMenusSB(HMENU hmenuShared, ref Ole32.OLEMENUGROUPWIDTHS lpMenuWidths)
+        public HRESULT InsertMenusSB(HMENU hmenuShared, ref Ole32.OLEMENUGROUPWIDTHS lpMenuWidths)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void SetMenuSB(HMENU hmenuShared, IntPtr holemenuRes, HWND hwndActiveObject)
+        public HRESULT SetMenuSB(HMENU hmenuShared, IntPtr holemenuRes, HWND hwndActiveObject)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void RemoveMenusSB(HMENU hmenuShared)
+        public HRESULT RemoveMenusSB(HMENU hmenuShared)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void SetStatusTextSB(string pszStatusText)
+        public HRESULT SetStatusTextSB(string pszStatusText)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void EnableModelessSB(bool fEnable)
+        public HRESULT EnableModelessSB(bool fEnable)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void TranslateAcceleratorSB(ref MSG pmsg, ushort wID)
+        public HRESULT TranslateAcceleratorSB(ref MSG pmsg, ushort wID)
         {
             //throw new NotImplementedException();
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void BrowseObject(IntPtr pidl, Shell32.SBSP wFlags)
+        public HRESULT BrowseObject(IntPtr pidl, Shell32.SBSP wFlags)
         {
 
 
-            // Doppelklick: SBSP_SAMEBROWSER, SBSP_OPENMODE
+            // Double Click: SBSP_SAMEBROWSER, SBSP_OPENMODE
 
 
             Shell32.PIDL pidlTmp = default;
@@ -310,38 +379,62 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadSync(delegate
             {
-                this.GetShellView(pidlTmp);
+                var shellFolder = this.GetShellView(pidlTmp);
+
+                if (null != shellFolder)
+                {
+                    // TODO: Lock currentFolder cause of MultiThreading!
+                    var oldFolder = this.currentFolder;
+                    this.currentFolder = shellFolder;
+                    oldFolder.Dispose();
+
+                    this.OnNavigationComplete(shellFolder);
+                }
+
+                pidlTmp.Close();
             });
+
+            return HRESULT.S_OK;
         }
 
-        public IStream GetViewStateStream(STGM grfMode)
+        public HRESULT GetViewStateStream(STGM grfMode, out IStream stream)
         {
-            return default;                 //throw new NotImplementedException();
+            stream = null;
+
+            return HRESULT.E_NOTIMPL;
         }
 
-        public IntPtr GetControlWindow(Shell32.FCW id)
+        public HRESULT GetControlWindow(Shell32.FCW id, out HWND hwnd)
         {
-            return IntPtr.Zero;             //throw new NotImplementedException();
+            hwnd = HWND.NULL;
+
+            return HRESULT.E_NOTIMPL;
         }
 
-        public IntPtr SendControlMsg(Shell32.FCW id, uint uMsg, IntPtr wParam, IntPtr lParam)
+        public HRESULT SendControlMsg(Shell32.FCW id, uint uMsg, IntPtr wParam, IntPtr lParam, out IntPtr pret)
         {
-            return IntPtr.Zero;             //throw new NotImplementedException();
+            pret = IntPtr.Zero;
+
+            return HRESULT.E_NOTIMPL;
         }
 
-        public Shell32.IShellView QueryActiveShellView()
+        public HRESULT QueryActiveShellView(out Shell32.IShellView shellView)
         {
             Marshal.AddRef(Marshal.GetIUnknownForObject(this.shellView));
 
-            return this.shellView;
+            shellView = this.shellView;
+
+            return HRESULT.S_OK;
         }
 
-        public void OnViewWindowActive(Shell32.IShellView ppshv)
+        public HRESULT OnViewWindowActive(Shell32.IShellView ppshv)
         {
+            return HRESULT.E_NOTIMPL;
         }
 
-        public void SetToolbarItems(ComCtl32.TBBUTTON[] lpButtons, uint nButtons, Shell32.FCT uFlags)
+        public HRESULT SetToolbarItems(ComCtl32.TBBUTTON[] lpButtons, uint nButtons, Shell32.FCT uFlags)
         {
+            return HRESULT.E_NOTIMPL;
         }
 
         #endregion ============================================================================================================

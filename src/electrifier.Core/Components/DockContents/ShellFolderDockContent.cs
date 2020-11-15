@@ -18,12 +18,13 @@
 **
 */
 
-using System;
-using Vanara.Windows.Shell;
-
 using electrifier.Core.Components.Controls;
-using WeifenLuo.WinFormsUI.Docking;
 using System.ComponentModel;
+using System;
+using Vanara.PInvoke;
+using Vanara.Windows.Shell;
+using WeifenLuo.WinFormsUI.Docking;
+using Vanara.Windows.Forms;
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -31,9 +32,9 @@ namespace electrifier.Core.Components.DockContents
     public class ShellFolderDockContent
       : NavigableDockContent
     {
-        private System.Windows.Forms.Splitter splitter1;
-        private ShellBrowser shellBrowser1;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.Splitter splitter;
+        private ShellBrowser shellBrowser;
+        private System.Windows.Forms.StatusStrip statusStrip;
         private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
 
         public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
@@ -50,17 +51,79 @@ namespace electrifier.Core.Components.DockContents
 
         private void ShellFolderDockContent_Load(object sender, EventArgs e)
         {
-            this.shellNamespaceTree.RootItems.Add(ShellFolder.Desktop, false, true);
+            this.shellNamespaceTree.DisplayPinnedItemsOnly = true;
+            //            var test = KnownFolder.Desktop;
+            //            var test2 = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
+
+            // TODO: Add QuickAccess, OneDrive, This PC, Network
+            //            this.shellNamespaceTree.RootItems.Add(ShellFolder.Desktop, false, true);
+            //this.shellNamespaceTree.RootItems.Add(new ShellFolder(KnownFolder.Desktop), false, false);
+            //this.shellNamespaceTree.RootItems.Add(KnownFolder.SkyDrive, false, false);
+            //            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop), false, false);
+            //            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.), false, false);
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(@"shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}"), false, false);        // This is the "Quick Access"-folder, which is new to Windows 10
+
+
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop), false, false);
+//            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_AppDataDesktop), false, false);
+//            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_PublicDesktop), false, false);
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_ThisPCDesktop), false, false);     // => Is mapped to "Snyc Centre"?
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_OneDrive), false, false);
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_ComputerFolder), false, false);
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_NetworkFolder), false, false);
+
+
+
         }
+
+        private void ShellNamespaceTree_AfterSelect(object sender, EventArgs e)
+        {
+            ShellItem shellItem = this.shellNamespaceTree.SelectedItem;
+
+            if (null != shellItem)
+            {
+                if(!this.shellBrowser.CurrentFolder.PIDL.Equals(shellItem.PIDL))
+                    this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+
+            }
+        }
+
+
+
+        /// <summary>
+        /// TODO: This is very experimental, and only works if the new folder navigated to is an direct successor node
+        ///       to the currently selected node.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ShellBrowser_NavigationComplete(object sender, ShellBrowserNavigationCompleteEventArgs e)
+        {
+            ShellFolder newCurrentFolder = e.CurrentFolder;
+
+            if (null != newCurrentFolder)
+            {
+                Shell32.PIDL newCurrentFolderPIDL = newCurrentFolder.PIDL;
+                ShellItem selectedTreeItem = this.shellNamespaceTree.SelectedItem;
+
+                if ((selectedTreeItem != null) && (selectedTreeItem.PIDL.IsParentOf(newCurrentFolderPIDL, immediate: true)))
+                    this.shellNamespaceTree.SelectedItem = newCurrentFolder;
+
+                // TODO: BUG: Navigation to user folder, e.g. "Thorsten Jung", will "magically add" that folder to the tree
+                //else
+                //    this.shellNamespaceTree.SelectedItem = null;
+            }
+        }
+
+
 
         #region Component Designer generated code =============================================================================
 
         private void InitializeComponent()
         {
             this.shellNamespaceTree = new Vanara.Windows.Forms.ShellNamespaceTreeControl();
-            this.splitter1 = new System.Windows.Forms.Splitter();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.shellBrowser1 = new electrifier.Core.Components.Controls.ShellBrowser();
+            this.splitter = new System.Windows.Forms.Splitter();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.shellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
             this.SuspendLayout();
             // 
             // shellNamespaceTree
@@ -70,39 +133,42 @@ namespace electrifier.Core.Components.DockContents
             this.shellNamespaceTree.Name = "shellNamespaceTree";
             this.shellNamespaceTree.Size = new System.Drawing.Size(320, 876);
             this.shellNamespaceTree.TabIndex = 1;
+            this.shellNamespaceTree.AfterSelect += new System.EventHandler(this.ShellNamespaceTree_AfterSelect);
             // 
-            // splitter1
+            // splitter
             // 
-            this.splitter1.Location = new System.Drawing.Point(320, 0);
-            this.splitter1.Name = "splitter1";
-            this.splitter1.Size = new System.Drawing.Size(6, 876);
-            this.splitter1.TabIndex = 4;
-            this.splitter1.TabStop = false;
+            this.splitter.Location = new System.Drawing.Point(320, 0);
+            this.splitter.Name = "splitter";
+            this.splitter.Size = new System.Drawing.Size(6, 876);
+            this.splitter.TabIndex = 4;
+            this.splitter.TabStop = false;
             // 
-            // statusStrip1
+            // statusStrip
             // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(326, 854);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(835, 22);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 6;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.statusStrip.Location = new System.Drawing.Point(326, 854);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(835, 22);
+            this.statusStrip.SizingGrip = false;
+            this.statusStrip.TabIndex = 6;
+            this.statusStrip.Text = "statusStrip1";
             // 
-            // shellBrowser1
+            // shellBrowser
             // 
-            this.shellBrowser1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.shellBrowser1.Location = new System.Drawing.Point(326, 0);
-            this.shellBrowser1.Name = "shellBrowser1";
-            this.shellBrowser1.Size = new System.Drawing.Size(835, 876);
-            this.shellBrowser1.TabIndex = 5;
+            this.shellBrowser.CurrentFolder = null;
+            this.shellBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.shellBrowser.Location = new System.Drawing.Point(326, 0);
+            this.shellBrowser.Name = "shellBrowser";
+            this.shellBrowser.Size = new System.Drawing.Size(835, 876);
+            this.shellBrowser.TabIndex = 5;
+            this.shellBrowser.NavigationComplete += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigationCompleteEventArgs>(this.ShellBrowser_NavigationComplete);
             // 
             // ShellFolderDockContent
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.shellBrowser1);
-            this.Controls.Add(this.splitter1);
+            this.Controls.Add(this.statusStrip);
+            this.Controls.Add(this.shellBrowser);
+            this.Controls.Add(this.splitter);
             this.Controls.Add(this.shellNamespaceTree);
             this.Name = "ShellFolderDockContent";
             this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
@@ -112,6 +178,5 @@ namespace electrifier.Core.Components.DockContents
         }
 
         #endregion ============================================================================================================
-
     }
 }
