@@ -28,7 +28,7 @@ namespace electrifier.Core.Components.Controls
     /// The most common default implementations are provided via Extension Methods in
     /// <see cref="Extensions.ThemedControlExtensions"/>.
     /// </summary>
-    public interface IElThemedControl
+    public interface IThemedControl
     {
         string DefaultTheme { get; }
         string ThemeResourceNamespace { get; }

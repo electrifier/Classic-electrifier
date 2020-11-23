@@ -29,7 +29,7 @@ namespace electrifier.Core.Components.Controls
 {
     public class NavigationToolStrip
         : System.Windows.Forms.ToolStrip
-        , IElThemedControl
+        , IThemedControl
     {
         #region Fields =========================================================================================================
 
@@ -79,7 +79,7 @@ namespace electrifier.Core.Components.Controls
         public string DefaultTheme => "iTweek by Miles Ponson (32px)";
         //public string DefaultTheme => "Microsoft Windows (24px)";
 
-        public string ThemeResourceNamespace { get => this.GetThemeResourceNamespace(); }
+        public string ThemeResourceNamespace { get => this.ThemeResourceNamespace(); }
 
         public IEnumerable<string> GetAvailableThemes() { return this.EnumerateAvailableThemes(); }
 

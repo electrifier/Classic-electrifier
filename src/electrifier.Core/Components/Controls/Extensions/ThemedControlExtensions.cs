@@ -30,46 +30,60 @@ namespace electrifier.Core.Components.Controls.Extensions
 {
     /// <summary>
     /// Static class that provides the most common Extension Methods used in conjunction with Interface
-    /// <see cref="IElThemedControl"/>.
+    /// <see cref="IThemedControl"/>.
     /// </summary>
     public static class ThemedControlExtensions
     {
-        public static string ThemeFileExtension = ".png";
+        public static string ThemeFileExtension { get => ".png"; }
 
-        public static string GetThemeResourceNamespace(this IElThemedControl control)
+        public static string ThemeResourceNamespace(this IThemedControl control)
         {
+            if (null == control)
+                throw new ArgumentNullException(nameof(control));
+
             return @"electrifier.Core.Resources.Themes." + control.GetType().Name + ".";
         }
 
         /// <summary>
-        /// Search all embedded resources in this assembly for images that can be used as themes for an IElThemedControl.
+        /// Search all embedded resources in this assembly for images that can be used as themes for an IThemedControl.
         /// 
         /// Their namespace has to match the following pattern:
         ///   "[IThemedControl.ThemeResourceNamespace].THEMENAME.[ThemedControlExtensions.ThemeFileExtension]"
         /// </summary>
-        /// <param name="control">The control that implements IElThemedControl interface.</param>
+        /// <param name="control">The control that implements IThemedControl interface.</param>
         /// <returns>An IEnumerable collection of the available themes.</returns>
-        public static IEnumerable<string> EnumerateAvailableThemes(this IElThemedControl control)
+        public static IEnumerable<string> EnumerateAvailableThemes(this IThemedControl control)
         {
-            IEnumerable<string> resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(Name =>
+            if (null == control)
+                throw new ArgumentNullException(nameof(control));
+
+            IEnumerable<string> resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(
+                Name =>
                 Name.StartsWith(control.ThemeResourceNamespace, StringComparison.InvariantCultureIgnoreCase) &&
-                Name.EndsWith(ThemedControlExtensions.ThemeFileExtension, StringComparison.InvariantCultureIgnoreCase));
+                Name.EndsWith(ThemeFileExtension, StringComparison.InvariantCultureIgnoreCase));
 
             foreach (var currentName in resourceNames)
             {
                 yield return currentName.Substring(control.ThemeResourceNamespace.Length,
-                    (currentName.Length - control.ThemeResourceNamespace.Length - ThemedControlExtensions.ThemeFileExtension.Length));
+                    (currentName.Length - control.ThemeResourceNamespace.Length - ThemeFileExtension.Length));
             }
         }
 
         /// <summary>
         /// Load image strip from embedded resource and return as new <see cref="ImageList"/>.
         /// </summary>
-        /// <param name="control">The control that implements IElThemedControl interface.</param>
+        /// <param name="control">The control that implements IThemedControl interface.</param>
         /// <param name="themeName">The name of embedded resource that contains the theme.</param>
         /// <returns>The <see cref="ImageList"/> containing the images of the loaded image strip.</returns>
-        public static ImageList LoadThemeImageListFromResource(this IElThemedControl control, string themeName)
+        public static ImageList LoadThemeImageListFromResource(this IThemedControl control, string themeName)
         {
+            if (null == control)
+                throw new ArgumentNullException(nameof(control));
+            if (string.IsNullOrWhiteSpace(themeName))
+                throw new ArgumentOutOfRangeException(nameof(themeName), "No theme name provided");
+
+            string resourceName = control.ThemeResourceNamespace + themeName + ThemeFileExtension;
+
             try
             {
                 ImageList imageList = new ImageList
@@ -79,8 +93,7 @@ namespace electrifier.Core.Components.Controls.Extensions
                     ColorDepth = ColorDepth.Depth32Bit
                 };
 
-                using (Stream bmpStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(
-                    control.ThemeResourceNamespace + themeName + ThemedControlExtensions.ThemeFileExtension))
+                using (Stream bmpStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     var bitmap = new Bitmap(bmpStream);
 
@@ -94,7 +107,7 @@ namespace electrifier.Core.Components.Controls.Extensions
             }
             catch (Exception ex)
             {
-                throw new Exception(@"Unable to get ImageList for theme.", ex);
+                throw new Exception($"Unable to load ImageList for theme from embedded resource '{ resourceName }'.", ex);
             }
         }
     }
