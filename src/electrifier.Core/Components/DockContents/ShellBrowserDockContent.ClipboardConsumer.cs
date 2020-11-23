@@ -38,11 +38,11 @@ namespace electrifier.Core.Components.DockContents
     /// This partial class file contains the <see cref="IElClipboardConsumer"/> implementation.
     /// </summary>
     public partial class ElShellBrowserDockContent
-      : IElClipboardConsumer
+      : IClipboardConsumer
     {
         #region Fields ========================================================================================================
 
-        private ElClipboardAbilities currentClipboardAbilities = ElClipboardAbilities.None;
+        private ClipboardAbilities currentClipboardAbilities = ClipboardAbilities.None;
 
         #endregion Fields =====================================================================================================
 
@@ -56,7 +56,7 @@ namespace electrifier.Core.Components.DockContents
         /// <summary>
         /// Raises the <see cref="IElClipboardConsumer.ClipboardAbilitiesChanged"/> event.
         /// </summary>
-        protected internal virtual void OnClipboardAbilitiesChanged(ElClipboardAbilities clipboardAbilities)
+        protected internal virtual void OnClipboardAbilitiesChanged(ClipboardAbilities clipboardAbilities)
         {
             this.ClipboardAbilitiesChanged?.Invoke(this, new ClipboardAbilitiesChangedEventArgs(clipboardAbilities));
         }
@@ -78,11 +78,11 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
-        public ElClipboardAbilities GetClipboardAbilities()
+        public ClipboardAbilities GetClipboardAbilities()
         {
             var itemCount = 0; //this.ExplorerBrowserControl.GetItemCount(Shell32.SVGIO.SVGIO_SELECTION);
 
-            return ((itemCount > 0) ? (ElClipboardAbilities.CanCopy | ElClipboardAbilities.CanCut) : ElClipboardAbilities.None);
+            return ((itemCount > 0) ? (ClipboardAbilities.CanCopy | ClipboardAbilities.CanCut) : ClipboardAbilities.None);
         }
 
         /// <summary>

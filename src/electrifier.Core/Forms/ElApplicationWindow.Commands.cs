@@ -139,17 +139,17 @@ namespace electrifier.Core.Forms
         /// Perform Clipboard-Cut Operation.
         /// 
         /// Includes the following validations:
-        ///  1.) Check if ActiveContent is IElClipboardConsumer.
-        ///  2.) Check if this IElClipboardConsumer can actually cut.
+        ///  1.) Check if ActiveContent is IClipboardConsumer.
+        ///  2.) Check if this IClipboardConsumer can actually cut.
         ///  3.) Perform the Cut-Operation to cut selected data/items to the clipboard.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         internal void CmdClipboardCut_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
+            if (this.dpnDockPanel.ActiveContent is IClipboardConsumer clipboardConsumer)
             {
-                if (clipboardConsumer.GetClipboardAbilities().HasFlag(ElClipboardAbilities.CanCut))
+                if (clipboardConsumer.GetClipboardAbilities().HasFlag(ClipboardAbilities.CanCut))
                     clipboardConsumer.CutToClipboard();
             }
         }
@@ -158,17 +158,17 @@ namespace electrifier.Core.Forms
         /// Perform Clipboard-Copy Operation.
         /// 
         /// Includes the following validations:
-        ///  1.) Check if ActiveContent is IElClipboardConsumer.
-        ///  2.) Check if this IElClipboardConsumer can actually copy.
+        ///  1.) Check if ActiveContent is IClipboardConsumer.
+        ///  2.) Check if this IClipboardConsumer can actually copy.
         ///  3.) Perform the Copy-Operation to copy selected data/items to the clipboard.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         internal void CmdClipboardCopy_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
+            if (this.dpnDockPanel.ActiveContent is IClipboardConsumer clipboardConsumer)
             {
-                if (clipboardConsumer.GetClipboardAbilities().HasFlag(ElClipboardAbilities.CanCopy))
+                if (clipboardConsumer.GetClipboardAbilities().HasFlag(ClipboardAbilities.CanCopy))
                     clipboardConsumer.CopyToClipboard();
             }
         }
@@ -177,16 +177,16 @@ namespace electrifier.Core.Forms
         /// Perform Clipboard-Paste Operation.
         /// 
         /// Includes the following validations:
-        ///  1.) Check if ActiveContent is IElClipboardConsumer.
-        ///  2.) Check if this IElClipboardConsumer can actually paste, i.e. if clipoard content os suitable for this type of ClipboardConsumer.
+        ///  1.) Check if ActiveContent is IClipboardConsumer.
+        ///  2.) Check if this IClipboardConsumer can actually paste, i.e. if clipoard content os suitable for this type of ClipboardConsumer.
         ///  3.) Perform the Paste-Operation to paste clipboard data/items into this ClipboardConsumers View/Folder.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         internal void CmdClipboardPaste_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            // Only IElClipboardConsumer can paste data from clipboard
-            if (this.dpnDockPanel.ActiveContent is IElClipboardConsumer clipboardConsumer)
+            // Only IClipboardConsumer can paste data from clipboard
+            if (this.dpnDockPanel.ActiveContent is IClipboardConsumer clipboardConsumer)
             {
                 if (clipboardConsumer.CanPasteFromClipboard())
                     clipboardConsumer.PasteFromClipboard();
@@ -195,7 +195,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdSelectAll_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IElClipboardConsumer to avoid accessing ActiveContent
+            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.SelectAll();
@@ -204,7 +204,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdSelectNone_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IElClipboardConsumer to avoid accessing ActiveContent
+            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.SelectNone();
@@ -213,7 +213,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IElClipboardConsumer to avoid accessing ActiveContent
+            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.InvertSelection();

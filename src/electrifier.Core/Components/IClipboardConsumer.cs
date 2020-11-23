@@ -24,21 +24,21 @@ using System;
 namespace electrifier.Core.Components
 {
     [Flags]
-    public enum ElClipboardAbilities
+    public enum ClipboardAbilities
     {
         None = 0x0,
         CanCut = 0x1,
         CanCopy = 0x2,
     }
 
-    public interface IElClipboardConsumer
+    public interface IClipboardConsumer
     {
         // Cut & Copy
 
-        ElClipboardAbilities GetClipboardAbilities();
+        ClipboardAbilities GetClipboardAbilities();
         /// <summary>
-        /// Fires when the clipboard abilities (i.e. <see cref="ElClipboardAbilities.CanCut"/> and / or
-        /// <see cref="ElClipboardAbilities.CanCopy"/>) changed, e.g. after selection has been changed.
+        /// Fires when the clipboard abilities (i.e. <see cref="ClipboardAbilities.CanCut"/> and / or
+        /// <see cref="ClipboardAbilities.CanCopy"/>) changed, e.g. after selection has been changed.
         /// </summary>
         event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
 
@@ -58,7 +58,7 @@ namespace electrifier.Core.Components
         bool CanPasteFromClipboard(); // TODO: Type of clipboard content
 
         ///// <summary>
-        ///// CanPasteFromClipboardChanged is invoked by IElClipboardConsumer when CanPasteFromClipboard changed, e.g. after navigation to a new destination folder has completed.
+        ///// CanPasteFromClipboardChanged is invoked by IClipboardConsumer when CanPasteFromClipboard changed, e.g. after navigation to a new destination folder has completed.
         ///// </summary>
         //event EventHandler CanPasteFromClipboardChanged;
 
@@ -70,15 +70,15 @@ namespace electrifier.Core.Components
 
     /// <summary>
     /// The event argument for the <see cref="ClipboardAbilitiesChanged"/> event holds the new, current
-    /// <see cref="ElClipboardAbilities"/> of this <see cref="ShellBrowserDockContent"/>.
+    /// <see cref="ClipboardAbilities"/> of this <see cref="ShellBrowserDockContent"/>.
     /// </summary>
     public class ClipboardAbilitiesChangedEventArgs : EventArgs                 // TODO: Move into interface in future revisions of C#/VS
     {
-        public ClipboardAbilitiesChangedEventArgs(ElClipboardAbilities elClipboardAbilities)
-            => this.NewClipboardAbilities = elClipboardAbilities;
+        public ClipboardAbilitiesChangedEventArgs(ClipboardAbilities clipboardAbilities)
+            => this.NewClipboardAbilities = clipboardAbilities;
 
-        /// <summary>The new <see cref="ElClipboardAbilities"/> of this <see cref="ShellBrowserDockContent"/>.</summary>
-        public ElClipboardAbilities NewClipboardAbilities { get; }
+        /// <summary>The new <see cref="ClipboardAbilities"/> of this <see cref="ShellBrowserDockContent"/>.</summary>
+        public ClipboardAbilities NewClipboardAbilities { get; }
     }
 
     #endregion ================================================================================================================

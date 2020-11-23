@@ -73,7 +73,7 @@ namespace electrifier.Core.Components.Controls
 
         #endregion =============================================================================================================
 
-        #region Implemented Interface: IElThemedControl ========================================================================
+        #region Implemented Interface: IThemedControl ==========================================================================
 
         // Remember the theme resource name is build internally, so don't add its ".png"-file extension here :)
         public string DefaultTheme => "iTweek by Miles Ponson (32px)";

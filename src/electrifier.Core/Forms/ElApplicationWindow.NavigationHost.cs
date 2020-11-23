@@ -54,7 +54,7 @@ namespace electrifier.Core.Forms
                 dockContent.ShellFolderViewModeChanged += this.DockContent_ShellFolderViewModeChanged;
 
             // Connect clipboard consumer events
-            if (dockContent is IElClipboardConsumer clipboardConsumer)
+            if (dockContent is IClipboardConsumer clipboardConsumer)
                 clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardAbilitiesChanged;
 
 

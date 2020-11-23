@@ -41,7 +41,7 @@ namespace RibbonLib.Controls
     {
         #region Fields ====================================================================================================
 
-        private ElClipboardAbilities clipboardAbilities = ElClipboardAbilities.CanCut | ElClipboardAbilities.CanCopy;
+        private ClipboardAbilities clipboardAbilities = ClipboardAbilities.CanCut | ClipboardAbilities.CanCopy;
 
         private Shell32.FOLDERVIEWMODE shellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_AUTO;
 
@@ -57,9 +57,9 @@ namespace RibbonLib.Controls
             get => this.activeDockContent;
             set
             {
-                // Update the clipboard buttons accordingly if activated DockContent is an IElClipboardConsumer
-                this.ClipboardAbilities = (value is IElClipboardConsumer clipboardConsumer) ?
-                    clipboardConsumer.GetClipboardAbilities() : ElClipboardAbilities.None;
+                // Update the clipboard buttons accordingly if activated DockContent is an IClipboardConsumer
+                this.ClipboardAbilities = (value is IClipboardConsumer clipboardConsumer) ?
+                    clipboardConsumer.GetClipboardAbilities() : ClipboardAbilities.None;
                 this.activeDockContent = value;
             }
         }
@@ -71,7 +71,7 @@ namespace RibbonLib.Controls
 
 
 
-        public ElClipboardAbilities ClipboardAbilities
+        public ClipboardAbilities ClipboardAbilities
         {
             get => this.clipboardAbilities;
             set
@@ -81,8 +81,8 @@ namespace RibbonLib.Controls
                     this.clipboardAbilities = value;
 
                     // Update ribbon command button states
-                    this.BtnClipboardCut.Enabled = value.HasFlag(ElClipboardAbilities.CanCut);
-                    this.BtnClipboardCopy.Enabled = value.HasFlag(ElClipboardAbilities.CanCopy);
+                    this.BtnClipboardCut.Enabled = value.HasFlag(ClipboardAbilities.CanCut);
+                    this.BtnClipboardCopy.Enabled = value.HasFlag(ClipboardAbilities.CanCopy);
                 }
             }
         }
@@ -270,7 +270,7 @@ namespace RibbonLib.Controls
         /// <param name="e">The <see cref="ClipboardAbilitiesChangedEventArgs"/>.</param>
         public void ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs args)
         {
-            Debug.Assert(sender is IElClipboardConsumer, "sender is not of type IElClipboardConsumer");
+            Debug.Assert(sender is IClipboardConsumer, "sender is not of type IClipboardConsumer");
 
             if (sender is null) throw new ArgumentNullException(nameof(sender));
             if (args is null) throw new ArgumentNullException(nameof(args));
