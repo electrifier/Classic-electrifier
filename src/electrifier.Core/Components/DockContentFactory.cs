@@ -30,11 +30,11 @@ namespace electrifier.Core.Components
         /// <summary>
         /// Deserialize given persistString as used in XML-files to create the corresponding DockContent instance.
         /// </summary>
-        /// <param name="navigationHost"><see cref="IElNavigationHost"/> instance the new DockContent will be added to.</param>
+        /// <param name="navigationHost"><see cref="INavigationHost"/> instance the new DockContent will be added to.</param>
         /// <param name="persistString">The string stored in XML-Files with DockContent type and parameters,
         ///     e.g "ElShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
         /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid</returns>
-        public static IDockContent Deserialize(IElNavigationHost navigationHost, string persistString)
+        public static IDockContent Deserialize(INavigationHost navigationHost, string persistString)
         {
             IDockContent dockContent = default;
             var typeNameSeperatorPos = persistString.IndexOf(" ");
@@ -56,7 +56,7 @@ namespace electrifier.Core.Components
             return dockContent;
         }
 
-        public static DockContents.ElShellBrowserDockContent CreateShellBrowser(IElNavigationHost navigationHost, string persistString = null)
+        public static DockContents.ElShellBrowserDockContent CreateShellBrowser(INavigationHost navigationHost, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
             DockContents.ElShellBrowserDockContent shellBrowser = new DockContents.ElShellBrowserDockContent(navigationHost, persistString);
@@ -66,7 +66,7 @@ namespace electrifier.Core.Components
             return shellBrowser;
         }
 
-        public static ShellFolderDockContent CreateShellFolderDockContent(IElNavigationHost navigationHost, string persistString = null)
+        public static ShellFolderDockContent CreateShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
         {
             ShellFolderDockContent dockContent = new ShellFolderDockContent(navigationHost, persistString);
 

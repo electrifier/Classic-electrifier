@@ -84,7 +84,7 @@ namespace electrifier.Core.Components.DockContents
 
         // TODO: Work on Get/Lost Focus in general!
 
-        public ElShellBrowserDockContent(IElNavigationHost navigationHost, string persistString = null)
+        public ElShellBrowserDockContent(INavigationHost navigationHost, string persistString = null)
           : base(navigationHost)
         {
             this.SuspendLayout();

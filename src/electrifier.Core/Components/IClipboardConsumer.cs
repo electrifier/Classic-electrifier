@@ -53,7 +53,7 @@ namespace electrifier.Core.Components
         void GetSupportedClipboardPasteTypes();
 
         /// <summary>
-        /// CanPaste is invoked by IElNavigationHost when the clipboard content has changed.
+        /// CanPaste is invoked by INavigationHost when the clipboard content has changed.
         /// </summary>
         bool CanPasteFromClipboard(); // TODO: Type of clipboard content
 

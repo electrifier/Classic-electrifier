@@ -33,7 +33,7 @@ namespace electrifier.Core.Components.DockContents
 {
     /// <summary>
     /// Abstract class <see cref="NavigableDockContent"/> is the skeleton for navigation clients that
-    /// are controlled by an implementer of the <see cref="IElNavigationHost"/> interface.
+    /// are controlled by an implementer of the <see cref="INavigationHost"/> interface.
     /// </summary>
     /// 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<NavigableDockContent, DockContent>))]
@@ -41,9 +41,9 @@ namespace electrifier.Core.Components.DockContents
       : WeifenLuo.WinFormsUI.Docking.DockContent
 //      , IDockContentEntity
     {
-        public IElNavigationHost NavigationHost { get; private set; }
+        public INavigationHost NavigationHost { get; private set; }
 
-        public NavigableDockContent(IElNavigationHost navigationHost)
+        public NavigableDockContent(INavigationHost navigationHost)
           : base()
         {
             this.NavigationHost = navigationHost ??

@@ -30,7 +30,7 @@ using electrifier.Core.Components.DockContents;
 namespace electrifier.Core.Forms
 {
     public partial class ElApplicationWindow
-      : IElNavigationHost
+      : INavigationHost
     {
         protected internal ArrayList dockContentList = new ArrayList();
         protected internal NavigableDockContent activeDockContent = null;

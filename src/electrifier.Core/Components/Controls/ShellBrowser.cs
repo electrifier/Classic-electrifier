@@ -126,8 +126,8 @@ namespace electrifier.Core.Components.Controls
 
         public ShellFolder CurrentFolder
         {
-            set => this.SetCurrentFolder(value);
             get => this.currentFolder;
+            set => this.SetCurrentFolder(value);
         }
 
 
@@ -151,8 +151,8 @@ namespace electrifier.Core.Components.Controls
 
         private void ShellBrowser_Load(object sender, EventArgs e)
         {
-            var startFolder = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
-            this.SetCurrentFolder(startFolder);
+            //var startFolder = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
+            //this.SetCurrentFolder(startFolder);
             // TODO: SHCreateShellFolderView?!?
         }
 
@@ -172,11 +172,12 @@ namespace electrifier.Core.Components.Controls
 
             if (null != this.currentFolder)
             {
-                //if (Shell32.PIDLUtil.Equals(this.currentFolder.PIDL, shellFolder.PIDL))
-                //{
-                //    AppContext.TraceWarning("SetCurrentFolder already set!");
-                //    return;
-                //}
+                if (Shell32.PIDLUtil.Equals(this.currentFolder.PIDL, newCurrentFolder.PIDL))
+                {
+                    AppContext.TraceWarning("ShellBrowser.SetCurrentFolder(): Targeted same folder " +
+                        $"'{ newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing) }'");
+                    return;
+                }
 
                 this.currentFolder.Dispose();
             }
@@ -236,7 +237,7 @@ namespace electrifier.Core.Components.Controls
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show($"GetShellView failed: {ex.ToString()}");
+                System.Windows.Forms.MessageBox.Show($"GetShellView failed: { ex }");
             }
 
             return null;

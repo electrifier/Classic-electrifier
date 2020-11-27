@@ -32,60 +32,53 @@ namespace electrifier.Core.Components.DockContents
     public class ShellFolderDockContent
       : NavigableDockContent
     {
+        private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
         private System.Windows.Forms.Splitter splitter;
         private ShellBrowser shellBrowser;
         private System.Windows.Forms.StatusStrip statusStrip;
-        private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
 
         public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
 
         public override event EventHandler NavigationOptionsChanged;
 
-        public ShellFolderDockContent(IElNavigationHost navigationHost, string persistString = null)
+        public ShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
           : base(navigationHost)
         {
             this.InitializeComponent();
-
-
         }
 
         private void ShellFolderDockContent_Load(object sender, EventArgs e)
         {
-            this.shellNamespaceTree.DisplayPinnedItemsOnly = true;
-            //            var test = KnownFolder.Desktop;
-            //            var test2 = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
+            this.Icon = Properties.Resources.ShellBrowserDockContent;
 
-            // TODO: Add QuickAccess, OneDrive, This PC, Network
-            //            this.shellNamespaceTree.RootItems.Add(ShellFolder.Desktop, false, true);
-            //this.shellNamespaceTree.RootItems.Add(new ShellFolder(KnownFolder.Desktop), false, false);
-            //this.shellNamespaceTree.RootItems.Add(KnownFolder.SkyDrive, false, false);
-            //            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop), false, false);
-            //            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.), false, false);
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(@"shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}"), false, false);        // This is the "Quick Access"-folder, which is new to Windows 10
-
-
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop), false, false);
-//            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_AppDataDesktop), false, false);
-//            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_PublicDesktop), false, false);
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_ThisPCDesktop), false, false);     // => Is mapped to "Snyc Centre"?
+            this.shellNamespaceTree.RootItems.Add(new ShellFolder(@"shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}"), false, false);        // TOOD: This is the "Quick Access"-folder, which is new to Windows 10
             this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_OneDrive), false, false);
             this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_ComputerFolder), false, false);
             this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_NetworkFolder), false, false);
 
-
-
+            this.shellNamespaceTree.SelectedItem = this.shellNamespaceTree.RootItems[0];
         }
 
         private void ShellNamespaceTree_AfterSelect(object sender, EventArgs e)
         {
             ShellItem shellItem = this.shellNamespaceTree.SelectedItem;
 
-            if (null != shellItem)
-            {
-                if(!this.shellBrowser.CurrentFolder.PIDL.Equals(shellItem.PIDL))
-                    this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+            if (null == shellItem)
+                throw new NullReferenceException(nameof(shellItem));
 
-            }
+            this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+
+            //if (!shellItem.PIDL.Equals(this.shellBrowser.CurrentFolder))
+            //{
+            //    this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+            //}
+
+
+            //if (null != shellItem)
+            //{
+            //    if (null == this.shellBrowser.CurrentFolder || !this.shellBrowser.CurrentFolder.PIDL.Equals(shellItem.PIDL))
+            //        this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+            //}
         }
 
 
@@ -111,6 +104,8 @@ namespace electrifier.Core.Components.DockContents
                 // TODO: BUG: Navigation to user folder, e.g. "Thorsten Jung", will "magically add" that folder to the tree
                 //else
                 //    this.shellNamespaceTree.SelectedItem = null;
+
+                this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.ParentRelativeForUI);
             }
         }
 

@@ -25,9 +25,9 @@ namespace electrifier.Core.Components
     /// <summary>
     /// The interface hosts of <see cref="NavigableDockContent"/>'s have to provide to communicate.
     /// 
-    /// Currently only <see cref="Forms.Electrifier"/> implements this interface
+    /// Currently only <see cref="Forms.ElApplicationWindow"/> implements this interface
     /// </summary>
-    public interface IElNavigationHost
+    public interface INavigationHost
     {
         NavigableDockContent ActiveDockContent { get; }
 

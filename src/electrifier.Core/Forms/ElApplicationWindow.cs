@@ -147,7 +147,7 @@ namespace electrifier.Core.Forms
             // Process Ribbon-part of DockContent-Activation
             this.RibbonItems.ActiveDockContent = activeContent;
 
-            // Process Interface IElNavigationHost-part of DockContent-Activation
+            // Process Interface INavigationHost-part of DockContent-Activation
             if (null == activeContent)
             {
                 AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, activeContent is null");
