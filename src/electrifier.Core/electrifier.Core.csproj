@@ -186,7 +186,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SessionContext.cs" />
-    <Compile Include="WindowsShell\Clipboard.cs" />
+    <Compile Include="WindowsShell\ClipboardState.cs" />
     <Compile Include="WindowsShell\DesktopIconManager.cs" />
     <Compile Include="WindowsShell\ShellFileOperations.cs" />
     <Compile Include="WindowsShell\ShellTools.cs" />

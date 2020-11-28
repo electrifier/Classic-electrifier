@@ -165,7 +165,7 @@ namespace electrifier.Core.Components.DockContents
             AppContext.TraceScope();
 
             // Check whether clipboard contains any data object
-            if (!ElClipboard.ContainsData())
+            if (!ClipboardState.ContainsData)
             {
                 AppContext.TraceWarning("No clipboard data present.");
 
@@ -185,7 +185,7 @@ namespace electrifier.Core.Components.DockContents
             if (Clipboard.ContainsFileDropList())
             {
                 // Determine the DragDropEffect of the current clipboard object and perform paste operation
-                this.PasteFileDropListFromClipboard(ElClipboard.EvaluateDropEffect());
+                this.PasteFileDropListFromClipboard(ClipboardState.CurrentDropEffect);
             }
             else
                 throw new NotImplementedException("Clipboard format not supported: " + Clipboard.GetDataObject().GetFormats().ToString());
