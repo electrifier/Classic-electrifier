@@ -35,7 +35,7 @@ namespace electrifier.Core.Components.DockContents
     /// <summary>
     /// ElShellBrowserDockContent is electrifier's wrapper class for ExplorerBrowser Control.
     /// 
-    /// This partial class file contains the <see cref="IElClipboardConsumer"/> implementation.
+    /// This partial class file contains the <see cref="IClipboardConsumer"/> implementation.
     /// </summary>
     public partial class ElShellBrowserDockContent
       : IClipboardConsumer
@@ -54,7 +54,7 @@ namespace electrifier.Core.Components.DockContents
         public event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
 
         /// <summary>
-        /// Raises the <see cref="IElClipboardConsumer.ClipboardAbilitiesChanged"/> event.
+        /// Raises the <see cref="IClipboardConsumer.ClipboardAbilitiesChanged"/> event.
         /// </summary>
         protected internal virtual void OnClipboardAbilitiesChanged(ClipboardAbilities clipboardAbilities)
         {

@@ -86,7 +86,7 @@ namespace electrifier.Core.Components.DockContents
         // TODO: Put ShellFolderViewMode-property into its own interface? => "Classes are fast, interfaces are slow" I've read.
         public virtual bool HasShellFolderViewMode => false;
         public virtual Shell32.FOLDERVIEWMODE ShellFolderViewMode { get => Shell32.FOLDERVIEWMODE.FVM_AUTO; set => throw new NotImplementedException(); }
-        public virtual event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
+        public event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
 
         // TODO: 05/02/19 Search and Filter options will be combined!
         //public virtual ElNavOptionState CanApplyFilter() { return ElNavOptionState.Hidden; }
@@ -143,7 +143,7 @@ namespace electrifier.Core.Components.DockContents
           : base()
         {
             this.Owner = owner ??
-                throw new ArgumentNullException("Instantiation of ElNavigableTargetItemCollection not allowed without given NavigableDockContent");
+                throw new ArgumentNullException(nameof(owner));
         }
 
         /// <summary>
@@ -199,7 +199,7 @@ namespace electrifier.Core.Components.DockContents
     /// </summary>
     public abstract class ElNavigableTargetItem
     {
-        protected ShellItem shellItem = default;
+        private ShellItem shellItem;
 
         public ShellItem ShellItem {
             get => this.shellItem;

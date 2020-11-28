@@ -51,7 +51,7 @@ namespace RibbonLib.Controls
 
         public ElApplicationWindow ApplicationWindow { get; }
 
-        private IDockContent activeDockContent = null;
+        private IDockContent activeDockContent;
         public IDockContent ActiveDockContent
         {
             get => this.activeDockContent;
@@ -262,11 +262,11 @@ namespace RibbonLib.Controls
         }
 
         /// <summary>
-        /// Process <see cref="IElClipboardConsumer.ClipboardAbilitiesChanged"/> event.
+        /// Process <see cref="IClipboardConsumer.ClipboardAbilitiesChanged"/> event.
         /// 
         /// In case sender is the active DockContent, update the clipboard buttons accordingly.
         /// </summary>
-        /// <param name="sender">The <see cref="IElClipboardConsumer"/> that has changed its <see cref="clipboardAbilities"/>.</param>
+        /// <param name="sender">The <see cref="IClipboardConsumer"/> that has changed its <see cref="clipboardAbilities"/>.</param>
         /// <param name="e">The <see cref="ClipboardAbilitiesChangedEventArgs"/>.</param>
         public void ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs args)
         {

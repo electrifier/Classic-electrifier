@@ -36,7 +36,7 @@ namespace electrifier.Core.Components.Controls
         /// <summary> 
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer components;
 
         private System.Windows.Forms.ToolStripButton btnGoBack;
         private System.Windows.Forms.ToolStripButton btnGoForward;
@@ -64,7 +64,7 @@ namespace electrifier.Core.Components.Controls
 
         #region Properties =====================================================================================================
 
-        private NavigableDockContent activeDockContent = null;
+        private NavigableDockContent activeDockContent;
 
         public NavigableDockContent ActiveDockContent {
             get => this.activeDockContent;
@@ -83,7 +83,7 @@ namespace electrifier.Core.Components.Controls
 
         public IEnumerable<string> GetAvailableThemes() { return this.EnumerateAvailableThemes(); }
 
-        private string currentTheme = null;
+        private string currentTheme;
         public string CurrentTheme {
             get => this.currentTheme;
             set {

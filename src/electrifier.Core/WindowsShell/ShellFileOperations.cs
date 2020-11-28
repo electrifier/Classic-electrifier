@@ -31,7 +31,7 @@ namespace electrifier.Core.WindowsShell
     {
         public ShellFileOperations ShellFileOperations { get; }
 
-        public bool ThrowUserCancellation { get; set; } = false;
+        public bool ThrowUserCancellation { get; set; }
 
         //public IEnumerable<ShellItem> SourceItems { get; }
 

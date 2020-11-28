@@ -127,6 +127,6 @@ namespace electrifier.Core.Components.DockContents
             set => this.ViewMode = value;
         }
 
-        public override event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
+//        public override event EventHandler<ShellFolderViewModeChangedEventArgs> ShellFolderViewModeChanged;
     }
 }

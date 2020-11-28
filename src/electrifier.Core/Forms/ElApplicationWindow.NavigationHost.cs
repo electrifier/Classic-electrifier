@@ -32,8 +32,8 @@ namespace electrifier.Core.Forms
     public partial class ElApplicationWindow
       : INavigationHost
     {
-        protected internal ArrayList dockContentList = new ArrayList();
-        protected internal NavigableDockContent activeDockContent = null;
+        private ArrayList dockContentList = new ArrayList();
+        private NavigableDockContent activeDockContent;
         public NavigableDockContent ActiveDockContent { get => this.activeDockContent; }
 
         public void AddDockContent(NavigableDockContent dockContent)

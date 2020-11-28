@@ -41,10 +41,10 @@ namespace electrifier.Core.Components
         // event EventHandler ClientActivated;
 
         // event EventHandler CurrentFolderUpdated;
-        // void SetCurrentFolder(IElNavigationClient client);
+        // void SetCurrentFolder(INavigationClient client);
         // event EventHandler FavoritesUpdated;
-        // void SetFavorites(IElNavigationClient client, object[] Favorites);
+        // void SetFavorites(INavigationClient client, object[] Favorites);
         // event EventHandler NavigationOptionsUpdated;
-        // void OnNavigationOptionsChanged(IElNavigationClient client);
+        // void OnNavigationOptionsChanged(INavigationClient client);
     }
 }

@@ -172,7 +172,7 @@ namespace electrifier.Core
             private set; //set { this.properties.Assign(value); }
         }
 
-        public SessionSelector SessionSelector { get; private set; } = null;
+        public SessionSelector SessionSelector { get; private set; }
         public bool HasSessionSelector => this.SessionSelector != null;
 
 

@@ -52,7 +52,7 @@ namespace electrifier.Core.Components
         /// <summary>
         /// Set to 'True' to cancel the operation.
         /// </summary>
-        public bool Cancel { get; set; } = false;
+        public bool Cancel { get; set; }
     }
 
     #endregion ============================================================================================================
@@ -332,7 +332,7 @@ namespace electrifier.Core.Components
         /// <summary>
         /// Required designer variable.
         /// </summary>
-        private System.ComponentModel.IContainer components = null;
+        private System.ComponentModel.IContainer components;
 
         /// <summary> 
         /// Clean up any resources being used.

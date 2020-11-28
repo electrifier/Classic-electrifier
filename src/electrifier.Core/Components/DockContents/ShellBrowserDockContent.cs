@@ -48,7 +48,7 @@ namespace electrifier.Core.Components.DockContents
 
         #region Properties ====================================================================================================
 
-        public ShellItem InitialNaviagtionTarget { get; private set; } = default;
+        public ShellItem InitialNaviagtionTarget { get; private set; }
 
         public Shell32.FOLDERVIEWMODE ViewMode
         {
