@@ -1,0 +1,9 @@
+Icons in this folder are taken from
+
+  https://commons.wikimedia.org/wiki/Tango_icons.
+
+Files are available under licenses specified on their description page.
+All structured data from the file and property namespaces is available
+under the Creative Commons CC0 License; all unstructured text is
+available under the Creative Commons Attribution-ShareAlike License;
+additional terms may apply.
