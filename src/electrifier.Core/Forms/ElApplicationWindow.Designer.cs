@@ -49,31 +49,31 @@ namespace electrifier.Core.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.stsStatusStrip = new System.Windows.Forms.StatusStrip();
+            this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.tslItemCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.tslSelectionCount = new System.Windows.Forms.ToolStripStatusLabel();
             this.tscToolStripContainer = new System.Windows.Forms.ToolStripContainer();
             this.dpnDockPanel = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this.ntsNavigation = new electrifier.Core.Components.Controls.NavigationToolStrip();
+            this.NavigationToolStrip = new electrifier.Core.Components.Controls.NavigationToolStrip();
             this.rbnRibbon = new RibbonLib.Ribbon();
-            this.fspFormStatePersistor = new electrifier.Core.Components.ElFormStatePersistor(this.components);
-            this.stsStatusStrip.SuspendLayout();
+            this.FormStatePersistor = new electrifier.Core.Components.FormStatePersistor(this.components);
+            this.StatusStrip.SuspendLayout();
             this.tscToolStripContainer.ContentPanel.SuspendLayout();
             this.tscToolStripContainer.TopToolStripPanel.SuspendLayout();
             this.tscToolStripContainer.SuspendLayout();
             this.SuspendLayout();
             // 
-            // stsStatusStrip
+            // StatusStrip
             // 
-            this.stsStatusStrip.AutoSize = false;
-            this.stsStatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.stsStatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.StatusStrip.AutoSize = false;
+            this.StatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tslItemCount,
             this.tslSelectionCount});
-            this.stsStatusStrip.Location = new System.Drawing.Point(0, 528);
-            this.stsStatusStrip.Name = "stsStatusStrip";
-            this.stsStatusStrip.Size = new System.Drawing.Size(782, 25);
-            this.stsStatusStrip.TabIndex = 0;
+            this.StatusStrip.Location = new System.Drawing.Point(0, 528);
+            this.StatusStrip.Name = "StatusStrip";
+            this.StatusStrip.Size = new System.Drawing.Size(782, 25);
+            this.StatusStrip.TabIndex = 0;
             // 
             // tslItemCount
             // 
@@ -105,7 +105,7 @@ namespace electrifier.Core.Forms
             // 
             // tscToolStripContainer.TopToolStripPanel
             // 
-            this.tscToolStripContainer.TopToolStripPanel.Controls.Add(this.ntsNavigation);
+            this.tscToolStripContainer.TopToolStripPanel.Controls.Add(this.NavigationToolStrip);
             // 
             // dpnDockPanel
             // 
@@ -116,20 +116,20 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.Size = new System.Drawing.Size(782, 351);
             this.dpnDockPanel.TabIndex = 5;
             // 
-            // ntsNavigation
+            // NavigationToolStrip
             // 
-            this.ntsNavigation.ActiveDockContent = null;
-            this.ntsNavigation.CurrentTheme = "iTweek by Miles Ponson (32px)";
-            this.ntsNavigation.Dock = System.Windows.Forms.DockStyle.None;
-            this.ntsNavigation.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
-            this.ntsNavigation.ImageScalingSize = new System.Drawing.Size(32, 32);
-            this.ntsNavigation.Location = new System.Drawing.Point(0, 0);
-            this.ntsNavigation.Name = "ntsNavigation";
-            this.ntsNavigation.Padding = new System.Windows.Forms.Padding(8);
-            this.ntsNavigation.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.ntsNavigation.Size = new System.Drawing.Size(782, 55);
-            this.ntsNavigation.Stretch = true;
-            this.ntsNavigation.TabIndex = 0;
+            this.NavigationToolStrip.ActiveDockContent = null;
+            this.NavigationToolStrip.CurrentTheme = "iTweek by Miles Ponson (32px)";
+            this.NavigationToolStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.NavigationToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;
+            this.NavigationToolStrip.ImageScalingSize = new System.Drawing.Size(32, 32);
+            this.NavigationToolStrip.Location = new System.Drawing.Point(0, 0);
+            this.NavigationToolStrip.Name = "NavigationToolStrip";
+            this.NavigationToolStrip.Padding = new System.Windows.Forms.Padding(8);
+            this.NavigationToolStrip.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
+            this.NavigationToolStrip.Size = new System.Drawing.Size(782, 55);
+            this.NavigationToolStrip.Stretch = true;
+            this.NavigationToolStrip.TabIndex = 0;
             // 
             // rbnRibbon
             // 
@@ -141,13 +141,10 @@ namespace electrifier.Core.Forms
             this.rbnRibbon.Size = new System.Drawing.Size(782, 122);
             this.rbnRibbon.TabIndex = 6;
             // 
-            // fspFormStatePersistor
+            // FormStatePersistor
             // 
-            this.fspFormStatePersistor.ClientForm = this;
-            this.fspFormStatePersistor.FixWindowState = true;
-            this.fspFormStatePersistor.FormToDesktopMargin = new System.Drawing.Size(94, 94);
-            this.fspFormStatePersistor.LoadingFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.fspFormStatePersistor_LoadingFormState);
-            this.fspFormStatePersistor.SavingFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_SavingFormState);
+            this.FormStatePersistor.LoadFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_LoadFormState);
+            this.FormStatePersistor.SaveFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_SaveFormState);
             // 
             // ElApplicationWindow
             // 
@@ -156,10 +153,10 @@ namespace electrifier.Core.Forms
             this.ClientSize = new System.Drawing.Size(782, 553);
             this.Controls.Add(this.tscToolStripContainer);
             this.Controls.Add(this.rbnRibbon);
-            this.Controls.Add(this.stsStatusStrip);
+            this.Controls.Add(this.StatusStrip);
             this.Name = "ElApplicationWindow";
-            this.stsStatusStrip.ResumeLayout(false);
-            this.stsStatusStrip.PerformLayout();
+            this.StatusStrip.ResumeLayout(false);
+            this.StatusStrip.PerformLayout();
             this.tscToolStripContainer.ContentPanel.ResumeLayout(false);
             this.tscToolStripContainer.TopToolStripPanel.ResumeLayout(false);
             this.tscToolStripContainer.TopToolStripPanel.PerformLayout();
@@ -171,11 +168,11 @@ namespace electrifier.Core.Forms
 
         #endregion
 
-        private System.Windows.Forms.StatusStrip stsStatusStrip;
-        private Components.ElFormStatePersistor fspFormStatePersistor;
+        private System.Windows.Forms.StatusStrip StatusStrip;
+        private Components.FormStatePersistor FormStatePersistor;
         private System.Windows.Forms.ToolStripContainer tscToolStripContainer;
         private WeifenLuo.WinFormsUI.Docking.DockPanel dpnDockPanel;
-        private Components.Controls.NavigationToolStrip ntsNavigation;
+        private Components.Controls.NavigationToolStrip NavigationToolStrip;
         private System.Windows.Forms.ToolStripStatusLabel tslItemCount;
         private System.Windows.Forms.ToolStripStatusLabel tslSelectionCount;
         private RibbonLib.Ribbon rbnRibbon;

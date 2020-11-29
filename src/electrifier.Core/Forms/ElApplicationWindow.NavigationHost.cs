@@ -97,7 +97,7 @@ namespace electrifier.Core.Forms
             AppContext.TraceDebug("CHANGED by Activation - NavigationHost - ViewMode: " + this.RibbonItems.ShellFolderViewMode);
 
             // Update navigation bar, i.e. its button states
-            this.ntsNavigation.ActiveDockContent = dockContent;
+            this.NavigationToolStrip.ActiveDockContent = dockContent;
         }
 
         public void RemoveDockContent(NavigableDockContent dockContent)
@@ -141,7 +141,7 @@ namespace electrifier.Core.Forms
             Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
             if (sender.Equals(this.ActiveDockContent))
-                this.ntsNavigation.UpdateButtonState(sender as NavigableDockContent);
+                this.NavigationToolStrip.UpdateButtonState(sender as NavigableDockContent);
         }
 
         // TODO: 18/11/19: ShellFolderViewMode should be placed into its own Interface => Class are fast, interfaces are slow!

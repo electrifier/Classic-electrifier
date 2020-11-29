@@ -41,7 +41,7 @@ namespace electrifier.Core.Forms
         private SessionCreationMode creationMode = SessionCreationMode.StartNew;
 //        private int ContinueSessionListView_LastSelectedItem = -1;
 
-        #endregion ============================================================================================================
+        #endregion
 
         #region Properties ====================================================================================================
 
@@ -104,7 +104,7 @@ namespace electrifier.Core.Forms
             }
         }
 
-        #endregion ============================================================================================================
+        #endregion
 
         #region Published Events ==============================================================================================
 
@@ -122,7 +122,7 @@ namespace electrifier.Core.Forms
         [Category("Action"), Description("User wants to continue an existing session.")]
         public event EventHandler<ContinueSessionEventArgs> ContinueSession;
 
-        #endregion ============================================================================================================
+        #endregion
 
         #region Subclass: SessionSelectorListViewItem =========================================================================
 
@@ -143,7 +143,7 @@ namespace electrifier.Core.Forms
             }
         }
 
-        #endregion ============================================================================================================
+        #endregion
 
         public SessionSelector(SessionContext sessionContext)
         {
@@ -264,5 +264,5 @@ namespace electrifier.Core.Forms
         public long SessionId { get; }
     }
 
-    #endregion ================================================================================================================
+    #endregion
 }

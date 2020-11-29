@@ -63,7 +63,7 @@ namespace electrifier.Core.WindowsShell
         ///     Verify whether clipboard contains any data object.
         /// </summary>
         /// <returns>
-        ///     true if a data object is present
+        ///     true if a data object is present,
         ///     false if not.
         /// </returns>
         public static bool ContainsData => DataFormatNames.Any(dataformat => Clipboard.ContainsData(dataformat));

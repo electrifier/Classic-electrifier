@@ -349,7 +349,6 @@
 
         #endregion
 
-        private Components.ElFormStatePersistor FormStatePersistor;
         private System.Windows.Forms.SplitContainer Session_WorkbenchSplitContainer;
         private System.Windows.Forms.GroupBox SessionGroupBox;
         private System.Windows.Forms.Panel DialogButtonPanel;

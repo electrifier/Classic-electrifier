@@ -213,7 +213,7 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.SaveAsXml(fullFileName);
         }
 
-        private void fspFormStatePersistor_LoadingFormState(object sender, FormStatePersistorEventArgs args)
+        private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)
         {
             TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
             TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
@@ -229,7 +229,7 @@ namespace electrifier.Core.Forms
             args.Cancel = false;
         }
 
-        private void FormStatePersistor_SavingFormState(object sender, FormStatePersistorEventArgs args)
+        private void FormStatePersistor_SaveFormState(object sender, FormStatePersistorEventArgs args)
         {
             TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
             TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
