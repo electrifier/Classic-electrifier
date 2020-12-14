@@ -30,7 +30,7 @@ namespace electrifier.Core.Forms
     public partial class SessionSelector
       : Form
     {
-        #region Fields ========================================================================================================
+        #region = Fields =======================================================================================================
 
         public enum SessionCreationMode
         {
@@ -43,7 +43,7 @@ namespace electrifier.Core.Forms
 
         #endregion
 
-        #region Properties ====================================================================================================
+        #region = Properties ===================================================================================================
 
         public SessionContext SessionContext { get; }
 
@@ -106,25 +106,27 @@ namespace electrifier.Core.Forms
 
         #endregion
 
-        #region Published Events ==============================================================================================
+        #region = Published Events =============================================================================================
 
         /// <summary>
-        /// Fires when this dialog gets confirmed by using the <b>Ok</b> button
+        /// Fires after this dialog gets confirmed by using the <b>Ok</b> button
         /// and <see cref="SessionCreationMode"/> is <i>StartNew</i>.
         /// </summary>
-        [Category("Action"), Description("User wants to start a new session.")]
+        [Category("Action")]
+        [Description("User has chosen to start a new session.")]
         public event EventHandler<StartNewSessionEventArgs> StartNewSession;
 
         /// <summary>
-        /// Fires when this dialog gets confirmed by using the <b>Ok</b> button
+        /// Fires after this dialog gets confirmed by using the <b>Ok</b> button
         /// and <see cref="SessionCreationMode"/> is <i>Continue</i>.
         /// </summary>
-        [Category("Action"), Description("User wants to continue an existing session.")]
+        [Category("Action")]
+        [Description("User has chosen to continue an existing session.")]
         public event EventHandler<ContinueSessionEventArgs> ContinueSession;
 
         #endregion
 
-        #region Subclass: SessionSelectorListViewItem =========================================================================
+        #region = Subclass: SessionSelectorListViewItem ========================================================================
 
         protected class SessionSelectorListViewItem
           : ListViewItem
@@ -180,8 +182,9 @@ namespace electrifier.Core.Forms
             if (SessionCreationMode.StartNew == this.CreationMode)
             {
                 this.StartNewSession.Invoke(this, new StartNewSessionEventArgs(
-                    this.CreateSessionNameTextBox.Text,
-                    this.CreateSessionDescriptionTextBox.Text));
+                    this.SessionCreationName,
+                    this.SessionCreationDescription,
+                    this.DialogRememberChoiceCheckBox.Checked));
             }
             else if (SessionCreationMode.Continue == this.CreationMode)
             {
@@ -194,7 +197,9 @@ namespace electrifier.Core.Forms
 
                 SessionSelectorListViewItem listViewItem = items[0] as SessionSelectorListViewItem;
 
-                this.ContinueSession.Invoke(this, new ContinueSessionEventArgs(listViewItem.Session.Id));
+                this.ContinueSession.Invoke(this, new ContinueSessionEventArgs(
+                    listViewItem.Session.Id,
+                    this.DialogRememberChoiceCheckBox.Checked));
             }
 
             this.Close();
@@ -237,21 +242,23 @@ namespace electrifier.Core.Forms
         }
     }
 
-    #region EventArgs =========================================================================================================
+    #region = EventArgs ========================================================================================================
 
     /// <summary>
     /// Event argument for the <see cref="SessionSelector.StartNewSession"/> event.
     /// </summary>
     public class StartNewSessionEventArgs : EventArgs
     {
-        public StartNewSessionEventArgs(string name, string description)
+        public StartNewSessionEventArgs(string name, string description, bool setAsDefault)
         {
             this.Name = name;
             this.Description = description;
+            this.SetAsDefault = setAsDefault;
         }
 
         public string Name { get; }
         public string Description { get; }
+        public bool SetAsDefault { get; }
     }
 
     /// <summary>
@@ -259,9 +266,13 @@ namespace electrifier.Core.Forms
     /// </summary>
     public class ContinueSessionEventArgs : EventArgs
     {
-        public ContinueSessionEventArgs(long sessionId) => this.SessionId = sessionId;
-
+        public ContinueSessionEventArgs(long sessionId, bool setAsDefault)
+        {
+            this.SessionId = sessionId;
+            this.SetAsDefault = setAsDefault;
+        }
         public long SessionId { get; }
+        public bool SetAsDefault { get; }
     }
 
     #endregion

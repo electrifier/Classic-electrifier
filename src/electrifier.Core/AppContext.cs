@@ -243,8 +243,9 @@ namespace electrifier.Core
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                AppContext.TraceError(ex.Message);
                 throw;
             }
 

@@ -467,6 +467,11 @@ namespace EntityLighter
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="statement"></param>
+        /// <returns>The number of rows inserted, updated or delated. -1 for SELECT statements.</returns>
         public int ExecuteNonQuery(string statement)
         {
             using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
@@ -505,6 +510,11 @@ namespace EntityLighter
 
             return false;
         }
+
+        //public SqliteCommand CreateCommand()
+        //{
+                // TODO: Use Fluent Interface for command creation and parameter binding
+        //}
 
         public void CreateEntityModel(Type entityType)
         {

@@ -119,25 +119,30 @@ namespace electrifier
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Error while running electrifier.\n\n" + ex.Message,
-                        "electrifier: Runtime Error",
-
-                        // Inner Exception!
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
+                    MessageBox.Show(
+                        $"Error while running electrifier.\n\n" +
+                        $"Please try to reinstall electrifier application.\n\n" +
+                        $"Type of Exception: '{ ex.Message }'\n\n" +
+                        $"Inner Exception: '{ ex.InnerException.Message }'\n\n" +
+                        $"{ ex.StackTrace }",
+                        caption: @"electrifier: Runtime Error",
+                        buttons: MessageBoxButtons.OK,
+                        icon: MessageBoxIcon.Error);
 
                     Environment.ExitCode = (int)SystemErrorCodes.ERROR_INVALID_FUNCTION;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to load '" + ElectrifierMainEntryPoint.elCoreDLLFileName + "'.\n\n" +
-                    "Please reinstall electrifier application.\n\n" + ex.Message,
-                    "electrifier: Critical Startup Error",
-
-                    // Inner Exception!
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"Unable to launch '{ ElectrifierMainEntryPoint.elCoreDLLFileName }'.\n\n" +
+                    $"Please try to reinstall electrifier application.\n\n" +
+                    $"Type of Exception: '{ ex.Message }'\n\n" +
+                    $"Inner Exception: '{ ex.InnerException.Message }'\n\n" +
+                    $"{ ex.StackTrace }",
+                    caption: @"electrifier: Critical Startup Error",
+                    buttons: MessageBoxButtons.OK,
+                    icon: MessageBoxIcon.Error);
 
                 Environment.ExitCode = (int)SystemErrorCodes.ERROR_FILE_NOT_FOUND;
             }

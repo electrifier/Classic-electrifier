@@ -28,8 +28,16 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 
+// TODO: By using 'sqlite3_column_int()' we could retrieve 32-bit-integers
+// TODO: We should use prepared statements:
+//      https://stackoverflow.com/questions/16711386/getting-int-values-from-sqlite
+//      https://stackoverflow.com/questions/27383724/sqlite3-prepare-v2-sqlite3-exec
+
+
 namespace electrifier.Core
 {
+    #region = SessionEntity ====================================================================================================
+
     [Table(Name = "Session")]
     public class SessionEntity
     {
@@ -48,13 +56,13 @@ namespace electrifier.Core
         [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
         public DateTime DateModified { get; protected set; }
 
-        private SessionEntity(DataContext dataContext, SqliteDataReader dataReader)
+        private SessionEntity(SqliteDataReader dataReader)
         {
-            this.Id = (long)dataReader[0];              // TODO: Use column names instead of ids
-            this.Name = (string)dataReader[1];
-            this.Description = (dataReader[2] is DBNull ? string.Empty : (string)dataReader[2]);
-            this.DateCreated = DataContext.ConvertToDateTime((string)dataReader[3]);
-            this.DateModified = DataContext.ConvertToDateTime((string)dataReader[4]);
+            this.Id = (long)dataReader[nameof(this.Id)];
+            this.Name = (string)dataReader[nameof(this.Name)];
+            this.Description = (dataReader[nameof(this.Description)] is DBNull ? string.Empty : (string)dataReader[nameof(this.Description)]); // TODO: Put Null-Handling into EntityLighter
+            this.DateCreated = DataContext.ConvertToDateTime((string)dataReader[nameof(this.DateCreated)]);
+            this.DateModified = DataContext.ConvertToDateTime((string)dataReader[nameof(this.DateModified)]);
 
             //this.Properties = new PropertyCollection(dataContext);
         }
@@ -82,10 +90,12 @@ namespace electrifier.Core
             return new EntitySet<SessionEntity>(dataContext).Load(statement,
                 (sqliteDataReader) =>
                 {
-                    return new SessionEntity(dataContext, sqliteDataReader);
+                    return new SessionEntity(sqliteDataReader);
                 });
         }
     }
+
+    #endregion
 
     /*
      * In case we want to provide multi-window-support in the future, see this:
@@ -138,7 +148,7 @@ namespace electrifier.Core
 
         public string DataContextStorage { get { return $"{ this.BaseDirectory }\\electrifier.config"; } }
         public DataContext DataContext { get; }
-
+        public GlobalConfig GlobalConfig { get; }
         public Icon ApplicationIcon { get; private set; }
         public ElApplicationWindow ApplicationWindow { get; private set; }
 
@@ -216,32 +226,37 @@ namespace electrifier.Core
             this.BaseDirectory = baseDirectory;
             this.IsIncognito = isIncognito;
 
-            // TODO: Incognito => read only db
-            // TODO: db may be locked by DB Browser! electrifier itself doesn't lock the DB.
-            // TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
-            this.DataContext = new EntityLighter.DataContext(this.DataContextStorage);
+            try
+            {
+                // TODO: Incognito => read only db
+                // TODO: db may be locked by DB Browser! electrifier itself doesn't lock the DB.
+                // TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
+                this.DataContext = new EntityLighter.DataContext(this.DataContextStorage);
+                this.GlobalConfig = new GlobalConfig(this.DataContext);
 
-            this.DataContext.CreateEntityModel(typeof(SessionEntity));
-            this.DataContext.CreateEntityModel(typeof(SessionProperty));
+
+                this.DataContext.CreateEntityModel(typeof(ConfigurationEntity));
+                this.DataContext.CreateEntityModel(typeof(SessionEntity));
+                this.DataContext.CreateEntityModel(typeof(SessionProperty));
+
+            }
+            catch (Exception)
+            {
+                // TODO: Switch to incognito mode
+                throw;
+            }
         }
+
+
+        // TODO: Overhaul CreateIntitalForm to avoid Cohesion with AppContext
 
 
         public void CreateInitialForm(AppContext appContext)
         {
-            // TODO: First check if there is a default selection for new session dialog, then directly create ElApplicationWindow
+            var test = (int)this.GlobalConfig.DefaultSession;
 
-            if (this.HasSession)        // Is any DEFAULT SESSION out there?
-            {
-                // Load session, return main window
-                //this.ApplicationWindow = new ElApplicationWindow(this);
 
-                //this.OnMainFormChange(this.ApplicationWindow);
-                long defaultSessionId = -1;     // TODO: Get default session id!
-                this.LoadSession(defaultSessionId);
-
-                this.ApplicationWindow.Show();
-            }
-            else
+            if (this.GlobalConfig.DefaultSession.IsNull)
             {
                 this.SessionSelector = new SessionSelector(this);
                 this.SessionSelector.StartNewSession += this.SessionSelector_StartNewSession;
@@ -249,6 +264,13 @@ namespace electrifier.Core
 
                 this.OnMainFormChange(this.SessionSelector);
             }
+            else
+            {
+                this.LoadSession((int)this.GlobalConfig.DefaultSession);
+            }
+
+            // TODO: Nochmal kucken, ob das hin und hercasten nicht doch zu fehleranfällig ist...
+            // TODO: Testen mit NULL
         }
 
         /// <summary>
@@ -297,6 +319,9 @@ namespace electrifier.Core
             ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
 
             this.ApplicationWindow.Show();
+
+            if (args.SetAsDefault)
+                this.GlobalConfig.DefaultSession.Value = this.Session.Id;
         }
 
         private void SessionSelector_ContinueSession(object sender, ContinueSessionEventArgs args)
@@ -304,6 +329,9 @@ namespace electrifier.Core
             this.LoadSession(args.SessionId);
 
             this.ApplicationWindow.Show();
+
+            if (args.SetAsDefault)
+                this.GlobalConfig.DefaultSession.Value = this.Session.Id;
         }
 
 
@@ -631,7 +659,8 @@ namespace electrifier.Core
 
         public SessionProperty(SessionContext sessionContext, SqliteDataReader sqliteData)
         {
-            this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
+            this.SessionContext = sessionContext ??
+                throw new ArgumentNullException(nameof(sessionContext));
             if (null == sqliteData)
                 throw new ArgumentNullException(nameof(sqliteData));
 

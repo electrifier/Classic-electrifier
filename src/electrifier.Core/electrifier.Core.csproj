@@ -154,6 +154,7 @@
     <Compile Include="Components\FormStatePersistor.cs" />
     <Compile Include="Components\IClipboardConsumer.cs" />
     <Compile Include="Components\INavigationHost.cs" />
+    <Compile Include="GlobalConfig.cs" />
     <Compile Include="Forms\ElAboutDialog.cs">
       <SubType>Form</SubType>
     </Compile>
