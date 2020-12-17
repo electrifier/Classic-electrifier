@@ -59,6 +59,9 @@ namespace electrifier.Core.Components
 
     /// <summary>
     /// <see cref="FormStatePersistor"/> class.
+    /// TODO: Use IExtenderProvider Interface for those Properties
+    /// TODO: Use some generic, i.e. static event-handler for all forms, by extending
+    /// <see cref="FormStatePersistorEventArgs"/> by the Form who's calling.
     /// </summary>
     public class FormStatePersistor
       : Component
@@ -100,7 +103,7 @@ namespace electrifier.Core.Components
         protected bool ShouldSerializeFormToDesktopMargin() => this.FormToDesktopMargin != SystemInformation.IconSpacingSize;
 
         [Category("FormStatePersistor")]
-        [ReadOnly(true)]
+        //[ReadOnly(true)] // TODO: BUG: When ReadOnly = true, no serialization takes place...
         public Form ClientForm
         {
             get => this.clientForm;
