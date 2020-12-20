@@ -25,7 +25,7 @@ namespace Vanara.Windows.Shell
 	/// <seealso cref="Shell32.IServiceProvider" />
 	/// <seealso cref="ICommDlgBrowser" />
 	[ComVisible(true), ClassInterface(ClassInterfaceType.None)]
-	public class ShellBrowser : UserControl, IShellBrowser, IOleCommandTarget, Shell32.IServiceProvider, ICommDlgBrowser
+	public class ShellBrowser : UserControl, IShellBrowser, /*IOleCommandTarget, */Shell32.IServiceProvider, ICommDlgBrowser	// WICHTIG! IOLECOMMANDTARGET auslkommentiert!
 	{
 		internal HWND shellViewWindow;
 		private ShellFolder currentFolder;
@@ -57,11 +57,25 @@ namespace Vanara.Windows.Shell
 		//		public ShellBrowser(ShellView view) => shellView = view ?? throw new ArgumentNullException(nameof(view));
 		public ShellBrowser()
 		{
-
+            this.Load += this.ShellBrowser_Load;
+            this.Resize += this.ShellBrowser_Resize;
 		}
 
-		/// <summary>Gets or sets the <see cref="ShellFolder"/> currently being browsed by the <see cref="ShellView"/>.</summary>
-		[Category("Data"), DefaultValue(null), Description("The folder currently being browsed.")]
+        private void ShellBrowser_Resize(object sender, EventArgs e)
+        {
+            if (iShellView != null && shellViewWindow != null)
+            {
+                User32.MoveWindow(shellViewWindow, 0, 0, ClientRectangle.Width, ClientRectangle.Height, false);
+            }
+        }
+
+        private void ShellBrowser_Load(object sender, EventArgs e)
+        {
+			this.CurrentFolder = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
+        }
+
+        /// <summary>Gets or sets the <see cref="ShellFolder"/> currently being browsed by the <see cref="ShellView"/>.</summary>
+        [Category("Data"), DefaultValue(null), Description("The folder currently being browsed.")]
 		public ShellFolder CurrentFolder
 		{
 			get => currentFolder; //??= IShellView is null ? ShellFolder.Desktop : new ShellFolder(GetFolderForView(IShellView));
@@ -183,6 +197,16 @@ namespace Vanara.Windows.Shell
 			IShellView.UIActivate(SVUIA.SVUIA_ACTIVATE_NOFOCUS);
 
 			if (DesignMode) User32.EnableWindow(shellViewWindow, false);
+		}
+
+		protected override void WndProc(ref Message m)
+		{
+			const int CWM_GETISHELLBROWSER = 0x407;
+
+			if (CWM_GETISHELLBROWSER == m.Msg)
+				m.Result = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
+			else
+				base.WndProc(ref m);
 		}
 
 
@@ -320,8 +344,15 @@ namespace Vanara.Windows.Shell
 		/// <inheritdoc/>
 		public virtual HRESULT QueryActiveShellView(out IShellView ppshv)
 		{
-			ppshv = null;
-			return HRESULT.E_NOTIMPL;
+			/*
+						ppshv = null;
+						return HRESULT.E_NOTIMPL;
+			*/
+			Marshal.AddRef(Marshal.GetIUnknownForObject(iShellView));
+
+			ppshv = iShellView;
+
+			return HRESULT.S_OK;
 		}
 
 		/// <inheritdoc/>

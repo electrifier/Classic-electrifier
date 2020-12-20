@@ -66,7 +66,7 @@ namespace electrifier.Core.Components.DockContents
             if (null == shellItem)
                 throw new NullReferenceException(nameof(shellItem));
 
-            this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+//            this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
 
             //if (!shellItem.PIDL.Equals(this.shellBrowser.CurrentFolder))
             //{
@@ -150,7 +150,7 @@ namespace electrifier.Core.Components.DockContents
             // 
             // shellBrowser
             // 
-            this.shellBrowser.CurrentFolder = null;
+            //this.shellBrowser.CurrentFolder = null;
             this.shellBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shellBrowser.Location = new System.Drawing.Point(326, 0);
             this.shellBrowser.Name = "shellBrowser";
