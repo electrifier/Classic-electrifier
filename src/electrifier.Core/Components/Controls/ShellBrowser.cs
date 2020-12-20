@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -24,15 +25,172 @@ namespace Vanara.Windows.Shell
 	/// <seealso cref="Shell32.IServiceProvider" />
 	/// <seealso cref="ICommDlgBrowser" />
 	[ComVisible(true), ClassInterface(ClassInterfaceType.None)]
-	internal class ShellBrowser : IShellBrowser, IOleCommandTarget, Shell32.IServiceProvider, ICommDlgBrowser
+	public class ShellBrowser : UserControl, IShellBrowser, IOleCommandTarget, Shell32.IServiceProvider, ICommDlgBrowser
 	{
+		internal HWND shellViewWindow;
+		private ShellFolder currentFolder;
+		private IShellView iShellView;
+
+
 		/// <summary>The <see cref="ShellView"/> instance from initialization.</summary>
-		protected readonly ShellView shellView;
+		//protected ShellView shellView;		// TODO: Immer null!
+
+		/// <summary>Occurs when a property value changes.</summary>
+		[Category("Behavior"), Description("Property changed.")]
+		public event PropertyChangedEventHandler PropertyChanged;
+
+		/// <summary>Fires when a navigation has been initiated, but is not yet complete.</summary>
+		[Category("Action"), Description("Navigation initiated, but not complete.")]
+		public event EventHandler<NavigatingEventArgs> Navigating;
+
+		/// <summary>
+		/// Fires when a navigation has been 'completed': no Navigating listener has canceled, and the ExplorerBorwser has created a new
+		/// view. The view will be populated with new items asynchronously, and ItemsChanged will be fired to reflect this some time later.
+		/// </summary>
+		[Category("Action"), Description("Navigation complete.")]
+		public event EventHandler<NavigatedEventArgs> Navigated;
+
 
 		/// <summary>Initializes a new instance of the <see cref="ShellBrowser"/> class with a <see cref="ShellView"/> instance.</summary>
 		/// <param name="view">The <see cref="ShellView"/> instance.</param>
 		/// <exception cref="ArgumentNullException">view</exception>
-		public ShellBrowser(ShellView view) => shellView = view ?? throw new ArgumentNullException(nameof(view));
+		//		public ShellBrowser(ShellView view) => shellView = view ?? throw new ArgumentNullException(nameof(view));
+		public ShellBrowser()
+		{
+
+		}
+
+		/// <summary>Gets or sets the <see cref="ShellFolder"/> currently being browsed by the <see cref="ShellView"/>.</summary>
+		[Category("Data"), DefaultValue(null), Description("The folder currently being browsed.")]
+		public ShellFolder CurrentFolder
+		{
+			get => currentFolder; //??= IShellView is null ? ShellFolder.Desktop : new ShellFolder(GetFolderForView(IShellView));
+			set => Navigate(value);
+		}
+
+		/// <summary>Gets the underlying <see cref="IShellView"/> instance.</summary>
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public IShellView IShellView
+		{
+			get => iShellView;
+			private set
+			{
+				iShellView = value;
+				//Items = new ShellItemArray(GetItemArray(iShellView, SVGIO.SVGIO_ALLVIEW));
+			}
+		}
+
+		/// <summary>Folder view mode.</summary>
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public FOLDERVIEWMODE ViewMode => IShellView.GetCurrentInfo().ViewMode;
+
+		/// <summary>A set of flags that indicate the options for the folder.</summary>
+		[Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public FOLDERFLAGS Flags => IShellView.GetCurrentInfo().fFlags;
+
+
+
+		/// <summary>
+		/// Clears the view of existing content, fills it with content from the specified container, and adds a new item to the history.
+		/// </summary>
+		/// <param name="folder">The shell folder to navigate to.</param>
+		public void Navigate(ShellFolder folder)
+		{
+			if (folder is null)
+				return;
+
+			if (!OnNavigating(folder)) return;
+
+            ShellFolder previous = currentFolder;
+            currentFolder = folder;
+
+            try
+            {
+                RecreateShellView();
+                //History.Add(folder.PIDL);
+                OnNavigated();
+            }
+            catch (Exception)
+            {
+                currentFolder = previous;
+                RecreateShellView();
+                throw;
+            }
+            OnPropertyChanged(nameof(CurrentFolder));
+        }
+
+
+		/// <summary>Raises the <see cref="Navigated"/> event.</summary>
+		protected internal virtual void OnNavigated() => Navigated?.Invoke(this, new NavigatedEventArgs(CurrentFolder));
+
+
+		private void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "") => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+		/// <summary>Raises the <see cref="Navigating"/> event.</summary>
+		protected internal virtual bool OnNavigating(ShellFolder pendingLocation)
+		{
+			var e = new NavigatingEventArgs(pendingLocation);
+			Navigating?.Invoke(this, e);
+			return !e.Cancel;
+		}
+
+		private void RecreateShellView()
+		{
+//			if (IShellView != null)	// taj: why?!?
+			{
+				CreateShellView();
+				OnNavigated();
+			}
+		}
+
+		//private static IShellView CreateViewObject(ShellFolder folder, HWND owner) =>		// 20.12. taj
+		//	folder?.iShellFolder.CreateViewObject<IShellView>(owner);
+		private static IShellView CreateViewObject(ShellFolder folder, HWND owner)
+		{
+			return folder?.IShellFolder.CreateViewObject<IShellView>(owner);
+		}
+
+		private void CreateShellView()
+		{
+			IShellView prev = IShellView;
+			IShellView = CreateViewObject(CurrentFolder, Handle);
+
+			iShellView = IShellView; // taj, HACK
+			//shellView = (ShellView)IShellView;	// 20.12.
+
+			try
+			{
+				var fsettings = new FOLDERSETTINGS(FOLDERVIEWMODE.FVM_AUTO, FOLDERFLAGS.FWF_AUTOARRANGE); /*prev?.GetCurrentInfo() ?? new FOLDERSETTINGS(ViewMode, Flags);*/		// BUG! => viewmode und flags kommen ja vom prev.
+				shellViewWindow = IShellView.CreateViewWindow(prev, fsettings, /*Browser*/ this, ClientRectangle);
+			}
+			catch (COMException ex)
+			{
+				// If the operation was cancelled by the user (for example because an empty removable media drive was selected, then
+				// "Cancel" pressed in the resulting dialog) convert the exception into something more meaningfil.
+				if (ex.ErrorCode == unchecked((int)0x800704C7U))
+				{
+					throw new OperationCanceledException("User cancelled.", ex);
+				}
+			}
+
+			if (prev != null)
+			{
+				prev.UIActivate(SVUIA.SVUIA_DEACTIVATE);
+				prev.DestroyViewWindow();
+				Marshal.ReleaseComObject(prev);
+			}
+
+			IShellView.UIActivate(SVUIA.SVUIA_ACTIVATE_NOFOCUS);
+
+			if (DesignMode) User32.EnableWindow(shellViewWindow, false);
+		}
+
+
+		/// SNIP: Old Code following =====================================================================================================================================================================================================================================
+
+
+
+
 
 		/// <summary>Gets or sets the progress bar associated with the view.</summary>
 		/// <value>The progress bar.</value>
@@ -58,20 +216,21 @@ namespace Vanara.Windows.Shell
 			switch (wFlags)
 			{
 				case var f when f.IsFlagSet(SBSP.SBSP_NAVIGATEBACK):
-					shellView.NavigateBack();
+					//shellView.NavigateBack(); // 20.12.
 					break;
 				case var f when f.IsFlagSet(SBSP.SBSP_NAVIGATEFORWARD):
-					shellView.NavigateForward();
+					//shellView.NavigateForward();	// 20.12.
 					break;
 				case var f when f.IsFlagSet(SBSP.SBSP_PARENT):
-					shellView.NavigateParent();
+					//shellView.NavigateParent();	// 20.12.
 					break;
 				case var f when f.IsFlagSet(SBSP.SBSP_RELATIVE):
-					if (ShellItem.Open(shellView.CurrentFolder.IShellFolder, pidl) is ShellFolder sf)
-						shellView.Navigate(sf);
+					//if (ShellItem.Open(shellView.CurrentFolder.IShellFolder, pidl) is ShellFolder sf) 20.12.
+					//	shellView.Navigate(sf);
 					break;
 				default:
-					shellView.Navigate(new ShellFolder(pidl));
+					//shellView.Navigate(new ShellFolder(pidl));		// 20.12.
+
 					break;
 			}
 			return HRESULT.S_OK;
@@ -89,6 +248,7 @@ namespace Vanara.Windows.Shell
 		/// <inheritdoc/>
 		public virtual HRESULT GetControlWindow(FCW id, out HWND phwnd)
 		{
+			/* taj 20.12.
 			phwnd = id switch
 			{
 				FCW.FCW_PROGRESS => CheckAndLoad(ProgressBar),
@@ -102,6 +262,9 @@ namespace Vanara.Windows.Shell
 			return phwnd.IsNull ? HRESULT.E_NOTIMPL : HRESULT.S_OK;
 
 			static HWND CheckAndLoad(Control c) => c != null && c.IsHandleCreated ? c.Handle : HWND.NULL;
+			*/
+			phwnd = HWND.NULL;
+			return HRESULT.E_NOTIMPL;
 		}
 
 		/// <inheritdoc/>
@@ -114,12 +277,12 @@ namespace Vanara.Windows.Shell
 		/// <inheritdoc/>
 		public virtual HRESULT GetWindow(out HWND phwnd)
 		{
-			phwnd = shellView.shellViewWindow;
+			phwnd = this.Handle;	/* taj shellView.shellViewWindow */
 			return HRESULT.S_OK;
 		}
 
 		/// <inheritdoc/>
-		public virtual HRESULT IncludeObject(IShellView ppshv, IntPtr pidl) => shellView.IncludeItem(pidl) ? HRESULT.S_OK : HRESULT.S_FALSE;
+		public virtual HRESULT IncludeObject(IShellView ppshv, IntPtr pidl) => HRESULT.S_OK; //=> shellView.IncludeItem(pidl) ? HRESULT.S_OK : HRESULT.S_FALSE; taj 20.12.
 
 		/// <inheritdoc/>
 		public virtual HRESULT InsertMenusSB(HMENU hmenuShared, ref Ole32.OLEMENUGROUPWIDTHS lpMenuWidths) => HRESULT.E_NOTIMPL;
@@ -127,6 +290,7 @@ namespace Vanara.Windows.Shell
 		/// <inheritdoc/>
 		public virtual HRESULT OnDefaultCommand(IShellView ppshv)
 		{
+			/* 20.12.
 			var selected = shellView.SelectedItems;
 
 			if (selected.Length > 0 && selected[0].IsFolder)
@@ -138,15 +302,15 @@ namespace Vanara.Windows.Shell
 			{
 				shellView.OnDoubleClick(EventArgs.Empty);
 			}
-
+			*/
 			return HRESULT.S_OK;
 		}
 
 		/// <inheritdoc/>
 		public virtual HRESULT OnStateChange(IShellView ppshv, CDBOSC uChange)
 		{
-			if (uChange == CDBOSC.CDBOSC_SELCHANGE)
-				shellView.OnSelectionChanged();
+			//if (uChange == CDBOSC.CDBOSC_SELCHANGE)	// 20.12.
+			//	shellView.OnSelectionChanged();
 			return HRESULT.S_OK;
 		}
 
@@ -164,14 +328,14 @@ namespace Vanara.Windows.Shell
 		public virtual HRESULT QueryService(in Guid guidService, in Guid riid, out IntPtr ppvObject)
 		{
 			var lriid = riid;
-			var i = GetType().GetInterfaces().FirstOrDefault(i => i.IsCOMObject && i.GUID == lriid);
-			if (i is null)
+			var ii = GetType().GetInterfaces().FirstOrDefault(i => i.IsCOMObject && i.GUID == lriid);
+			if (ii is null)
 			{
 				ppvObject = IntPtr.Zero;
 				return HRESULT.E_NOINTERFACE;
 			}
 
-			ppvObject = Marshal.GetComInterfaceForObject(this, i);
+			ppvObject = Marshal.GetComInterfaceForObject(this, ii);
 			return HRESULT.S_OK;
 		}
 
