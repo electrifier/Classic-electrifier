@@ -66,7 +66,7 @@ namespace electrifier.Core.Components.DockContents
             if (null == shellItem)
                 throw new NullReferenceException(nameof(shellItem));
 
-//            this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+            this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
 
             //if (!shellItem.PIDL.Equals(this.shellBrowser.CurrentFolder))
             //{
@@ -89,25 +89,25 @@ namespace electrifier.Core.Components.DockContents
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        //private void ShellBrowser_NavigationComplete(object sender, ShellBrowserNavigationCompleteEventArgs e)
-        //{
-        //    ShellFolder newCurrentFolder = e.CurrentFolder;
+        private void ShellBrowser_NavigationComplete(object sender, ShellBrowserNavigationCompleteEventArgs e)
+        {
+            ShellFolder newCurrentFolder = e.CurrentFolder;
 
-        //    if (null != newCurrentFolder)
-        //    {
-        //        Shell32.PIDL newCurrentFolderPIDL = newCurrentFolder.PIDL;
-        //        ShellItem selectedTreeItem = this.shellNamespaceTree.SelectedItem;
+            if (null != newCurrentFolder)
+            {
+                Shell32.PIDL newCurrentFolderPIDL = newCurrentFolder.PIDL;
+                ShellItem selectedTreeItem = this.shellNamespaceTree.SelectedItem;
 
-        //        if ((selectedTreeItem != null) && (selectedTreeItem.PIDL.IsParentOf(newCurrentFolderPIDL, immediate: true)))
-        //            this.shellNamespaceTree.SelectedItem = newCurrentFolder;
+                if ((selectedTreeItem != null) && (selectedTreeItem.PIDL.IsParentOf(newCurrentFolderPIDL, immediate: true)))
+                    this.shellNamespaceTree.SelectedItem = newCurrentFolder;
 
-        //        // TODO: BUG: Navigation to user folder, e.g. "Thorsten Jung", will "magically add" that folder to the tree
-        //        //else
-        //        //    this.shellNamespaceTree.SelectedItem = null;
+                // TODO: BUG: Navigation to user folder, e.g. "Thorsten Jung", will "magically add" that folder to the tree
+                //else
+                //    this.shellNamespaceTree.SelectedItem = null;
 
-        //        this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.ParentRelativeForUI);
-        //    }
-        //}
+                this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.ParentRelativeForUI);
+            }
+        }
 
 
 
@@ -118,7 +118,7 @@ namespace electrifier.Core.Components.DockContents
             this.shellNamespaceTree = new Vanara.Windows.Forms.ShellNamespaceTreeControl();
             this.splitter = new System.Windows.Forms.Splitter();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.shellBrowser = new Vanara.Windows.Shell.ShellBrowser();
+            this.shellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
             this.SuspendLayout();
             // 
             // shellNamespaceTree
@@ -150,13 +150,13 @@ namespace electrifier.Core.Components.DockContents
             // 
             // shellBrowser
             // 
-            //this.shellBrowser.CurrentFolder = null;
+            this.shellBrowser.CurrentFolder = null;
             this.shellBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.shellBrowser.Location = new System.Drawing.Point(326, 0);
             this.shellBrowser.Name = "shellBrowser";
             this.shellBrowser.Size = new System.Drawing.Size(835, 876);
             this.shellBrowser.TabIndex = 5;
-            //this.shellBrowser.NavigationComplete += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigationCompleteEventArgs>(this.ShellBrowser_NavigationComplete);
+            this.shellBrowser.NavigationComplete += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigationCompleteEventArgs>(this.ShellBrowser_NavigationComplete);
             // 
             // ShellFolderDockContent
             // 
