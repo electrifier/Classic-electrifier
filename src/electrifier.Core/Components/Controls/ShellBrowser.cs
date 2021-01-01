@@ -32,6 +32,7 @@ using Vanara.Windows.Shell;
 // http://www.sky.franken.de/doxy/explorer/structIShellBrowserImpl.html
 
 
+// TODO: ViewFlags?!? 
 
 namespace electrifier.Core.Components.Controls
 {
@@ -88,7 +89,20 @@ namespace electrifier.Core.Components.Controls
         }
     }
 
-    // TODO: Rename to ShellBrowserPanel
+    // TODO: See Interlocked class for threading issues
+    // TODO: Grouping => In ShellView2 oder so?!?
+    //
+    // IFolderView2 interface (shobjidl_core.h)
+    // 12/05/2018
+    // 2 minutes to read
+    //Exposes methods that retrieve information about a folder's display options, select specified items in that folder, and set the folder's view mode.
+
+    //
+    // TODO: Very handy: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
+    //
+    // TODO: For Keyboard handling, have a look here: https://docs.microsoft.com/en-us/windows/win32/api/oleidl/nn-oleidl-ioleinplaceactiveobject
+    //
+    // TODO: Creating ViewWindow using '.CreateViewWindow(' fails on Zip-Folders; I barely remember we have to react on DDE_ - Messages for this to work?!?
 
     /// <summary>
     /// https://www.codeproject.com/Articles/28961/Full-implementation-of-IShellBrowser
@@ -97,27 +111,17 @@ namespace electrifier.Core.Components.Controls
     [ClassInterface(ClassInterfaceType.None)]
     public class ShellBrowser
         : UserControl
-        , System.Windows.Forms.IWin32Window
+        , IWin32Window
         , Shell32.IShellBrowser
-        , Shell32.ICommDlgBrowser3
         , Shell32.IServiceProvider
+        , Shell32.IShellFolderViewCB
     {
 
         private Guid IID_IShellBrowser = new Guid("000214E2-0000-0000-C000-000000000046");
 
-        private Guid IID_ICommDlgBrowser = new Guid("000214F1-0000-0000-C000-000000000046");
-        private Guid IID_ICommDlgBrowser3 = new Guid("C8AD25A1-3294-41EE-8165-71174BD01C57");
+        private const int WM_GETISHELLBROWSER = WM_USER + 0x00000007;
+        private const int WM_USER = 0x00000400;          // See KB 157247
 
-
-        private static uint WM_GETISHELLBROWSER = WM_USER + 0x00000007;
-        private static uint WM_USER = 0x00000400;          // See KB 157247
-
-        /*
-          IID_IServiceProvider: TGUID = '{6D5140C1-7436-11CE-8034-00AA006009FA}';
-          SID_STopLevelBrowser: TGUID = '{4C96BE40-915C-11CF-99D3-00AA004AE837}';
-
-         dfbc7e30-f9e5-455f-88f8-fa98c1e494ca => IShellView
-        */
 
 
         private Shell32.IShellView shellView;
@@ -137,23 +141,7 @@ namespace electrifier.Core.Components.Controls
         {
             this.InitializeComponent();
 
-            this.Load += this.ShellBrowser_Load;
             this.Resize += this.ShellBrowser_Resize;
-        }
-
-
-        // Erst Handle created, dann Load!
-
-        protected override void OnHandleCreated(EventArgs e)
-        {
-            base.OnHandleCreated(e);
-        }
-
-        private void ShellBrowser_Load(object sender, EventArgs e)
-        {
-            //var startFolder = new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_Desktop);
-            //this.SetCurrentFolder(startFolder);
-            // TODO: SHCreateShellFolderView?!?
         }
 
         private void ShellBrowser_Resize(object sender, EventArgs e)
@@ -209,27 +197,53 @@ namespace electrifier.Core.Components.Controls
 
 
 
-        protected ShellFolder GetShellView(Shell32.PIDL pidl)
+        protected ShellFolder RecreateShellView(Shell32.PIDL pidl)
         {
-            /* Vanara: https://github.com/dahall/Vanara/blob/master/Windows.Shell/ShellObjects/ShellItem.cs GetIShellFolder
-                            if (ShellFolder.Desktop.PIDL.Equals(dtPidl))
-                                return ShellFolder.Desktop.iShellFolder;
-                            return (IShellFolder)ShellFolder.Desktop.iShellFolder.BindToObject(PIDL, null, typeof(IShellFolder).GUID);
-            */
+            var shellFolder = new ShellFolder(pidl);
+            var sfvCreate = new Shell32.SFV_CREATE()
+            {
+                psfvcb = this, // IShellFolderViewCB
+                pshf = shellFolder.IShellFolder,
+                psvOuter = null,
+            };
+            sfvCreate.cbSize = (uint)Marshal.SizeOf(sfvCreate);
+            var folderSettings = new Shell32.FOLDERSETTINGS(
+                Shell32.FOLDERVIEWMODE.FVM_AUTO,
+                Shell32.FOLDERFLAGS.FWF_NONE);
 
-            // TODO: SHCreateShellFolderView?!?
+
+            Shell32.SHCreateShellFolderView(ref sfvCreate, out Shell32.IShellView newShellView).ThrowIfFailed();
+
+            /// TODO: Take care of threading here... The following has to be Invoked into the main thread.
+
+            if (!this.shellViewHandle.IsNull)
+                User32.DestroyWindow(this.shellViewHandle);
+
+            if (this.shellView != null)
+            {
+                this.shellView.UIActivate(Shell32.SVUIA.SVUIA_DEACTIVATE);
+
+                if (this.shellView.GetType().IsCOMObject)
+                    Marshal.ReleaseComObject(this.shellView);
+            }
+
+            Shell32.IFolderView2 folderview = (Shell32.IFolderView2)newShellView;
+            if (folderview is null)
+                MessageBox.Show("No IFolderView2");
+
+
+            var test = folderview.GetCurrentViewMode();
+            AppContext.TraceDebug($"ViewMode: {test}");
+
+            // internal IFolderView2 GetFolderView2() { try { return explorerBrowserControl?.GetCurrentView<IFolderView2>(); } catch { return null; } }
 
             try
             {
-                var shellFolder = new ShellFolder(pidl);
-                Shell32.FOLDERSETTINGS folderSettings = new Shell32.FOLDERSETTINGS(Shell32.FOLDERVIEWMODE.FVM_DETAILS, Shell32.FOLDERFLAGS.FWF_NONE);
-                RECT viewRect = new RECT(this.ClientRectangle);
+                this.shellView = newShellView;
 
-                this.shellView = shellFolder.GetViewObject<Shell32.IShellView>(this);
-
-                var defaultFolderSettings = this.shellView.GetCurrentInfo();
-
-                this.shellViewHandle = this.shellView.CreateViewWindow(null, folderSettings, this, viewRect);
+                // TODO: For folder "Network", we'll get an COMException here: 0x80004005
+                // TODO: Zipped folders won't work at all :(
+                this.shellViewHandle = newShellView.CreateViewWindow(psvPrevious: null, pfs: folderSettings, psb: this, prcView: this.ClientRectangle);
 
                 this.shellView.UIActivate(Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS);
 
@@ -237,74 +251,51 @@ namespace electrifier.Core.Components.Controls
             }
             catch (Exception ex)
             {
-                System.Windows.Forms.MessageBox.Show($"GetShellView failed: { ex }");
-            }
+                System.Windows.Forms.MessageBox.Show($"RecreateShellView failed: { ex }");
 
-            return null;
+                throw;
+            }
         }
 
-
-
-        protected override void WndProc(ref Message m)
+        /// <summary>
+        /// Override <seealso cref="UserControl.WndProc(ref Message)"/> to handle custom messages.
+        /// </summary>
+        /// <param name="message">The Window Message to process.</param>
+        protected override void WndProc(ref Message message)
         {
-            if (WM_GETISHELLBROWSER == m.Msg)
-                m.Result = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
-            else
-                base.WndProc(ref m);
+            switch (message.Msg)
+            {
+                case WM_GETISHELLBROWSER:
+                    message.Result = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
+                    break;
+                default:
+                    base.WndProc(ref message);
+                    break;
+            }
         }
 
         #region IShellBrowser interface =======================================================================================
 
         public HRESULT GetWindow(out HWND phwnd)
         {
-            //AppContext.TraceDebug("IShellBrowser.GetWindow()");
-
             phwnd = this.Handle;
 
             return HRESULT.S_OK;
         }
 
-        public HRESULT ContextSensitiveHelp(bool fEnterMode)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT ContextSensitiveHelp(bool fEnterMode) => HRESULT.E_NOTIMPL;
 
-        public HRESULT InsertMenusSB(HMENU hmenuShared, ref Ole32.OLEMENUGROUPWIDTHS lpMenuWidths)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT InsertMenusSB(HMENU hmenuShared, ref Ole32.OLEMENUGROUPWIDTHS lpMenuWidths) => HRESULT.E_NOTIMPL;
 
-        public HRESULT SetMenuSB(HMENU hmenuShared, IntPtr holemenuRes, HWND hwndActiveObject)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT SetMenuSB(HMENU hmenuShared, IntPtr holemenuRes, HWND hwndActiveObject) => HRESULT.E_NOTIMPL;
 
-        public HRESULT RemoveMenusSB(HMENU hmenuShared)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT RemoveMenusSB(HMENU hmenuShared) => HRESULT.E_NOTIMPL;
 
-        public HRESULT SetStatusTextSB(string pszStatusText)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT SetStatusTextSB(string pszStatusText) => HRESULT.E_NOTIMPL;
 
-        public HRESULT EnableModelessSB(bool fEnable)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT EnableModelessSB(bool fEnable) => HRESULT.E_NOTIMPL;
 
-        public HRESULT TranslateAcceleratorSB(ref MSG pmsg, ushort wID)
-        {
-            //throw new NotImplementedException();
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT TranslateAcceleratorSB(ref MSG pmsg, ushort wID) => HRESULT.E_NOTIMPL;
 
         public HRESULT BrowseObject(IntPtr pidl, Shell32.SBSP wFlags)
         {
@@ -380,7 +371,7 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadSync(delegate
             {
-                var shellFolder = this.GetShellView(pidlTmp);
+                var shellFolder = this.RecreateShellView(pidlTmp);
 
                 if (null != shellFolder)
                 {
@@ -428,74 +419,11 @@ namespace electrifier.Core.Components.Controls
             return HRESULT.S_OK;
         }
 
-        public HRESULT OnViewWindowActive(Shell32.IShellView ppshv)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT OnViewWindowActive(Shell32.IShellView ppshv) => HRESULT.E_NOTIMPL;
 
-        public HRESULT SetToolbarItems(ComCtl32.TBBUTTON[] lpButtons, uint nButtons, Shell32.FCT uFlags)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
+        public HRESULT SetToolbarItems(ComCtl32.TBBUTTON[] lpButtons, uint nButtons, Shell32.FCT uFlags) => HRESULT.E_NOTIMPL;
 
         #endregion ============================================================================================================
-
-
-
-        #region ICommDlgBrowser3 ==============================================================================================
-
-        public HRESULT OnDefaultCommand(Shell32.IShellView ppshv)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
-
-        public HRESULT OnStateChange(Shell32.IShellView ppshv, Shell32.CDBOSC uChange)
-        {
-            if (uChange == Shell32.CDBOSC.CDBOSC_SELCHANGE)
-                AppContext.TraceDebug("ICommDlgBrowser3: Selection changed");
-
-            return HRESULT.S_OK;
-        }
-
-        public HRESULT IncludeObject(Shell32.IShellView ppshv, IntPtr pidl)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
-
-        public HRESULT GetDefaultMenuText(Shell32.IShellView ppshv, StringBuilder pszText, int cchMax)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
-
-        public HRESULT GetViewFlags(out Shell32.CDB2GVF pdwFlags)
-        {
-            pdwFlags = Shell32.CDB2GVF.CDB2GVF_SHOWALLFILES;        // Show all files, including hidden and system files
-
-            return HRESULT.S_OK;
-        }
-
-        public HRESULT Notify(Shell32.IShellView ppshv, Shell32.CDB2N dwNotifyType)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
-
-        public HRESULT GetCurrentFilter(StringBuilder pszFileSpec, int cchFileSpec)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
-
-        public HRESULT OnColumnClicked(Shell32.IShellView ppshv, int iColumn)
-        {
-            return HRESULT.E_NOTIMPL;
-        }
-
-        public HRESULT OnPreViewCreated(Shell32.IShellView ppshv)
-        {
-            return HRESULT.S_OK;
-        }
-
-        #endregion ============================================================================================================
-
 
 
         #region IServiceProvider interface ====================================================================================
@@ -509,18 +437,34 @@ namespace electrifier.Core.Components.Controls
                 return HRESULT.S_OK;
             }
 
-            if (riid.Equals(this.IID_ICommDlgBrowser) || riid.Equals(this.IID_ICommDlgBrowser3))
+            if (riid.Equals(typeof(Shell32.IShellFolderViewCB).GUID)) // [Guid("2047E320-F2A9-11CE-AE65-08002B2E1262")]
             {
-                ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.ICommDlgBrowser3));
+                ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellFolderViewCB));
 
                 return HRESULT.S_OK;
             }
 
-            //AppContext.TraceDebug($"QueryService: {guidService}, riid: {riid}");
-
             ppvObject = IntPtr.Zero;
-
             return HRESULT.E_NOINTERFACE;
+        }
+
+        #endregion ============================================================================================================
+
+        #region IShellFolderViewCB interface ==================================================================================
+
+        public HRESULT MessageSFVCB(Shell32.SFVM uMsg, IntPtr wParam, IntPtr lParam, ref IntPtr plResult)
+        {
+            //AppContext.TraceDebug($"{uMsg}");
+            //switch (uMsg)
+            //{
+            //    case Shell32.SFVM.SFVM_UPDATESTATUSBAR:
+            //        AppContext.TraceDebug("SFVM_UPDATESTATUSBAR");
+            //        break;
+
+            //    default:
+            //        break;
+            //}
+            return HRESULT.S_OK;
         }
 
         #endregion ============================================================================================================
