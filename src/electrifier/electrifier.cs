@@ -57,7 +57,11 @@ namespace electrifier
         private static readonly string appContextTypeID = @"electrifier.Core.AppContext";
 
         /// <summary>
-        /// This Main method is the entry point of the electrifier application.
+        /// This Main method is the entry point of the electrifier application.<br/>
+        /// <br/>
+        /// Since we use COM to interop with Shell Objects, we have to use Single Thread ApartmentState.<br/>See
+        /// <seealso href="https://docs.microsoft.com/en-us/archive/blogs/jfoscoding/why-is-stathread-required">
+        /// Why is STAThread required?</seealso> for more information on this topic.
         /// </summary>
         [STAThread]
         static void Main(string[] args)

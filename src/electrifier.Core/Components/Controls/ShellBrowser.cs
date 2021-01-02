@@ -32,7 +32,6 @@ using Vanara.Windows.Shell;
 // http://www.sky.franken.de/doxy/explorer/structIShellBrowserImpl.html
 
 
-// TODO: ViewFlags?!? 
 
 namespace electrifier.Core.Components.Controls
 {
@@ -90,22 +89,31 @@ namespace electrifier.Core.Components.Controls
     }
 
     // TODO: See Interlocked class for threading issues
-    // TODO: Grouping => In ShellView2 oder so?!?
+    // TODO: Disable header in Details view when grouping is enabled
     //
-    // IFolderView2 interface (shobjidl_core.h)
-    // 12/05/2018
-    // 2 minutes to read
-    //Exposes methods that retrieve information about a folder's display options, select specified items in that folder, and set the folder's view mode.
-
     //
-    // TODO: Very handy: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
+    // NOTE: Very handy: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
+    // NOTE: Very handy: https://stackoverflow.com/questions/54390268/getting-the-current-ishellview-user-is-interacting-with
     //
-    // TODO: For Keyboard handling, have a look here: https://docs.microsoft.com/en-us/windows/win32/api/oleidl/nn-oleidl-ioleinplaceactiveobject
+    // NOTE: For Keyboard handling, have a look here: https://docs.microsoft.com/en-us/windows/win32/api/oleidl/nn-oleidl-ioleinplaceactiveobject
     //
-    // TODO: Creating ViewWindow using '.CreateViewWindow(' fails on Zip-Folders; I barely remember we have to react on DDE_ - Messages for this to work?!?
+    // TODO: Creating ViewWindow using '.CreateViewWindow(' fails on Zip-Folders; I barely remember we have to react on DDE_ - Messages for this to work?!? -> When Implementing ICommonDlgBrowser, this works! => Fixed by removing IShellFolderViewCB
 
     /// <summary>
+    /// 
+    /// This implements the following Interfaces:
+    /// ICommonDlgBrowser: To be able to browse into Zip-Folders => NO! // NOTE: 01/01/21: IShellFolderViewCB => If you provide this, navigating into zipped Folders won't work any more. Maybe you have to respond to one if it's Messages correctly.
+    /// 
     /// https://www.codeproject.com/Articles/28961/Full-implementation-of-IShellBrowser
+    /// 
+    /// 
+    /// Known Issues:
+    /// - Using windows 10, the virtual Quick-Access folder doesn't get displayed properly. It has to be grouped by "Group"
+    ///   (as shown in Windows Explorer UI), but I couldn't find the OLE-Property for this.
+    ///   Also, if using Groups, the Frequent Files List doesn't have its Icons. Maybe we have to bind to another version
+    ///   of ComCtrls to get this rendered properly - That's just an idea though, cause the Collapse-/Expand-Icons of the
+    ///   Groups have the Windows Vista / Windows 7-Theme, not the Windows 10 Theme as I can see.
+    /// - Keyboard input doesn't work so far.
     /// </summary>
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
@@ -114,7 +122,7 @@ namespace electrifier.Core.Components.Controls
         , IWin32Window
         , Shell32.IShellBrowser
         , Shell32.IServiceProvider
-        , Shell32.IShellFolderViewCB
+//        , Shell32.IShellFolderViewCB
     {
 
         private Guid IID_IShellBrowser = new Guid("000214E2-0000-0000-C000-000000000046");
@@ -202,7 +210,7 @@ namespace electrifier.Core.Components.Controls
             var shellFolder = new ShellFolder(pidl);
             var sfvCreate = new Shell32.SFV_CREATE()
             {
-                psfvcb = this, // IShellFolderViewCB
+                psfvcb = null, // NOTE: 01/01/21: IShellFolderViewCB => If you provide this, navigating into virtual zipped Folders won't work any more. Maybe you have to respond to one if it's Messages correctly.
                 pshf = shellFolder.IShellFolder,
                 psvOuter = null,
             };
@@ -231,6 +239,25 @@ namespace electrifier.Core.Components.Controls
             if (folderview is null)
                 MessageBox.Show("No IFolderView2");
 
+            folderview.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, "This folder\nis empty!");        // TODO: Put into property
+                                                                                                    //folderview.SetViewModeAndIconSize
+
+            //folderview.SetGroupBy(Ole32.PROPERTYKEY.System.PerceivedType, true);
+            //folderview.SetGroupBy(Ole32.PROPERTYKEY.System.Category, true);
+
+
+
+            // TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
+            //       As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
+            //       However, it seems to be a special group, since folders are Tiles, whereas files are shown in Details mode.
+            // NOTE: The grouping is done by 'Group'. Activate it using "Group by->More->Group", and then do the grouping.
+            //       However, the Icons for 'Recent Files'-Group get lost.
+            // NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
+
+
+            //folderview.SetGroupBy(Ole32.PROPERTYKEY.System.Shell., true); ==> 01.01.21.23:33: "Group" wird gesucht...
+
+
 
             var test = folderview.GetCurrentViewMode();
             AppContext.TraceDebug($"ViewMode: {test}");
@@ -241,8 +268,8 @@ namespace electrifier.Core.Components.Controls
             {
                 this.shellView = newShellView;
 
-                // TODO: For folder "Network", we'll get an COMException here: 0x80004005
-                // TODO: Zipped folders won't work at all :(
+                // TODO: For folder "Network", we'll get an COMException here: 0x80004005, => // NOTE 01/01/21, since dropping ICommonDlgBrowser Interface, there's no exception anymore.
+                // TODO: Zipped folders won't work at all :( => // NOTE: 01/01/21: Since dropping IShellFolderViewCB, they work again
                 this.shellViewHandle = newShellView.CreateViewWindow(psvPrevious: null, pfs: folderSettings, psb: this, prcView: this.ClientRectangle);
 
                 this.shellView.UIActivate(Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS);
