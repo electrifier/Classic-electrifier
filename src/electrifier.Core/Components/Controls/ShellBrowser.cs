@@ -114,27 +114,29 @@ namespace electrifier.Core.Components.Controls
     ///   of ComCtrls to get this rendered properly - That's just an idea though, cause the Collapse-/Expand-Icons of the
     ///   Groups have the Windows Vista / Windows 7-Theme, not the Windows 10 Theme as I can see.
     /// - Keyboard input doesn't work so far.
+    /// - DONE: Only Details-Mode should have column headers: (Using Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS)
+    ///   https://stackoverflow.com/questions/11776266/ishellview-columnheaders-not-hidden-if-autoview-does-not-choose-details
     /// </summary>
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
     public class ShellBrowser
         : UserControl
-        , IWin32Window
+        , IWin32Window      // See also: NativeWindow
         , Shell32.IShellBrowser
         , Shell32.IServiceProvider
-//        , Shell32.IShellFolderViewCB
+        , Shell32.IShellFolderViewCB
     {
 
-        private Guid IID_IShellBrowser = new Guid("000214E2-0000-0000-C000-000000000046");
+        //private Guid IID_IShellBrowser = new Guid("000214E2-0000-0000-C000-000000000046");
 
-        private const int WM_GETISHELLBROWSER = WM_USER + 0x00000007;
-        private const int WM_USER = 0x00000400;          // See KB 157247
+        //private const int WM_GETISHELLBROWSER = WM_USER + 0x00000007;
+        //private const int WM_USER = 0x00000400;          // See KB 157247
 
 
 
+        private ShellFolder currentFolder;
         private Shell32.IShellView shellView;
         private HWND shellViewHandle;
-        private ShellFolder currentFolder;
 
         public ShellFolder CurrentFolder
         {
@@ -160,12 +162,13 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
-        public void SetCurrentFolder(ShellFolder newCurrentFolder)
+        protected virtual void SetCurrentFolder(ShellFolder newCurrentFolder)
         {
-            // Note: The Designer will set shellFolder to NULL
+            // Note: The Designer may set CurrentFolder to null
             if (this.DesignMode || (newCurrentFolder is null))
                 return;
 
+            // TODO: 02/01/21: We should not allow exceptions here! When navigation fails, show a warning in the browser, call NavigationFailed event
             if (null != this.currentFolder)
             {
                 if (Shell32.PIDLUtil.Equals(this.currentFolder.PIDL, newCurrentFolder.PIDL))
@@ -192,7 +195,6 @@ namespace electrifier.Core.Components.Controls
 
         #endregion ============================================================================================================
 
-
         protected void OnNavigationComplete(ShellFolder shellFolder)
         {
             if (null != this.NavigationComplete)
@@ -202,8 +204,6 @@ namespace electrifier.Core.Components.Controls
                 this.NavigationComplete.Invoke(this, eventArgs);
             }
         }
-
-
 
         protected ShellFolder RecreateShellView(Shell32.PIDL pidl)
         {
@@ -217,7 +217,7 @@ namespace electrifier.Core.Components.Controls
             sfvCreate.cbSize = (uint)Marshal.SizeOf(sfvCreate);
             var folderSettings = new Shell32.FOLDERSETTINGS(
                 Shell32.FOLDERVIEWMODE.FVM_AUTO,
-                Shell32.FOLDERFLAGS.FWF_NONE);
+                Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS);
 
 
             Shell32.SHCreateShellFolderView(ref sfvCreate, out Shell32.IShellView newShellView).ThrowIfFailed();
@@ -238,9 +238,17 @@ namespace electrifier.Core.Components.Controls
             Shell32.IFolderView2 folderview = (Shell32.IFolderView2)newShellView;
             if (folderview is null)
                 MessageBox.Show("No IFolderView2");
+            //Shell32.IShellView3 shellView3 = (Shell32.IShellView3)newShellView;
+            //if(shellView3 is null)
+            //    MessageBox.Show("No ShellView3");
+
+
+
 
             folderview.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, "This folder\nis empty!");        // TODO: Put into property
                                                                                                     //folderview.SetViewModeAndIconSize
+
+            
 
             //folderview.SetGroupBy(Ole32.PROPERTYKEY.System.PerceivedType, true);
             //folderview.SetGroupBy(Ole32.PROPERTYKEY.System.Category, true);
@@ -268,9 +276,11 @@ namespace electrifier.Core.Components.Controls
             {
                 this.shellView = newShellView;
 
-                // TODO: For folder "Network", we'll get an COMException here: 0x80004005, => // NOTE 01/01/21, since dropping ICommonDlgBrowser Interface, there's no exception anymore.
-                // TODO: Zipped folders won't work at all :( => // NOTE: 01/01/21: Since dropping IShellFolderViewCB, they work again
+                // TODO: For folder "Network", we'll get an COMException here: 0x80004005,      => // NOTE: 01/01/21: since dropping ICommonDlgBrowser Interface, there's no exception anymore.
+                // TODO: Zipped folders won't work at all :(                                    => // NOTE: 01/01/21: Since dropping IShellFolderViewCB, they work again
                 this.shellViewHandle = newShellView.CreateViewWindow(psvPrevious: null, pfs: folderSettings, psb: this, prcView: this.ClientRectangle);
+
+                // TODO: Take care of disk drives with removeable media; => "Cancalled by the user" COMException
 
                 this.shellView.UIActivate(Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS);
 
@@ -284,22 +294,22 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
-        /// <summary>
-        /// Override <seealso cref="UserControl.WndProc(ref Message)"/> to handle custom messages.
-        /// </summary>
-        /// <param name="message">The Window Message to process.</param>
-        protected override void WndProc(ref Message message)
-        {
-            switch (message.Msg)
-            {
-                case WM_GETISHELLBROWSER:
-                    message.Result = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
-                    break;
-                default:
-                    base.WndProc(ref message);
-                    break;
-            }
-        }
+        ///// <summary>
+        ///// Override <seealso cref="UserControl.WndProc(ref Message)"/> to handle custom messages.
+        ///// </summary>
+        ///// <param name="message">The Window Message to process.</param>
+        //protected override void WndProc(ref Message message)
+        //{
+        //    switch (message.Msg)
+        //    {
+        //        //case WM_GETISHELLBROWSER:       // 02/01/21: This Message is only needed when using ICommDlgBrowser
+        //        //    message.Result = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
+        //        //    break;
+        //        default:
+        //            base.WndProc(ref message);
+        //            break;
+        //    }
+        //}
 
         #region IShellBrowser interface =======================================================================================
 
@@ -457,14 +467,16 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT QueryService(in Guid guidService, in Guid riid, out IntPtr ppvObject)
         {
-            if (riid.Equals(this.IID_IShellBrowser))
+            // Guid("000214E2-0000-0000-C000-000000000046")
+            if (riid.Equals(typeof(Shell32.IShellBrowser).GUID))
             {
                 ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellBrowser));
 
                 return HRESULT.S_OK;
             }
 
-            if (riid.Equals(typeof(Shell32.IShellFolderViewCB).GUID)) // [Guid("2047E320-F2A9-11CE-AE65-08002B2E1262")]
+            // Guid("2047E320-F2A9-11CE-AE65-08002B2E1262")
+            if (riid.Equals(typeof(Shell32.IShellFolderViewCB).GUID))
             {
                 ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellFolderViewCB));
 
