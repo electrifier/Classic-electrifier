@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 
+
 // http://www.sky.franken.de/doxy/explorer/structIShellBrowserImpl.html
 
 /// <summary>
@@ -175,6 +176,7 @@ namespace electrifier.Core.Components.Controls
         public event EventHandler<ShellBrowserNavigationCompleteEventArgs> NavigationComplete;
 
         #endregion ============================================================================================================
+
 
 
         public ShellBrowser()
@@ -360,6 +362,37 @@ namespace electrifier.Core.Components.Controls
         //    }
         //}
 
+        /// <summary>
+        /// Raises the <see cref="Navigating"/> event.
+        /// </summary>
+        protected internal virtual void OnNavigating(ShellBrowserNavigatingEventArgs eventargs, out bool cancelled)
+        {
+            cancelled = false;
+
+            //return eventargs;       // For fluid design pattern?!?
+
+            //if (Navigating is null || npevent?.PendingLocation is null) return;
+            //foreach (var del in Navigating.GetInvocationList())
+            //{
+            //    del.DynamicInvoke(new object[] { this, npevent });
+            //    if (npevent.Cancel)
+            //        cancelled = true;
+            //}
+        }
+
+        protected internal virtual void DoNavigating(ShellBrowserNavigatingEventArgs args)
+        {
+
+            this.shellView = args.ShellView;        // => set -> Release old ones...
+            this.folderView2 = args.FolderView2;    // 
+            this.shellViewWindow = args.ViewWindow; //
+
+            args.ShellView.UIActivate(Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS);
+
+            // TODO: Set msg hook: MessageSFVCB...
+            // TODO: Marshal.AddRef() on COM-Objects
+        }
+
         #region IShellBrowser interface =======================================================================================
 
         public HRESULT GetWindow(out HWND phwnd)
@@ -438,7 +471,6 @@ namespace electrifier.Core.Components.Controls
 
 
 
-
                 //// SBSP_ABSOLUTE - pidl is an absolute pidl (relative from desktop)
                 //pidlTmp = NativeMethods.Shell32.ILClone(pidl);
                 //if ((hr = m_desktopFolder.BindToObject(pidlTmp, IntPtr.Zero, ref NativeMethods.IID_IShellFolder,
@@ -455,8 +487,17 @@ namespace electrifier.Core.Components.Controls
 
 
 
-            this.UIThreadSync(delegate
+            this.UIThreadSync(delegate  //TODO: Check if asynchronous processing is possible
             {
+                using (var navigatingArgs = new ShellBrowserNavigatingEventArgs(this, new ShellFolder(pidlTmp)))
+                {
+                    this.OnNavigating(navigatingArgs, out bool cancelled);
+
+                    if (!cancelled)
+                        this.DoNavigating(navigatingArgs);
+                }
+
+                /*
                 var shellFolder = this.RecreateShellView(pidlTmp);
 
                 if (null != shellFolder)
@@ -468,9 +509,12 @@ namespace electrifier.Core.Components.Controls
 
                     this.OnNavigationComplete(shellFolder);
                 }
+                */
 
                 pidlTmp.Close();
             });
+
+
 
             return HRESULT.S_OK;
         }
@@ -554,16 +598,8 @@ namespace electrifier.Core.Components.Controls
                     // Here we have to pass a combination of events we want to get notified of.
                     break;
 
-                //case Shell32.SFVM.SFVM_UPDATESTATUSBAR:
-                //    AppContext.TraceDebug("SFVM_UPDATESTATUSBAR");
-                //    break;
-
-                //case (Shell32.SFVM)SFVM_ENUMERATEDITEMS:
-                //    AppContext.TraceDebug("SFVM_ENUMERATEDITEMS");
-                //    break;
-
                 case (Shell32.SFVM)SFVM_SELECTIONCHANGED:
-                    AppContext.TraceDebug("SFVM_SELECTIONCHANGED");     // wParam = 0x7200;
+                    AppContext.TraceDebug("SFVM_SELECTIONCHANGED");
                     return HRESULT.S_OK;
 
                 case (Shell32.SFVM)SFVM_LISTREFRESHED:
@@ -646,7 +682,7 @@ namespace electrifier.Core.Components.Controls
         ///  <see cref="HRESULT.S_OK"/> or<br/>
         ///  <see cref="HRESULT.E_NOINTERFACE"/>
         /// </returns>
-        public HRESULT QueryService(in Guid guidService, in Guid riid, out IntPtr ppvObject)
+        HRESULT Shell32.IServiceProvider.QueryService(in Guid guidService, in Guid riid, out IntPtr ppvObject)
         {
             // IShellBrowser: Guid("000214E2-0000-0000-C000-000000000046")
             if (riid.Equals(typeof(Shell32.IShellBrowser).GUID))
@@ -702,4 +738,79 @@ namespace electrifier.Core.Components.Controls
 
         #endregion ============================================================================================================
     }
+
+    #region ShellBrowserNavigatingEventArgs ===================================================================================
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ShellBrowserNavigatingEventArgs
+      : IDisposable
+    {
+        public ShellBrowser Owner { get; }
+        public ShellFolder ShellFolder { get; }
+        public Shell32.IShellView ShellView { get; }
+        public Shell32.IFolderView2 FolderView2 { get; }
+        public HWND ViewWindow { get; }
+        public bool IsValid { get; } = true;
+        public bool IsDiskInDrive { get; } = true;
+        public COMException ValidationError { get; private set; }
+        // {"The operation was canceled by the user. (Exception from HRESULT: 0x800704C7)"}
+        private static HRESULT hResultOperationCanceled = new HRESULT(0x800704C7);
+
+        public ShellBrowserNavigatingEventArgs(
+            ShellBrowser owner,
+            ShellFolder shellFolder,
+            Shell32.FOLDERVIEWMODE folderViewMode = Shell32.FOLDERVIEWMODE.FVM_AUTO,
+            Shell32.FOLDERFLAGS folderFlags = Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS)
+        {
+            this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
+            this.ShellFolder = shellFolder ?? throw new ArgumentNullException(nameof(shellFolder));
+
+            // Try to create ShellView and FolderView2 objects, then its ViewWindow
+            try
+            {
+                var folderSettings = new Shell32.FOLDERSETTINGS(folderViewMode, folderFlags);
+                this.ShellView = shellFolder.GetViewObject<Shell32.IShellView>(owner);
+                this.FolderView2 = (Shell32.IFolderView2)this.ShellView ?? throw new InvalidComObjectException(nameof(FolderView2));
+
+                // Try to create ViewWindow and take special care of Exception
+                // {"The operation was canceled by the user. (Exception from HRESULT: 0x800704C7)"}
+                // cause this happens when there's no disk in a drive.
+                try
+                {
+                    this.ViewWindow = this.ShellView.CreateViewWindow(null, folderSettings, owner, owner.ClientRectangle);
+                }
+                catch (COMException ex)
+                {
+                    if(hResultOperationCanceled.Equals(ex.ErrorCode))
+                        this.IsDiskInDrive = false;
+                    else
+                        throw;
+                }
+            }
+            catch (COMException ex)
+            {
+                this.ValidationError = ex;
+                this.IsValid = false;
+            }
+
+
+            // We should use the following pattern:
+            // 1) Try to Create new ShellFolder, IFolderView2 and new ShellViewWindow
+            // 2) Raise event that navigation should be done, event-variable: "Target is valid" and "Allow Navigation"
+            // 3) When the owner responds with "OKAY", then navigate to the new folder, releasing the old ones.
+            //    If, however, the target is invalid, enter owner-drawn error mode.
+            //    In Erromode, show an error-glyph and an error-text. Use custom-drawn error-mode for designer also.
+            // 4) If not, Dispose the handles again.
+
+        }
+
+        public void Dispose()
+        {
+            //throw new NotImplementedException();
+        }
+    }
+
+    #endregion ================================================================================================================
 }
