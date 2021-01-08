@@ -144,7 +144,8 @@ namespace electrifier.Core.Components.Controls
         private ShellFolder currentFolder;
         private Shell32.IShellView shellView;
         private HWND shellViewWindow;
-        private Shell32.IFolderView2 folderView2;
+
+        protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
         #region Properties =====================================================================================================
 
@@ -189,10 +190,7 @@ namespace electrifier.Core.Components.Controls
 
         private void ShellBrowser_Resize(object sender, EventArgs e)
         {
-            if (this.shellView != null && this.shellViewWindow != null)
-            {
-                User32.MoveWindow(this.shellViewWindow, 0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
-            }
+            this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
         }
 
         protected virtual void SetCurrentFolder(ShellFolder newCurrentFolder)
@@ -259,10 +257,9 @@ namespace electrifier.Core.Components.Controls
                 return;
 
             this.shellView = args.ShellView;        // => set -> Release old ones...
-            this.folderView2 = args.FolderView2;    // 
             this.shellViewWindow = args.ViewWindow; //
 
-            args.ShellView.UIActivate(Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS);
+            args.UIActivate();
 
             // TODO: Set msg hook: MessageSFVCB...
             // TODO: Marshal.AddRef() on COM-Objects
@@ -362,16 +359,16 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadSync(delegate  //TODO: Check if asynchronous processing is possible
             {
-                var newBrowserViewHandler = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp));
+                this.ViewHandler = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp));
 
-                this.OnNavigating(newBrowserViewHandler, out bool cancelled);
+                this.OnNavigating(this.ViewHandler, out bool cancelled);
 
                 if (!cancelled)
                 {
-                    this.DoNavigating(newBrowserViewHandler);
+                    this.DoNavigating(this.ViewHandler);
                 }
                 else
-                    newBrowserViewHandler.Dispose();
+                    this.ViewHandler.Dispose();
 
 
                 //using (var navigatingArgs = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp)))
@@ -697,7 +694,7 @@ namespace electrifier.Core.Components.Controls
             // Dispose unmanaged resources
             if (null != this.ShellView)
             {
-                this.ShellView.UIActivate(Shell32.SVUIA.SVUIA_DEACTIVATE);
+                this.UIDeactivate();
                 this.ShellView.DestroyViewWindow();
                 Marshal.ReleaseComObject(this.ShellView);
                 this.ShellView = null;
@@ -734,6 +731,11 @@ namespace electrifier.Core.Components.Controls
                     return HRESULT.E_NOTIMPL;
             }
         }
+
+        public bool MoveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) =>
+            this.ViewWindow != HWND.NULL && User32.MoveWindow(this.ViewWindow, X, Y, nWidth, nHeight, bRepaint);
+        public void UIActivate(Shell32.SVUIA uState = Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS) => this.ShellView?.UIActivate(uState);
+        public void UIDeactivate() => this.UIActivate(Shell32.SVUIA.SVUIA_DEACTIVATE);
     }
 
     #endregion ================================================================================================================
