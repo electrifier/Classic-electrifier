@@ -28,6 +28,16 @@ using System.Windows.Forms;
 using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 
+using Vanara.Collections; // For History
+using static Vanara.PInvoke.Shell32;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.Linq;
+using Vanara.Extensions;
+
+
 namespace electrifier.Core.Components.Controls
 {
     /// <summary>
@@ -42,7 +52,7 @@ namespace electrifier.Core.Components.Controls
     ///       => Fixed by removing IShellFolderViewCB ==> Fixed again by returning HRESULT.E_NOTIMPL from MessageSFVCB
     /// DOCS: https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features
     /// DOCS: https://stackoverflow.com/questions/15750842/allow-selection-in-explorer-style-list-view-to-start-in-the-first-column
-    /// TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above
+    /// TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above: IFolderView2
     /// TODO: Use COMReleaser: https://github.com/dahall/Vanara/blob/master/Core/InteropServices/ComReleaser.cs
     /// TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
     ///       As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
@@ -52,6 +62,7 @@ namespace electrifier.Core.Components.Controls
     /// TODO: Maybe this interface could help, too: https://docs.microsoft.com/en-us/windows/win32/shell/shellfolderview
     /// NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
     /// TODO: Add border like the one on the adressbar of Edge
+    /// TODO: IInputObject_WinForms in Vanara\Windows.Forms\Controls\ExplorerBrowser.cs
     /// </summary>
 
     public class ShellBrowserNavigationCompleteEventArgs : EventArgs
@@ -129,12 +140,13 @@ namespace electrifier.Core.Components.Controls
     /// - Keyboard input doesn't work so far.<br/>
     /// - DONE: Only Details-Mode should have column headers: (Using Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS)<br/>
     ///   https://stackoverflow.com/questions/11776266/ishellview-columnheaders-not-hidden-if-autoview-does-not-choose-details
-    /// - TODO: CustomDraw, when currently no shellView available, draw white background to avoid flicker while navigating?!? => OR: Release shellViewWindow AFTER creating the new window...<br/>
+    /// - TODO: CustomDraw, when currently no shellView available<br/>
     /// - DONE: Network folder: E_FAIL => DONE: Returning HRESULT.E_NOTIMPL from MessageSFVCB fixes this<br/>
     /// - DONE: Disk Drive (empty): E_CANCELLED_BY_USER<br/>
     /// </summary>
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
+    [Guid("B8B0F852-9527-4CA8-AB1D-648AE95B618E")]
     public class ShellBrowser
         : UserControl
         , IWin32Window
@@ -142,14 +154,16 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IServiceProvider
     {
         private ShellFolder currentFolder;
-        private Shell32.IShellView shellView;
-        private HWND shellViewWindow;
+//        private Shell32.IShellView shellView;
+//        private HWND shellViewWindow;
 
         protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
         #region Properties =====================================================================================================
 
-        /// <summary>Contains the navigation history of the ExplorerBrowser</summary>
+        /// <summary>
+        /// Contains the navigation history of the ShellBrowser
+        /// </summary>
         [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ShellNavigationHistory History { get; private set; }
 
@@ -183,7 +197,7 @@ namespace electrifier.Core.Components.Controls
         {
             this.InitializeComponent();
 
-            //this.History = new ShellNavigationHistory();
+            this.History = new ShellNavigationHistory();
 
             this.Resize += this.ShellBrowser_Resize;
         }
@@ -236,7 +250,7 @@ namespace electrifier.Core.Components.Controls
         /// <summary>
         /// Raises the <see cref="Navigating"/> event.
         /// </summary>
-        protected internal virtual void OnNavigating(ShellBrowserViewHandler eventargs, out bool cancelled)
+        protected internal virtual void OnNavigating(ShellBrowserViewHandler newViewHandler, out bool cancelled)
         {
             cancelled = false;
 
@@ -251,18 +265,18 @@ namespace electrifier.Core.Components.Controls
             //}
         }
 
-        protected internal virtual void DoNavigating(ShellBrowserViewHandler args)
+        protected internal virtual void DoNavigating(ShellBrowserViewHandler newViewHandler)
         {
-            if (!args.IsBrowsable)
+            if (!newViewHandler.IsValid)
                 return;
 
-            this.shellView = args.ShellView;        // => set -> Release old ones...
-            this.shellViewWindow = args.ViewWindow; //
+            this.History.Add(newViewHandler.ShellFolder);
 
-            args.UIActivate();
-
-            // TODO: Set msg hook: MessageSFVCB...
-            // TODO: Marshal.AddRef() on COM-Objects
+            var oldViewHandler = this.ViewHandler;
+            this.ViewHandler = newViewHandler;
+            oldViewHandler?.UIDeactivate();
+            newViewHandler.UIActivate();
+            oldViewHandler?.Dispose();
         }
 
         #region IShellBrowser interface =======================================================================================
@@ -359,16 +373,16 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadSync(delegate  //TODO: Check if asynchronous processing is possible
             {
-                this.ViewHandler = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp));
+                var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp));
 
-                this.OnNavigating(this.ViewHandler, out bool cancelled);
+                this.OnNavigating(viewHandler, out bool cancelled);
 
                 if (!cancelled)
                 {
-                    this.DoNavigating(this.ViewHandler);
+                    this.DoNavigating(viewHandler);
                 }
                 else
-                    this.ViewHandler.Dispose();
+                    viewHandler.Dispose();
 
 
                 //using (var navigatingArgs = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp)))
@@ -404,31 +418,33 @@ namespace electrifier.Core.Components.Controls
         public HRESULT GetViewStateStream(STGM grfMode, out IStream stream)
         {
             stream = null;
-
             return HRESULT.E_NOTIMPL;
         }
 
         public HRESULT GetControlWindow(Shell32.FCW id, out HWND hwnd)
         {
             hwnd = HWND.NULL;
-
             return HRESULT.E_NOTIMPL;
         }
 
         public HRESULT SendControlMsg(Shell32.FCW id, uint uMsg, IntPtr wParam, IntPtr lParam, out IntPtr pret)
         {
             pret = IntPtr.Zero;
-
             return HRESULT.E_NOTIMPL;
         }
 
         public HRESULT QueryActiveShellView(out Shell32.IShellView shellView)
         {
-            Marshal.AddRef(Marshal.GetIUnknownForObject(this.shellView));
+            if (this.ViewHandler.IsValid)
+            {
+                Marshal.AddRef(Marshal.GetIUnknownForObject(ViewHandler.ShellView));
+                shellView = ViewHandler.ShellView;
 
-            shellView = this.shellView;
+                return HRESULT.S_OK;
+            }
 
-            return HRESULT.S_OK;
+            shellView = null;
+            return HRESULT.E_PENDING;
         }
 
         public HRESULT OnViewWindowActive(Shell32.IShellView ppshv) => HRESULT.E_NOTIMPL;
@@ -602,7 +618,7 @@ namespace electrifier.Core.Components.Controls
         public Shell32.IShellView ShellView { get; private set; }
         public Shell32.IFolderView2 FolderView2 { get; private set; }
         public HWND ViewWindow { get; }
-        public bool IsBrowsable { get; } = true;
+        public bool IsValid { get; }
         public bool NoDiskInDriveError { get; }
         public COMException ValidationError { get; private set; }
 
@@ -655,6 +671,8 @@ namespace electrifier.Core.Components.Controls
                 try
                 {
                     this.ViewWindow = this.ShellView.CreateViewWindow(null, folderSettings, owner, owner.ClientRectangle);
+
+                    this.IsValid = true;
                 }
                 catch (COMException ex)
                 {
@@ -666,7 +684,6 @@ namespace electrifier.Core.Components.Controls
             catch (COMException ex)
             {
                 this.ValidationError = ex;
-                this.IsBrowsable = false;
             }
         }
 
@@ -739,4 +756,96 @@ namespace electrifier.Core.Components.Controls
     }
 
     #endregion ================================================================================================================
+
+
+
+    #region temporary ShellNavigationHistory class
+
+    /// <summary>The navigation log is a history of the locations visited by a shell view object.</summary>
+    public class ShellNavigationHistory : IHistory<ShellItem>
+    {
+        private readonly History<PIDL> pidls = new History<PIDL>();
+
+        internal ShellNavigationHistory()
+        {
+            pidls.CollectionChanged += (s, e) => CollectionChanged?.Invoke(this, e);
+            pidls.PropertyChanged += (s, e) => PropertyChanged?.Invoke(this, e);
+        }
+
+        /// <summary>Occurs when an item is added, removed, changed, moved, or the entire list is refreshed.</summary>
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        /// <summary>Occurs when a property value changes.</summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>Indicates the presence of items in the history that can be reached by calling <see cref="M:Vanara.Collections.IHistory`1.SeekBackward"/>.</summary>
+        /// <value><see langword="true"/> if this instance can seek backward; otherwise, <see langword="false"/>.</value>
+        public bool CanSeekBackward => pidls.CanSeekBackward;
+
+        /// <summary>Indicates the presence of items in the history that can be reached by calling <see cref="M:Vanara.Collections.IHistory`1.SeekForward"/>.</summary>
+        /// <value><see langword="true"/> if this instance can seek forward; otherwise, <see langword="false"/>.</value>
+        public bool CanSeekForward => pidls.CanSeekForward;
+
+        /// <summary>Gets the items in the history.</summary>
+        /// <value>The number of items.</value>
+        public int Count => pidls.Count;
+
+        /// <summary>Gets the shell object in the Locations collection pointed to by CurrentLocationIndex.</summary>
+        public ShellItem Current => new ShellItem(pidls.Current);
+
+        /// <summary>
+        /// Adds the specified item as the last history entry and sets the <see cref="P:Vanara.Collections.IHistory`1.Current"/> property to
+        /// it's value.
+        /// </summary>
+        /// <param name="item">The item to add to the history.</param>
+        public void Add(ShellItem item) => pidls.Add(item.PIDL, true);
+
+        /// <summary>Clears the history of all items.</summary>
+        public void Clear() => pidls.Clear();
+
+        /// <summary>Returns an enumerator that iterates through the collection.</summary>
+        /// <returns>A <see cref="IEnumerator{T}"/> that can be used to iterate through the collection.</returns>
+        public IEnumerator<ShellItem> GetEnumerator() => pidls.Select(p => new ShellItem(p)).GetEnumerator();
+
+        /// <summary>Gets a specified number of items starting at a location within the history.</summary>
+        /// <param name="count">The maximum number of items to retrieve. The actual number of items returned may be less if not avaialable.</param>
+        /// <param name="origin">The reference point within the history at which to start fetching items.</param>
+        /// <returns>A read-only list of items.</returns>
+        public IReadOnlyList<ShellItem> GetItems(int count, SeekOrigin origin) => (IReadOnlyList<ShellItem>)new List<ShellItem>(pidls.GetItems(count, origin).Select(ShIFromPIDL));
+
+        /// <summary>
+        /// Seeks through the history a given number of items starting at a known location within the history. This updates the <see
+        /// cref="P:Vanara.Collections.IHistory`1.Current"/> property.
+        /// </summary>
+        /// <param name="count">The number of items to move. This value can be negative to search backwards or positive to search forwards.</param>
+        /// <param name="origin">The reference point within the history at which to start seeking.</param>
+        /// <returns>The value at the new current pointer position.</returns>
+        public ShellItem Seek(int count, SeekOrigin origin) => ShIFromPIDL(pidls.Seek(count, origin));
+
+        /// <summary>Seeks one position backwards.</summary>
+        /// <returns>The value at the new current pointer position.</returns>
+        public ShellItem SeekBackward() => ShIFromPIDL(pidls.SeekBackward());
+
+        /// <summary>Seeks one position forwards.</summary>
+        /// <returns>The value at the new current pointer position.</returns>
+        public ShellItem SeekForward() => ShIFromPIDL(pidls.SeekForward());
+
+        /// <summary>
+        /// Adds the specified item as the last history entry and sets the <see cref="P:Vanara.Collections.IHistory`1.Current"/> property to
+        /// it's value.
+        /// </summary>
+        /// <param name="item">The item to add to the history.</param>
+        /// <param name="removeForwardItems">
+        /// <see langword="true"/> indicates to remove all items forward of the current pointer; <see langword="false"/> leaves the history intact.
+        /// </param>
+        void IHistory<ShellItem>.Add(ShellItem item, bool removeForwardItems) => pidls.Add(item?.PIDL, removeForwardItems);
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        internal void Add(PIDL pidl) => pidls.Add(pidl, true);
+
+        private static ShellItem ShIFromPIDL(PIDL pidl) => pidl is null ? null : new ShellItem(pidl);
+    }
+
+    #endregion
 }
