@@ -34,12 +34,14 @@ namespace electrifier.Core.Components.DockContents
     {
         private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
         private System.Windows.Forms.Splitter splitter;
-        private ShellBrowser shellBrowser;
         private System.Windows.Forms.StatusStrip statusStrip;
+
+        public ShellBrowser ShellBrowser { private set; get; }
 
         public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
 
-        public override event EventHandler NavigationOptionsChanged;
+
+
 
         public ShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
           : base(navigationHost)
@@ -57,6 +59,26 @@ namespace electrifier.Core.Components.DockContents
             this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_NetworkFolder), false, false);
 
             this.shellNamespaceTree.SelectedItem = this.shellNamespaceTree.RootItems[0];
+
+            this.ShellBrowser.NavigationComplete += this.ShellBrowser_NavigationComplete;
+            this.ShellBrowser.ItemsChanged += this.ShellBrowser_ItemsChanged;
+            this.ShellBrowser.SelectionChanged += this.ShellBrowser_SelectionChanged;
+        }
+
+        private void ShellBrowser_SelectionChanged(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            if (sender != this.ShellBrowser)
+                AppContext.TraceWarning("sender is not my ShellBrowser!");
+        }
+
+        private void ShellBrowser_ItemsChanged(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            if (sender != this.ShellBrowser)
+                AppContext.TraceWarning("sender is not my ShellBrowser!");
         }
 
         private void ShellNamespaceTree_AfterSelect(object sender, EventArgs e)
@@ -66,7 +88,10 @@ namespace electrifier.Core.Components.DockContents
             if (null == shellItem)
                 throw new NullReferenceException(nameof(shellItem));
 
-            this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
+
+            // TODO: 18/01/21 Remove CurrentFolder in ShellBrowser
+            //this.ShellBrowser.CurrentFolder = (ShellFolder)shellItem;
+            this.ShellBrowser.BrowseObject((IntPtr)shellItem.PIDL, Shell32.SBSP.SBSP_ABSOLUTE);
 
             //if (!shellItem.PIDL.Equals(this.shellBrowser.CurrentFolder))
             //{
@@ -107,8 +132,37 @@ namespace electrifier.Core.Components.DockContents
 
                 this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.ParentRelativeForUI);
             }
+
+            this.OnNavigationOptionsChanged(EventArgs.Empty);
         }
 
+
+        public override bool CanGoBack => this.ShellBrowser.History.CanSeekBackward;
+
+        public override void GoBack()
+        {
+            this.ShellBrowser.NavigateBack();
+            this.OnNavigationOptionsChanged(EventArgs.Empty);
+        }
+
+        public override bool CanGoForward => this.ShellBrowser.History.CanSeekForward;
+
+        public override void GoForward()
+        {
+            this.ShellBrowser.NavigateForward();
+            this.OnNavigationOptionsChanged(EventArgs.Empty);
+        }
+
+
+
+        public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
+
+        public override event EventHandler NavigationOptionsChanged;
+
+        public virtual void OnNavigationOptionsChanged(EventArgs args)
+        {
+            this.NavigationOptionsChanged?.Invoke(this, args);
+        }
 
 
         #region Component Designer generated code =============================================================================
@@ -118,7 +172,7 @@ namespace electrifier.Core.Components.DockContents
             this.shellNamespaceTree = new Vanara.Windows.Forms.ShellNamespaceTreeControl();
             this.splitter = new System.Windows.Forms.Splitter();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.shellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
+            this.ShellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
             this.SuspendLayout();
             // 
             // shellNamespaceTree
@@ -150,19 +204,20 @@ namespace electrifier.Core.Components.DockContents
             // 
             // shellBrowser
             // 
-            this.shellBrowser.CurrentFolder = null;
-            this.shellBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.shellBrowser.Location = new System.Drawing.Point(326, 0);
-            this.shellBrowser.Name = "shellBrowser";
-            this.shellBrowser.Size = new System.Drawing.Size(835, 876);
-            this.shellBrowser.TabIndex = 5;
-            this.shellBrowser.NavigationComplete += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigationCompleteEventArgs>(this.ShellBrowser_NavigationComplete);
+            this.ShellBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShellBrowser.Location = new System.Drawing.Point(326, 0);
+            this.ShellBrowser.Name = "shellBrowser";
+            this.ShellBrowser.Size = new System.Drawing.Size(835, 851);
+            this.ShellBrowser.TabIndex = 5;
+            this.ShellBrowser.NavigationComplete += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigationCompleteEventArgs>(this.ShellBrowser_NavigationComplete);
             // 
             // ShellFolderDockContent
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
             this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.shellBrowser);
+            this.Controls.Add(this.ShellBrowser);
             this.Controls.Add(this.splitter);
             this.Controls.Add(this.shellNamespaceTree);
             this.Name = "ShellFolderDockContent";

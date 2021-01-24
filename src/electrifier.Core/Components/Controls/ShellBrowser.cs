@@ -36,7 +36,8 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using Vanara.Extensions;
-
+//using static Vanara.PInvoke.User32;
+using Vanara.InteropServices;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -124,7 +125,6 @@ namespace electrifier.Core.Components.Controls
     /// Implements the following Interfaces:<br/>
     /// - <seealso cref="IWin32Window"/><br/>
     /// - <seealso cref="Shell32.IShellBrowser"/><br/>
-    /// - <seealso cref="Shell32.IShellFolderViewCB"/><br/>
     /// - <seealso cref="Shell32.IServiceProvider"/><br/>
     /// <br/>
     /// For more Information on used techniques see:<br/>
@@ -154,19 +154,16 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IServiceProvider
     {
         private ShellFolder currentFolder;
-//        private Shell32.IShellView shellView;
-//        private HWND shellViewWindow;
 
         protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
         #region Properties =====================================================================================================
 
-        /// <summary>
-        /// Contains the navigation history of the ShellBrowser
-        /// </summary>
-        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public ShellNavigationHistory History { get; private set; }
-
+        public ShellFolder CurrentFolder
+        {
+            get => this.currentFolder;
+            //set => this.SetCurrentFolder(value);
+        }
 
         //private string emptyFolderText = "This folder\nis empty.";
         //[Category("Appearance"), Description("The default text that is displayed when an empty folder is shown.")]
@@ -176,11 +173,22 @@ namespace electrifier.Core.Components.Controls
         //    set => this.SetEmptyFolderText(value);
         //}
 
-        public ShellFolder CurrentFolder
-        {
-            get => this.currentFolder;
-            set => this.SetCurrentFolder(value);
-        }
+        /// <summary>
+        /// Contains the navigation history of the ShellBrowser
+        /// </summary>
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public ShellNavigationHistory History { get; private set; }
+
+        /// <summary>The set of ShellItems in the Explorer Browser</summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IReadOnlyList<ShellItem> Items { get; }
+
+        /// <summary>The set of selected ShellItems in the Explorer Browser</summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public IReadOnlyList<ShellItem> SelectedItems { get; }
+
 
         #endregion ============================================================================================================
 
@@ -188,6 +196,14 @@ namespace electrifier.Core.Components.Controls
 
         [Category("Shell Event"), Description("ShellBowser has navigated to a new folder.")]
         public event EventHandler<ShellBrowserNavigationCompleteEventArgs> NavigationComplete;
+
+        /// <summary>Fires when the Items collection changes.</summary>
+        [Category("Action"), Description("Items changed.")]
+        public event EventHandler ItemsChanged;
+
+        /// <summary>Fires when the SelectedItems collection changes.</summary>
+        [Category("Behavior"), Description("Selection changed.")]
+        public event EventHandler SelectionChanged;
 
         #endregion ============================================================================================================
 
@@ -198,6 +214,10 @@ namespace electrifier.Core.Components.Controls
             this.InitializeComponent();
 
             this.History = new ShellNavigationHistory();
+
+            //this.Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW);
+            //this.SelectedItems = new ShellItemCollection(this, SVGIO.SVGIO_SELECTION);
+
 
             this.Resize += this.ShellBrowser_Resize;
         }
@@ -237,15 +257,17 @@ namespace electrifier.Core.Components.Controls
         //    this.folderView2?.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, value);
         //}
 
-        protected void OnNavigationComplete(ShellFolder shellFolder)
-        {
-            if (null != this.NavigationComplete)
-            {
-                ShellBrowserNavigationCompleteEventArgs eventArgs = new ShellBrowserNavigationCompleteEventArgs(shellFolder);
+        /// <summary>
+        /// Raises the <see cref="ItemsChanged"/> event.
+        /// </summary>
+        protected internal virtual void OnItemsChanged() => this.ItemsChanged?.Invoke(this, EventArgs.Empty);
 
-                this.NavigationComplete.Invoke(this, eventArgs);
-            }
-        }
+        /// <summary>
+        /// Raises the <see cref="SelectionChanged"/> event.
+        /// </summary>
+        protected internal virtual void OnSelectionChanged() => this.SelectionChanged?.Invoke(this, EventArgs.Empty);
+
+
 
         /// <summary>
         /// Raises the <see cref="Navigating"/> event.
@@ -267,24 +289,79 @@ namespace electrifier.Core.Components.Controls
 
         protected internal virtual void DoNavigating(ShellBrowserViewHandler newViewHandler)
         {
-            if (!newViewHandler.IsValid)
+            if (newViewHandler.Validated() is null)
                 return;
 
-            this.History.Add(newViewHandler.ShellFolder);
+            // Clone the PIDL, to have our own object on the heap
+            var newPIDL = new PIDL(newViewHandler.ShellFolder.PIDL);
+
+            this.History.Add(newPIDL);
 
             var oldViewHandler = this.ViewHandler;
             this.ViewHandler = newViewHandler;
             oldViewHandler?.UIDeactivate();
             newViewHandler.UIActivate();
             oldViewHandler?.Dispose();
+
+            this.OnNavigationComplete(newViewHandler.ShellFolder);
         }
+        protected void OnNavigationComplete(ShellFolder shellFolder)
+        {
+            if (null != this.NavigationComplete)
+            {
+                ShellBrowserNavigationCompleteEventArgs eventArgs = new ShellBrowserNavigationCompleteEventArgs(shellFolder);
+
+                this.NavigationComplete.Invoke(this, eventArgs);
+            }
+        }
+
+        /// <summary>
+        /// Navigates to the last item in the navigation history list. This does not change the set of locations in the navigation log.
+        /// </summary>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        public bool NavigateBack()
+        {
+            return this.BrowseObject(IntPtr.Zero, Shell32.SBSP.SBSP_NAVIGATEBACK).Succeeded;
+        }
+
+        /// <summary>
+        /// Navigates to the next item in the navigation history list. This does not change the set of locations in the navigation log.
+        /// </summary>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        public bool NavigateForward()
+        {
+            return this.BrowseObject(IntPtr.Zero, Shell32.SBSP.SBSP_NAVIGATEFORWARD).Succeeded;
+        }
+
+
+
+        /// <summary>
+        /// Navigate within the navigation log in a specific direciton. This does not change the set of locations in the navigation log.
+        /// </summary>
+        /// <param name="direction">The direction to navigate within the navigation logs collection.</param>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+//        public bool NavigateFromHistory(NavigationLogDirection direction) => History.NavigateLog(direction);
+
+        /// <summary>Navigate within the navigation log. This does not change the set of locations in the navigation log.</summary>
+        /// <param name="historyIndex">An index into the navigation logs Locations collection.</param>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        public bool NavigateToHistoryIndex(int historyIndex)
+        {
+            using (ShellItem shellFolder = this.History.Seek(historyIndex, SeekOrigin.Current))
+            {
+                if (shellFolder != null)
+                    return this.BrowseObject((IntPtr)shellFolder.PIDL, SBSP.SBSP_ABSOLUTE | SBSP.SBSP_WRITENOHISTORY).Succeeded;
+            }
+
+            return false;
+        }
+
 
         #region IShellBrowser interface =======================================================================================
 
         public HRESULT GetWindow(out HWND phwnd)
         {
             phwnd = this.Handle;
-
             return HRESULT.S_OK;
         }
 
@@ -302,19 +379,46 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT TranslateAcceleratorSB(ref MSG pmsg, ushort wID) => HRESULT.E_NOTIMPL;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="pidl"></param>
+        /// <param name="wFlags"></param>
+        /// <returns>HRESULT.STG_E_PATHNOTFOUND if path n found</returns>
         public HRESULT BrowseObject(IntPtr pidl, Shell32.SBSP wFlags)
         {
-            Shell32.PIDL pidlTmp = default;
+            ShellItem shellObject = null;
 
-            // TODO: if(Shell32.SBSP.SBSP_NAVIGATEFORWARD)
-            // TODO: if(Shell32.SBSP.SBSP_NAVIGATEBACK)
-
-
-
-            if (ShellFolder.Desktop.PIDL.Equals(pidl))                      // pidl equals Desktop
+            //
+            // The given PIDL equals Desktop, so ignore the other flags
+            //
+            if (ShellFolder.Desktop.PIDL.Equals(pidl))
             {
-                pidlTmp = new Shell32.PIDL(pidl, true, true);
+                shellObject = new ShellItem(ShellFolder.Desktop.PIDL);
             }
+
+            //
+            // SBSP_NAVIGATEBACK means the last item in the navigation history list
+            //
+            else if (wFlags.HasFlag(Shell32.SBSP.SBSP_NAVIGATEBACK))
+            {
+                if (this.History.CanSeekBackward)
+                    shellObject = this.History.SeekBackward();
+                else
+                    return HRESULT.STG_E_PATHNOTFOUND;
+            }
+
+            //
+            // SBSP_NAVIGATEFORWARD means the next item in the navigation history list
+            //
+            else if (wFlags.HasFlag(Shell32.SBSP.SBSP_NAVIGATEFORWARD))
+            {
+                if (this.History.CanSeekForward)
+                    shellObject = this.History.SeekForward();
+                else
+                    return HRESULT.STG_E_PATHNOTFOUND;
+            }
+
             else if (wFlags.HasFlag(Shell32.SBSP.SBSP_RELATIVE))            // pidl is relative to the current fodler
             {
                 AppContext.TraceDebug("BrowseObject: Relative");
@@ -327,6 +431,7 @@ namespace electrifier.Core.Components.Controls
                 //pidlTmp = NativeMethods.Shell32.ILCombine(m_pidlAbsCurrent, pidl);
                 //folderTmp = (NativeMethods.IShellFolder)Marshal.GetObjectForIUnknown(folderTmpPtr);
             }
+
             else if (wFlags.HasFlag(Shell32.SBSP.SBSP_PARENT))              // browse to parent folder and ignore the pidl
             {
                 AppContext.TraceDebug("BrowseObject: Parent");
@@ -347,21 +452,14 @@ namespace electrifier.Core.Components.Controls
                 //    folderTmp = (NativeMethods.IShellFolder)Marshal.GetObjectForIUnknown(folderTmpPtr);
                 //}
             }
+
+            //
+            // SBSP_ABSOLUTE as the remaining option means an absolute pidl is given
+            //
             else
             {
-                Debug.Assert(wFlags.HasFlag(Shell32.SBSP.SBSP_ABSOLUTE));
-
-                pidlTmp = new Shell32.PIDL(pidl, true, true);
-
-
-
-                //// SBSP_ABSOLUTE - pidl is an absolute pidl (relative from desktop)
-                //pidlTmp = NativeMethods.Shell32.ILClone(pidl);
-                //if ((hr = m_desktopFolder.BindToObject(pidlTmp, IntPtr.Zero, ref NativeMethods.IID_IShellFolder,
-                //                                       out folderTmpPtr)) != NativeMethods.S_OK)
-                //    return hr;
-                //folderTmp = (NativeMethods.IShellFolder)Marshal.GetObjectForIUnknown(folderTmpPtr);
-
+                // Remember we are not the owner of this pidl, so clone it to have our own copy on the heap.
+                shellObject = new ShellItem(new PIDL(pidl, true));
             }
 
 
@@ -373,7 +471,7 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadSync(delegate  //TODO: Check if asynchronous processing is possible
             {
-                var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp));
+                var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(shellObject));
 
                 this.OnNavigating(viewHandler, out bool cancelled);
 
@@ -384,33 +482,8 @@ namespace electrifier.Core.Components.Controls
                 else
                     viewHandler.Dispose();
 
-
-                //using (var navigatingArgs = new ShellBrowserViewHandler(this, new ShellFolder(pidlTmp)))
-                //{
-                //    this.OnNavigating(navigatingArgs, out bool cancelled);
-
-                //    if (!cancelled)
-                //        this.DoNavigating(navigatingArgs);
-                //}
-
-                /*
-                var shellFolder = this.RecreateShellView(pidlTmp);
-
-                if (null != shellFolder)
-                {
-                    // TODO: Lock currentFolder cause of MultiThreading!
-                    var oldFolder = this.currentFolder;
-                    this.currentFolder = shellFolder;
-                    oldFolder.Dispose();
-
-                    this.OnNavigationComplete(shellFolder);
-                }
-                */
-
-                pidlTmp.Close();
+                //targetShellObject.Dispose();
             });
-
-
 
             return HRESULT.S_OK;
         }
@@ -435,10 +508,10 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT QueryActiveShellView(out Shell32.IShellView shellView)
         {
-            if (this.ViewHandler.IsValid)
+            if (this.ViewHandler.Validated() != null)
             {
-                Marshal.AddRef(Marshal.GetIUnknownForObject(ViewHandler.ShellView));
-                shellView = ViewHandler.ShellView;
+                Marshal.AddRef(Marshal.GetIUnknownForObject(this.ViewHandler.ShellView));
+                shellView = this.ViewHandler.ShellView;
 
                 return HRESULT.S_OK;
             }
@@ -484,9 +557,14 @@ namespace electrifier.Core.Components.Controls
             // IShellFolderViewCB: Guid("2047E320-F2A9-11CE-AE65-08002B2E1262")
             if (riid.Equals(typeof(Shell32.IShellFolderViewCB).GUID))
             {
-                ppvObject = Marshal.GetComInterfaceForObject(this, typeof(Shell32.IShellFolderViewCB));
+                ShellBrowserViewHandler shvwHandler = this.ViewHandler.Validated();
 
-                return HRESULT.S_OK;
+                if (!(shvwHandler is null))
+                {
+                    ppvObject = Marshal.GetComInterfaceForObject(shvwHandler, typeof(Shell32.IShellFolderViewCB));
+
+                    return HRESULT.S_OK;
+                }
             }
 
             ppvObject = IntPtr.Zero;
@@ -627,7 +705,7 @@ namespace electrifier.Core.Components.Controls
         /// call to <see cref="Shell32.IShellView.CreateViewWindow"/> on a Shell Item that targets a removable Disk Drive
         /// when currently no Media is present. Let's catch these to use our own error handling for this.
         /// </summary>
-        internal static readonly HRESULT HResultOperationCanceled = new HRESULT(0x800704C7);
+        internal static readonly HRESULT HRESULT_CANCELLED = new HRESULT(0x800704C7);
 
         /// <summary>
         /// Create an instance of <see cref="ShellBrowserViewHandler"/> to handle Callback messages for the given ShellFolder.
@@ -676,7 +754,7 @@ namespace electrifier.Core.Components.Controls
                 }
                 catch (COMException ex)
                 {
-                    if (HResultOperationCanceled.Equals(ex.ErrorCode))
+                    if (HRESULT_CANCELLED.Equals(ex.ErrorCode))
                         this.NoDiskInDriveError = true;
                     throw;
                 }
@@ -690,7 +768,7 @@ namespace electrifier.Core.Components.Controls
         public void Dispose()
         {
             this.Dispose(true);
-            GC.SuppressFinalize(this);
+            System.GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -739,12 +817,19 @@ namespace electrifier.Core.Components.Controls
             switch ((SFVMUD)uMsg)
             {
                 case SFVMUD.SFVM_SELECTIONCHANGED:
-                    AppContext.TraceDebug("...Selection Changed");
+                    this.Owner.OnSelectionChanged();
                     return HRESULT.S_OK;
                 case SFVMUD.SFVM_LISTREFRESHED:
-                    AppContext.TraceDebug("...List Refreshed");
+                    this.Owner.OnItemsChanged();
+                    return HRESULT.S_OK;
+                case SFVMUD.SFVM_ENUMERATEDITEMS:
+                    // It seems this msg never gets sent, using Win 10 at least.
+                    AppContext.TraceError("ShellBrowser: SFVM_ENUMERATEDITEMS!!!!!!!!!!!!!!!");
                     return HRESULT.S_OK;
                 default:
+                    //
+                    // TODO: What happens when the ViewMode gets changed via Context-Menu? => Msg #33, #18
+                    //
                     return HRESULT.E_NOTIMPL;
             }
         }
@@ -754,6 +839,16 @@ namespace electrifier.Core.Components.Controls
         public void UIActivate(Shell32.SVUIA uState = Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS) => this.ShellView?.UIActivate(uState);
         public void UIDeactivate() => this.UIActivate(Shell32.SVUIA.SVUIA_DEACTIVATE);
     }
+
+    /// <summary>
+    /// Extension methods for <see cref="ShellBrowserViewHandler"/>.
+    /// </summary>
+    public static class ShellBrowserViewHandlerExtension
+    {
+        public static ShellBrowserViewHandler Validated(this ShellBrowserViewHandler shellBrowserViewHandler) =>
+            ((!(shellBrowserViewHandler is null)) && shellBrowserViewHandler.IsValid) ? shellBrowserViewHandler : null;
+    }
+
 
     #endregion ================================================================================================================
 

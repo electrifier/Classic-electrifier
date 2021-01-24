@@ -161,9 +161,13 @@ namespace electrifier.Core.Forms
                     + ", ActivatedContentType=" + activatedContentType);
 
                 // ElShellBrowserDockContent has been activated.
-                if (typeof(ElShellBrowserDockContent).Equals(activatedContentType))
+                //if (typeof(ElShellBrowserDockContent).Equals(activatedContentType))
+                //{
+                //    this.ActivateDockContent(activeContent as ElShellBrowserDockContent);
+                //}
+                if (typeof(ShellFolderDockContent).Equals(activatedContentType))
                 {
-                    this.ActivateDockContent(activeContent as ElShellBrowserDockContent);
+                    this.ActivateDockContent(activeContent as ShellFolderDockContent);
                 }
                 else
                 {
