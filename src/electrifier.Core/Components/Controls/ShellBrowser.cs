@@ -305,6 +305,7 @@ namespace electrifier.Core.Components.Controls
 
             this.OnNavigationComplete(newViewHandler.ShellFolder);
         }
+
         protected void OnNavigationComplete(ShellFolder shellFolder)
         {
             if (null != this.NavigationComplete)
@@ -464,12 +465,19 @@ namespace electrifier.Core.Components.Controls
 
 
 
+            //if ((this.ViewHandler.Validated() != null) && shellObject != null)
+            //{
+            //    if (Shell32.PIDLUtil.Equals(this.ViewHandler.ShellFolder.PIDL, shellObject.PIDL))
+            //    {
+            //        AppContext.TraceWarning("ShellBrowser.BrowseObject(): Targeted same folder " +
+            //            $"'{ shellObject.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing) }'");
+            //        return HRESULT.S_OK;
+            //    }
+            //}
 
 
 
-
-
-            this.UIThreadSync(delegate  //TODO: Check if asynchronous processing is possible
+            this.UIThreadAsync(delegate  //TODO: Check if asynchronous processing is possible
             {
                 var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(shellObject));
 
@@ -740,7 +748,7 @@ namespace electrifier.Core.Components.Controls
                     throw new InvalidComObjectException(nameof(this.ShellView));
 
                 var folderSettings = new Shell32.FOLDERSETTINGS(folderViewMode, folderFlags);
-                this.FolderView2 = (Shell32.IFolderView2)this.ShellView ??                     // @dahall: Is this safe, or should I use the Marshaller for this?
+                this.FolderView2 = (Shell32.IFolderView2)this.ShellView ??
                     throw new InvalidComObjectException(nameof(this.FolderView2));
 
                 // Try to create ViewWindow and take special care of Exception
@@ -754,6 +762,7 @@ namespace electrifier.Core.Components.Controls
                 }
                 catch (COMException ex)
                 {
+                    // TODO: Check if the target folder IS actually a drive with removable disks in it!
                     if (HRESULT_CANCELLED.Equals(ex.ErrorCode))
                         this.NoDiskInDriveError = true;
                     throw;
@@ -761,6 +770,7 @@ namespace electrifier.Core.Components.Controls
             }
             catch (COMException ex)
             {
+                // TODO: e.g. C:\Windows\CSC => Permission denied!
                 this.ValidationError = ex;
             }
         }
@@ -791,13 +801,13 @@ namespace electrifier.Core.Components.Controls
             {
                 this.UIDeactivate();
                 this.ShellView.DestroyViewWindow();
-                Marshal.ReleaseComObject(this.ShellView);
+                //Marshal.ReleaseComObject(this.ShellView);     // We mustn't Release using Marshal, cause we didn't use for creation
                 this.ShellView = null;
             }
 
             if (null != this.FolderView2)
             {
-                Marshal.ReleaseComObject(this.FolderView2);
+                //Marshal.ReleaseComObject(this.FolderView2);   // We mustn't Release using Marshal, cause we didn't use for creation
                 this.FolderView2 = null;
             }
 
