@@ -272,10 +272,8 @@ namespace electrifier.Core.Components.Controls
         /// <summary>
         /// Raises the <see cref="Navigating"/> event.
         /// </summary>
-        protected internal virtual void OnNavigating(ShellBrowserViewHandler newViewHandler, out bool cancelled)
+        protected internal virtual void OnNavigating(ShellBrowserViewHandler newViewHandler)
         {
-            cancelled = false;
-
             //return eventargs;       // For fluid design pattern?!?
 
             //if (Navigating is null || npevent?.PendingLocation is null) return;
@@ -285,25 +283,6 @@ namespace electrifier.Core.Components.Controls
             //    if (npevent.Cancel)
             //        cancelled = true;
             //}
-        }
-
-        protected internal virtual void DoNavigating(ShellBrowserViewHandler newViewHandler)
-        {
-            if (newViewHandler.Validated() is null)
-                return;
-
-            // Clone the PIDL, to have our own object on the heap
-            var newPIDL = new PIDL(newViewHandler.ShellFolder.PIDL);
-
-            this.History.Add(newPIDL);
-
-            var oldViewHandler = this.ViewHandler;
-            this.ViewHandler = newViewHandler;
-            oldViewHandler?.UIDeactivate();
-            newViewHandler.UIActivate();
-            oldViewHandler?.Dispose();
-
-            this.OnNavigationComplete(newViewHandler.ShellFolder);
         }
 
         protected void OnNavigationComplete(ShellFolder shellFolder)
@@ -481,14 +460,30 @@ namespace electrifier.Core.Components.Controls
             {
                 var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(shellObject));
 
-                this.OnNavigating(viewHandler, out bool cancelled);
+                this.OnNavigating(viewHandler);
 
-                if (!cancelled)
-                {
-                    this.DoNavigating(viewHandler);
-                }
-                else
-                    viewHandler.Dispose();
+                // BEGIN DoNavigating
+
+
+//                if (viewHandler.Validated() is null)
+//                    return;
+
+                // Clone the PIDL, to have our own object on the heap
+                var newPIDL = new PIDL(viewHandler.ShellFolder.PIDL);
+
+                this.History.Add(newPIDL);
+
+                var oldViewHandler = this.ViewHandler;
+                this.ViewHandler = viewHandler;
+                oldViewHandler?.UIDeactivate();
+                viewHandler.UIActivate();
+                //oldViewHandler?.Dispose();
+
+                this.OnNavigationComplete(viewHandler.ShellFolder);
+
+                // END DoNavigating
+
+
 
                 //targetShellObject.Dispose();
             });
@@ -695,8 +690,8 @@ namespace electrifier.Core.Components.Controls
     ///   </seealso>
     /// </summary>
     public class ShellBrowserViewHandler
-        : IDisposable
-        , Shell32.IShellFolderViewCB
+//        : IDisposable
+        : Shell32.IShellFolderViewCB
     {
         private bool isDisposed;
         public ShellBrowser Owner { get; }
@@ -775,44 +770,44 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
-        public void Dispose()
-        {
-            this.Dispose(true);
-            System.GC.SuppressFinalize(this);
-        }
+        //public void Dispose()
+        //{
+        //    this.Dispose(true);
+        //    System.GC.SuppressFinalize(this);
+        //}
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (this.isDisposed)
-                return;
+        //protected virtual void Dispose(bool disposing)
+        //{
+        //    if (this.isDisposed)
+        //        return;
 
-            // Dispose managed resources
-            if (disposing)
-            {
-                if (null != this.ShellFolder)
-                {
-                    this.ShellFolder.Dispose();
-                    this.ShellFolder = null;
-                }
-            }
+        //    // Dispose managed resources
+        //    if (disposing)
+        //    {
+        //        if (null != this.ShellFolder)
+        //        {
+        //            //this.ShellFolder.Dispose();
+        //            this.ShellFolder = null;
+        //        }
+        //    }
 
-            // Dispose unmanaged resources
-            if (null != this.ShellView)
-            {
-                this.UIDeactivate();
-                this.ShellView.DestroyViewWindow();
-                //Marshal.ReleaseComObject(this.ShellView);     // We mustn't Release using Marshal, cause we didn't use for creation
-                this.ShellView = null;
-            }
+        //    // Dispose unmanaged resources
+        //    if (null != this.ShellView)
+        //    {
+        //        this.UIDeactivate();
+        //        this.ShellView.DestroyViewWindow();
+        //        //Marshal.ReleaseComObject(this.ShellView);     // We mustn't Release using Marshal, cause we didn't use for creation
+        //        this.ShellView = null;
+        //    }
 
-            if (null != this.FolderView2)
-            {
-                //Marshal.ReleaseComObject(this.FolderView2);   // We mustn't Release using Marshal, cause we didn't use for creation
-                this.FolderView2 = null;
-            }
+        //    if (null != this.FolderView2)
+        //    {
+        //        //Marshal.ReleaseComObject(this.FolderView2);   // We mustn't Release using Marshal, cause we didn't use for creation
+        //        this.FolderView2 = null;
+        //    }
 
-            this.isDisposed = true;
-        }
+        //    this.isDisposed = true;
+        //}
 
         /// <summary>
         /// 
