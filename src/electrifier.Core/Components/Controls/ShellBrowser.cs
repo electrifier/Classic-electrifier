@@ -153,17 +153,9 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IShellBrowser
         , Shell32.IServiceProvider
     {
-        private ShellFolder currentFolder;
-
         protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
         #region Properties =====================================================================================================
-
-        public ShellFolder CurrentFolder
-        {
-            get => this.currentFolder;
-            //set => this.SetCurrentFolder(value);
-        }
 
         //private string emptyFolderText = "This folder\nis empty.";
         //[Category("Appearance"), Description("The default text that is displayed when an empty folder is shown.")]
@@ -225,30 +217,6 @@ namespace electrifier.Core.Components.Controls
         private void ShellBrowser_Resize(object sender, EventArgs e)
         {
             this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
-        }
-
-        protected virtual void SetCurrentFolder(ShellFolder newCurrentFolder)
-        {
-            // Note: The Designer may set CurrentFolder to null
-            if (this.DesignMode || (newCurrentFolder is null))
-                return;
-
-            // TODO: 02/01/21: We should not allow exceptions here! When navigation fails, show a warning in the browser, call NavigationFailed event
-            if (null != this.currentFolder)
-            {
-                if (Shell32.PIDLUtil.Equals(this.currentFolder.PIDL, newCurrentFolder.PIDL))
-                {
-                    AppContext.TraceWarning("ShellBrowser.SetCurrentFolder(): Targeted same folder " +
-                        $"'{ newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing) }'");
-                    return;
-                }
-
-                this.currentFolder.Dispose();
-            }
-
-            this.currentFolder = newCurrentFolder;
-
-            this.BrowseObject((IntPtr)this.CurrentFolder.PIDL, Shell32.SBSP.SBSP_ABSOLUTE);
         }
 
         //protected virtual void SetEmptyFolderText(string value)     // TODO!
@@ -442,28 +410,11 @@ namespace electrifier.Core.Components.Controls
                 shellObject = new ShellItem(new PIDL(pidl, true));
             }
 
-
-
-            //if ((this.ViewHandler.Validated() != null) && shellObject != null)
-            //{
-            //    if (Shell32.PIDLUtil.Equals(this.ViewHandler.ShellFolder.PIDL, shellObject.PIDL))
-            //    {
-            //        AppContext.TraceWarning("ShellBrowser.BrowseObject(): Targeted same folder " +
-            //            $"'{ shellObject.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing) }'");
-            //        return HRESULT.S_OK;
-            //    }
-            //}
-
-
-
-            this.UIThreadAsync(delegate  //TODO: Check if asynchronous processing is possible
+            this.UIThreadAsync(delegate
             {
                 var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(shellObject));
 
                 this.OnNavigating(viewHandler);
-
-                // BEGIN DoNavigating
-
 
 //                if (viewHandler.Validated() is null)
 //                    return;
@@ -477,15 +428,9 @@ namespace electrifier.Core.Components.Controls
                 this.ViewHandler = viewHandler;
                 oldViewHandler?.UIDeactivate();
                 viewHandler.UIActivate();
-                //oldViewHandler?.Dispose();
+                oldViewHandler?.DestroyView();
 
                 this.OnNavigationComplete(viewHandler.ShellFolder);
-
-                // END DoNavigating
-
-
-
-                //targetShellObject.Dispose();
             });
 
             return HRESULT.S_OK;
@@ -693,13 +638,13 @@ namespace electrifier.Core.Components.Controls
 //        : IDisposable
         : Shell32.IShellFolderViewCB
     {
-        private bool isDisposed;
+        //private bool isDisposed;
         public ShellBrowser Owner { get; }
         public ShellFolder ShellFolder { get; private set; }
         public Shell32.IShellView ShellView { get; private set; }
         public Shell32.IFolderView2 FolderView2 { get; private set; }
-        public HWND ViewWindow { get; }
-        public bool IsValid { get; }
+        public HWND ViewWindow { get; private set; }
+        public bool IsValid { get; private set; }
         public bool NoDiskInDriveError { get; }
         public COMException ValidationError { get; private set; }
 
@@ -768,6 +713,20 @@ namespace electrifier.Core.Components.Controls
                 // TODO: e.g. C:\Windows\CSC => Permission denied!
                 this.ValidationError = ex;
             }
+        }
+
+        public void DestroyView()
+        {
+            this.IsValid = false;
+
+            // TODO: Remove MessageSFVCB here!
+            // Destroy ShellView's ViewWindow
+            this.ViewWindow = HWND.NULL;
+            this.ShellView.DestroyViewWindow();
+
+            this.FolderView2 = null;
+            this.ShellView = null;
+            //this.ShellFolder = null;      // NOTE: I >>think<< this one causes RPC-Errors
         }
 
         //public void Dispose()
