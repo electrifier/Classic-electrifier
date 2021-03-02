@@ -66,11 +66,11 @@ namespace electrifier.Core.Components.Controls
     /// TODO: IInputObject_WinForms in Vanara\Windows.Forms\Controls\ExplorerBrowser.cs
     /// </summary>
 
-    public class ShellBrowserNavigationCompleteEventArgs : EventArgs
+    public class ShellBrowserNavigatedEventArgs : EventArgs
     {
         public ShellFolder CurrentFolder { get; }
 
-        public ShellBrowserNavigationCompleteEventArgs(ShellFolder currentFolder)
+        public ShellBrowserNavigatedEventArgs(ShellFolder currentFolder)
         {
             this.CurrentFolder = currentFolder ?? throw new ArgumentNullException(nameof(currentFolder));
         }
@@ -157,18 +157,25 @@ namespace electrifier.Core.Components.Controls
 
         #region Properties =====================================================================================================
 
-        //private string emptyFolderText = "This folder\nis empty.";
-        //[Category("Appearance"), Description("The default text that is displayed when an empty folder is shown.")]
-        //public string EmptyFolderText
-        //{
-        //    get => this.emptyFolderText;
-        //    set => this.SetEmptyFolderText(value);
-        //}
+        private string emptyFolderText = "This folder is empty.";
 
-        /// <summary>
-        /// Contains the navigation history of the ShellBrowser
-        /// </summary>
-        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>The default text that is displayed when an empty folder is shown</summary>
+        [Category("Appearance")]
+        [Description("The default text that is displayed when an empty folder is shown.")]
+        [DefaultValue("This folder is empty.")]
+        public string EmptyFolderText
+        {
+            get => this.emptyFolderText;
+            set
+            {
+                this.emptyFolderText = value;
+                this.ViewHandler?.SetText();
+            }
+        }
+
+        /// <summary>Contains the navigation history of the ShellBrowser</summary>
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ShellNavigationHistory History { get; private set; }
 
         /// <summary>The set of ShellItems in the Explorer Browser</summary>
@@ -186,12 +193,13 @@ namespace electrifier.Core.Components.Controls
 
         #region Published Events ==============================================================================================
 
-        [Category("Shell Event"), Description("ShellBowser has navigated to a new folder.")]
-        public event EventHandler<ShellBrowserNavigationCompleteEventArgs> NavigationComplete;
-
         /// <summary>Fires when the Items collection changes.</summary>
         [Category("Action"), Description("Items changed.")]
         public event EventHandler ItemsChanged;
+
+        /// <summary>Fires when ShellBrowser has navigated to a new folder.</summary>
+        [Category("Action"), Description("ShellBowser has navigated to a new folder.")]
+        public event EventHandler<ShellBrowserNavigatedEventArgs> Navigated;
 
         /// <summary>Fires when the SelectedItems collection changes.</summary>
         [Category("Behavior"), Description("Selection changed.")]
@@ -207,61 +215,33 @@ namespace electrifier.Core.Components.Controls
 
             this.History = new ShellNavigationHistory();
 
-            //this.Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW);
-            //this.SelectedItems = new ShellItemCollection(this, SVGIO.SVGIO_SELECTION);
-
+            this.Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW);
+            this.SelectedItems = new ShellItemCollection(this, SVGIO.SVGIO_SELECTION);
 
             this.Resize += this.ShellBrowser_Resize;
         }
 
-        private void ShellBrowser_Resize(object sender, EventArgs e)
+        protected internal virtual void ShellBrowser_Resize(object sender, EventArgs e)
         {
             this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
         }
 
-        //protected virtual void SetEmptyFolderText(string value)     // TODO!
-        //{
-        //    this.emptyFolderText = value;
-        //    this.folderView2?.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, value);
-        //}
-
-        /// <summary>
-        /// Raises the <see cref="ItemsChanged"/> event.
-        /// </summary>
+        /// <summary>Raises the <see cref="ItemsChanged"/> event.</summary>
         protected internal virtual void OnItemsChanged() => this.ItemsChanged?.Invoke(this, EventArgs.Empty);
 
-        /// <summary>
-        /// Raises the <see cref="SelectionChanged"/> event.
-        /// </summary>
-        protected internal virtual void OnSelectionChanged() => this.SelectionChanged?.Invoke(this, EventArgs.Empty);
-
-
-
-        /// <summary>
-        /// Raises the <see cref="Navigating"/> event.
-        /// </summary>
-        protected internal virtual void OnNavigating(ShellBrowserViewHandler newViewHandler)
+        /// <summary>Raises the <see cref="Navigated"/> event.</summary>
+        protected internal virtual void OnNavigated(ShellFolder shellFolder)
         {
-            //return eventargs;       // For fluid design pattern?!?
-
-            //if (Navigating is null || npevent?.PendingLocation is null) return;
-            //foreach (var del in Navigating.GetInvocationList())
-            //{
-            //    del.DynamicInvoke(new object[] { this, npevent });
-            //    if (npevent.Cancel)
-            //        cancelled = true;
-            //}
-        }
-
-        protected void OnNavigationComplete(ShellFolder shellFolder)
-        {
-            if (null != this.NavigationComplete)
+            if (null != this.Navigated)
             {
-                ShellBrowserNavigationCompleteEventArgs eventArgs = new ShellBrowserNavigationCompleteEventArgs(shellFolder);
+                ShellBrowserNavigatedEventArgs eventArgs = new ShellBrowserNavigatedEventArgs(shellFolder);
 
-                this.NavigationComplete.Invoke(this, eventArgs);
+                this.Navigated.Invoke(this, eventArgs);
             }
         }
+
+        /// <summary>Raises the <see cref="SelectionChanged"/> event.</summary>
+        protected internal virtual void OnSelectionChanged() => this.SelectionChanged?.Invoke(this, EventArgs.Empty);
 
         /// <summary>
         /// Navigates to the last item in the navigation history list. This does not change the set of locations in the navigation log.
@@ -414,8 +394,6 @@ namespace electrifier.Core.Components.Controls
             {
                 var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(shellObject));
 
-                this.OnNavigating(viewHandler);
-
 //                if (viewHandler.Validated() is null)
 //                    return;
 
@@ -430,7 +408,8 @@ namespace electrifier.Core.Components.Controls
                 viewHandler.UIActivate();
                 oldViewHandler?.DestroyView();
 
-                this.OnNavigationComplete(viewHandler.ShellFolder);
+                this.OnNavigated(viewHandler.ShellFolder);
+                this.OnSelectionChanged();
             });
 
             return HRESULT.S_OK;
@@ -521,6 +500,101 @@ namespace electrifier.Core.Components.Controls
 
         #endregion ============================================================================================================
 
+
+
+        #region ShellItemCollection ===========================================================================================
+
+        /// <summary>
+        /// Represents a collection of <see cref="ShellItem"/> attached to an <see cref="ShellBrowser"/>.
+        /// </summary>
+        private class ShellItemCollection : IReadOnlyList<ShellItem>
+        {
+            private readonly ShellBrowser shellBrowser;
+            private readonly SVGIO option;
+
+            internal ShellItemCollection(ShellBrowser shellBrowser, SVGIO opt)
+            {
+                this.shellBrowser = shellBrowser;
+                option = opt;
+            }
+
+            /// <summary>Gets the number of elements in the collection.</summary>
+            /// <value>Returns a <see cref="int"/> value.</value>
+            public int Count
+            {
+                get
+                {
+                    var viewHandler = this.shellBrowser.ViewHandler.Validated();
+
+                    if (viewHandler != null)
+                    {
+                        return viewHandler.FolderView2.ItemCount(this.option);
+                    }
+
+                    return 0;
+                }
+            }
+
+            private IShellItemArray Array => null;  //shellBrowser.GetItemsArray(option); // TODO
+
+            private IEnumerable<IShellItem> Items
+            {
+                get
+                {
+                    var array = Array;
+                    if (array is null)
+                        yield break;
+                    try
+                    {
+                        for (uint i = 0; i < array.GetCount(); i++)
+                            yield return array.GetItemAt(i);
+                    }
+                    finally
+                    {
+                        Marshal.ReleaseComObject(array);
+                    }
+                }
+            }
+
+            /// <summary>Gets the <see cref="ShellItem"/> at the specified index.</summary>
+            /// <value>The <see cref="ShellItem"/>.</value>
+            /// <param name="index">The zero-based index of the element to get.</param>
+            public ShellItem this[int index]
+            {
+                get
+                {
+                    var array = Array;
+                    try
+                    {
+                        return array is null ? null : ShellItem.Open(array.GetItemAt((uint)index));
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                    finally
+                    {
+                        if (array != null)
+                            Marshal.ReleaseComObject(array);
+                    }
+                }
+            }
+
+            /// <summary>Returns an enumerator that iterates through the collection.</summary>
+            /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+            public IEnumerator<ShellItem> GetEnumerator() => Items.Select(ShellItem.Open).GetEnumerator();
+
+            /// <summary>Returns an enumerator that iterates through the collection.</summary>
+            /// <returns>An enumerator that can be used to iterate through the collection.</returns>
+            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        }
+
+
+        #endregion ============================================================================================================
+
+
+
+
         #region Component Designer Support ====================================================================================
 
         /// <summary> 
@@ -589,7 +663,7 @@ namespace electrifier.Core.Components.Controls
         SFVM_GETEXTVIEWS = 40,
 
         SFVM_GET_CUSTOMVIEWINFO = 77,
-        SFVM_ENUMERATEDITEMS = 79,
+        SFVM_ENUMERATEDITEMS = 79,                  // It seems this msg never gets sent, using Win 10 at least.
         SFVM_GET_VIEW_DATA = 80,
         SFVM_GET_WEBVIEW_LAYOUT = 82,
         SFVM_GET_WEBVIEW_CONTENT = 83,
@@ -635,10 +709,8 @@ namespace electrifier.Core.Components.Controls
     ///   </seealso>
     /// </summary>
     public class ShellBrowserViewHandler
-//        : IDisposable
         : Shell32.IShellFolderViewCB
     {
-        //private bool isDisposed;
         public ShellBrowser Owner { get; }
         public ShellFolder ShellFolder { get; private set; }
         public Shell32.IShellView ShellView { get; private set; }
@@ -699,6 +771,8 @@ namespace electrifier.Core.Components.Controls
                     this.ViewWindow = this.ShellView.CreateViewWindow(null, folderSettings, owner, owner.ClientRectangle);
 
                     this.IsValid = true;
+
+                    this.SetText();
                 }
                 catch (COMException ex)
                 {
@@ -729,45 +803,6 @@ namespace electrifier.Core.Components.Controls
             //this.ShellFolder = null;      // NOTE: I >>think<< this one causes RPC-Errors
         }
 
-        //public void Dispose()
-        //{
-        //    this.Dispose(true);
-        //    System.GC.SuppressFinalize(this);
-        //}
-
-        //protected virtual void Dispose(bool disposing)
-        //{
-        //    if (this.isDisposed)
-        //        return;
-
-        //    // Dispose managed resources
-        //    if (disposing)
-        //    {
-        //        if (null != this.ShellFolder)
-        //        {
-        //            //this.ShellFolder.Dispose();
-        //            this.ShellFolder = null;
-        //        }
-        //    }
-
-        //    // Dispose unmanaged resources
-        //    if (null != this.ShellView)
-        //    {
-        //        this.UIDeactivate();
-        //        this.ShellView.DestroyViewWindow();
-        //        //Marshal.ReleaseComObject(this.ShellView);     // We mustn't Release using Marshal, cause we didn't use for creation
-        //        this.ShellView = null;
-        //    }
-
-        //    if (null != this.FolderView2)
-        //    {
-        //        //Marshal.ReleaseComObject(this.FolderView2);   // We mustn't Release using Marshal, cause we didn't use for creation
-        //        this.FolderView2 = null;
-        //    }
-
-        //    this.isDisposed = true;
-        //}
-
         /// <summary>
         /// 
         /// </summary>
@@ -783,19 +818,24 @@ namespace electrifier.Core.Components.Controls
                 case SFVMUD.SFVM_SELECTIONCHANGED:
                     this.Owner.OnSelectionChanged();
                     return HRESULT.S_OK;
+
                 case SFVMUD.SFVM_LISTREFRESHED:
                     this.Owner.OnItemsChanged();
                     return HRESULT.S_OK;
-                case SFVMUD.SFVM_ENUMERATEDITEMS:
-                    // It seems this msg never gets sent, using Win 10 at least.
-                    AppContext.TraceError("ShellBrowser: SFVM_ENUMERATEDITEMS!!!!!!!!!!!!!!!");
-                    return HRESULT.S_OK;
+
                 default:
                     //
                     // TODO: What happens when the ViewMode gets changed via Context-Menu? => Msg #33, #18
                     //
                     return HRESULT.E_NOTIMPL;
             }
+        }
+
+        /// <summary>Sets the default text to be used when there are no items in the view.</summary>
+        public void SetText()
+        {
+            if (this.IsValid)
+                this.FolderView2.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, this.Owner.EmptyFolderText);
         }
 
         public bool MoveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) =>

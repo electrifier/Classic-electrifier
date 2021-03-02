@@ -35,8 +35,9 @@ namespace electrifier.Core.Components.DockContents
         private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
         private System.Windows.Forms.Splitter splitter;
         private System.Windows.Forms.StatusStrip statusStrip;
-
-        public ShellBrowser ShellBrowser { private set; get; }
+        private System.Windows.Forms.ToolStripStatusLabel itemCountStatusLabel;
+        private System.Windows.Forms.ToolStripStatusLabel selectionStatusLabel;
+        private electrifier.Core.Components.Controls.ShellBrowser ShellBrowser;
 
         public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
 
@@ -60,25 +61,24 @@ namespace electrifier.Core.Components.DockContents
 
             this.shellNamespaceTree.SelectedItem = this.shellNamespaceTree.RootItems[0];
 
-            this.ShellBrowser.NavigationComplete += this.ShellBrowser_NavigationComplete;
+            this.ShellBrowser.Navigated += this.ShellBrowser_Navigated;
             this.ShellBrowser.ItemsChanged += this.ShellBrowser_ItemsChanged;
             this.ShellBrowser.SelectionChanged += this.ShellBrowser_SelectionChanged;
+        }
+        private void ShellBrowser_ItemsChanged(object sender, EventArgs e)
+        {
+            if (sender != this.ShellBrowser)
+                AppContext.TraceWarning("sender is not my ShellBrowser!");
+
+            this.itemCountStatusLabel.Text = this.ShellBrowser.Items.Count.ToString() + " items";
         }
 
         private void ShellBrowser_SelectionChanged(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
-
             if (sender != this.ShellBrowser)
                 AppContext.TraceWarning("sender is not my ShellBrowser!");
-        }
 
-        private void ShellBrowser_ItemsChanged(object sender, EventArgs e)
-        {
-            AppContext.TraceScope();
-
-            if (sender != this.ShellBrowser)
-                AppContext.TraceWarning("sender is not my ShellBrowser!");
+            this.selectionStatusLabel.Text = this.ShellBrowser.SelectedItems.Count.ToString() + " selected items";
         }
 
         private void ShellNamespaceTree_AfterSelect(object sender, EventArgs e)
@@ -114,7 +114,7 @@ namespace electrifier.Core.Components.DockContents
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ShellBrowser_NavigationComplete(object sender, ShellBrowserNavigationCompleteEventArgs e)
+        private void ShellBrowser_Navigated(object sender, ShellBrowserNavigatedEventArgs e)
         {
             ShellFolder newCurrentFolder = e.CurrentFolder;
 
@@ -172,7 +172,10 @@ namespace electrifier.Core.Components.DockContents
             this.shellNamespaceTree = new Vanara.Windows.Forms.ShellNamespaceTreeControl();
             this.splitter = new System.Windows.Forms.Splitter();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.itemCountStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.selectionStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ShellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // shellNamespaceTree
@@ -195,33 +198,49 @@ namespace electrifier.Core.Components.DockContents
             // statusStrip
             // 
             this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip.Location = new System.Drawing.Point(326, 854);
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.itemCountStatusLabel,
+            this.selectionStatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(326, 850);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(835, 22);
+            this.statusStrip.Size = new System.Drawing.Size(835, 26);
             this.statusStrip.SizingGrip = false;
             this.statusStrip.TabIndex = 6;
             this.statusStrip.Text = "statusStrip1";
             // 
-            // shellBrowser
+            // itemCountStatusLabel
             // 
-            this.ShellBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.itemCountStatusLabel.AutoSize = false;
+            this.itemCountStatusLabel.Name = "itemCountStatusLabel";
+            this.itemCountStatusLabel.Size = new System.Drawing.Size(100, 20);
+            // 
+            // selectionStatusLabel
+            // 
+            this.selectionStatusLabel.AutoSize = false;
+            this.selectionStatusLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
+            this.selectionStatusLabel.Name = "selectionStatusLabel";
+            this.selectionStatusLabel.Size = new System.Drawing.Size(150, 20);
+            // 
+            // ShellBrowser
+            // 
+            this.ShellBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ShellBrowser.Location = new System.Drawing.Point(326, 0);
-            this.ShellBrowser.Name = "shellBrowser";
-            this.ShellBrowser.Size = new System.Drawing.Size(835, 851);
+            this.ShellBrowser.Name = "ShellBrowser";
+            this.ShellBrowser.Size = new System.Drawing.Size(835, 850);
             this.ShellBrowser.TabIndex = 5;
-            this.ShellBrowser.NavigationComplete += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigationCompleteEventArgs>(this.ShellBrowser_NavigationComplete);
+            this.ShellBrowser.Navigated += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigatedEventArgs>(this.ShellBrowser_Navigated);
             // 
             // ShellFolderDockContent
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
-            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.ShellBrowser);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.splitter);
             this.Controls.Add(this.shellNamespaceTree);
             this.Name = "ShellFolderDockContent";
             this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
