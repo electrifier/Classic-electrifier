@@ -62,8 +62,9 @@ namespace electrifier.Core.Components.Controls
     ///       However, the Icons for 'Recent Files'-Group get lost.
     /// TODO: Maybe this interface could help, too: https://docs.microsoft.com/en-us/windows/win32/shell/shellfolderview
     /// NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
-    /// TODO: Add border like the one on the adressbar of Edge
+    /// TODO: BorderStyle? => Additionally border like the one on the adressbar of Edge
     /// TODO: IInputObject_WinForms in Vanara\Windows.Forms\Controls\ExplorerBrowser.cs
+    /// TODO: FolderViewMode and FolderFlags in BrowseObject
     /// </summary>
 
     public class ShellBrowserNavigatedEventArgs : EventArgs
@@ -226,6 +227,54 @@ namespace electrifier.Core.Components.Controls
             this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
         }
 
+        /// <summary>Gets the items in the ExplorerBrowser as an IShellItemArray</summary>
+        /// <returns>An <see cref="IShellItemArray"/> instance or <see langword="null"/> if not available.</returns>
+        internal IShellItemArray GetItemsArray(SVGIO opt)
+        {
+            try
+            {
+                var viewHandler = this.ViewHandler.Validated();
+
+                if (viewHandler != null)
+                    return viewHandler.FolderView2.Items<IShellItemArray>(opt);
+                else
+                    return null;
+            }
+            catch { return null; }
+        }
+
+        // TODO: ViewMode-Property
+
+        // TODO: AppContext.Trace* removal
+
+        // TODO: Keyboard-Handling
+
+        // TODO: BrowseObject ->Parent -> Relative
+
+
+        /// <summary>Selects all items in the current view.</summary>
+        public void SelectAll()
+        {
+            // TODO: To speed things up, try workaround #2: https://stackoverflow.com/questions/9039989/how-to-selectall-in-a-winforms-virtual-listview
+
+            var viewHandler = this.ViewHandler.Validated();
+
+            if (viewHandler != null)
+            {
+                for (var i = 0; i < viewHandler.FolderView2.ItemCount(SVGIO.SVGIO_ALLVIEW); i++)
+                    viewHandler.FolderView2.SelectItem(i, SVSIF.SVSI_SELECT);
+            }
+        }
+
+        /// <summary>Unselects all items in the current view.</summary>
+        public void UnselectAll()
+        {
+            var viewHandler = this.ViewHandler.Validated();
+
+            if (viewHandler != null)
+                viewHandler.FolderView2.SelectItem(-1, SVSIF.SVSI_DESELECTOTHERS);
+        }
+
         /// <summary>Raises the <see cref="ItemsChanged"/> event.</summary>
         protected internal virtual void OnItemsChanged() => this.ItemsChanged?.Invoke(this, EventArgs.Empty);
 
@@ -349,7 +398,6 @@ namespace electrifier.Core.Components.Controls
 
             else if (wFlags.HasFlag(Shell32.SBSP.SBSP_RELATIVE))            // pidl is relative to the current fodler
             {
-                AppContext.TraceDebug("BrowseObject: Relative");
 
 
                 //// SBSP_RELATIVE - pidl is relative from the current folder
@@ -362,7 +410,6 @@ namespace electrifier.Core.Components.Controls
 
             else if (wFlags.HasFlag(Shell32.SBSP.SBSP_PARENT))              // browse to parent folder and ignore the pidl
             {
-                AppContext.TraceDebug("BrowseObject: Parent");
 
                 //// SBSP_PARENT - Browse the parent folder (ignores the pidl)
                 //pidlTmp = GetParentPidl(m_pidlAbsCurrent);
@@ -408,7 +455,7 @@ namespace electrifier.Core.Components.Controls
                 viewHandler.UIActivate();
                 oldViewHandler?.DestroyView();
 
-                this.OnNavigated(viewHandler.ShellFolder);
+                this.OnNavigated(viewHandler.ShellFolder);      // TODO: Move this call above, to show folder in Adress Bar BEFORE enumerating?
                 this.OnSelectionChanged();
             });
 
@@ -515,7 +562,7 @@ namespace electrifier.Core.Components.Controls
             internal ShellItemCollection(ShellBrowser shellBrowser, SVGIO opt)
             {
                 this.shellBrowser = shellBrowser;
-                option = opt;
+                this.option = opt;
             }
 
             /// <summary>Gets the number of elements in the collection.</summary>
@@ -527,21 +574,20 @@ namespace electrifier.Core.Components.Controls
                     var viewHandler = this.shellBrowser.ViewHandler.Validated();
 
                     if (viewHandler != null)
-                    {
                         return viewHandler.FolderView2.ItemCount(this.option);
-                    }
 
                     return 0;
                 }
             }
 
-            private IShellItemArray Array => null;  //shellBrowser.GetItemsArray(option); // TODO
+            private IShellItemArray Array => this.shellBrowser.GetItemsArray(this.option);
 
             private IEnumerable<IShellItem> Items
             {
                 get
                 {
-                    var array = Array;
+                    var array = this.Array;
+
                     if (array is null)
                         yield break;
                     try

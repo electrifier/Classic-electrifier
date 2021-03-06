@@ -39,7 +39,13 @@ namespace electrifier.Core.Components.DockContents
         private System.Windows.Forms.ToolStripStatusLabel selectionStatusLabel;
         private electrifier.Core.Components.Controls.ShellBrowser ShellBrowser;
 
-        public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
+        //public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
+        internal string currentLocation;
+        public override string CurrentLocation
+        {
+            get => this.currentLocation;
+            set => this.currentLocation = value;
+        }
 
 
 
@@ -130,6 +136,7 @@ namespace electrifier.Core.Components.DockContents
                 //else
                 //    this.shellNamespaceTree.SelectedItem = null;
 
+                this.CurrentLocation = newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
                 this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.ParentRelativeForUI);
             }
 
@@ -165,6 +172,17 @@ namespace electrifier.Core.Components.DockContents
         }
 
 
+        public void SelectAll()
+        {
+            this.ShellBrowser.SelectAll();
+        }
+
+        public void UnselectAll()
+        {
+            this.ShellBrowser.UnselectAll();
+        }
+
+
         #region Component Designer generated code =============================================================================
 
         private void InitializeComponent()
@@ -197,6 +215,7 @@ namespace electrifier.Core.Components.DockContents
             // 
             // statusStrip
             // 
+            this.statusStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
             this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.itemCountStatusLabel,

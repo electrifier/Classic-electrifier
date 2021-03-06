@@ -200,6 +200,14 @@ namespace electrifier.Core.Forms
             {
                 elShellBrowserDockContent.SelectAll();
             }
+
+            if (this.dpnDockPanel.ActiveContent is ShellFolderDockContent folderDockContent)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate ()
+                {
+                    folderDockContent.SelectAll();
+                }));
+            }
         }
 
         internal void CmdSelectNone_ExecuteEvent(object sender, ExecuteEventArgs e)
@@ -208,6 +216,14 @@ namespace electrifier.Core.Forms
             if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
             {
                 elShellBrowserDockContent.SelectNone();
+            }
+
+            if (this.dpnDockPanel.ActiveContent is ShellFolderDockContent folderDockContent)
+            {
+                this.BeginInvoke(new MethodInvoker(delegate ()
+                {
+                    folderDockContent.UnselectAll();
+                }));
             }
         }
 
