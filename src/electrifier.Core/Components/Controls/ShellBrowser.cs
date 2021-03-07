@@ -20,7 +20,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Windows.Forms;
@@ -29,15 +28,14 @@ using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 
 using Vanara.Collections; // For History
-using static Vanara.PInvoke.Shell32;
+using static Vanara.PInvoke.Shell32; // For History
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using Vanara.Extensions;
 //using static Vanara.PInvoke.User32;
-using Vanara.InteropServices;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -66,6 +64,37 @@ namespace electrifier.Core.Components.Controls
     /// TODO: IInputObject_WinForms in Vanara\Windows.Forms\Controls\ExplorerBrowser.cs
     /// TODO: FolderViewMode and FolderFlags in BrowseObject
     /// </summary>
+
+    /// <summary>Indicates the viewing mode of the ShellBrowser</summary>
+    public enum ShellBrowserViewMode
+    {
+        /// <summary>Choose the best view mode for the folder</summary>
+        Auto = Shell32.FOLDERVIEWMODE.FVM_AUTO,
+
+        /// <summary>(New for Windows7)</summary>
+        Content = Shell32.FOLDERVIEWMODE.FVM_CONTENT,
+
+        /// <summary>Object names and other selected information, such as the size or date last updated, are shown.</summary>
+        Details = Shell32.FOLDERVIEWMODE.FVM_DETAILS,
+
+        /// <summary>The view should display medium-size icons.</summary>
+        Icon = Shell32.FOLDERVIEWMODE.FVM_ICON,
+
+        /// <summary>Object names are displayed in a list view.</summary>
+        List = Shell32.FOLDERVIEWMODE.FVM_LIST,
+
+        /// <summary>The view should display small icons.</summary>
+        SmallIcon = Shell32.FOLDERVIEWMODE.FVM_SMALLICON,
+
+        /// <summary>The view should display thumbnail icons.</summary>
+        Thumbnail = Shell32.FOLDERVIEWMODE.FVM_THUMBNAIL,
+
+        /// <summary>The view should display icons in a filmstrip format.</summary>
+        ThumbStrip = Shell32.FOLDERVIEWMODE.FVM_THUMBSTRIP,
+
+        /// <summary>The view should display large icons.</summary>
+        Tile = Shell32.FOLDERVIEWMODE.FVM_TILE
+    }
 
     public class ShellBrowserNavigatedEventArgs : EventArgs
     {
@@ -156,39 +185,70 @@ namespace electrifier.Core.Components.Controls
     {
         protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
+        internal FOLDERSETTINGS folderSettings = new FOLDERSETTINGS(FOLDERVIEWMODE.FVM_AUTO, defaultFolderFlags);
+
+        private const FOLDERFLAGS defaultFolderFlags = FOLDERFLAGS.FWF_NOHEADERINALLVIEWS | FOLDERFLAGS.FWF_USESEARCHFOLDER | FOLDERFLAGS.FWF_NOWEBVIEW;
+        internal const int defaultThumbnailSize = 32;
+
         #region Properties =====================================================================================================
+
+        /// <inheritdoc/>
+        protected override Size DefaultSize => new Size(200, 150);
 
         private string emptyFolderText = "This folder is empty.";
 
         /// <summary>The default text that is displayed when an empty folder is shown</summary>
-        [Category("Appearance")]
-        [Description("The default text that is displayed when an empty folder is shown.")]
-        [DefaultValue("This folder is empty.")]
+        [Category("Appearance"), DefaultValue("This folder is empty."), Description("The default text that is displayed when an empty folder is shown.")]
         public string EmptyFolderText
         {
             get => this.emptyFolderText;
             set
             {
                 this.emptyFolderText = value;
-                this.ViewHandler?.SetText();
+
+                if (this.ViewHandler.IsValid)
+                    this.ViewHandler.Text = value;
             }
         }
 
         /// <summary>Contains the navigation history of the ShellBrowser</summary>
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public ShellNavigationHistory History { get; private set; }
 
-        /// <summary>The set of ShellItems in the Explorer Browser</summary>
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>The set of ShellItems in the ShellBrowser</summary>
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public IReadOnlyList<ShellItem> Items { get; }
 
-        /// <summary>The set of selected ShellItems in the Explorer Browser</summary>
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        /// <summary>The set of selected ShellItems in the ShellBrowser</summary>
+        [Browsable(false), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public IReadOnlyList<ShellItem> SelectedItems { get; }
 
+        /// <summary>The size of the thumbnails in pixels.</summary>
+        [Category("Appearance"), DefaultValue(defaultThumbnailSize), Description("The size of the thumbnails in pixels.")]
+        public int ThumbnailSize
+        {
+            get => (this.ViewHandler.IsValid) ? this.ViewHandler.ThumbnailSize : defaultThumbnailSize;
+            set
+            {
+                if (this.ViewHandler.IsValid)
+                    this.ViewHandler.ThumbnailSize = value;
+            }
+        }
+
+        /// <summary>The viewing mode of the ShellBrowser</summary>
+        [Category("Appearance"), DefaultValue(typeof(ShellBrowserViewMode), "Auto"), Description("The viewing mode of the ShellBrowser.")]
+        public ShellBrowserViewMode ViewMode
+        {
+            get => (ShellBrowserViewMode)this.folderSettings.ViewMode;
+            set
+            {
+                // TODO: Set ThumbnailSize accordingly?
+                this.folderSettings.ViewMode = (FOLDERVIEWMODE)value;
+
+                if (this.ViewHandler.IsValid)
+                    this.ViewHandler.ViewMode = this.folderSettings.ViewMode;
+            }
+        }
 
         #endregion ============================================================================================================
 
@@ -227,7 +287,7 @@ namespace electrifier.Core.Components.Controls
             this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
         }
 
-        /// <summary>Gets the items in the ExplorerBrowser as an IShellItemArray</summary>
+        /// <summary>Gets the items in the ShellBrowser as an IShellItemArray</summary>
         /// <returns>An <see cref="IShellItemArray"/> instance or <see langword="null"/> if not available.</returns>
         internal IShellItemArray GetItemsArray(SVGIO opt)
         {
@@ -243,7 +303,7 @@ namespace electrifier.Core.Components.Controls
             catch { return null; }
         }
 
-        // TODO: ViewMode-Property
+        // TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
 
         // TODO: AppContext.Trace* removal
 
@@ -439,7 +499,10 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadAsync(delegate
             {
-                var viewHandler = new ShellBrowserViewHandler(this, new ShellFolder(shellObject));
+                var viewHandler = new ShellBrowserViewHandler(this,
+                    new ShellFolder(shellObject),
+                    ref this.folderSettings,
+                    ref this.emptyFolderText);
 
 //                if (viewHandler.Validated() is null)
 //                    return;
@@ -757,6 +820,18 @@ namespace electrifier.Core.Components.Controls
     public class ShellBrowserViewHandler
         : Shell32.IShellFolderViewCB
     {
+        private string text;
+        private int thumbnailSize = ShellBrowser.defaultThumbnailSize;
+
+        /// <summary>
+        /// <code>{"The operation was canceled by the user. (Exception from HRESULT: 0x800704C7)"}</code> is the result of a 
+        /// call to <see cref="Shell32.IShellView.CreateViewWindow"/> on a Shell Item that targets a removable Disk Drive
+        /// when currently no Media is present. Let's catch these to use our own error handling for this.
+        /// </summary>
+        internal static readonly HRESULT HRESULT_CANCELLED = new HRESULT(0x800704C7);
+
+        #region Properties ====================================================================================================
+
         public ShellBrowser Owner { get; }
         public ShellFolder ShellFolder { get; private set; }
         public Shell32.IShellView ShellView { get; private set; }
@@ -766,12 +841,60 @@ namespace electrifier.Core.Components.Controls
         public bool NoDiskInDriveError { get; }
         public COMException ValidationError { get; private set; }
 
-        /// <summary>
-        /// <code>{"The operation was canceled by the user. (Exception from HRESULT: 0x800704C7)"}</code> is the result of a 
-        /// call to <see cref="Shell32.IShellView.CreateViewWindow"/> on a Shell Item that targets a removable Disk Drive
-        /// when currently no Media is present. Let's catch these to use our own error handling for this.
-        /// </summary>
-        internal static readonly HRESULT HRESULT_CANCELLED = new HRESULT(0x800704C7);
+        /// <summary>The default text to be used when there are no items in the view.</summary>
+        public string Text
+        {
+            get => this.text;
+
+            set
+            {
+                this.text = value;
+
+                if (this.IsValid)
+                    this.FolderView2.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, value);
+            }
+        }
+
+        /// <summary>The size of the thumbnails in pixels.</summary>
+        public int ThumbnailSize
+        {
+            get
+            {
+                if (this.IsValid)
+                    this.FolderView2.GetViewModeAndIconSize(out _, out this.thumbnailSize);
+
+                return this.thumbnailSize;
+            }
+            set
+            {
+                if (this.IsValid)
+                {
+                    this.FolderView2.GetViewModeAndIconSize(out var fvm, out _);
+                    this.FolderView2.SetViewModeAndIconSize(fvm, this.thumbnailSize = value);
+                }
+            }
+        }
+
+        /// <summary>The viewing mode of the ShellBrowser.</summary>
+        public Shell32.FOLDERVIEWMODE ViewMode
+        {
+            get
+            {
+                if (this.IsValid)
+                {
+                    return this.FolderView2.GetCurrentViewMode();
+                }
+
+                return Shell32.FOLDERVIEWMODE.FVM_AUTO;     // TODO!
+            }
+            set
+            {
+                if (this.IsValid)
+                    this.FolderView2.SetCurrentViewMode(value);
+            }
+        }
+
+        #endregion ============================================================================================================
 
         /// <summary>
         /// Create an instance of <see cref="ShellBrowserViewHandler"/> to handle Callback messages for the given ShellFolder.
@@ -783,13 +906,13 @@ namespace electrifier.Core.Components.Controls
         public ShellBrowserViewHandler(
             ShellBrowser owner,
             ShellFolder shellFolder,
-            Shell32.FOLDERVIEWMODE folderViewMode = Shell32.FOLDERVIEWMODE.FVM_AUTO,
-            Shell32.FOLDERFLAGS folderFlags = Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS)
+            ref Shell32.FOLDERSETTINGS folderSettings,
+            ref string emptyFolderText)
         {
             this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
             this.ShellFolder = shellFolder ?? throw new ArgumentNullException(nameof(shellFolder));
 
-            // Try to create ShellView and FolderView2 objects, then its ViewWindow
+            // Create ShellView and FolderView2 objects, then its ViewWindow
             try
             {
                 var sfvCreate = new Shell32.SFV_CREATE()
@@ -805,7 +928,6 @@ namespace electrifier.Core.Components.Controls
                 this.ShellView = shellView ??
                     throw new InvalidComObjectException(nameof(this.ShellView));
 
-                var folderSettings = new Shell32.FOLDERSETTINGS(folderViewMode, folderFlags);
                 this.FolderView2 = (Shell32.IFolderView2)this.ShellView ??
                     throw new InvalidComObjectException(nameof(this.FolderView2));
 
@@ -818,7 +940,7 @@ namespace electrifier.Core.Components.Controls
 
                     this.IsValid = true;
 
-                    this.SetText();
+                    this.Text = emptyFolderText;
                 }
                 catch (COMException ex)
                 {
@@ -831,6 +953,7 @@ namespace electrifier.Core.Components.Controls
             catch (COMException ex)
             {
                 // TODO: e.g. C:\Windows\CSC => Permission denied!
+                // 0x8007 0005 E_ACCESSDENIED
                 this.ValidationError = ex;
             }
         }
@@ -840,6 +963,7 @@ namespace electrifier.Core.Components.Controls
             this.IsValid = false;
 
             // TODO: Remove MessageSFVCB here!
+
             // Destroy ShellView's ViewWindow
             this.ViewWindow = HWND.NULL;
             this.ShellView.DestroyViewWindow();
@@ -877,16 +1001,17 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
-        /// <summary>Sets the default text to be used when there are no items in the view.</summary>
-        public void SetText()
-        {
-            if (this.IsValid)
-                this.FolderView2.SetText(Shell32.FVTEXTTYPE.FVST_EMPTYTEXT, this.Owner.EmptyFolderText);
-        }
-
+        /// <summary>Changes the position and dimensions of this <see cref="ViewWindow"/>.</summary>
+        /// <param name="bRepaint">Force redraw</param>
+        /// <returns>If the function succeeds, the return value is nonzero.</returns>
         public bool MoveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) =>
             this.ViewWindow != HWND.NULL && User32.MoveWindow(this.ViewWindow, X, Y, nWidth, nHeight, bRepaint);
+
+        /// <summary>Activate the ShellView of this ShellBrowser.</summary>
+        /// <param name="uState">The <seealso cref="Shell32.SVUIA"/> to be set</param>
         public void UIActivate(Shell32.SVUIA uState = Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS) => this.ShellView?.UIActivate(uState);
+
+        /// <summary>Deactivate the ShellView of this ShellBrowser.</summary>
         public void UIDeactivate() => this.UIActivate(Shell32.SVUIA.SVUIA_DEACTIVATE);
     }
 

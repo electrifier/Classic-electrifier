@@ -182,6 +182,16 @@ namespace electrifier.Core.Components.DockContents
             this.ShellBrowser.UnselectAll();
         }
 
+        public override bool HasShellFolderViewMode => true;
+
+        public override Shell32.FOLDERVIEWMODE ShellFolderViewMode
+        {
+            get => (Shell32.FOLDERVIEWMODE)this.ShellBrowser.ViewMode;
+            set => this.ShellBrowser.ViewMode = (ShellBrowserViewMode)value;
+        }
+
+
+
 
         #region Component Designer generated code =============================================================================
 
