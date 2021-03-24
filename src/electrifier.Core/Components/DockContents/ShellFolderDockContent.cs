@@ -220,7 +220,7 @@ namespace electrifier.Core.Components.DockContents
             this.splitter.Location = new System.Drawing.Point(320, 0);
             this.splitter.Name = "splitter";
             this.splitter.Size = new System.Drawing.Size(6, 876);
-            this.splitter.TabIndex = 4;
+            this.splitter.TabIndex = 3;
             this.splitter.TabStop = false;
             // 
             // statusStrip
@@ -234,7 +234,7 @@ namespace electrifier.Core.Components.DockContents
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(835, 26);
             this.statusStrip.SizingGrip = false;
-            this.statusStrip.TabIndex = 6;
+            this.statusStrip.TabIndex = 4;
             this.statusStrip.Text = "statusStrip1";
             // 
             // itemCountStatusLabel
@@ -256,7 +256,7 @@ namespace electrifier.Core.Components.DockContents
             this.ShellBrowser.Location = new System.Drawing.Point(326, 0);
             this.ShellBrowser.Name = "ShellBrowser";
             this.ShellBrowser.Size = new System.Drawing.Size(835, 850);
-            this.ShellBrowser.TabIndex = 5;
+            this.ShellBrowser.TabIndex = 2;
             this.ShellBrowser.Navigated += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigatedEventArgs>(this.ShellBrowser_Navigated);
             // 
             // ShellFolderDockContent

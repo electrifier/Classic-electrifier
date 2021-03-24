@@ -1,24 +1,4 @@
-﻿/*
-** 
-**  electrifier
-** 
-**  Copyright 2017-19 Thorsten Jung, www.electrifier.org
-**  
-**  Licensed under the Apache License, Version 2.0 (the "License");
-**  you may not use this file except in compliance with the License.
-**  You may obtain a copy of the License at
-**  
-**      http://www.apache.org/licenses/LICENSE-2.0
-**  
-**  Unless required by applicable law or agreed to in writing, software
-**  distributed under the License is distributed on an "AS IS" BASIS,
-**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-**  See the License for the specific language governing permissions and
-**  limitations under the License.
-**
-*/
-
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
@@ -35,6 +15,7 @@ using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 //using static Vanara.PInvoke.User32;
 
 namespace electrifier.Core.Components.Controls
@@ -47,12 +28,11 @@ namespace electrifier.Core.Components.Controls
     ///
     /// NOTE: For Keyboard handling, have a look here: https://docs.microsoft.com/en-us/windows/win32/api/oleidl/nn-oleidl-ioleinplaceactiveobject
     ///
-    /// FIXED TODO: Creating ViewWindow using '.CreateViewWindow(' fails on Zip-Folders; I barely remember we have to react on DDE_ - Messages for this to work?!? -> When Implementing ICommonDlgBrowser, this works!
+    /// DONE: Creating ViewWindow using '.CreateViewWindow(' fails on Zip-Folders; I barely remember we have to react on DDE_ - Messages for this to work?!? -> When Implementing ICommonDlgBrowser, this works!
     ///       => Fixed by removing IShellFolderViewCB ==> Fixed again by returning HRESULT.E_NOTIMPL from MessageSFVCB
-    /// DOCS: https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features
+    /// DOCS: IMPORTANT! https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features        // IMPORTANT!
     /// DOCS: https://stackoverflow.com/questions/15750842/allow-selection-in-explorer-style-list-view-to-start-in-the-first-column
     /// TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above: IFolderView2
-    /// TODO: Use COMReleaser: https://github.com/dahall/Vanara/blob/master/Core/InteropServices/ComReleaser.cs
     /// TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
     ///       As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
     ///       However, it seems to be a special group, since folders are Tiles, whereas files are shown in Details mode.
@@ -61,8 +41,15 @@ namespace electrifier.Core.Components.Controls
     /// TODO: Maybe this interface could help, too: https://docs.microsoft.com/en-us/windows/win32/shell/shellfolderview
     /// NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
     /// TODO: BorderStyle? => Additionally border like the one on the adressbar of Edge
-    /// TODO: IInputObject_WinForms in Vanara\Windows.Forms\Controls\ExplorerBrowser.cs
     /// TODO: FolderViewMode and FolderFlags in BrowseObject
+    /// TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
+    /// TODO: AppContext.Trace* removal
+    /// DONE: Keyboard-Handling
+    /// DONE: BrowseObject ->Parent -> Relative
+    /// TODO: Properties in design editor!!!
+    /// TODO: Write History correctly!
+    /// TODO: Check getting / losing Focus!
+    /// TODO: Context-Menu -> "Open File Location" doesn't work on folder "Quick Access"
     /// </summary>
 
     /// <summary>Indicates the viewing mode of the ShellBrowser</summary>
@@ -176,6 +163,7 @@ namespace electrifier.Core.Components.Controls
     /// </summary>
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
+    [Description("A Shell object that displays a list of Shell Items.")]
     [Guid("B8B0F852-9527-4CA8-AB1D-648AE95B618E")]
     public class ShellBrowser
         : UserControl
@@ -183,14 +171,19 @@ namespace electrifier.Core.Components.Controls
         , Shell32.IShellBrowser
         , Shell32.IServiceProvider
     {
-        protected ShellBrowserViewHandler ViewHandler { get; private set; }
+        private Shell32.FOLDERSETTINGS folderSettings = new Shell32.FOLDERSETTINGS(
+            Shell32.FOLDERVIEWMODE.FVM_AUTO,
+            Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS |
+            Shell32.FOLDERFLAGS.FWF_NOWEBVIEW |
+            Shell32.FOLDERFLAGS.FWF_USESEARCHFOLDER);
 
-        internal FOLDERSETTINGS folderSettings = new FOLDERSETTINGS(FOLDERVIEWMODE.FVM_AUTO, defaultFolderFlags);
-
-        private const FOLDERFLAGS defaultFolderFlags = FOLDERFLAGS.FWF_NOHEADERINALLVIEWS | FOLDERFLAGS.FWF_USESEARCHFOLDER | FOLDERFLAGS.FWF_NOWEBVIEW;
         internal const int defaultThumbnailSize = 32;
 
-        #region Properties =====================================================================================================
+        protected readonly StringBuilder processCmdKeyClassName = new StringBuilder(processCmdKeyClassNameMaxLength + 1);
+        protected const int processCmdKeyClassNameMaxLength = 31;
+        protected const string processCmdKeyClassNameEdit = "Edit";
+
+        #region Properties ====================================================================================================
 
         /// <inheritdoc/>
         protected override Size DefaultSize => new Size(200, 150);
@@ -234,6 +227,8 @@ namespace electrifier.Core.Components.Controls
                     this.ViewHandler.ThumbnailSize = value;
             }
         }
+
+        protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
         /// <summary>The viewing mode of the ShellBrowser</summary>
         [Category("Appearance"), DefaultValue(typeof(ShellBrowserViewMode), "Auto"), Description("The viewing mode of the ShellBrowser.")]
@@ -282,6 +277,101 @@ namespace electrifier.Core.Components.Controls
             this.Resize += this.ShellBrowser_Resize;
         }
 
+        /// <summary>Process known command keys of the ShellBrowser.</summary>
+        /// <param name="msg">Windows Message</param>
+        /// <param name="keyData">Key codes and modifiers</param>
+        /// <returns>true if character was processed by the control; otherwise, false</returns>
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // We have to take special care when the ShellView is currently renaming an item:
+            // If message's sender equals class 'Edit', and its parent window is our ViewWindow,
+            // the ShellView is currently showing an Edit-field to let the User edit an item's name.
+            // Thus, we have to pass all Key Strokes directly to the ShellView.
+
+            if (this.ViewHandler.Validated() != null)
+            {
+                if (User32.GetClassName(msg.HWnd,
+                    this.processCmdKeyClassName,
+                    ShellBrowser.processCmdKeyClassNameMaxLength) > 0)
+                {
+                    if (processCmdKeyClassName.ToString().Equals(ShellBrowser.processCmdKeyClassNameEdit))
+                    {
+                        // Try to get Edit field's parent 'SysListView32' handle
+                        HWND hSysListView32 = User32.GetParent(msg.HWnd);
+
+                        if (hSysListView32 != null)
+                        {
+                            // Try to get SysListView32's parent 'SHELLDLL_DefView' handle
+                            HWND hShellDllDefViewWindow = User32.GetParent(hSysListView32);
+
+                            if ((hShellDllDefViewWindow != null) && (hShellDllDefViewWindow == this.ViewHandler.ViewWindow))
+                            {
+                                this.ViewHandler.ShellView.TranslateAccelerator(
+                                    new MSG(msg.HWnd, (uint)msg.Msg, msg.WParam, msg.LParam));
+
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            //
+            // Process tab key for control focus cycle:
+            //  Tab          =>  Focus next control
+            //  Tab + Shift  =>  Focus previous control
+            //
+            if ((keyData & Keys.KeyCode) == Keys.Tab)
+            {
+                bool forward = (keyData & Keys.Shift) != Keys.Shift;
+
+                this.Parent.SelectNextControl(ActiveControl,
+                    forward: forward, tabStopOnly: true, nested: true, wrap: true);
+
+                return true;
+            }
+
+            //
+            // Process folder navigation shortcuts:
+            //  Alt + Left   OR  BrowserBack     =>  Navigate back in history
+            //  Alt + Right  OR  BrowserForward  =>  Navigate forward in history
+            //  Backspace                        =>  Navigate to parent folder
+            //
+            switch (keyData)
+            {
+                case Keys.BrowserBack:
+                case Keys.Alt | Keys.Left:
+                    this.NavigateBack();
+
+                    return true;
+
+                case Keys.BrowserForward:
+                case Keys.Alt | Keys.Right:
+                    this.NavigateForward();
+
+                    return true;
+
+                case Keys.Back:
+                    this.NavigateParent();
+
+                    return true;
+            }
+
+            //
+            // Let the ShellView process all other keystrokes
+            //
+            if (this.ViewHandler.Validated() != null)
+            {
+                this.ViewHandler.ShellView.TranslateAccelerator(
+                    new MSG(msg.HWnd, (uint)msg.Msg, msg.WParam, msg.LParam));
+
+                return true;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+
         protected internal virtual void ShellBrowser_Resize(object sender, EventArgs e)
         {
             this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
@@ -303,26 +393,27 @@ namespace electrifier.Core.Components.Controls
             catch { return null; }
         }
 
-        // TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
-
-        // TODO: AppContext.Trace* removal
-
-        // TODO: Keyboard-Handling
-
-        // TODO: BrowseObject ->Parent -> Relative
-
-
         /// <summary>Selects all items in the current view.</summary>
         public void SelectAll()
         {
-            // TODO: To speed things up, try workaround #2: https://stackoverflow.com/questions/9039989/how-to-selectall-in-a-winforms-virtual-listview
-
             var viewHandler = this.ViewHandler.Validated();
 
             if (viewHandler != null)
             {
-                for (var i = 0; i < viewHandler.FolderView2.ItemCount(SVGIO.SVGIO_ALLVIEW); i++)
-                    viewHandler.FolderView2.SelectItem(i, SVSIF.SVSI_SELECT);
+                // NOTE: The for-loop is rather slow, so send (Ctrl+A)-KeyDown-Message instead and let the ShellView do the work
+                // for (var i = 0; i < viewHandler.FolderView2.ItemCount(SVGIO.SVGIO_ALLVIEW); i++)
+                //   viewHandler.FolderView2.SelectItem(i, SVSIF.SVSI_SELECT);
+                //
+                // TODO: Another way would be to use this Windows Message-Pattern (Workaround #2):
+                //   https://stackoverflow.com/questions/9039989/how-to-selectall-in-a-winforms-virtual-listview
+
+                var msg = new Message()
+                {
+                    HWnd = (IntPtr)this.ViewHandler.ViewWindow,
+                    Msg = (int)User32.WindowMessage.WM_KEYDOWN,
+                };
+
+                this.ProcessCmdKey(ref msg, Keys.Control | Keys.A);
             }
         }
 
@@ -387,12 +478,21 @@ namespace electrifier.Core.Components.Controls
             using (ShellItem shellFolder = this.History.Seek(historyIndex, SeekOrigin.Current))
             {
                 if (shellFolder != null)
-                    return this.BrowseObject((IntPtr)shellFolder.PIDL, SBSP.SBSP_ABSOLUTE | SBSP.SBSP_WRITENOHISTORY).Succeeded;
+                    return this.BrowseObject((IntPtr)shellFolder.PIDL,
+                        SBSP.SBSP_ABSOLUTE | SBSP.SBSP_WRITENOHISTORY).Succeeded;
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Navigates to the parent folder.
+        /// </summary>
+        /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        public bool NavigateParent()
+        {
+            return this.BrowseObject(IntPtr.Zero, Shell32.SBSP.SBSP_PARENT).Succeeded;
+        }
 
         #region IShellBrowser interface =======================================================================================
 
@@ -435,7 +535,7 @@ namespace electrifier.Core.Components.Controls
             }
 
             //
-            // SBSP_NAVIGATEBACK means the last item in the navigation history list
+            // SBSP_NAVIGATEBACK stands for the last item in the navigation history list (and ignores the pidl)
             //
             else if (wFlags.HasFlag(Shell32.SBSP.SBSP_NAVIGATEBACK))
             {
@@ -446,7 +546,7 @@ namespace electrifier.Core.Components.Controls
             }
 
             //
-            // SBSP_NAVIGATEFORWARD means the next item in the navigation history list
+            // SBSP_NAVIGATEFORWARD stands for the next item in the navigation history list (and ignores the pidl)
             //
             else if (wFlags.HasFlag(Shell32.SBSP.SBSP_NAVIGATEFORWARD))
             {
@@ -456,40 +556,34 @@ namespace electrifier.Core.Components.Controls
                     return HRESULT.STG_E_PATHNOTFOUND;
             }
 
-            else if (wFlags.HasFlag(Shell32.SBSP.SBSP_RELATIVE))            // pidl is relative to the current fodler
+            //
+            // SBSP_RELATIVE stands for a pidl relative to the current folder
+            //
+            else if (wFlags.HasFlag(Shell32.SBSP.SBSP_RELATIVE))
             {
+                var currentObject = this.History.Current;
 
+                var targetObject = PIDLUtil.ILCombine((IntPtr)currentObject.PIDL, pidl);
 
-                //// SBSP_RELATIVE - pidl is relative from the current folder
-                //if ((hr = m_currentFolder.BindToObject(pidl, IntPtr.Zero, ref NativeMethods.IID_IShellFolder,
-                //                                       out folderTmpPtr)) != NativeMethods.S_OK)
-                //    return hr;
-                //pidlTmp = NativeMethods.Shell32.ILCombine(m_pidlAbsCurrent, pidl);
-                //folderTmp = (NativeMethods.IShellFolder)Marshal.GetObjectForIUnknown(folderTmpPtr);
-            }
-
-            else if (wFlags.HasFlag(Shell32.SBSP.SBSP_PARENT))              // browse to parent folder and ignore the pidl
-            {
-
-                //// SBSP_PARENT - Browse the parent folder (ignores the pidl)
-                //pidlTmp = GetParentPidl(m_pidlAbsCurrent);
-                //string pathTmp = GetDisplayName(m_desktopFolder, pidlTmp, NativeMethods.SHGNO.SHGDN_FORPARSING);
-                //if (pathTmp.Equals(m_desktopPath))
-                //{
-                //    pidlTmp = NativeMethods.Shell32.ILClone(m_desktopPidl);
-                //    folderTmp = m_desktopFolder;
-                //}
-                //else
-                //{
-                //    if ((hr = m_desktopFolder.BindToObject(pidlTmp, IntPtr.Zero, ref NativeMethods.IID_IShellFolder,
-                //                                           out folderTmpPtr)) != NativeMethods.S_OK)
-                //        return hr;
-                //    folderTmp = (NativeMethods.IShellFolder)Marshal.GetObjectForIUnknown(folderTmpPtr);
-                //}
+                shellObject = new ShellItem(targetObject);
             }
 
             //
-            // SBSP_ABSOLUTE as the remaining option means an absolute pidl is given
+            // SBSP_PARENT stands for the parent folder (and ignores the pidl)
+            //
+            else if (wFlags.HasFlag(Shell32.SBSP.SBSP_PARENT))
+            {
+                var currentObject = this.History.Current;
+                var parentObject = currentObject.Parent;
+
+                if ((parentObject != null) && (parentObject.PIDL.IsParentOf(currentObject.PIDL)))
+                    shellObject = parentObject;
+                else
+                    return HRESULT.STG_E_PATHNOTFOUND;
+            }
+
+            //
+            // SBSP_ABSOLUTE as the remaining option stands for an absolute pidl that is given
             //
             else
             {
@@ -510,6 +604,7 @@ namespace electrifier.Core.Components.Controls
                 // Clone the PIDL, to have our own object on the heap
                 var newPIDL = new PIDL(viewHandler.ShellFolder.PIDL);
 
+				// TODO: SBSP_DONTWRITEHISTORY
                 this.History.Add(newPIDL);
 
                 var oldViewHandler = this.ViewHandler;
@@ -883,6 +978,7 @@ namespace electrifier.Core.Components.Controls
                 if (this.IsValid)
                 {
                     return this.FolderView2.GetCurrentViewMode();
+                    // TODO: Check ThumbNailSize for new ViewModes with larger sized icons 
                 }
 
                 return Shell32.FOLDERVIEWMODE.FVM_AUTO;     // TODO!
@@ -918,9 +1014,9 @@ namespace electrifier.Core.Components.Controls
                 var sfvCreate = new Shell32.SFV_CREATE()
                 {
                     cbSize = (uint)Marshal.SizeOf<Shell32.SFV_CREATE>(),
-                    psfvcb = this,
                     pshf = shellFolder.IShellFolder,
                     psvOuter = null,
+                    psfvcb = this,
                 };
 
                 Shell32.SHCreateShellFolderView(ref sfvCreate, out Shell32.IShellView shellView).ThrowIfFailed();
