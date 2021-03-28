@@ -9,6 +9,7 @@ using Vanara.Windows.Shell;
 
 using Vanara.Collections; // For History
 using static Vanara.PInvoke.Shell32; // For History
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -16,42 +17,19 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Runtime.CompilerServices;
 //using static Vanara.PInvoke.User32;
+
+/*
+ * NOTE: Very handy: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
+ * NOTE: Very handy: https://stackoverflow.com/questions/54390268/getting-the-current-ishellview-user-is-interacting-with
+ * NOTE: IMPORTANT! https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features        // IMPORTANT!
+ * NOTE: https://stackoverflow.com/questions/15750842/allow-selection-in-explorer-style-list-view-to-start-in-the-first-column
+ * NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
+*/
 
 namespace electrifier.Core.Components.Controls
 {
-    /// <summary>
-    /// TODO: See Interlocked class for threading issues
-    /// FIXED TODO: Disable header in Details view when grouping is enabled
-    /// NOTE: Very handy: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
-    /// NOTE: Very handy: https://stackoverflow.com/questions/54390268/getting-the-current-ishellview-user-is-interacting-with
-    ///
-    /// NOTE: For Keyboard handling, have a look here: https://docs.microsoft.com/en-us/windows/win32/api/oleidl/nn-oleidl-ioleinplaceactiveobject
-    ///
-    /// DONE: Creating ViewWindow using '.CreateViewWindow(' fails on Zip-Folders; I barely remember we have to react on DDE_ - Messages for this to work?!? -> When Implementing ICommonDlgBrowser, this works!
-    ///       => Fixed by removing IShellFolderViewCB ==> Fixed again by returning HRESULT.E_NOTIMPL from MessageSFVCB
-    /// DOCS: IMPORTANT! https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features        // IMPORTANT!
-    /// DOCS: https://stackoverflow.com/questions/15750842/allow-selection-in-explorer-style-list-view-to-start-in-the-first-column
-    /// TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above: IFolderView2
-    /// TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
-    ///       As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
-    ///       However, it seems to be a special group, since folders are Tiles, whereas files are shown in Details mode.
-    /// NOTE: The grouping is done by 'Group'. Activate it using "Group by->More->Group", and then do the grouping.
-    ///       However, the Icons for 'Recent Files'-Group get lost.
-    /// TODO: Maybe this interface could help, too: https://docs.microsoft.com/en-us/windows/win32/shell/shellfolderview
-    /// NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
-    /// TODO: BorderStyle? => Additionally border like the one on the adressbar of Edge
-    /// TODO: FolderViewMode and FolderFlags in BrowseObject
-    /// TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
-    /// TODO: AppContext.Trace* removal
-    /// DONE: Keyboard-Handling
-    /// DONE: BrowseObject ->Parent -> Relative
-    /// TODO: Properties in design editor!!!
-    /// TODO: Write History correctly!
-    /// TODO: Check getting / losing Focus!
-    /// TODO: Context-Menu -> "Open File Location" doesn't work on folder "Quick Access"
-    /// </summary>
-
     /// <summary>Indicates the viewing mode of the ShellBrowser</summary>
     public enum ShellBrowserViewMode
     {
@@ -154,12 +132,36 @@ namespace electrifier.Core.Components.Controls
     ///   Also, if using Groups, the Frequent Files List doesn't have its Icons. Maybe we have to bind to another version
     ///   of ComCtrls to get this rendered properly - That's just an idea though, cause the Collapse-/Expand-Icons of the
     ///   Groups have the Windows Vista / Windows 7-Theme, not the Windows 10 Theme as I can see.<br/>
-    /// - Keyboard input doesn't work so far.<br/>
+    /// - DONE: Keyboard input doesn't work so far.<br/>
     /// - DONE: Only Details-Mode should have column headers: (Using Shell32.FOLDERFLAGS.FWF_NOHEADERINALLVIEWS)<br/>
     ///   https://stackoverflow.com/questions/11776266/ishellview-columnheaders-not-hidden-if-autoview-does-not-choose-details
     /// - TODO: CustomDraw, when currently no shellView available<br/>
     /// - DONE: Network folder: E_FAIL => DONE: Returning HRESULT.E_NOTIMPL from MessageSFVCB fixes this<br/>
     /// - DONE: Disk Drive (empty): E_CANCELLED_BY_USER<br/>
+    /// 
+    /// 
+    /// 
+    /// DONE: Disable header in Details view when grouping is enabled
+    /// DONE: Creating ViewWindow using '.CreateViewWindow()' fails on Zip-Folders; => Fixed again by returning HRESULT.E_NOTIMPL from MessageSFVCB
+    /// TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above: IFolderView2
+    /// TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
+    ///       As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
+    ///       However, it seems to be a special group, since folders are Tiles, whereas files are shown in Details mode.
+    /// NOTE: The grouping is done by 'Group'. Activate it using "Group by->More->Group", and then do the grouping.
+    ///       However, the Icons for 'Recent Files'-Group get lost.
+    /// TODO: Maybe this interface could help, too: https://docs.microsoft.com/en-us/windows/win32/shell/shellfolderview
+    /// TODO: BorderStyle? => Additionally border like the one on the adressbar of Edge
+    /// TODO: FolderViewMode and FolderFlags in BrowseObject
+    /// TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
+    /// TODO: AppContext.Trace* removal
+    /// DONE: Keyboard-Handling
+    /// DONE: BrowseObject ->Parent -> Relative
+    /// TODO: Properties in design editor!!!
+    /// TODO: Write History correctly!
+    /// TODO: Check getting / losing Focus!
+    /// TODO: Context-Menu -> "Open File Location" doesn't work on folder "Quick Access"
+    /// TODO: For Background Image -> https://docs.microsoft.com/en-gb/windows/win32/controls/lvm-setbkimage?redirectedfrom=MSDN, https://social.msdn.microsoft.com/Forums/en-US/95a8db2b-ea0f-4388-8b52-78348500e0f7/listview-background-image
+    /// TODO: When columns get reordered in details mode, then navigate to another folder, then back => columns get messed
     /// </summary>
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
@@ -182,6 +184,9 @@ namespace electrifier.Core.Components.Controls
         protected readonly StringBuilder processCmdKeyClassName = new StringBuilder(processCmdKeyClassNameMaxLength + 1);
         protected const int processCmdKeyClassNameMaxLength = 31;
         protected const string processCmdKeyClassNameEdit = "Edit";
+
+        protected IStream viewStateStream;
+        protected string viewStateStreamIdentifier;
 
         #region Properties ====================================================================================================
 
@@ -245,6 +250,12 @@ namespace electrifier.Core.Components.Controls
             }
         }
 
+        /// <summary>The Registry Key where Browser ViewStates get serialized</summary>
+        /// <example>Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Streams\\</example>
+        [Category("Behavior"), Description("The Registry Key where Browser ViewStates get serialized.")]
+        public string ViewStateRegistryKey { get; set; } =
+            $"Software\\{ Application.CompanyName }\\{ Application.ProductName }\\ShellBrowser\\ViewStateStreams";
+
         #endregion ============================================================================================================
 
         #region Published Events ==============================================================================================
@@ -270,11 +281,11 @@ namespace electrifier.Core.Components.Controls
             this.InitializeComponent();
 
             this.History = new ShellNavigationHistory();
-
             this.Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW);
             this.SelectedItems = new ShellItemCollection(this, SVGIO.SVGIO_SELECTION);
 
             this.Resize += this.ShellBrowser_Resize;
+            this.HandleDestroyed += this.ShellBrowser_HandleDestroyed;
         }
 
         /// <summary>Process known command keys of the ShellBrowser.</summary>
@@ -326,7 +337,10 @@ namespace electrifier.Core.Components.Controls
                 bool forward = (keyData & Keys.Shift) != Keys.Shift;
 
                 this.Parent.SelectNextControl(ActiveControl,
-                    forward: forward, tabStopOnly: true, nested: true, wrap: true);
+                    forward: forward,
+                    tabStopOnly: true,
+                    nested: true,
+                    wrap: true);
 
                 return true;
             }
@@ -371,7 +385,19 @@ namespace electrifier.Core.Components.Controls
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        /// <summary>
+        /// <seealso cref="ShellBrowser"/>'s event handler for <seealso cref="Control.HandleDestroyed"/> event:
+        /// Save ViewState when ShellBrowser gets closed.
+        /// </summary>
+        protected internal virtual void ShellBrowser_HandleDestroyed(object sender, EventArgs e)
+        {
+            this.ViewHandler.Validated()?.ShellView.SaveViewState();
+        }
 
+        /// <summary>
+        /// <seealso cref="ShellBrowser"/>'s event handler for <seealso cref="Control.Resize"/> event:
+        /// Resize ViewWindow when ShellBrowser gets resized.
+        /// </summary>
         protected internal virtual void ShellBrowser_Resize(object sender, EventArgs e)
         {
             this.ViewHandler?.MoveWindow(0, 0, this.ClientRectangle.Width, this.ClientRectangle.Height, false);
@@ -432,7 +458,7 @@ namespace electrifier.Core.Components.Controls
         /// <summary>Raises the <see cref="Navigated"/> event.</summary>
         protected internal virtual void OnNavigated(ShellFolder shellFolder)
         {
-            if (null != this.Navigated)
+            if (this.Navigated != null)
             {
                 ShellBrowserNavigatedEventArgs eventArgs = new ShellBrowserNavigatedEventArgs(shellFolder);
 
@@ -468,7 +494,8 @@ namespace electrifier.Core.Components.Controls
         /// </summary>
         /// <param name="direction">The direction to navigate within the navigation logs collection.</param>
         /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
-//        public bool NavigateFromHistory(NavigationLogDirection direction) => History.NavigateLog(direction);
+
+//        public bool NavigateFromHistory(NavigationLogDirection direction) => History.NavigateLog(direction);      TODO
 
         /// <summary>Navigate within the navigation log. This does not change the set of locations in the navigation log.</summary>
         /// <param name="historyIndex">An index into the navigation logs Locations collection.</param>
@@ -593,19 +620,22 @@ namespace electrifier.Core.Components.Controls
 
             this.UIThreadAsync(delegate
             {
+                // Save ViewState of current folder
+                this.ViewHandler.Validated()?.ShellView.SaveViewState();
+
+                if (this.viewStateStream != null)
+                    Marshal.ReleaseComObject(this.viewStateStream);
+
+                this.viewStateStreamIdentifier = shellObject.ParsingName;
+
                 var viewHandler = new ShellBrowserViewHandler(this,
                     new ShellFolder(shellObject),
                     ref this.folderSettings,
                     ref this.emptyFolderText);
 
-//                if (viewHandler.Validated() is null)
-//                    return;
-
-                // Clone the PIDL, to have our own object on the heap
-                var newPIDL = new PIDL(viewHandler.ShellFolder.PIDL);
-
-				// TODO: SBSP_DONTWRITEHISTORY
-                this.History.Add(newPIDL);
+                // Clone the PIDL, to have our own object copy on the heap!
+                if (!wFlags.HasFlag(SBSP.SBSP_WRITENOHISTORY))
+                    this.History.Add(new PIDL(viewHandler.ShellFolder.PIDL));
 
                 var oldViewHandler = this.ViewHandler;
                 this.ViewHandler = viewHandler;
@@ -622,8 +652,16 @@ namespace electrifier.Core.Components.Controls
 
         public HRESULT GetViewStateStream(STGM grfMode, out IStream stream)
         {
-            stream = null;
-            return HRESULT.E_NOTIMPL;
+            if (this.viewStateStream != null)
+                Marshal.ReleaseComObject(this.viewStateStream);
+
+            stream = this.viewStateStream = ShlwApi.SHOpenRegStream2(
+                hkey: HKEY.HKEY_CURRENT_USER,
+                pszSubkey: this.ViewStateRegistryKey,
+                pszValue: this.viewStateStreamIdentifier,
+                grfMode: grfMode);
+
+            return stream == null ? HRESULT.E_FAIL : HRESULT.S_OK;
         }
 
         public HRESULT GetControlWindow(Shell32.FCW id, out HWND hwnd)
@@ -1100,14 +1138,17 @@ namespace electrifier.Core.Components.Controls
         /// <summary>Changes the position and dimensions of this <see cref="ViewWindow"/>.</summary>
         /// <param name="bRepaint">Force redraw</param>
         /// <returns>If the function succeeds, the return value is nonzero.</returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool MoveWindow(int X, int Y, int nWidth, int nHeight, bool bRepaint) =>
             this.ViewWindow != HWND.NULL && User32.MoveWindow(this.ViewWindow, X, Y, nWidth, nHeight, bRepaint);
 
         /// <summary>Activate the ShellView of this ShellBrowser.</summary>
         /// <param name="uState">The <seealso cref="Shell32.SVUIA"/> to be set</param>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UIActivate(Shell32.SVUIA uState = Shell32.SVUIA.SVUIA_ACTIVATE_NOFOCUS) => this.ShellView?.UIActivate(uState);
 
         /// <summary>Deactivate the ShellView of this ShellBrowser.</summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void UIDeactivate() => this.UIActivate(Shell32.SVUIA.SVUIA_DEACTIVATE);
     }
 
@@ -1116,6 +1157,7 @@ namespace electrifier.Core.Components.Controls
     /// </summary>
     public static class ShellBrowserViewHandlerExtension
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static ShellBrowserViewHandler Validated(this ShellBrowserViewHandler shellBrowserViewHandler) =>
             ((!(shellBrowserViewHandler is null)) && shellBrowserViewHandler.IsValid) ? shellBrowserViewHandler : null;
     }
