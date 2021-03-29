@@ -30,6 +30,16 @@ using System.Runtime.CompilerServices;
 
 namespace electrifier.Core.Components.Controls
 {
+    /// <summary>The direction argument for NavigateFromHistory()</summary>
+    public enum NavigationLogDirection
+    {
+        /// <summary>Navigates forward through the navigation log</summary>
+        Forward,
+
+        /// <summary>Navigates backward through the travel log</summary>
+        Backward
+    }
+
     /// <summary>Indicates the viewing mode of the ShellBrowser</summary>
     public enum ShellBrowserViewMode
     {
@@ -190,6 +200,18 @@ namespace electrifier.Core.Components.Controls
 
         #region Properties ====================================================================================================
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// <br/><br/>
+        /// Note: I've tried using ComCtl32.ListViewMessage.LVM_SETBKIMAGE, but this doesn't work properly.
+        /// That's why this property has been hidden.
+        /// </summary>
+        [Bindable(false)]
+        [Browsable(false)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public override Image BackgroundImage { get => base.BackgroundImage; }
+
         /// <inheritdoc/>
         protected override Size DefaultSize => new Size(200, 150);
 
@@ -236,6 +258,7 @@ namespace electrifier.Core.Components.Controls
         protected ShellBrowserViewHandler ViewHandler { get; private set; }
 
         /// <summary>The viewing mode of the ShellBrowser</summary>
+        /// <remarks>Internally, this uses LVM_SETVIEW and LVM_GETVIEW messages on the ListView control</remarks>
         [Category("Appearance"), DefaultValue(typeof(ShellBrowserViewMode), "Auto"), Description("The viewing mode of the ShellBrowser.")]
         public ShellBrowserViewMode ViewMode
         {
@@ -301,6 +324,7 @@ namespace electrifier.Core.Components.Controls
 
             if (this.ViewHandler.Validated() != null)
             {
+                // Note: I tried using the LVM_GETEDITCONTROL message for finding the edit control without luck
                 if (User32.GetClassName(msg.HWnd,
                     this.processCmdKeyClassName,
                     ShellBrowser.processCmdKeyClassNameMaxLength) > 0)
@@ -487,15 +511,25 @@ namespace electrifier.Core.Components.Controls
             return this.BrowseObject(IntPtr.Zero, Shell32.SBSP.SBSP_NAVIGATEFORWARD).Succeeded;
         }
 
-
-
         /// <summary>
         /// Navigate within the navigation log in a specific direciton. This does not change the set of locations in the navigation log.
         /// </summary>
         /// <param name="direction">The direction to navigate within the navigation logs collection.</param>
         /// <returns>True if the navigation succeeded, false if it failed for any reason.</returns>
+        public bool NavigateFromHistory(NavigationLogDirection direction)
+        {
+            switch (direction)
+            {
+                case NavigationLogDirection.Backward:
+                    return this.NavigateBack();
 
-//        public bool NavigateFromHistory(NavigationLogDirection direction) => History.NavigateLog(direction);      TODO
+                case NavigationLogDirection.Forward:
+                    return this.NavigateForward();
+
+                default:
+                    return false;
+            }
+        }
 
         /// <summary>Navigate within the navigation log. This does not change the set of locations in the navigation log.</summary>
         /// <param name="historyIndex">An index into the navigation logs Locations collection.</param>
@@ -1108,13 +1142,13 @@ namespace electrifier.Core.Components.Controls
         }
 
         /// <summary>
-        /// 
+        /// Allows communication between the system folder view object and a system folder view callback object.
         /// </summary>
-        /// <param name="uMsg"></param>
-        /// <param name="wParam"></param>
-        /// <param name="lParam"></param>
-        /// <param name="plResult"></param>
-        /// <returns></returns>
+        /// <param name="uMsg">One of the SFVM_* notifications.</param>
+        /// <param name="wParam">Additional information. See the individual notification pages for specific requirements.</param>
+        /// <param name="lParam">Additional information. See the individual notification pages for specific requirements.</param>
+        /// <param name="plResult">TODO: @dahall: Where does this come from?</param>
+        /// <returns><b>S_OK</b> if the notification has been handled. <b>E_NOTIMPL</b> otherwise.</returns>
         HRESULT Shell32.IShellFolderViewCB.MessageSFVCB(Shell32.SFVM uMsg, IntPtr wParam, IntPtr lParam, ref IntPtr plResult)
         {
             switch ((SFVMUD)uMsg)
