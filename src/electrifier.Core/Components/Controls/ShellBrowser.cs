@@ -20,14 +20,6 @@ using System.Text;
 using System.Runtime.CompilerServices;
 //using static Vanara.PInvoke.User32;
 
-/*
- * NOTE: Very handy: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
- * NOTE: Very handy: https://stackoverflow.com/questions/54390268/getting-the-current-ishellview-user-is-interacting-with
- * NOTE: IMPORTANT! https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features        // IMPORTANT!
- * NOTE: https://stackoverflow.com/questions/15750842/allow-selection-in-explorer-style-list-view-to-start-in-the-first-column
- * NOTE: This could help: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
-*/
-
 namespace electrifier.Core.Components.Controls
 {
     /// <summary>The direction argument for NavigateFromHistory()</summary>
@@ -81,49 +73,6 @@ namespace electrifier.Core.Components.Controls
         }
     }
 
-    /////// <summary>
-    /////// https://carsten.familie-schumann.info/blog/einfaches-invoke-in-c/
-    /////// </summary>
-
-    public static class FormInvokeExtension
-    {
-        static public void UIThreadAsync(this Control control, Action code)
-        {
-            if (null == control)
-                throw new ArgumentNullException(nameof(control));
-
-            if (null == code)
-                throw new ArgumentNullException(nameof(code));
-
-            if (control.InvokeRequired)
-            {
-                control.BeginInvoke(code);
-
-                return;
-            }
-            else
-                code.Invoke();
-        }
-
-        static public void UIThreadSync(this Control control, Action code)
-        {
-            if (null == control)
-                throw new ArgumentNullException(nameof(control));
-
-            if (null == code)
-                throw new ArgumentNullException(nameof(code));
-
-            if (control.InvokeRequired)
-            {
-                control.Invoke(code);
-
-                return;
-            }
-            code.Invoke();
-        }
-    }
-
-
     /// <summary>
     /// Encapsulates a <see cref="Shell32.IShellBrowser"/>-Implementation within an <see cref="UserControl"/>.<br/>
     /// <br/>
@@ -148,30 +97,27 @@ namespace electrifier.Core.Components.Controls
     /// - TODO: CustomDraw, when currently no shellView available<br/>
     /// - DONE: Network folder: E_FAIL => DONE: Returning HRESULT.E_NOTIMPL from MessageSFVCB fixes this<br/>
     /// - DONE: Disk Drive (empty): E_CANCELLED_BY_USER<br/>
+    /// - DONE: Disable header in Details view when grouping is enabled
+    /// - DONE: Creating ViewWindow using '.CreateViewWindow()' fails on Zip-Folders; => Fixed again by returning HRESULT.E_NOTIMPL from MessageSFVCB
+    /// - TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above: IFolderView2
+    /// - TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
+    ///         As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
+    ///         However, it seems to be a special group, since folders are Tiles, whereas files are shown in Details mode.
+    /// - NOTE: The grouping is done by 'Group'. Activate it using "Group by->More->Group", and then do the grouping.
+    ///         However, the Icons for 'Recent Files'-Group get lost.
+    /// - TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
+    /// - DONE: Keyboard-Handling
+    /// - DONE: BrowseObject ->Parent -> Relative
+    /// - TODO: Properties in design editor!!!
+    /// - TODO: Write History correctly!
+    /// - TODO: Check getting / losing Focus! again
+    /// - TODO: Context-Menu -> "Open File Location" doesn't work on folder "Quick Access"
+    /// - TODO: When columns get reordered in details mode, then navigate to another folder, then back => column content gets messed
     /// 
-    /// 
-    /// 
-    /// DONE: Disable header in Details view when grouping is enabled
-    /// DONE: Creating ViewWindow using '.CreateViewWindow()' fails on Zip-Folders; => Fixed again by returning HRESULT.E_NOTIMPL from MessageSFVCB
-    /// TODO: internal static readonly bool IsMinVista = Environment.OSVersion.Version.Major >= 6;     // TODO: We use one interface, afaik, that only works in vista and above: IFolderView2
-    /// TODO: Windows 10' Quick Access folder has a special type of grouping, can't find out how this works yet.
-    ///       As soon as we would be able to get all the available properties for an particular item, we would be able found out how this grouping works.
-    ///       However, it seems to be a special group, since folders are Tiles, whereas files are shown in Details mode.
-    /// NOTE: The grouping is done by 'Group'. Activate it using "Group by->More->Group", and then do the grouping.
-    ///       However, the Icons for 'Recent Files'-Group get lost.
-    /// TODO: Maybe this interface could help, too: https://docs.microsoft.com/en-us/windows/win32/shell/shellfolderview
-    /// TODO: BorderStyle? => Additionally border like the one on the adressbar of Edge
-    /// TODO: FolderViewMode and FolderFlags in BrowseObject
-    /// TODO: ViewMode-Property, Thumbnailsize => Set ThumbnailSize for Large, ExtraLarge, etc.
-    /// TODO: AppContext.Trace* removal
-    /// DONE: Keyboard-Handling
-    /// DONE: BrowseObject ->Parent -> Relative
-    /// TODO: Properties in design editor!!!
-    /// TODO: Write History correctly!
-    /// TODO: Check getting / losing Focus!
-    /// TODO: Context-Menu -> "Open File Location" doesn't work on folder "Quick Access"
-    /// TODO: For Background Image -> https://docs.microsoft.com/en-gb/windows/win32/controls/lvm-setbkimage?redirectedfrom=MSDN, https://social.msdn.microsoft.com/Forums/en-US/95a8db2b-ea0f-4388-8b52-78348500e0f7/listview-background-image
-    /// TODO: When columns get reordered in details mode, then navigate to another folder, then back => columns get messed
+    /// NOTE: https://stackoverflow.com/questions/7698602/how-to-get-embedded-explorer-ishellview-to-be-browsable-i-e-trigger-browseobje
+    /// NOTE: https://stackoverflow.com/questions/54390268/getting-the-current-ishellview-user-is-interacting-with
+    /// NOTE: https://www.codeproject.com/Articles/35197/Undocumented-List-View-Features        // IMPORTANT!
+    /// NOTE: https://answers.microsoft.com/en-us/windows/forum/windows_10-files-winpc/windows-10-quick-access-folders-grouped-separately/ecd4be4a-1847-4327-8c44-5aa96e0120b8
     /// </summary>
     [ComVisible(true)]
     [ClassInterface(ClassInterfaceType.None)]
@@ -652,7 +598,16 @@ namespace electrifier.Core.Components.Controls
                 shellObject = new ShellItem(new PIDL(pidl, true));
             }
 
-            this.UIThreadAsync(delegate
+            if (this.InvokeRequired)
+                this.BeginInvoke((Action)(() => BrowseShellItemInternal(shellObject)));
+            else
+                BrowseShellItemInternal(shellObject);
+
+            return HRESULT.S_OK;
+
+            #region BrowseShellItemInternal
+
+            void BrowseShellItemInternal(ShellItem shellItem)
             {
                 // Save ViewState of current folder
                 this.ViewHandler.Validated()?.ShellView.SaveViewState();
@@ -677,11 +632,11 @@ namespace electrifier.Core.Components.Controls
                 viewHandler.UIActivate();
                 oldViewHandler?.DestroyView();
 
-                this.OnNavigated(viewHandler.ShellFolder);      // TODO: Move this call above, to show folder in Adress Bar BEFORE enumerating?
+                this.OnNavigated(viewHandler.ShellFolder);
                 this.OnSelectionChanged();
-            });
+            }
 
-            return HRESULT.S_OK;
+            #endregion
         }
 
         public HRESULT GetViewStateStream(STGM grfMode, out IStream stream)
