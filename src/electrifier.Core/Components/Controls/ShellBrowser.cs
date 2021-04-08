@@ -901,6 +901,8 @@ namespace electrifier.Core.Components.Controls
         SFVM_GET_WEBVIEW_TASKS = 84,
         SFVM_GET_WEBVIEW_THEME = 86,
         SFVM_GETDEFERREDVIEWSETTINGS = 92,
+
+        SFVM_Windows10_ViewModeChange = 109,        // I'm pretty sure this works, using Win 10 at least.
     }
 
 #pragma warning restore CA1707 // Identifiers should not contain underscores
@@ -1106,19 +1108,159 @@ namespace electrifier.Core.Components.Controls
         /// <returns><b>S_OK</b> if the notification has been handled. <b>E_NOTIMPL</b> otherwise.</returns>
         HRESULT Shell32.IShellFolderViewCB.MessageSFVCB(Shell32.SFVM uMsg, IntPtr wParam, IntPtr lParam, ref IntPtr plResult)
         {
+            // https://www.pinvoke.net/default.aspx/Enums/SHCNE.html
+            // https://stackoverflow.com/questions/47243278/shchangenotifyregister-notifications-on-windows-10-are-inconsistent
+
+
+            //
+            // Sehr interessant:
+            // https://www.shellboost.com/Doc/Reference/ShellBoost-Core-Assembly/html/c07fb3a6-23fb-dac6-4e54-a3c456f17187.htm
+
+            // NOTE:
+            // Final notes:
+            // Maybe it would be easier to use a FileSystemWatcher: https://docs.microsoft.com/en-us/dotnet/api/system.io.filesystemwatcher?view=net-5.0
+            // I think dahall has an own implementation or a wrapper for this.
+            // The following constructs work somehow in Win10, if we would wait for 
+            // - SHCNE_EXTENDED_EVENT after SHCNE_UPDATEITEM or SHCNE_UPDATEDIR has occured. Only deletions are missing actually,
+            //   which would get handled thorugh their appropriate own messages.
+            //   => it would be worth a try, but i'm not sure this works in all scenarios and windows versions.
+
+
+
+            switch ((SFVM)uMsg)
+            {
+                case SFVM.SFVM_INVOKECOMMAND:
+                    AppContext.TraceDebug("Invoke Command!");
+                    return HRESULT.S_OK;
+                case SFVM.SFVM_FSNOTIFY:
+                    var shcne = (SHCNE)lParam;
+
+                    switch (shcne)
+                    {
+                        //case SHCNE.SHCNE_CREATE: Würde nur mit delay funktionieren, weil neues file noch gar nicht da...
+                        // ODER:
+                        // SHCNE_CREATE, und SHCNE_MKDIR und dann SHCNE_EXTENDED_EVENT abwarten...
+
+
+
+
+                        //case SHCNE.SHCNE_MKDIR:
+                        //    AppContext.TraceDebug("SHCNE_MKDIR => Directory Created...");
+                        //    this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                        //    break;
+
+
+                        //case SHCNE.SHCNE_CREATE:
+                        //    AppContext.TraceDebug("SHCNE_CREATE => File has been created...");
+                        //    this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                        //    break;
+
+
+
+                        //                        case SHCNE.SHCNE_MKDIR:
+                        //                        case SHCNE.SHCNE_RMDIR:
+                        //                            AppContext.TraceDebug("SFVM_FSNOTIFY: MkDir or RmDir");
+
+                        //                            //this.Owner
+
+                        //                            //var result = User32.SendNotifyMessage(this.Owner.Handle, User32.WM_USER);
+                        //                            var result = User32.PostMessage(this.Owner.Handle, User32.WM_USER);
+                        //                            if (!result)
+                        //                                AppContext.TraceWarning("PostMessage failed!");
+
+                        //                            //this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                        //                            break;
+
+
+                        case SHCNE.SHCNE_UPDATEITEM:        // WARNING!: This is called 1000x times per second
+                            //AppContext.TraceDebug("SFVM_FSNOTIFY: UpdateItem");
+                            //this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                            break;
+
+                        //                        case SHCNE.SHCNE_CREATE:
+                        //                            AppContext.TraceDebug("SFVM_FSNOTIFY: Create");
+                        //                            //this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                        //                            break;
+                        //                        case SHCNE.SHCNE_DELETE:
+                        //                            AppContext.TraceDebug("SFVM_FSNOTIFY: Delete");
+                        //                            //this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                        //                            break;
+                        //                        //case SHCNE.SHCNE_DISKEVENTS:
+                        //                        //    AppContext.TraceDebug($"SFVM_FSNOTIFY: SHCNE_DISKEVENTS: { wParam }");
+                        //                        //    break;
+
+                        case SHCNE.SHCNE_EXTENDED_EVENT:
+                            AppContext.TraceDebug($"SFVM_FSNOTIFY: SHCNE_EXTENDED_EVENT: { wParam }");
+                            this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                            break;
+                        case SHCNE.SHCNE_UPDATEDIR:
+                            AppContext.TraceDebug("SHCNE_UPDATEDIR => Directory Update...");
+                            this.Owner.BeginInvoke((Action)(() => this.Owner.OnItemsChanged()));
+                            break;
+
+                        default:
+                            AppContext.TraceDebug($"SFVM_FSNOTIFY: { shcne.ToString() }");
+                            break;
+
+                    }
+                    return HRESULT.S_OK;
+
+                //case SFVM.SFVM_UPDATESTATUSBAR:
+                //    AppContext.TraceDebug("SFVM_UPDATESTATUSBAR");
+                //    return HRESULT.S_OK;
+
+                case SFVM.SFVM_GETNOTIFY:
+                    AppContext.TraceDebug("Get Notify!!!");
+                    wParam = (IntPtr)this.ShellFolder.PIDL;
+                    lParam = (IntPtr)(SHCNE.SHCNE_EXTENDED_EVENT | SHCNE.SHCNE_UPDATEDIR);         //(IntPtr)SHCNE.SHCNE_DISKEVENTS;
+
+                    return HRESULT.S_OK;
+                case SFVM.SFVM_QUERYFSNOTIFY:
+                    AppContext.TraceError("Achtung Baby! Achtung Baby! Achtung Baby! =>> Query FS Notify!!!");
+                    return HRESULT.S_OK;
+            }
+
             switch ((SFVMUD)uMsg)
             {
+                //case (SFVMUD)SFVM.SFVM_FSNOTIFY:
+                //    AppContext.TraceDebug($"SFVM_FSNOTIFY: { wParam } - { lParam }");
+
+                //    var shcne = (SHCNE)lParam;
+
+
+                //    if ((uint)lParam == (uint)SHCNE.SHCNE_UPDATEDIR)
+                //    {
+                //        AppContext.TraceDebug("SFVM_FSNOTIFY: UpdateDir()");
+
+                //        this.Owner.OnItemsChanged();
+                //    }
+                //    return HRESULT.S_OK;
+
                 case SFVMUD.SFVM_SELECTIONCHANGED:
                     this.Owner.OnSelectionChanged();
                     return HRESULT.S_OK;
 
+                //case (SFVMUD)SFVM.SFVM_BACKGROUNDENUM:
+                //    AppContext.TraceDebug("SFVM_BACKGROUNDENUM");
+                //    this.Owner.OnItemsChanged();
+                //    return HRESULT.S_OK;
+
+                //case (SFVMUD)SFVM.SFVM_BACKGROUNDENUMDONE:
+                //    AppContext.TraceDebug("SFVM_BACKGROUNDENUMDONE");
+                //    this.Owner.OnItemsChanged();
+                //    return HRESULT.S_OK;
+
+
                 case SFVMUD.SFVM_LISTREFRESHED:
+                    AppContext.TraceDebug("SFVM_LISTREFRESHED");
                     this.Owner.OnItemsChanged();
+                    this.Owner.OnSelectionChanged();
                     return HRESULT.S_OK;
 
                 default:
+                    AppContext.TraceDebug($"SFVM_Undocumented: { uMsg.ToString() }");
                     //
-                    // TODO: What happens when the ViewMode gets changed via Context-Menu? => Msg #33, #18
+                    // TODO: What happens when the ViewMode gets changed via Context-Menu? => Msg #109, #33, #18
                     //
                     return HRESULT.E_NOTIMPL;
             }
