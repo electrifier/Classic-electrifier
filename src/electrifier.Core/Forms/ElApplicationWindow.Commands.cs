@@ -39,7 +39,7 @@ namespace electrifier.Core.Forms
             AppContext.TraceScope();
 
             this.CreateShellFolderDockContent();
-            //ElDockContentFactory.CreateShellBrowser(this, null);
+            //DockContentFactory.CreateShellBrowser(this, null);
         }
 
         //private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
@@ -196,11 +196,6 @@ namespace electrifier.Core.Forms
         internal void CmdSelectAll_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
-            if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
-            {
-                elShellBrowserDockContent.SelectAll();
-            }
-
             if (this.dpnDockPanel.ActiveContent is ShellFolderDockContent folderDockContent)
             {
                 this.BeginInvoke(new MethodInvoker(delegate ()
@@ -213,11 +208,6 @@ namespace electrifier.Core.Forms
         internal void CmdSelectNone_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
-            if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
-            {
-                elShellBrowserDockContent.SelectNone();
-            }
-
             if (this.dpnDockPanel.ActiveContent is ShellFolderDockContent folderDockContent)
             {
                 this.BeginInvoke(new MethodInvoker(delegate ()
@@ -230,10 +220,10 @@ namespace electrifier.Core.Forms
         internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
-            if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
-            {
-                elShellBrowserDockContent.InvertSelection();
-            }
+            //if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
+            //{
+            //    elShellBrowserDockContent.InvertSelection();
+            //}
         }
 
         internal void CmdBtnDesktopIconLayoutSave_ExecuteEvent(object sender, ExecuteEventArgs e)

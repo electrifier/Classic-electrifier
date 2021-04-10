@@ -25,7 +25,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components
 {
-    internal static class ElDockContentFactory
+    internal static class DockContentFactory
     {
         /// <summary>
         /// Deserialize given persistString as used in XML-files to create the corresponding DockContent instance.
@@ -48,31 +48,24 @@ namespace electrifier.Core.Components
                 dockContentArguments = persistString.Substring(typeNameSeperatorPos);
             }
 
-            if (nameof(DockContents.ElShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
-            {
-                dockContent = ElDockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
-            }
+            //if (nameof(DockContents.ElShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
+            //{
+            //    dockContent = DockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
+            //}
 
             return dockContent;
         }
 
-        public static DockContents.ElShellBrowserDockContent CreateShellBrowser(INavigationHost navigationHost, string persistString = null)
+
+
+        public static ShellFolderDockContent CreateShellBrowser(INavigationHost navigationHost, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            DockContents.ElShellBrowserDockContent shellBrowser = new DockContents.ElShellBrowserDockContent(navigationHost, persistString);
+            DockContents.ShellFolderDockContent shellBrowser = new DockContents.ShellFolderDockContent(navigationHost, persistString);
 
             navigationHost.AddDockContent(shellBrowser);
 
             return shellBrowser;
-        }
-
-        public static ShellFolderDockContent CreateShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
-        {
-            ShellFolderDockContent dockContent = new ShellFolderDockContent(navigationHost, persistString);
-
-            navigationHost.AddDockContent(dockContent);
-
-            return dockContent;
         }
     }
 }

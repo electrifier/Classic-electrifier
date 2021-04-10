@@ -316,7 +316,7 @@ namespace electrifier.Core
             this.LoadSession(sessionId);
 
             // Initialize new Session: Create default DockContentWindows
-            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+            DockContentFactory.CreateShellBrowser(this.ApplicationWindow);
 
             this.ApplicationWindow.Show();
 
@@ -362,7 +362,7 @@ namespace electrifier.Core
         //    // TODO: Check if another instance is already running. If so, create new session with different name and fresh settings; optionally copy default session to new session settings!
         //    //
         //    // TODO: Create new default shellbrowser - for test purposes only
-        //    ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+        //    DockContentFactory.CreateShellBrowser(this.ApplicationWindow);
 
 
 
@@ -524,7 +524,7 @@ namespace electrifier.Core
         //
         //
         //            // TODO: Create new shellbrowser - for test purposes only
-        //            ElDockContentFactory.CreateShellBrowser(this.ApplicationWindow);
+        //            DockContentFactory.CreateShellBrowser(this.ApplicationWindow);
         //
         //
         //
