@@ -180,7 +180,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            ShellFolderDockContent shellFolderDockContent = ElDockContentFactory.CreateShellFolderDockContent(this);
+            ShellFolderDockContent shellFolderDockContent = DockContentFactory.CreateShellBrowser(this);
 
             this.AddDockContent(shellFolderDockContent);       // TODO => dockAlignment
 
@@ -195,7 +195,7 @@ namespace electrifier.Core.Forms
                 //this.dpnDockPanel.LoadFromXml(fullFileName,
                 //    new DeserializeDockContent(delegate (string persistString)
                 //    {
-                //        return ElDockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
+                //        return DockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
                 //    }));
             }
             catch (Exception e)

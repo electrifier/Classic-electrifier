@@ -25,19 +25,30 @@ using Vanara.PInvoke;
 using Vanara.Windows.Shell;
 using WeifenLuo.WinFormsUI.Docking;
 using Vanara.Windows.Forms;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using System.Collections.Specialized;
+using System.IO;
+using electrifier.Core.WindowsShell;
 
 namespace electrifier.Core.Components.DockContents
 {
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ShellFolderDockContent, DockContent>))]
     public class ShellFolderDockContent
       : NavigableDockContent
+      , IClipboardConsumer
     {
-        private Vanara.Windows.Forms.ShellNamespaceTreeControl shellNamespaceTree;
         private System.Windows.Forms.Splitter splitter;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel itemCountStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel selectionStatusLabel;
-        private electrifier.Core.Components.Controls.ShellBrowser ShellBrowser;
+        private ShellNamespaceTreeControl shellNamespaceTree;
+//        private ShellBrowser shellBrowser;
+
+        #region Properties ====================================================================================================
 
         //public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
         internal string currentLocation;
@@ -47,13 +58,23 @@ namespace electrifier.Core.Components.DockContents
             set => this.currentLocation = value;
         }
 
+        public ShellBrowser ShellBrowser { get; private set; }
 
+        public ClipboardSelection Selection { get; }
+
+        #endregion ============================================================================================================
 
 
         public ShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
           : base(navigationHost)
         {
             this.InitializeComponent();
+
+            this.Selection = new ClipboardSelection(this);
+            
+            //this.shellNamespaceTree.BackColor = System.Drawing.Color.AliceBlue;       // TODO: This doesn't work, however, set to window background!
+
+
         }
 
         private void ShellFolderDockContent_Load(object sender, EventArgs e)
@@ -69,24 +90,43 @@ namespace electrifier.Core.Components.DockContents
 
             this.ShellBrowser.Navigated += this.ShellBrowser_Navigated;
             this.ShellBrowser.ItemsChanged += this.ShellBrowser_ItemsChanged;
-            this.ShellBrowser.SelectionChanged += this.ShellBrowser_SelectionChanged;
+
+
+            this.Selection.PropertyChanged += this.Selection_PropertyChanged;
+
+            // Initialize status bar selection text
+            this.Selection_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Selection.Count)));
         }
+
+        private void Selection_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(Selection.Count):
+                    this.selectionStatusLabel.Text = this.Selection.SelectionCountStatusBarText;
+                    break;
+                case nameof(Selection.CurrentClipboardAbilities):
+                    this.currentClipboardAbilities = this.Selection.CurrentClipboardAbilities;
+                    this.ClipboardAbilitiesChanged?.Invoke(this, new ClipboardAbilitiesChangedEventArgs(this.currentClipboardAbilities));
+                    break;
+                default:
+                    throw new ArgumentException(nameof(e));
+            }
+        }
+
+        /// <summary>
+        /// Process <see cref="ShellBrowser.ItemsChanged"/> event.
+        /// </summary>
         private void ShellBrowser_ItemsChanged(object sender, EventArgs e)
         {
-            if (sender != this.ShellBrowser)
-                AppContext.TraceWarning("sender is not my ShellBrowser!");
+            Debug.Assert(sender == this.ShellBrowser);
 
             this.itemCountStatusLabel.Text = this.ShellBrowser.Items.Count.ToString() + " items";
         }
 
-        private void ShellBrowser_SelectionChanged(object sender, EventArgs e)
-        {
-            if (sender != this.ShellBrowser)
-                AppContext.TraceWarning("sender is not my ShellBrowser!");
-
-            this.selectionStatusLabel.Text = this.ShellBrowser.SelectedItems.Count.ToString() + " selected items";
-        }
-
+        /// <summary>
+        /// Process <see cref="ShellNamespaceTreeControl.AfterSelect"/> event.
+        /// </summary>
         private void ShellNamespaceTree_AfterSelect(object sender, EventArgs e)
         {
             ShellItem shellItem = this.shellNamespaceTree.SelectedItem;
@@ -136,8 +176,8 @@ namespace electrifier.Core.Components.DockContents
                 //else
                 //    this.shellNamespaceTree.SelectedItem = null;
 
-                this.CurrentLocation = newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
-                this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.ParentRelativeForUI);
+                this.CurrentLocation =
+                    this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
             }
 
             this.OnNavigationOptionsChanged(EventArgs.Empty);
@@ -174,13 +214,11 @@ namespace electrifier.Core.Components.DockContents
 
         public void SelectAll()
         {
-            this.ShellBrowser.SelectAll();
+            throw new NotImplementedException("This doesn't work for any reason!");//this.ShellBrowser.SelectAll();
         }
+        
 
-        public void UnselectAll()
-        {
-            this.ShellBrowser.UnselectAll();
-        }
+        public void UnselectAll() => this.ShellBrowser.UnselectAll();
 
         public override bool HasShellFolderViewMode => true;
 
@@ -190,8 +228,230 @@ namespace electrifier.Core.Components.DockContents
             set => this.ShellBrowser.ViewMode = (ShellBrowserViewMode)value;
         }
 
+        #region IClipboardConsumer ============================================================================================
+
+        #region Published Events ==============================================================================================
+
+        /// <summary>
+        /// Fires when the clipboard abilities have changed.
+        /// </summary>
+        public event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
+
+        /// <summary>
+        /// Raises the <see cref="IClipboardConsumer.ClipboardAbilitiesChanged"/> event.
+        /// </summary>
+        //protected internal virtual void OnClipboardAbilitiesChanged(ClipboardAbilities clipboardAbilities)
+        //{
+        //    this.ClipboardAbilitiesChanged?.Invoke(this, new ClipboardAbilitiesChangedEventArgs(clipboardAbilities));
+        //}
+
+        #endregion ============================================================================================================
+
+        private ClipboardAbilities currentClipboardAbilities = ClipboardAbilities.None;
+
+        public ClipboardAbilities GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
+
+        public void CopyToClipboard() => this.Selection.SetClipboardDataObject(DragDropEffects.Copy);
+
+        public void CutToClipboard() => this.Selection.SetClipboardDataObject(DragDropEffects.Move);
+
+        public void GetSupportedClipboardPasteTypes()
+        {
+            // TODO: On virtual folders like 'This PC', we can't paste files... => Ask Shell if target folder can accept files
+
+            // TODO: Not implemented yet
+            throw new NotImplementedException();
+        }
+
+        // TODO: On virtual folders like 'This PC', we can't paste files... => Ask Shell if target folder can accept files
+        public bool CanPasteFromClipboard() => Clipboard.ContainsFileDropList();
+
+        public void PasteFromClipboard()
+        {
+            AppContext.TraceScope();
+
+            // Check whether clipboard contains any data object
+            if (!ClipboardState.ContainsData)
+            {
+                AppContext.TraceWarning("No clipboard data present.");
+
+                return;
+            }
+
+            // Check whether the clipboard contains a data format we can handle
+            if (!CanPasteFromClipboard())
+            {
+                AppContext.TraceWarning("Incompatible clipboard data format present.");
+
+                return;
+            }
+
+            // TODO: var ShellIDList = Clipboard.GetData("CFSTR_SHELLIDLIST");      // 31.10.18: We're looking for CFSTR_SHELLIDLIST or CFSTR_SHELLIDLISTOFFSET
+
+            if (Clipboard.ContainsFileDropList())
+            {
+                // Determine the DragDropEffect of the current clipboard object and perform paste operation
+                this.Selection.PasteFileDropListFromClipboard(ClipboardState.CurrentDropEffect);
+            }
+            else
+                throw new NotImplementedException("Clipboard format not supported: " + Clipboard.GetDataObject().GetFormats().ToString());
+        }
+
+        #endregion ============================================================================================================
 
 
+        /// <summary>
+        /// TODO: Convert to generic class, which is able to hold all clipboard-types
+        /// </summary>
+        public class ClipboardSelection
+          : INotifyPropertyChanged
+        {
+            public ShellFolderDockContent Owner { get; }
+            public ShellBrowser ShellBrowser { get; }
+
+            private int count;
+
+            public int Count
+            {
+                get { return this.count; }
+                set { PropertyChanged.ChangeAndNotify(ref this.count, value, () => Count); }
+            }
+
+            private ClipboardAbilities currentClipboardAbilities = ClipboardAbilities.None;
+
+            public ClipboardAbilities CurrentClipboardAbilities
+            {
+                get { return this.currentClipboardAbilities; }
+                set { PropertyChanged.ChangeAndNotify(ref this.currentClipboardAbilities, value, () => CurrentClipboardAbilities); }
+            }
+
+            public string SelectionCountStatusBarText
+            {
+                /// <summary>
+                /// TODO: Use recursive pattern here
+                /// </summary>
+                get
+                {
+                    //return selectionCount switch
+                    //{
+                    //    0 => "No Selection",
+                    //    1 => "One Item selected",
+                    //    _ => $"{selectionCount} items selected",
+                    //};
+                    switch (this.Count)
+                    {
+                        case 0: return "No Selection";
+                        case 1: return "One Item selected";
+                        default: return $"{count} items selected";
+                    }
+                }
+            }
+
+            public ClipboardSelection(ShellFolderDockContent owner)
+            {
+                this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
+                this.ShellBrowser = owner.ShellBrowser;
+
+                this.ShellBrowser.SelectionChanged += this.SelectionChanged;
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            public void SelectionChanged(object sender, EventArgs e)
+            {
+                Debug.Assert(sender == this.ShellBrowser);
+
+                this.Count = this.ShellBrowser.SelectedItems.Count;
+                this.CurrentClipboardAbilities = this.Count > 0 ?
+                    (ClipboardAbilities.CanCopy | ClipboardAbilities.CanCut) : ClipboardAbilities.None;
+            }
+
+            public void SetClipboardDataObject(DragDropEffects dropEffect)
+            {
+                // TODO: Try / Catch
+                // TODO: Extended DragDropEffects-struct with methods for checking flags
+                if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
+                    throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
+
+                if (dropEffect.HasFlag(DragDropEffects.Copy) && dropEffect.HasFlag(DragDropEffects.Move))
+                    throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
+
+                // TODO: IFolderView can return a DataObject, too: https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifolderview-items
+
+                // Get collection of selected items, return if empty cause nothing to do then
+                var selItems = this.ShellBrowser.SelectedItems;
+
+                if (selItems.Count < 1)
+                    return;
+
+                // Build file drop list
+                StringCollection scFileDropList = new StringCollection();
+                foreach (var selectedItem in selItems)
+                {
+                    scFileDropList.Add(selectedItem.ParsingName);
+                }
+
+                // Build the data object, including the DropEffect, and place it on the clipboard
+                DataObject dataObject = new DataObject();
+                byte[] baDropEffect = new byte[] { (byte)dropEffect, 0, 0, 0 };
+                MemoryStream msDropEffect = new MemoryStream();
+                msDropEffect.Write(baDropEffect, 0, baDropEffect.Length);
+
+                dataObject.SetFileDropList(scFileDropList);
+                dataObject.SetData("Preferred DropEffect", msDropEffect);       // TODO: Use Vanaras constant
+
+                //Clipboard.Clear();        // TODO: Do we have to call Clear before placing data on the clipboard?
+                Clipboard.SetDataObject(dataObject, true);
+            }
+
+            /// <summary>
+            /// Paste FileDropList from the clipboard to this ShellBrowser's current folder.
+            /// </summary>
+            /// <param name="dropEffect">Either DragDropEffects.Copy or DragDropEffects.Move are allowed. Additional flags will be ignored.</param>
+            /// <param name="operationFlags">Additional operation flags. Defaults to AllowUndo.</param>
+            public void PasteFileDropListFromClipboard(
+                DragDropEffects dropEffect,
+                ShellFileOperations.OperationFlags operationFlags = (ShellFileOperations.OperationFlags.AllowUndo | ShellFileOperations.OperationFlags.NoConfirmMkDir))
+            {
+                AppContext.TraceScope();
+
+                if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
+                    throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
+
+                if (dropEffect.HasFlag(DragDropEffects.Copy) && dropEffect.HasFlag(DragDropEffects.Move))
+                    throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
+
+                // Get file drop list, return if empty cause nothing to do then
+                StringCollection fileDropList = Clipboard.GetFileDropList();
+                if (fileDropList.Count < 1)
+                    return;
+
+                //operationFlags += ShellFileOperations.OperationFlags.WantMappingHandle // TODO 09/04/21: for Paste to the same folder
+
+                /* TODO:    When files are dropped to their source folder add RenameOnCollision to OperationFlags
+                 * WARNING: Only if files from the same folder are inserted again, then "RenameOnCollision" is needed when pasting.
+                 *          Otherwise, files of the same name will be overwritten (on request?)!
+                 *          
+                 * See 'IFolderView2::IsMoveInSameFolder' for this!
+                 **/
+
+                // TODO: 09/04/21: Perform file transfer in background!
+                using (var elShellFileOperations = new ElShellFileOperations(/* TODO: this */ null, operationFlags))  // TODO: 09/04/21 iwin32window handle!
+                {
+                    using (var destinationFolder = new ShellFolder(/*this.ShellBrowser.CurrentLocation*/ this.Owner.CurrentLocation))
+                    {
+                        foreach (var strFullPathName in fileDropList)
+                        {
+                            // TODO: => QueueCopyOperation(IEnumerable[]);
+                            elShellFileOperations.QueueClipboardOperation(strFullPathName, destinationFolder, dropEffect);
+                        }
+
+                        elShellFileOperations.PerformOperations();
+                    }
+                }
+            }
+
+        }
 
         #region Component Designer generated code =============================================================================
 
@@ -276,5 +536,48 @@ namespace electrifier.Core.Components.DockContents
         }
 
         #endregion ============================================================================================================
+    }
+
+
+    public static class PropertyChanged
+    {
+        /// <summary>
+        /// Taken from <see href="https://www.wpftutorial.net/INotifyPropertyChanged.html"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="handler"></param>
+        /// <param name="field"></param>
+        /// <param name="value"></param>
+        /// <param name="memberExpression"></param>
+        /// <returns></returns>
+        public static bool ChangeAndNotify<T>(
+            this PropertyChangedEventHandler handler,
+            ref T field,
+            T value,
+            Expression<Func<T>> memberExpression)
+        {
+            if (memberExpression == null)
+                throw new ArgumentNullException(nameof(memberExpression));
+
+            if (!(memberExpression.Body is MemberExpression body))
+                throw new ArgumentException($"Lambda for {memberExpression} must return a property.");
+
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+
+            if (body.Expression is ConstantExpression vmExpression)
+            {
+                LambdaExpression lambda = Expression.Lambda(vmExpression);
+                Delegate vmFunc = lambda.Compile();
+                object sender = vmFunc.DynamicInvoke();
+
+                handler?.Invoke(sender, new PropertyChangedEventArgs(body.Member.Name));
+            }
+
+            //field = value;
+            return true;
+        }
     }
 }

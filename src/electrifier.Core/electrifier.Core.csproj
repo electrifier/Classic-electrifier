@@ -137,15 +137,6 @@
     <Compile Include="Components\DockContents\NavigableDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.ClipboardConsumer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\DockContents\ShellBrowserDockContent.NavigableDockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="Components\DockContents\Extensions\NavigableDockContentExtensions.cs" />
     <Compile Include="Components\DockContentFactory.cs" />
     <Compile Include="Components\DockContents\ShellFolderDockContent.cs">

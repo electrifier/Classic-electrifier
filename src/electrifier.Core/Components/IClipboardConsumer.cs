@@ -42,8 +42,8 @@ namespace electrifier.Core.Components
         /// </summary>
         event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
 
-        void CutToClipboard();
         void CopyToClipboard();
+        void CutToClipboard();
 
         // Paste
 
