@@ -20,6 +20,8 @@ using System.Text;
 using System.Runtime.CompilerServices;
 //using static Vanara.PInvoke.User32;
 
+using electrifier.Core.WindowsShell;
+
 namespace electrifier.Core.Components.Controls
 {
     /// <summary>The direction argument for NavigateFromHistory()</summary>
@@ -396,20 +398,10 @@ namespace electrifier.Core.Components.Controls
 
             if (viewHandler != null)
             {
-                // NOTE: The for-loop is rather slow, so send (Ctrl+A)-KeyDown-Message instead and let the ShellView do the work
-                // for (var i = 0; i < viewHandler.FolderView2.ItemCount(SVGIO.SVGIO_ALLVIEW); i++)
-                //   viewHandler.FolderView2.SelectItem(i, SVSIF.SVSI_SELECT);
-                //
-                // TODO: Another way would be to use this Windows Message-Pattern (Workaround #2):
-                //   https://stackoverflow.com/questions/9039989/how-to-selectall-in-a-winforms-virtual-listview
-
-                var msg = new Message()
-                {
-                    HWnd = (IntPtr)this.ViewHandler.ViewWindow,
-                    Msg = (int)User32.WindowMessage.WM_KEYDOWN,
-                };
-
-                this.ProcessCmdKey(ref msg, Keys.Control | Keys.A);
+                this.ViewHandler.ListView.SetItemState(-1,
+                    ComCtl32.ListViewItemMask.LVIF_STATE,
+                    ComCtl32.ListViewItemState.LVIS_SELECTED,
+                    ComCtl32.ListViewItemState.LVIS_SELECTED);
             }
         }
 
@@ -960,6 +952,7 @@ namespace electrifier.Core.Components.Controls
         public ShellFolder ShellFolder { get; private set; }
         public Shell32.IShellView ShellView { get; private set; }
         public Shell32.IFolderView2 FolderView2 { get; private set; }
+        public IListView ListView { get; private set; }
         public HWND ViewWindow { get; private set; }
         public bool IsValid { get; private set; }
         public bool NoDiskInDriveError { get; }
@@ -1021,6 +1014,14 @@ namespace electrifier.Core.Components.Controls
 
         #endregion ============================================================================================================
 
+/*  TODO: THIS IS TEMPORARY STUFF TILL IListView-Interface is introduced to Vanara */
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(HWND hWnd, int Msg, ref Guid wParam, out IntPtr lParam);
+        protected readonly StringBuilder processCmdKeyClassName = new StringBuilder(processCmdKeyClassNameMaxLength + 1);
+        protected const int processCmdKeyClassNameMaxLength = 31;
+        protected int LVM_QUERYINTERFACE = 0x10BD;
+/*  TODO: THIS IS TEMPORARY STUFF TILL IListView-Interface is introduced to Vanara - END*/
+
         /// <summary>
         /// Create an instance of <see cref="ShellBrowserViewHandler"/> to handle Callback messages for the given ShellFolder.
         /// </summary>
@@ -1061,7 +1062,23 @@ namespace electrifier.Core.Components.Controls
                 // cause this happens when there's no disk in a drive.
                 try
                 {
+                    // This is "SHELLDLL_DefView"
                     this.ViewWindow = this.ShellView.CreateViewWindow(null, folderSettings, owner, owner.ClientRectangle);
+                    // This should be "SysListView32"
+                    var sysListView32Handle = User32.GetChildWindow(ViewWindow); // TODO: User32.FindWindowEx
+
+                    var iid = typeof(IListView).GUID;
+                    var result = SendMessage(sysListView32Handle, LVM_QUERYINTERFACE, ref iid, out IntPtr listviewhandle);
+                    this.ListView = (IListView)Marshal.GetTypedObjectForIUnknown(listviewhandle, typeof(IListView));
+
+                    if (this.ListView is null)
+                        throw new COMException("Unable to get IListView-Interface for folder!");
+
+                    this.ListView.SetBackgroundColor(0x00fafafa);
+                    this.ListView.SetTextBackgroundColor(0x00fafafa);
+                    this.ListView.SetTextColor(0x00ff0000);
+
+                    // TODO: Check if Set LVS_SHOWSELALWAYS, LVS_AUTOARRANGE , (User32.WindowStyles)0x00200000 | (User32.WindowStyles)0x0008 change focus-rect bahvaiour?!?
 
                     this.IsValid = true;
 
