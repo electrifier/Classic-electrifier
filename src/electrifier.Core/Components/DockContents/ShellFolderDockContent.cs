@@ -19,20 +19,20 @@
 */
 
 using electrifier.Core.Components.Controls;
+using electrifier.Core.WindowsShell;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Linq.Expressions;
+using System.Windows.Forms;
 using System;
 using Vanara.PInvoke;
+using Vanara.Windows.Forms;
 using Vanara.Windows.Shell;
 using WeifenLuo.WinFormsUI.Docking;
-using Vanara.Windows.Forms;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Linq.Expressions;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using System.Collections.Specialized;
-using System.IO;
-using electrifier.Core.WindowsShell;
 
 namespace electrifier.Core.Components.DockContents
 {
@@ -51,7 +51,7 @@ namespace electrifier.Core.Components.DockContents
         #region Properties ====================================================================================================
 
         //public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
-        internal string currentLocation;
+        protected string currentLocation;
         public override string CurrentLocation
         {
             get => this.currentLocation;
@@ -62,6 +62,18 @@ namespace electrifier.Core.Components.DockContents
 
         public ClipboardSelection Selection { get; }
 
+        protected Color backColor;
+        public override Color BackColor
+        {
+            get => this.backColor;
+            set
+            {
+                this.backColor = value;
+                this.splitter.BackColor = value;
+                // TODO: Set ShellBrowser.BackColor;
+            }
+        }
+
         #endregion ============================================================================================================
 
 
@@ -71,9 +83,11 @@ namespace electrifier.Core.Components.DockContents
             this.InitializeComponent();
 
             this.Selection = new ClipboardSelection(this);
-            
-            //this.shellNamespaceTree.BackColor = System.Drawing.Color.AliceBlue;       // TODO: This doesn't work, however, set to window background!
 
+            this.BackColor = Color.FromArgb(250, 250, 250);
+
+            //this.splitter.Cursor = Cursors.PanWest;                                               // TODO: For "Hide TreeView-Button"
+            //this.shellNamespaceTree.BackColor = System.Drawing.Color.FromArgb(0xFA, 0xFA, 0xFA);  // TODO: This doesn't work, however, set to window background!
 
         }
 
@@ -206,17 +220,9 @@ namespace electrifier.Core.Components.DockContents
 
         public override event EventHandler NavigationOptionsChanged;
 
-        public virtual void OnNavigationOptionsChanged(EventArgs args)
-        {
-            this.NavigationOptionsChanged?.Invoke(this, args);
-        }
+        public virtual void OnNavigationOptionsChanged(EventArgs args) => this.NavigationOptionsChanged?.Invoke(this, args);
 
-
-        public void SelectAll()
-        {
-            throw new NotImplementedException("This doesn't work for any reason!");//this.ShellBrowser.SelectAll();
-        }
-        
+        public void SelectAll() => this.ShellBrowser.SelectAll();
 
         public void UnselectAll() => this.ShellBrowser.UnselectAll();
 
