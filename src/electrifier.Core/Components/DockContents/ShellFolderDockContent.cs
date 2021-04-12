@@ -20,6 +20,7 @@
 
 using electrifier.Core.Components.Controls;
 using electrifier.Core.WindowsShell;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -27,8 +28,8 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq.Expressions;
+using System.Text;
 using System.Windows.Forms;
-using System;
 using Vanara.PInvoke;
 using Vanara.Windows.Forms;
 using Vanara.Windows.Shell;
@@ -41,22 +42,30 @@ namespace electrifier.Core.Components.DockContents
       : NavigableDockContent
       , IClipboardConsumer
     {
+        #region Fields ========================================================================================================
+
         private System.Windows.Forms.Splitter splitter;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel itemCountStatusLabel;
         private System.Windows.Forms.ToolStripStatusLabel selectionStatusLabel;
         private ShellNamespaceTreeControl shellNamespaceTree;
-//        private ShellBrowser shellBrowser;
+
+        protected const string persistParamURI = @"URI=";
+        protected const string persistParamViewMode = @"ViewMode=";
+
+        #endregion ============================================================================================================
 
         #region Properties ====================================================================================================
 
         //public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
         protected string currentLocation;
-        public override string CurrentLocation
+        public override string CurrentLocation      // TODO: CurrentLocation als Object, dann für jede Art von DockContent eine explizite Konvertierung vornehmen!
         {
             get => this.currentLocation;
             set => this.currentLocation = value;
         }
+
+        protected Shell32.PIDL CurrentFolderPidl;
 
         public ShellBrowser ShellBrowser { get; private set; }
 
@@ -70,7 +79,7 @@ namespace electrifier.Core.Components.DockContents
             {
                 this.backColor = value;
                 this.splitter.BackColor = value;
-                // TODO: Set ShellBrowser.BackColor;
+                // TODO: Set ShellBrowser.BackColor; as soon as Vanara got an Update and has IListView-Interface
             }
         }
 
@@ -89,6 +98,9 @@ namespace electrifier.Core.Components.DockContents
             //this.splitter.Cursor = Cursors.PanWest;                                               // TODO: For "Hide TreeView-Button"
             //this.shellNamespaceTree.BackColor = System.Drawing.Color.FromArgb(0xFA, 0xFA, 0xFA);  // TODO: This doesn't work, however, set to window background!
 
+
+
+            this.EvaluatePersistString(persistString);      // TODO: Error-Handling!
         }
 
         private void ShellFolderDockContent_Load(object sender, EventArgs e)
@@ -100,17 +112,112 @@ namespace electrifier.Core.Components.DockContents
             this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_ComputerFolder), false, false);
             this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_NetworkFolder), false, false);
 
-            this.shellNamespaceTree.SelectedItem = this.shellNamespaceTree.RootItems[0];
-
             this.ShellBrowser.Navigated += this.ShellBrowser_Navigated;
             this.ShellBrowser.ItemsChanged += this.ShellBrowser_ItemsChanged;
 
-
             this.Selection.PropertyChanged += this.Selection_PropertyChanged;
+
+            if (this.CurrentFolderPidl != null)
+                this.ShellBrowser.BrowseObject((IntPtr)this.CurrentFolderPidl, Shell32.SBSP.SBSP_ABSOLUTE);     // TODO: Overload BrowseObject in ShellFolder to accept a simple pidl without SBSP-Flags!
+            else
+                this.shellNamespaceTree.SelectedItem = this.shellNamespaceTree.RootItems[0];
+
 
             // Initialize status bar selection text
             this.Selection_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Selection.Count)));
         }
+
+        #region DockContent Persistence Overrides =============================================================================
+
+        /// <summary>
+        /// Override of WeifenLuo.WinFormsUI.Docking.DockContent.GetPersistString()
+        /// </summary>
+        /// <returns>The string describing persistence information. E.g. persistString = "ElShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";</returns>
+        protected override string GetPersistString()
+        {
+            var sb = new StringBuilder();
+            string paramFmt = " {0}{1}";
+
+            // Append class name as identifier
+            sb.Append(nameof(ShellFolderDockContent));
+
+            // If folder is a virtual folder, add suffix.
+            string persistParamFolder = this.CurrentFolderPidl.ToString(Shell32.SIGDN.SIGDN_DESKTOPABSOLUTEPARSING);
+            if (persistParamFolder.StartsWith(@"::"))
+                persistParamFolder = @"shell:" + persistParamFolder;
+
+            // Append URI of current location
+            sb.AppendFormat(paramFmt,
+                persistParamURI,
+                ElShellTools.UrlCreateFromPath(persistParamFolder));
+
+            // Append ViewMode
+//            sb.AppendFormat(paramFmt, ShellFolderDockContent.persistParamViewMode, this.ViewMode);
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Example: persistString = "ElShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";
+        /// </summary>
+        /// <param name="persistString"></param>
+        protected void EvaluatePersistString(string persistString)
+        {
+            try
+            {
+                if ((null != persistString) && (persistString.Trim().Length > ShellFolderDockContent.persistParamURI.Length))
+                {
+                    IEnumerable<string> args = ElShellTools.SplitArgumentString(persistString);
+                    string strInitialNavigationTarget = default;
+                    string strInitialViewMode = default;
+
+                    foreach (string arg in args)
+                    {
+                        if (arg.StartsWith(ShellFolderDockContent.persistParamURI))
+                        {
+
+                            strInitialNavigationTarget = arg.Substring(ShellFolderDockContent.persistParamURI.Length);
+
+                            if (!strInitialNavigationTarget.StartsWith(@"shell:"))
+                                ElShellTools.PathCreateFromUrl(strInitialNavigationTarget);
+                        }
+
+                        if (arg.StartsWith(ShellFolderDockContent.persistParamViewMode))
+                        {
+                            strInitialViewMode = arg.Substring(ShellFolderDockContent.persistParamViewMode.Length);
+                        }
+                    }
+
+
+                    // Finally, when all parameters have been parsed successfully, apply them
+                    if (default != strInitialNavigationTarget)
+                    {
+                        using (ShellItem navigationTarget = new ShellFolder(strInitialNavigationTarget))
+                        {
+                            this.CurrentFolderPidl = new Shell32.PIDL((IntPtr)navigationTarget.PIDL, clone: true);
+                        }
+                    }
+                        
+                    //if (null != strViewMode)
+                    //{
+                    //    ExplorerBrowserViewMode ebvm = ExplorerBrowserViewMode.Auto;
+
+                    //    ebvm = (ExplorerBrowserViewMode) Enum.Parse(typeof(ExplorerBrowserViewMode), strViewMode);
+                    //    this.initialViewMode = ebvm;
+                    //}
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("ElShellBrowserDockContent.EvaluatePersistString: Error evaluating parameters"
+                    + "\n\nParameters: '" + persistString + "'"
+                    + "\n\nError description: '" + e.Message + "'"
+                    + "\n\nResetting to default values.");
+            }
+        }
+
+        #endregion DockContent Persistence Overrides ==========================================================================
+
 
         private void Selection_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -190,8 +297,10 @@ namespace electrifier.Core.Components.DockContents
                 //else
                 //    this.shellNamespaceTree.SelectedItem = null;
 
-                this.CurrentLocation =
-                    this.Text = newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
+                this.CurrentLocation = this.Text =
+                    newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
+
+                this.CurrentFolderPidl = newCurrentFolderPIDL;
             }
 
             this.OnNavigationOptionsChanged(EventArgs.Empty);

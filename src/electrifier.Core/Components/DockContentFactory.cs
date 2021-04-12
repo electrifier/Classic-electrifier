@@ -22,7 +22,6 @@ using electrifier.Core.Components.DockContents;
 using System;
 using WeifenLuo.WinFormsUI.Docking;
 
-
 namespace electrifier.Core.Components
 {
     internal static class DockContentFactory
@@ -33,7 +32,8 @@ namespace electrifier.Core.Components
         /// <param name="navigationHost"><see cref="INavigationHost"/> instance the new DockContent will be added to.</param>
         /// <param name="persistString">The string stored in XML-Files with DockContent type and parameters,
         ///     e.g "ElShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
-        /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid</returns>
+        /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Unknown DockContent type.</exception>
         public static IDockContent Deserialize(INavigationHost navigationHost, string persistString)
         {
             IDockContent dockContent = default;
@@ -48,20 +48,22 @@ namespace electrifier.Core.Components
                 dockContentArguments = persistString.Substring(typeNameSeperatorPos);
             }
 
-            //if (nameof(DockContents.ElShellBrowserDockContent).Equals(dockContentTypeName, StringComparison.CurrentCultureIgnoreCase))
-            //{
-            //    dockContent = DockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
-            //}
+            switch (dockContentTypeName)
+            {
+                case nameof(ShellFolderDockContent):
+                    dockContent = DockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException($"Unknown DockContent of type { dockContentTypeName }");
+            }
 
             return dockContent;
         }
 
-
-
         public static ShellFolderDockContent CreateShellBrowser(INavigationHost navigationHost, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            DockContents.ShellFolderDockContent shellBrowser = new DockContents.ShellFolderDockContent(navigationHost, persistString);
+            ShellFolderDockContent shellBrowser = new ShellFolderDockContent(navigationHost, persistString);
 
             navigationHost.AddDockContent(shellBrowser);
 

@@ -253,9 +253,6 @@ namespace electrifier.Core
 
         public void CreateInitialForm(AppContext appContext)
         {
-            var test = (int)this.GlobalConfig.DefaultSession;
-
-
             if (this.GlobalConfig.DefaultSession.IsNull)
             {
                 this.SessionSelector = new SessionSelector(this);
