@@ -143,6 +143,9 @@ namespace electrifier.Core.Forms
             // 
             // FormStatePersistor
             // 
+            this.FormStatePersistor.ClientForm = this;
+            this.FormStatePersistor.FixWindowState = true;
+            this.FormStatePersistor.FormToDesktopMargin = new System.Drawing.Size(94, 94);
             this.FormStatePersistor.LoadFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_LoadFormState);
             this.FormStatePersistor.SaveFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_SaveFormState);
             // 

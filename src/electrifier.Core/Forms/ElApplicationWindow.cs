@@ -18,21 +18,17 @@
 **
 */
 
-using System;
-using System.Diagnostics;
-using System.Drawing;
-using System.Windows.Forms;
-
-using Vanara.PInvoke;
-
-using WeifenLuo.WinFormsUI.Docking;
-
 using electrifier.Core.Components;
 using electrifier.Core.Components.DockContents;
 using RibbonLib.Controls;
-using EntityLighter;
+using System;
 using System.ComponentModel;
-using Vanara.Windows.Shell;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
+using Vanara.PInvoke;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
@@ -138,11 +134,9 @@ namespace electrifier.Core.Forms
         /// <param name="e"></param>
         private void DpnDockPanel_ActiveContentChanged(object sender, EventArgs e)
         {
-            // Info: sender should be the DockPanel
-            if (!sender.Equals(this.dpnDockPanel))
-                throw new ArgumentException("TODO: Test purposes only: sender is not dpnDockPanel! @ DpnDockPanel_ActiveContentChanged");
+            Debug.Assert(sender.Equals(this.dpnDockPanel));
 
-            var activeContent = this.dpnDockPanel.ActiveContent;
+            IDockContent activeContent = this.dpnDockPanel.ActiveContent;
 
             // Process Ribbon-part of DockContent-Activation
             this.RibbonItems.ActiveDockContent = activeContent;
@@ -160,11 +154,6 @@ namespace electrifier.Core.Forms
                     + ", ActivatedContent=" + activeContent
                     + ", ActivatedContentType=" + activatedContentType);
 
-                // ElShellBrowserDockContent has been activated.
-                //if (typeof(ElShellBrowserDockContent).Equals(activatedContentType))
-                //{
-                //    this.ActivateDockContent(activeContent as ElShellBrowserDockContent);
-                //}
                 if (typeof(ShellFolderDockContent).Equals(activatedContentType))
                 {
                     this.ActivateDockContent(activeContent as ShellFolderDockContent);
@@ -187,36 +176,6 @@ namespace electrifier.Core.Forms
             return shellFolderDockContent;
         }
 
-
-        public bool LoadConfiguration(string fullFileName)
-        {
-            try
-            {
-                //this.dpnDockPanel.LoadFromXml(fullFileName,
-                //    new DeserializeDockContent(delegate (string persistString)
-                //    {
-                //        return DockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
-                //    }));
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show("ElApplicationWindow.cs->LoadConfiguration" +
-                    "\n\tError loading configuarion file." +
-                    "\n\nError description: " + e.Message);
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Called by AppContext.Session.SaveConfiguration()
-        /// </summary>
-        /// <param name="fullFileName">The full file name including its path.</param>
-        public void SaveConfiguration(string fullFileName)
-        {
-            this.dpnDockPanel.SaveAsXml(fullFileName);
-        }
-
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)
         {
             TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
@@ -230,6 +189,27 @@ namespace electrifier.Core.Forms
             args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Size", "800, 600"));
             args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.WindowState", "Normal"));
 
+            string dockPanelConfig = this.SessionContext.Properties.SyncProperty("ElApplicationWindow.DockPanelState", String.Empty);
+
+            if (dockPanelConfig.Length > 0)
+            {
+                using (var dockPanelStateStream = new MemoryStream())
+                {
+                    using (var streamWriter = new StreamWriter(dockPanelStateStream))
+                    {
+                        streamWriter.Write(dockPanelConfig);
+                        streamWriter.Flush();
+                        dockPanelStateStream.Position = 0;
+
+                        this.dpnDockPanel.LoadFromXml(dockPanelStateStream,
+                            new DeserializeDockContent(delegate (string persistString)
+                            {
+                                return DockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
+                            }));
+                    }
+                }
+            }
+
             args.Cancel = false;
         }
 
@@ -238,10 +218,24 @@ namespace electrifier.Core.Forms
             TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
             TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
             TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
+            string dockPanelConfig;
 
             this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);
             this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Size", sizeConvert.ConvertTo(args.Size, typeof(string)) as string);
             this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.WindowState", stateConvert.ConvertTo(args.WindowState, typeof(string)) as string);
+
+            using (var dockPanelStateStream = new MemoryStream())
+            {
+                this.dpnDockPanel.SaveAsXml(dockPanelStateStream, System.Text.Encoding.UTF8);
+
+                dockPanelStateStream.Position = 0;
+                using (var streamReader = new StreamReader(dockPanelStateStream, true))
+                {
+                    dockPanelConfig = streamReader.ReadToEnd();
+                }
+            }
+                
+            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.DockPanelState", dockPanelConfig);
         }
     }
 }

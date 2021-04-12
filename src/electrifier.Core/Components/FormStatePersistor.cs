@@ -116,16 +116,7 @@ namespace electrifier.Core.Components
                 if (null == this.ClientForm)
                 {
                     this.clientForm = value;
-
-                    //
-                    // Add handler for client's Load-event
-                    //
                     value.Load += this.ClientFormLoadEventHandler;
-
-
-                    //
-                    // Add handler for client's FormClosing-event
-                    //
                     value.FormClosing += this.ClientFormFormClosingEventHandler;
                 }
                 else
@@ -185,10 +176,7 @@ namespace electrifier.Core.Components
 
         #endregion
 
-        public FormStatePersistor()
-        {
-            this.InitializeComponent();
-        }
+        public FormStatePersistor() => this.InitializeComponent();
 
         public FormStatePersistor(IContainer container)
           : this()
@@ -202,7 +190,13 @@ namespace electrifier.Core.Components
         public FormStatePersistor(ContainerControl parentControl)
           : this()
         {
-            this.ClientForm = (Form)parentControl;
+            if (null == parentControl)
+                throw new ArgumentNullException(nameof(parentControl));
+
+            if (!(parentControl is Form))
+                throw new ArgumentOutOfRangeException(nameof(parentControl), "Only Form-Controls can be serialized");
+
+            this.ClientForm = parentControl as Form;
         }
 
         public virtual void ClientFormLoadEventHandler(object sender, EventArgs args)
