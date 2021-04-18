@@ -48,10 +48,17 @@ namespace electrifier.Core.Components
                 dockContentArguments = persistString.Substring(typeNameSeperatorPos);
             }
 
+            /* TODO: Remove namespace, but why has SelectConditionalBox one, whereas ShellFolderDockContent has not? */
+            if ((typeNameSeperatorPos = dockContentTypeName.LastIndexOf(".")) > 0)
+                dockContentTypeName = persistString.Substring(typeNameSeperatorPos + 1);
+
             switch (dockContentTypeName)
             {
                 case nameof(ShellFolderDockContent):
                     dockContent = DockContentFactory.CreateShellBrowser(navigationHost, dockContentArguments);
+                    break;
+                case nameof(SelectConditionalBox):
+                    dockContent = DockContentFactory.CreateSelectConditionalBox();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown DockContent of type { dockContentTypeName }");
@@ -68,6 +75,11 @@ namespace electrifier.Core.Components
             navigationHost.AddDockContent(shellBrowser);
 
             return shellBrowser;
+        }
+
+        public static SelectConditionalBox CreateSelectConditionalBox()
+        {
+            return new SelectConditionalBox();
         }
     }
 }

@@ -1,6 +1,9 @@
-2021-04-10 Check why ShellFolderDockContent.SelectAll() fails
+x 2021-04-18 2021-04-10 Check why ShellFolderDockContent.SelectAll() fails
 2021-04-10 CleanUp ShellFolderDockContent class, cause there's old stuff in here
-2021-04-11 See how Ribbon-Class paints it's Hint-PopUps, use this style for ShellBrowser, too
+(F) 2021-04-11 See how Ribbon-Class paints it's Hint-PopUps, use this style for ShellBrowser, too
 2021-04-12 TODO: See Vanara: MemoryPropertyStore
 2021-04-12 TODO: DockPanelGradient? What is that?
 2021-04-12 TODO: Where is 'Content'.ViewMode? Not available in ContentMenu
+(C) 2021-04-18 HINT: Take a look at these classes: https://www.vbforums.com/showthread.php?786079-VB6-Modern-Shell-Interface-Type-Library-oleexp-tlb#dloleexp
+(A) 2021-04-18 Check IFolderViewHost: What is this for? https://docs.microsoft.com/en-us/windows/win32/api/shobjidl/nn-shobjidl-ifolderviewhost
+2021-04-18 Internal: ShellBrowser.cs -> GetItemIndex(), SetSelectionState() to ShellBrowserViewHandler

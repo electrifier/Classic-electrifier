@@ -58,6 +58,8 @@ namespace electrifier.Core.Forms
             set => base.Text = AppContext.BuildDefaultFormText(value);
         }
 
+        public SelectConditionalBox SelectConditionalBox { get; private set; }
+
         #endregion ============================================================================================================
 
         #region Published Events ==============================================================================================
@@ -174,6 +176,18 @@ namespace electrifier.Core.Forms
             this.AddDockContent(shellFolderDockContent);       // TODO => dockAlignment
 
             return shellFolderDockContent;
+        }
+
+        internal void ToggleSelectConditionalBox()
+        {
+            AppContext.TraceScope();
+
+            if (this.SelectConditionalBox is null)
+            {
+                this.SelectConditionalBox = new SelectConditionalBox();
+            }
+
+            this.SelectConditionalBox.Show(this.dpnDockPanel);
         }
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)

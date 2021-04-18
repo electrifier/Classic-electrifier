@@ -69,6 +69,10 @@ namespace electrifier.Core.Components.DockContents
 
         public ShellBrowser ShellBrowser { get; private set; }
 
+        public IReadOnlyList<ShellItem> ShellItems => this.ShellBrowser.Items;
+
+
+
         public ClipboardSelection Selection { get; }
 
         protected Color backColor;
@@ -342,6 +346,9 @@ namespace electrifier.Core.Components.DockContents
             get => (Shell32.FOLDERVIEWMODE)this.ShellBrowser.ViewMode;
             set => this.ShellBrowser.ViewMode = (ShellBrowserViewMode)value;
         }
+
+        public bool SetSelectionState(ShellItem shellItem, Shell32.SVSIF selectionState = Shell32.SVSIF.SVSI_SELECT)
+            => this.ShellBrowser.SetSelectionState(shellItem, selectionState);
 
         #region IClipboardConsumer ============================================================================================
 

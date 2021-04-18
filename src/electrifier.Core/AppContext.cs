@@ -409,6 +409,7 @@ namespace electrifier.Core
 
             Trace.Listeners.Clear();
             Trace.Listeners.Add(defaultTraceListener);
+            Trace.AutoFlush = true;
         }
 
         [Conditional("DEBUG")]

@@ -139,6 +139,12 @@
     </Compile>
     <Compile Include="Components\DockContents\Extensions\NavigableDockContentExtensions.cs" />
     <Compile Include="Components\DockContentFactory.cs" />
+    <Compile Include="Components\DockContents\SelectConditionalBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Components\DockContents\SelectConditionalBox.Designer.cs">
+      <DependentUpon>SelectConditionalBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\DockContents\ShellFolderDockContent.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -197,6 +203,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Components\DockContents\SelectConditionalBox.resx">
+      <DependentUpon>SelectConditionalBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Components\DockContents\ShellFolderDockContent.resx">
       <DependentUpon>ShellFolderDockContent.cs</DependentUpon>
     </EmbeddedResource>

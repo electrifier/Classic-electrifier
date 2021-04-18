@@ -176,7 +176,7 @@ namespace RibbonLib.Controls
             //
             // Command Group: Home -> Select ==================================================================================
             //
-            this.BtnSelectConditional.Enabled = false;
+            this.BtnSelectConditional.ExecuteEvent += this.ApplicationWindow.CmdSelectConditional_ExecuteEvent;
             this.BtnSelectSelectAll.ExecuteEvent += this.ApplicationWindow.CmdSelectAll_ExecuteEvent;
             this.BtnSelectSelectNone.ExecuteEvent += this.ApplicationWindow.CmdSelectNone_ExecuteEvent;
             this.BtnSelectInvertSelection.ExecuteEvent += this.ApplicationWindow.CmdInvertSelection_ExecuteEvent;
@@ -212,7 +212,6 @@ namespace RibbonLib.Controls
             // TODO: For test purposes, enable all available Contexts
             this.TabGrpDesktopTools.ContextAvailable = ContextAvailability.Active;
         }
-
 
         private void CmdBtnHomeView_ExecuteEvent(object sender, ExecuteEventArgs _)
         {

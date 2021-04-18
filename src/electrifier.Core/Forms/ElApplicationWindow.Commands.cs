@@ -193,6 +193,14 @@ namespace electrifier.Core.Forms
             }
         }
 
+        internal void CmdSelectConditional_ExecuteEvent(object sender, ExecuteEventArgs e)
+        {
+            this.BeginInvoke(new MethodInvoker(delegate ()
+               {
+                   this.ToggleSelectConditionalBox();
+               }));
+        }
+
         internal void CmdSelectAll_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
             // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent

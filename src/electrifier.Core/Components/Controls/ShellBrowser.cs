@@ -247,13 +247,13 @@ namespace electrifier.Core.Components.Controls
 
 
         public ShellBrowser()
-            : base()
+            : base()            // TODO: IFolderViewHost?!?
         {
             this.InitializeComponent();
 
             this.History = new ShellNavigationHistory();
-            this.Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW);
-            this.SelectedItems = new ShellItemCollection(this, SVGIO.SVGIO_SELECTION);
+            this.Items = new ShellItemCollection(this, SVGIO.SVGIO_ALLVIEW | SVGIO.SVGIO_FLAG_VIEWORDER);
+            this.SelectedItems = new ShellItemCollection(this, SVGIO.SVGIO_SELECTION | SVGIO.SVGIO_FLAG_VIEWORDER);
 
             this.Resize += this.ShellBrowser_Resize;
             this.HandleDestroyed += this.ShellBrowser_HandleDestroyed;
@@ -355,6 +355,54 @@ namespace electrifier.Core.Components.Controls
             }
 
             return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        /// <summary>
+        /// Get the ItemIndex for one particular <paramref name="shellItem"/>.
+        /// <para><b>Warning:</b> This has been made protected, since the index is only valid as long as no new View has been created!</para>
+        /// </summary>
+        /// <param name="shellItem">The ShellItem whose ItemIndex is requested.</param>
+        /// <param name="itemIndex">The requested, zero-based<code>ItemIndex</code> or <code>-1</code> if not found.</param>
+        /// <returns><code>true</code> if successful, <code>false</code> otherwise, i.e. the given <paramref name="shellItem"/> has not been found.</returns>
+        protected bool GetItemIndex(ShellItem shellItem, out int itemIndex)
+        {
+            if (this.ViewHandler.Validated() != null)
+            {
+                IReadOnlyList<ShellItem> items = this.Items;
+
+                for (int i = 0; i < items.Count; i++)
+                {
+                    if (items[i].PIDL.Equals(shellItem.PIDL))
+                    {
+                        itemIndex = i;
+
+                        return true;
+                    }
+                }
+            }
+
+            itemIndex = -1;
+
+            return false;
+        }
+
+        /// <summary>
+        /// Set SelectionState for one particular <paramref name="shellItem"/>.
+        /// </summary>
+        /// <param name="shellItem">The ShellItem whose SelectionState should be changed.</param>
+        /// <param name="selectionState">The <seealso cref="SVSIF"/>SelectionState that should be applied to this item.</param>
+        /// <returns><code>true</code> if successful, <code>false</code> otherwise, i.e. the given <paramref name="shellItem"/> has not been found.</returns>
+        public bool SetSelectionState(ShellItem shellItem, Shell32.SVSIF selectionState = SVSIF.SVSI_SELECT)
+        {
+            // TODO: Lock ViewHandler? for multithreading issues
+            if (this.GetItemIndex(shellItem, out int itemIndex))
+            {
+                this.ViewHandler.FolderView2.SelectItem(itemIndex, selectionState);
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
