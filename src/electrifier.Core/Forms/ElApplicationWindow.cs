@@ -180,14 +180,17 @@ namespace electrifier.Core.Forms
 
         internal void ToggleSelectConditionalBox()
         {
-            AppContext.TraceScope();
+            var dockPanel = DockContentFactory.SelectConditionalBox;
 
-            if (this.SelectConditionalBox is null)
+            if (dockPanel != null)
             {
-                this.SelectConditionalBox = new SelectConditionalBox();
+                   
+                DockContentFactory.CloseSelectConditionalBox();
             }
-
-            this.SelectConditionalBox.Show(this.dpnDockPanel);
+            else
+            {
+                DockContentFactory.CreateSelectConditionalBox(this.dpnDockPanel);
+            }
         }
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)
@@ -218,7 +221,7 @@ namespace electrifier.Core.Forms
                         this.dpnDockPanel.LoadFromXml(dockPanelStateStream,
                             new DeserializeDockContent(delegate (string persistString)
                             {
-                                return DockContentFactory.Deserialize(this, persistString); // TODO: Throw Exception cause of unkown type in XML ? !?
+                                return DockContentFactory.Deserialize(this, persistString, this.dpnDockPanel); // TODO: Throw Exception cause of unkown type in XML ? !?
                             }));
                     }
                 }

@@ -29,100 +29,111 @@ namespace electrifier.Core.Components.DockContents
         /// </summary>
         private void InitializeComponent()
         {
-            this.baseFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.btnSelect = new System.Windows.Forms.Button();
             this.btnDeselect = new System.Windows.Forms.Button();
-            this.baseFlowLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // baseFlowLayoutPanel
-            // 
-            this.baseFlowLayoutPanel.Controls.Add(this.groupBox1);
-            this.baseFlowLayoutPanel.Controls.Add(this.btnSelect);
-            this.baseFlowLayoutPanel.Controls.Add(this.btnDeselect);
-            this.baseFlowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.baseFlowLayoutPanel.Location = new System.Drawing.Point(0, 0);
-            this.baseFlowLayoutPanel.Name = "baseFlowLayoutPanel";
-            this.baseFlowLayoutPanel.Size = new System.Drawing.Size(414, 450);
-            this.baseFlowLayoutPanel.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.checkBox1);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(397, 196);
-            this.groupBox1.TabIndex = 0;
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(6);
+            this.groupBox1.Size = new System.Drawing.Size(376, 383);
+            this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "FileName matches";
-            // 
-            // textBox1
-            // 
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Location = new System.Drawing.Point(6, 48);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(385, 142);
-            this.textBox1.TabIndex = 1;
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(9, 21);
+            this.checkBox1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.checkBox1.Location = new System.Drawing.Point(6, 21);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(81, 21);
+            this.checkBox1.Padding = new System.Windows.Forms.Padding(0, 8, 0, 0);
+            this.checkBox1.Size = new System.Drawing.Size(364, 29);
             this.checkBox1.TabIndex = 0;
             this.checkBox1.Text = "Is active";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
+            // textBox1
+            // 
+            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.textBox1.Location = new System.Drawing.Point(6, 56);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(364, 321);
+            this.textBox1.TabIndex = 1;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.btnSelect);
+            this.panel1.Controls.Add(this.btnDeselect);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel1.Location = new System.Drawing.Point(6, 395);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(376, 51);
+            this.panel1.TabIndex = 4;
+            // 
             // btnSelect
             // 
-            this.btnSelect.Location = new System.Drawing.Point(3, 205);
+            this.btnSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSelect.Location = new System.Drawing.Point(187, 8);
             this.btnSelect.Name = "btnSelect";
-            this.btnSelect.Size = new System.Drawing.Size(96, 32);
-            this.btnSelect.TabIndex = 1;
+            this.btnSelect.Size = new System.Drawing.Size(86, 32);
+            this.btnSelect.TabIndex = 4;
             this.btnSelect.Text = "Select";
             this.btnSelect.UseVisualStyleBackColor = true;
             this.btnSelect.Click += new System.EventHandler(this.btnSelect_Click);
             // 
             // btnDeselect
             // 
-            this.btnDeselect.Location = new System.Drawing.Point(105, 205);
+            this.btnDeselect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeselect.Location = new System.Drawing.Point(279, 8);
             this.btnDeselect.Name = "btnDeselect";
-            this.btnDeselect.Size = new System.Drawing.Size(96, 32);
-            this.btnDeselect.TabIndex = 2;
+            this.btnDeselect.Size = new System.Drawing.Size(85, 32);
+            this.btnDeselect.TabIndex = 3;
             this.btnDeselect.Text = "Deselect";
             this.btnDeselect.UseVisualStyleBackColor = true;
-            this.btnDeselect.Click += new System.EventHandler(this.btnDeselect_Click);
             // 
             // SelectConditionalBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(414, 450);
-            this.Controls.Add(this.baseFlowLayoutPanel);
+            this.ClientSize = new System.Drawing.Size(388, 452);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.groupBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "SelectConditionalBox";
+            this.Padding = new System.Windows.Forms.Padding(6);
             this.Text = "Select Conditional...";
-            this.baseFlowLayoutPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.FlowLayoutPanel baseFlowLayoutPanel;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnSelect;
         private System.Windows.Forms.Button btnDeselect;
-        private System.Windows.Forms.TextBox textBox1;
     }
 }

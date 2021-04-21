@@ -21,6 +21,7 @@ using System.Runtime.CompilerServices;
 //using static Vanara.PInvoke.User32;
 
 using electrifier.Core.WindowsShell;
+using System.Diagnostics;
 
 namespace electrifier.Core.Components.Controls
 {
@@ -85,6 +86,7 @@ namespace electrifier.Core.Components.Controls
     /// <br/>
     /// For more Information on used techniques see:<br/>
     /// - <seealso href="https://www.codeproject.com/Articles/28961/Full-implementation-of-IShellBrowser"/><br/>
+    /// - <seealso href="https://docs.microsoft.com/en-us/windows/win32/lwef/nse-folderview"/>
     /// <br/>
     /// <br/>
     /// Known Issues:<br/>
@@ -719,7 +721,18 @@ namespace electrifier.Core.Components.Controls
             return HRESULT.E_PENDING;
         }
 
-        public HRESULT OnViewWindowActive(Shell32.IShellView ppshv) => HRESULT.E_NOTIMPL;
+        public HRESULT OnViewWindowActive(Shell32.IShellView ppshv)
+        {
+            if (this.ViewHandler.Validated() != null)
+            {
+                Debug.Assert(this.ViewHandler.ShellView == ppshv);
+
+                this.ViewHandler.UIActivate(SVUIA.SVUIA_ACTIVATE_FOCUS);
+            }
+
+            return HRESULT.S_OK;
+        }
+            
 
         public HRESULT SetToolbarItems(ComCtl32.TBBUTTON[] lpButtons, uint nButtons, Shell32.FCT uFlags) => HRESULT.E_NOTIMPL;
 
