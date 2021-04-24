@@ -44,12 +44,6 @@ namespace electrifier.Core.Components.DockContents
     {
         #region Fields ========================================================================================================
 
-        private System.Windows.Forms.Splitter splitter;
-        private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.ToolStripStatusLabel itemCountStatusLabel;
-        private System.Windows.Forms.ToolStripStatusLabel selectionStatusLabel;
-        private ShellNamespaceTreeControl shellNamespaceTree;
-
         protected const string persistParamURI = @"URI=";
         protected const string persistParamViewMode = @"ViewMode=";
 
@@ -67,11 +61,7 @@ namespace electrifier.Core.Components.DockContents
 
         protected Shell32.PIDL CurrentFolderPidl;
 
-        public ShellBrowser ShellBrowser { get; private set; }
-
-        public IReadOnlyList<ShellItem> ShellItems => this.ShellBrowser.Items;
-
-
+        public ExplorerBrowser ExplorerBrowser { get; private set; }
 
         public ClipboardSelection Selection { get; }
 
@@ -82,7 +72,7 @@ namespace electrifier.Core.Components.DockContents
             set
             {
                 this.backColor = value;
-                this.splitter.BackColor = value;
+                //this.splitter.BackColor = value;
                 // TODO: Set ShellBrowser.BackColor; as soon as Vanara got an Update and has IListView-Interface
             }
         }
@@ -111,24 +101,17 @@ namespace electrifier.Core.Components.DockContents
         {
             this.Icon = Properties.Resources.ShellBrowserDockContent;
 
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(@"shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}"), false, false);        // TOOD: This is the "Quick Access"-folder, which is new to Windows 10
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_OneDrive), false, false);
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_ComputerFolder), false, false);
-            this.shellNamespaceTree.RootItems.Add(new ShellFolder(Shell32.KNOWNFOLDERID.FOLDERID_NetworkFolder), false, false);
 
-            this.ShellBrowser.Navigated += this.ShellBrowser_Navigated;
-            this.ShellBrowser.ItemsChanged += this.ShellBrowser_ItemsChanged;
+            this.ExplorerBrowser.Navigated += this.ExplorerBrowser_Navigated;
+//            this.ExplorerBrowser.ItemsChanged += ExplorerBrowser_ItemsChanged;
 
             this.Selection.PropertyChanged += this.Selection_PropertyChanged;
 
             if (this.CurrentFolderPidl != null)
-                this.ShellBrowser.BrowseObject((IntPtr)this.CurrentFolderPidl, Shell32.SBSP.SBSP_ABSOLUTE);     // TODO: Overload BrowseObject in ShellFolder to accept a simple pidl without SBSP-Flags!
+                this.ExplorerBrowser.Navigate(new ShellItem(this.CurrentFolderPidl));
             else
-                this.shellNamespaceTree.SelectedItem = this.shellNamespaceTree.RootItems[0];
+                this.ExplorerBrowser.Navigate(ShellFolder.Desktop);
 
-
-            // Initialize status bar selection text
-            this.Selection_PropertyChanged(this, new PropertyChangedEventArgs(nameof(Selection.Count)));
         }
 
         #region DockContent Persistence Overrides =============================================================================
@@ -228,7 +211,7 @@ namespace electrifier.Core.Components.DockContents
             switch (e.PropertyName)
             {
                 case nameof(Selection.Count):
-                    this.selectionStatusLabel.Text = this.Selection.SelectionCountStatusBarText;
+
                     break;
                 case nameof(Selection.CurrentClipboardAbilities):
                     this.currentClipboardAbilities = this.Selection.CurrentClipboardAbilities;
@@ -239,70 +222,15 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
-        /// <summary>
-        /// Process <see cref="ShellBrowser.ItemsChanged"/> event.
-        /// </summary>
-        private void ShellBrowser_ItemsChanged(object sender, EventArgs e)
+        private void ExplorerBrowser_Navigated(object sender, ExplorerBrowser.NavigatedEventArgs e)
         {
-            Debug.Assert(sender == this.ShellBrowser);
+            ShellItem newLocation = e.NewLocation;
 
-            this.itemCountStatusLabel.Text = this.ShellBrowser.Items.Count.ToString() + " items";
-        }
-
-        /// <summary>
-        /// Process <see cref="ShellNamespaceTreeControl.AfterSelect"/> event.
-        /// </summary>
-        private void ShellNamespaceTree_AfterSelect(object sender, EventArgs e)
-        {
-            ShellItem shellItem = this.shellNamespaceTree.SelectedItem;
-
-            if (null == shellItem)
-                throw new NullReferenceException(nameof(shellItem));
-
-
-            // TODO: 18/01/21 Remove CurrentFolder in ShellBrowser
-            //this.ShellBrowser.CurrentFolder = (ShellFolder)shellItem;
-            this.ShellBrowser.BrowseObject((IntPtr)shellItem.PIDL, Shell32.SBSP.SBSP_ABSOLUTE);
-
-            //if (!shellItem.PIDL.Equals(this.shellBrowser.CurrentFolder))
-            //{
-            //    this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
-            //}
-
-
-            //if (null != shellItem)
-            //{
-            //    if (null == this.shellBrowser.CurrentFolder || !this.shellBrowser.CurrentFolder.PIDL.Equals(shellItem.PIDL))
-            //        this.shellBrowser.CurrentFolder = (ShellFolder)shellItem;
-            //}
-        }
-
-
-
-        /// <summary>
-        /// TODO: This is very experimental, and only works if the new folder navigated to is an direct successor node
-        ///       to the currently selected node.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ShellBrowser_Navigated(object sender, ShellBrowserNavigatedEventArgs e)
-        {
-            ShellFolder newCurrentFolder = e.CurrentFolder;
-
-            if (null != newCurrentFolder)
+            if (null != newLocation)
             {
-                Shell32.PIDL newCurrentFolderPIDL = newCurrentFolder.PIDL;
-                ShellItem selectedTreeItem = this.shellNamespaceTree.SelectedItem;
-
-                if ((selectedTreeItem != null) && (selectedTreeItem.PIDL.IsParentOf(newCurrentFolderPIDL, immediate: true)))
-                    this.shellNamespaceTree.SelectedItem = newCurrentFolder;
-
-                // TODO: BUG: Navigation to user folder, e.g. "Thorsten Jung", will "magically add" that folder to the tree
-                //else
-                //    this.shellNamespaceTree.SelectedItem = null;
-
+                Shell32.PIDL newCurrentFolderPIDL = newLocation.PIDL;
                 this.CurrentLocation = this.Text =
-                    newCurrentFolder.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
+                    newLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
 
                 this.CurrentFolderPidl = newCurrentFolderPIDL;
             }
@@ -311,19 +239,19 @@ namespace electrifier.Core.Components.DockContents
         }
 
 
-        public override bool CanGoBack => this.ShellBrowser.History.CanSeekBackward;
+        public override bool CanGoBack => this.ExplorerBrowser.History.CanNavigateBackward;
 
         public override void GoBack()
         {
-            this.ShellBrowser.NavigateBack();
+            this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Backward);
             this.OnNavigationOptionsChanged(EventArgs.Empty);
         }
 
-        public override bool CanGoForward => this.ShellBrowser.History.CanSeekForward;
+        public override bool CanGoForward => this.ExplorerBrowser.History.CanNavigateForward;
 
         public override void GoForward()
         {
-            this.ShellBrowser.NavigateForward();
+            this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Forward);
             this.OnNavigationOptionsChanged(EventArgs.Empty);
         }
 
@@ -335,20 +263,21 @@ namespace electrifier.Core.Components.DockContents
 
         public virtual void OnNavigationOptionsChanged(EventArgs args) => this.NavigationOptionsChanged?.Invoke(this, args);
 
-        public void SelectAll() => this.ShellBrowser.SelectAll();
+        public void SelectAll() => this.ExplorerBrowser.SelectAll();
 
-        public void UnselectAll() => this.ShellBrowser.UnselectAll();
+        public void UnselectAll() => this.ExplorerBrowser.UnselectAll();
 
         public override bool HasShellFolderViewMode => true;
 
         public override Shell32.FOLDERVIEWMODE ShellFolderViewMode
         {
-            get => (Shell32.FOLDERVIEWMODE)this.ShellBrowser.ViewMode;
-            set => this.ShellBrowser.ViewMode = (ShellBrowserViewMode)value;
+            get => (Shell32.FOLDERVIEWMODE)this.ExplorerBrowser.ViewMode;
+            set => this.ExplorerBrowser.ViewMode = (ExplorerBrowserViewMode)value;
         }
 
         public bool SetSelectionState(ShellItem shellItem, Shell32.SVSIF selectionState = Shell32.SVSIF.SVSI_SELECT)
-            => this.ShellBrowser.SetSelectionState(shellItem, selectionState);
+            { System.Windows.Forms.MessageBox.Show("Not implemented yet."); return false; }
+            //=> this.ShellBrowser.SetSelectionState(shellItem, selectionState); 
 
         #region IClipboardConsumer ============================================================================================
 
@@ -429,7 +358,7 @@ namespace electrifier.Core.Components.DockContents
           : INotifyPropertyChanged
         {
             public ShellFolderDockContent Owner { get; }
-            public ShellBrowser ShellBrowser { get; }
+            public ExplorerBrowser ExplorerBrowser { get; }
 
             private int count;
 
@@ -447,43 +376,21 @@ namespace electrifier.Core.Components.DockContents
                 set { PropertyChanged.ChangeAndNotify(ref this.currentClipboardAbilities, value, () => CurrentClipboardAbilities); }
             }
 
-            public string SelectionCountStatusBarText
-            {
-                /// <summary>
-                /// TODO: Use recursive pattern here
-                /// </summary>
-                get
-                {
-                    //return selectionCount switch
-                    //{
-                    //    0 => "No Selection",
-                    //    1 => "One Item selected",
-                    //    _ => $"{selectionCount} items selected",
-                    //};
-                    switch (this.Count)
-                    {
-                        case 0: return "No Selection";
-                        case 1: return "One Item selected";
-                        default: return $"{count} items selected";
-                    }
-                }
-            }
-
             public ClipboardSelection(ShellFolderDockContent owner)
             {
                 this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
-                this.ShellBrowser = owner.ShellBrowser;
+                this.ExplorerBrowser = owner.ExplorerBrowser;
 
-                this.ShellBrowser.SelectionChanged += this.SelectionChanged;
+                this.ExplorerBrowser.SelectionChanged += this.SelectionChanged;
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
 
             public void SelectionChanged(object sender, EventArgs e)
             {
-                Debug.Assert(sender == this.ShellBrowser);
+                Debug.Assert(sender == this.ExplorerBrowser);
 
-                this.Count = this.ShellBrowser.SelectedItems.Count;
+                this.Count = this.ExplorerBrowser.SelectedItems.Count;
                 this.CurrentClipboardAbilities = this.Count > 0 ?
                     (ClipboardAbilities.CanCopy | ClipboardAbilities.CanCut) : ClipboardAbilities.None;
             }
@@ -501,7 +408,7 @@ namespace electrifier.Core.Components.DockContents
                 // TODO: IFolderView can return a DataObject, too: https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nf-shobjidl_core-ifolderview-items
 
                 // Get collection of selected items, return if empty cause nothing to do then
-                var selItems = this.ShellBrowser.SelectedItems;
+                var selItems = this.ExplorerBrowser.SelectedItems;
 
                 if (selItems.Count < 1)
                     return;
@@ -579,81 +486,26 @@ namespace electrifier.Core.Components.DockContents
 
         private void InitializeComponent()
         {
-            this.shellNamespaceTree = new Vanara.Windows.Forms.ShellNamespaceTreeControl();
-            this.splitter = new System.Windows.Forms.Splitter();
-            this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.itemCountStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.selectionStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.ShellBrowser = new electrifier.Core.Components.Controls.ShellBrowser();
-            this.statusStrip.SuspendLayout();
+            this.ExplorerBrowser = new Vanara.Windows.Forms.ExplorerBrowser();
             this.SuspendLayout();
             // 
-            // shellNamespaceTree
+            // ExplorerBrowser
             // 
-            this.shellNamespaceTree.Dock = System.Windows.Forms.DockStyle.Left;
-            this.shellNamespaceTree.Location = new System.Drawing.Point(0, 0);
-            this.shellNamespaceTree.Name = "shellNamespaceTree";
-            this.shellNamespaceTree.Size = new System.Drawing.Size(320, 876);
-            this.shellNamespaceTree.TabIndex = 1;
-            this.shellNamespaceTree.AfterSelect += new System.EventHandler(this.ShellNamespaceTree_AfterSelect);
-            // 
-            // splitter
-            // 
-            this.splitter.Location = new System.Drawing.Point(320, 0);
-            this.splitter.Name = "splitter";
-            this.splitter.Size = new System.Drawing.Size(6, 876);
-            this.splitter.TabIndex = 3;
-            this.splitter.TabStop = false;
-            // 
-            // statusStrip
-            // 
-            this.statusStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(250)))), ((int)(((byte)(250)))), ((int)(((byte)(250)))));
-            this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.itemCountStatusLabel,
-            this.selectionStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(326, 850);
-            this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(835, 26);
-            this.statusStrip.SizingGrip = false;
-            this.statusStrip.TabIndex = 4;
-            this.statusStrip.Text = "statusStrip1";
-            // 
-            // itemCountStatusLabel
-            // 
-            this.itemCountStatusLabel.AutoSize = false;
-            this.itemCountStatusLabel.Name = "itemCountStatusLabel";
-            this.itemCountStatusLabel.Size = new System.Drawing.Size(100, 20);
-            // 
-            // selectionStatusLabel
-            // 
-            this.selectionStatusLabel.AutoSize = false;
-            this.selectionStatusLabel.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Left;
-            this.selectionStatusLabel.Name = "selectionStatusLabel";
-            this.selectionStatusLabel.Size = new System.Drawing.Size(150, 20);
-            // 
-            // ShellBrowser
-            // 
-            this.ShellBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ShellBrowser.Location = new System.Drawing.Point(326, 0);
-            this.ShellBrowser.Name = "ShellBrowser";
-            this.ShellBrowser.Size = new System.Drawing.Size(835, 850);
-            this.ShellBrowser.TabIndex = 2;
-            this.ShellBrowser.Navigated += new System.EventHandler<electrifier.Core.Components.Controls.ShellBrowserNavigatedEventArgs>(this.ShellBrowser_Navigated);
+            this.ExplorerBrowser.ContentFlags = ((Vanara.Windows.Forms.ExplorerBrowserContentSectionOptions)((Vanara.Windows.Forms.ExplorerBrowserContentSectionOptions.NoWebView | Vanara.Windows.Forms.ExplorerBrowserContentSectionOptions.UseSearchFolder)));
+            this.ExplorerBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ExplorerBrowser.Location = new System.Drawing.Point(0, 0);
+            this.ExplorerBrowser.Name = "explorerBrowser";
+            this.ExplorerBrowser.NavigationFlags = Vanara.Windows.Forms.ExplorerBrowserNavigateOptions.ShowFrames;
+            this.ExplorerBrowser.Size = new System.Drawing.Size(1161, 876);
+            this.ExplorerBrowser.TabIndex = 5;
             // 
             // ShellFolderDockContent
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
-            this.Controls.Add(this.ShellBrowser);
-            this.Controls.Add(this.statusStrip);
-            this.Controls.Add(this.splitter);
-            this.Controls.Add(this.shellNamespaceTree);
+            this.Controls.Add(this.ExplorerBrowser);
             this.Name = "ShellFolderDockContent";
             this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
-            this.statusStrip.ResumeLayout(false);
-            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

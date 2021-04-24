@@ -128,7 +128,6 @@
     <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\Controls\ShellBrowser.cs" />
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -247,19 +246,19 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Vanara.Core">
-      <Version>3.3.4</Version>
+      <Version>3.3.9</Version>
     </PackageReference>
     <PackageReference Include="Vanara.PInvoke.Shell32">
-      <Version>3.3.4</Version>
+      <Version>3.3.9</Version>
     </PackageReference>
     <PackageReference Include="Vanara.PInvoke.User32">
-      <Version>3.3.4</Version>
+      <Version>3.3.9</Version>
     </PackageReference>
     <PackageReference Include="Vanara.Windows.Forms">
-      <Version>3.3.4</Version>
+      <Version>3.3.9</Version>
     </PackageReference>
     <PackageReference Include="Vanara.Windows.Shell">
-      <Version>3.3.4</Version>
+      <Version>3.3.9</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

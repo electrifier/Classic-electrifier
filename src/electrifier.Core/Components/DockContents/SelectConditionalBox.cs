@@ -43,108 +43,108 @@ namespace electrifier.Core.Components.DockContents
 
         void selectitemsinternal()
         {
-            var founditems = new ArrayList();
-            var searchpatterncount = 0;
+//            var founditems = new ArrayList();
+//            var searchpatterncount = 0;
 
-            try
-            {
-                var lines = this.textBox1.Lines;
-                var searchpatternlist = new ArrayList();
+//            try
+//            {
+//                var lines = this.textBox1.Lines;
+//                var searchpatternlist = new ArrayList();
 
-                // remove folderpath of lines
-                foreach (string fullfilename in lines)
-                    searchpatternlist.Add(System.IO.Path.GetFileName(fullfilename));
-                searchpatterncount = searchpatternlist.Count;
+//                // remove folderpath of lines
+//                foreach (string fullfilename in lines)
+//                    searchpatternlist.Add(System.IO.Path.GetFileName(fullfilename));
+//                searchpatterncount = searchpatternlist.Count;
 
-                // get filenamelist from shellfolderdockcontent
+//                // get filenamelist from shellfolderdockcontent
 
-                IDockContent dockContent = this.DockPanel.ActiveDocument;
+//                IDockContent dockContent = this.DockPanel.ActiveDocument;
 
-                if (dockContent is ShellFolderDockContent)
-                {
-                    var shellfolderdock = dockContent as ShellFolderDockContent;
-                    shellfolderdock.UnselectAll();
+//                if (dockContent is ShellFolderDockContent)
+//                {
+//                    var shellfolderdock = dockContent as ShellFolderDockContent;
+//                    shellfolderdock.UnselectAll();
 
-                    var shellItems = shellfolderdock.ShellItems;
+//                    var shellItems = shellfolderdock.ShellItems;
 
-                    AppContext.TraceDebug($"0.) Selecting conditional, searching a in list of { shellItems.Count } items...");
+//                    AppContext.TraceDebug($"0.) Selecting conditional, searching a in list of { shellItems.Count } items...");
 
-                    for (int i = 0; i < shellItems.Count; i++)
-                    {
-                        //AppContext.TraceDebug($" index i = {i}");
+//                    for (int i = 0; i < shellItems.Count; i++)
+//                    {
+//                        //AppContext.TraceDebug($" index i = {i}");
 
-                        var shellItem = shellItems[i];
-                        //AppContext.TraceDebug($" index i = {i}");
-                        AppContext.TraceDebug("1.)   Getting DisplayName");
-                        //var itemName = shellItem.GetDisplayName(ShellItemDisplayString.ParentRelative);
-                        var itemName = shellItem.Name;
-//                        var itemName = shellItem.GetDisplayName()
+//                        var shellItem = shellItems[i];
+//                        //AppContext.TraceDebug($" index i = {i}");
+//                        AppContext.TraceDebug("1.)   Getting DisplayName");
+//                        //var itemName = shellItem.GetDisplayName(ShellItemDisplayString.ParentRelative);
+//                        var itemName = shellItem.Name;
+////                        var itemName = shellItem.GetDisplayName()
                         
-                        AppContext.TraceDebug($"2.)     index i = {i}");
-                        AppContext.TraceDebug($"3.)       Checking SelectionState for item {i}: {itemName}");
+//                        AppContext.TraceDebug($"2.)     index i = {i}");
+//                        AppContext.TraceDebug($"3.)       Checking SelectionState for item {i}: {itemName}");
 
-                        foreach (var searchpattern in searchpatternlist)
-                        {
-                            AppContext.TraceDebug($"4.)         Foreach pattern");
+//                        foreach (var searchpattern in searchpatternlist)
+//                        {
+//                            AppContext.TraceDebug($"4.)         Foreach pattern");
 
-                            if (itemName.Equals(searchpattern as string, StringComparison.CurrentCultureIgnoreCase))
-                            {
-                                AppContext.TraceDebug($"5.)         Adding item to list");
+//                            if (itemName.Equals(searchpattern as string, StringComparison.CurrentCultureIgnoreCase))
+//                            {
+//                                AppContext.TraceDebug($"5.)         Adding item to list");
 
-                                if (shellfolderdock.SetSelectionState(shellItem))
-                                    founditems.Add(shellItem.Name);
-                            }
-                        }
-                    }
+//                                if (shellfolderdock.SetSelectionState(shellItem))
+//                                    founditems.Add(shellItem.Name);
+//                            }
+//                        }
+//                    }
 
-                    //
-                    // OLD foreach-statement, which fails for unknown reason, cause not all items appear...
-                    //foreach (ShellItem shellItem in shellItems)
-                    //{
-                    //    var filename = shellItem.GetDisplayName(ShellItemDisplayString.ParentRelative);
+//                    //
+//                    // OLD foreach-statement, which fails for unknown reason, cause not all items appear...
+//                    //foreach (ShellItem shellItem in shellItems)
+//                    //{
+//                    //    var filename = shellItem.GetDisplayName(ShellItemDisplayString.ParentRelative);
 
-                    //    AppContext.TraceDebug($"filename: {filename}");
+//                    //    AppContext.TraceDebug($"filename: {filename}");
 
-                    //    // now check each filename agains the given list
-                    //    foreach (var searchpattern in searchpatternlist)
-                    //    {
-                    //        if (filename.Equals(searchpattern as string, StringComparison.CurrentCultureIgnoreCase))
-                    //        {
-                    //            if (shellfolderdock.SetSelectionState(shellItem))
-                    //                founditems.Add(shellItem.Name);
-                    //        }
-                    //    }
-                    //}
-                }
-                else throw new ArgumentOutOfRangeException(nameof(ShellFolderDockContent));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+//                    //    // now check each filename agains the given list
+//                    //    foreach (var searchpattern in searchpatternlist)
+//                    //    {
+//                    //        if (filename.Equals(searchpattern as string, StringComparison.CurrentCultureIgnoreCase))
+//                    //        {
+//                    //            if (shellfolderdock.SetSelectionState(shellItem))
+//                    //                founditems.Add(shellItem.Name);
+//                    //        }
+//                    //    }
+//                    //}
+//                }
+//                else throw new ArgumentOutOfRangeException(nameof(ShellFolderDockContent));
+//            }
+//            catch (Exception ex)
+//            {
+//                MessageBox.Show(ex.Message);
+//            }
 
-            /*
-             * TODO: If there is already one item selected nothing happens here!
-             */
+//            /*
+//             * TODO: If there is already one item selected nothing happens here!
+//             */
 
-            if (founditems.Count > 0)
-            {
-                var resultstring = $"Searching { searchpatterncount} items in folder found { founditems.Count } matching item(s):\n\n";
+//            if (founditems.Count > 0)
+//            {
+//                var resultstring = $"Searching { searchpatterncount} items in folder found { founditems.Count } matching item(s):\n\n";
 
-                foreach (var filename in founditems)
-                    resultstring += filename + "\n";
+//                foreach (var filename in founditems)
+//                    resultstring += filename + "\n";
 
-                MessageBox.Show(resultstring, $"Select Conditional: { founditems.Count } selected");
-                //this.DockPanel.Focus();
+//                MessageBox.Show(resultstring, $"Select Conditional: { founditems.Count } selected");
+//                //this.DockPanel.Focus();
 
-                IDockContent dockContent = this.DockPanel.ActiveDocument;
-                if (dockContent is ShellFolderDockContent)
-                {
-                    var shellfolderdock = dockContent as ShellFolderDockContent;
-                    shellfolderdock.Focus();
-                }
+//                IDockContent dockContent = this.DockPanel.ActiveDocument;
+//                if (dockContent is ShellFolderDockContent)
+//                {
+//                    var shellfolderdock = dockContent as ShellFolderDockContent;
+//                    shellfolderdock.Focus();
+//                }
 
-            }
+//            }
 
         }
 
