@@ -19,6 +19,7 @@
 */
 
 using electrifier.Core.Components.DockContents;
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components
 {
@@ -29,11 +30,14 @@ namespace electrifier.Core.Components
     /// </summary>
     public interface INavigationHost
     {
-        NavigableDockContent ActiveDockContent { get; }
+        DockContent ActiveDockContent { get; }
 
-        void AddDockContent(NavigableDockContent DockContent);
-        void ActivateDockContent(NavigableDockContent DockContent);
-        void RemoveDockContent(NavigableDockContent DockContent);
+//        void AddDockContent(NavigableDockContent DockContent);
+        void AddDockContent(DockContent DockContent);
+
+//        void ActivateDockContent(NavigableDockContent DockContent);
+//        void RemoveDockContent(NavigableDockContent DockContent);
+        void RemoveDockContent(DockContent DockContent);
 
         // void DeactivateClient();
 

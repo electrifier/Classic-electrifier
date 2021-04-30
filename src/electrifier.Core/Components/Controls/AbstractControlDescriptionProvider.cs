@@ -38,6 +38,7 @@ namespace electrifier.Core.Components.Controls
     /// <typeparam name="TAbstract">Abstract class the control derives from</typeparam>
     /// <typeparam name="TBase">Base class </typeparam>
 
+    [Obsolete("This stuff will be removed!", true)]
     public class AbstractControlDescriptionProvider<TAbstract, TBase>
         : TypeDescriptionProvider
     {

@@ -25,7 +25,7 @@ using System.Diagnostics;
 using electrifier.Core.Components;
 using electrifier.Core.Components.Controls;
 using electrifier.Core.Components.DockContents;
-
+using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
@@ -33,10 +33,39 @@ namespace electrifier.Core.Forms
       : INavigationHost
     {
         private ArrayList dockContentList = new ArrayList();
-        private NavigableDockContent activeDockContent;
-        public NavigableDockContent ActiveDockContent { get => this.activeDockContent; }
+        private DockContent activeDockContent;
+        public DockContent ActiveDockContent { get => this.activeDockContent; }
 
-        public void AddDockContent(NavigableDockContent dockContent)
+//        public void AddDockContent(NavigableDockContent dockContent)
+//        {
+//            AppContext.TraceScope();
+//
+//            if (null == dockContent)
+//                throw new ArgumentNullException(nameof(dockContent));
+//
+//            this.dockContentList.Add(dockContent);
+//
+//            dockContent.Activated += this.DockContent_Activated;
+//            dockContent.FormClosed += this.DockContent_FormClosed;
+//
+//            // Connect navigation options changed event
+//            dockContent.NavigationOptionsChanged += this.DockContent_NavigationOptionsChanged;
+//            if (dockContent.HasShellFolderViewMode)
+//                dockContent.ShellFolderViewModeChanged += this.DockContent_ShellFolderViewModeChanged;
+//
+//            // Connect clipboard consumer events
+//            if (dockContent is IClipboardConsumer clipboardConsumer)
+//                clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardAbilitiesChanged;
+//
+//
+//            // TODO: Connect events!
+//            //newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
+//            //newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
+//
+//            dockContent.Show(this.dpnDockPanel);    // DockState.Document); // TODO: Previous pane?!?
+//        }
+
+        public void AddDockContent(DockContent dockContent)
         {
             AppContext.TraceScope();
 
@@ -49,9 +78,9 @@ namespace electrifier.Core.Forms
             dockContent.FormClosed += this.DockContent_FormClosed;
 
             // Connect navigation options changed event
-            dockContent.NavigationOptionsChanged += this.DockContent_NavigationOptionsChanged;
-            if (dockContent.HasShellFolderViewMode)
-                dockContent.ShellFolderViewModeChanged += this.DockContent_ShellFolderViewModeChanged;
+            //dockContent.NavigationOptionsChanged += this.DockContent_NavigationOptionsChanged;
+            //if (dockContent.HasShellFolderViewMode)
+            //    dockContent.ShellFolderViewModeChanged += this.DockContent_ShellFolderViewModeChanged;
 
             // Connect clipboard consumer events
             if (dockContent is IClipboardConsumer clipboardConsumer)
@@ -65,7 +94,8 @@ namespace electrifier.Core.Forms
             dockContent.Show(this.dpnDockPanel);    // DockState.Document); // TODO: Previous pane?!?
         }
 
-        public void ActivateDockContent(NavigableDockContent dockContent)
+
+        public void ActivateDockContent(DockContent dockContent)
         {
             AppContext.TraceScope();
 
@@ -76,7 +106,7 @@ namespace electrifier.Core.Forms
             if (this.ActiveDockContent == dockContent)
                 return;
 
-            if(!this.dockContentList.Contains(dockContent))
+            if (!this.dockContentList.Contains(dockContent))
                 throw new ArgumentException("DockContent never has been added to NavigationHost");
 
             //this.activeDockContent?.Deactivate();
@@ -87,18 +117,20 @@ namespace electrifier.Core.Forms
                 dockContent.Activate();
 
 
-            if (dockContent is ShellFolderDockContent shellBolderDockContent)
-                this.RibbonItems.ShellFolderViewMode = shellBolderDockContent.ShellFolderViewMode;
-            else
-                this.RibbonItems.ShellFolderViewMode = /* TODO: None */ Vanara.PInvoke.Shell32.FOLDERVIEWMODE.FVM_AUTO;
+            //if (dockContent is ShellFolderDockContent shellBolderDockContent)
+            //    this.RibbonItems.ShellFolderViewMode = shellBolderDockContent.ShellFolderViewMode;
+            //else
+            //    this.RibbonItems.ShellFolderViewMode = /* TODO: None */ Vanara.PInvoke.Shell32.FOLDERVIEWMODE.FVM_AUTO;
 
             AppContext.TraceDebug("CHANGED by Activation - NavigationHost - ViewMode: " + this.RibbonItems.ShellFolderViewMode);
 
             // Update navigation bar, i.e. its button states
-            this.NavigationToolStrip.ActiveDockContent = dockContent;
+//            this.NavigationToolStrip.ActiveDockContent = dockContent;
         }
 
-        public void RemoveDockContent(NavigableDockContent dockContent)
+
+
+        public void RemoveDockContent(DockContent dockContent)
         {
             AppContext.TraceScope();
 
@@ -107,8 +139,8 @@ namespace electrifier.Core.Forms
 
             // Disconnect events
             dockContent.Activated -= this.DockContent_Activated;
-            dockContent.ShellFolderViewModeChanged -= this.DockContent_ShellFolderViewModeChanged;
-            dockContent.NavigationOptionsChanged -= this.DockContent_NavigationOptionsChanged;
+            //dockContent.ShellFolderViewModeChanged -= this.DockContent_ShellFolderViewModeChanged;
+            //dockContent.NavigationOptionsChanged -= this.DockContent_NavigationOptionsChanged;
 
             this.dockContentList.Remove(dockContent);
         }
@@ -122,16 +154,16 @@ namespace electrifier.Core.Forms
         /// <param name="e"></param>
         private void DockContent_Activated(object sender, EventArgs e)
         {
-            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
+            Debug.Assert(sender is DockContent);
 
-            this.ActivateDockContent(sender as NavigableDockContent);
+            this.ActivateDockContent(sender as DockContent);
         }
 
         private void DockContent_FormClosed(object sender, System.Windows.Forms.FormClosedEventArgs e)
         {
-            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
+            Debug.Assert(sender is DockContent);
 
-            this.RemoveDockContent(sender as NavigableDockContent);
+            this.RemoveDockContent(sender as DockContent);
         }
 
         private void DockContent_NavigationOptionsChanged(object sender, EventArgs e)
