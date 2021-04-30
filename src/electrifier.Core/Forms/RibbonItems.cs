@@ -254,9 +254,9 @@ namespace RibbonLib.Controls
                         throw new IndexOutOfRangeException(nameof(cmdID));
                 }
 
-                // Finally, apply new ViewMode if ActiveDockContent is of type ElNavigableDockContent
-                if (this.ApplicationWindow.ActiveDockContent is NavigableDockContent navigableDockContent)
-                    navigableDockContent.ShellFolderViewMode = newShellFolderViewMode;
+//                // Finally, apply new ViewMode if ActiveDockContent is of type ElNavigableDockContent
+//                if (this.ApplicationWindow.ActiveDockContent is NavigableDockContent navigableDockContent)
+//                    navigableDockContent.ShellFolderViewMode = newShellFolderViewMode;
             }));
         }
 
@@ -274,8 +274,8 @@ namespace RibbonLib.Controls
             if (sender is null) throw new ArgumentNullException(nameof(sender));
             if (args is null) throw new ArgumentNullException(nameof(args));
 
-            if (sender.Equals(this.ApplicationWindow.ActiveDockContent))
-                this.ClipboardAbilities = args.NewClipboardAbilities;
+//            if (sender.Equals(this.ApplicationWindow.ActiveDockContent))
+//                this.ClipboardAbilities = args.NewClipboardAbilities;
         }
     }
 }

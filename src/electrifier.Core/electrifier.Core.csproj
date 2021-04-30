@@ -86,7 +86,7 @@
     <DebugType>none</DebugType>
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>false</Prefer32Bit>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ribbon, Version=1.0.0.0, Culture=neutral, PublicKeyToken=4a850abcb1bad68b, processorArchitecture=MSIL">
@@ -150,6 +150,7 @@
     <Compile Include="Components\FormStatePersistor.cs" />
     <Compile Include="Components\IClipboardConsumer.cs" />
     <Compile Include="Components\INavigationHost.cs" />
+    <Compile Include="Components\IRibbonConsumer.cs" />
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="Forms\ElAboutDialog.cs">
       <SubType>Form</SubType>

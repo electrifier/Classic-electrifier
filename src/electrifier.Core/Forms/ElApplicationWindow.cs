@@ -156,14 +156,14 @@ namespace electrifier.Core.Forms
                     + ", ActivatedContent=" + activeContent
                     + ", ActivatedContentType=" + activatedContentType);
 
-                if (typeof(ShellFolderDockContent).Equals(activatedContentType))
-                {
-                    this.ActivateDockContent(activeContent as ShellFolderDockContent);
-                }
-                else
-                {
-                    AppContext.TraceWarning("DpnDockPanel_ActiveContentChanged => Unknwon ActiveContent");
-                }
+                //if (typeof(ShellFolderDockContent).Equals(activatedContentType))
+                //{
+                //    this.ActivateDockContent(activeContent as ShellFolderDockContent);
+                //}
+                //else
+                //{
+                //    AppContext.TraceWarning("DpnDockPanel_ActiveContentChanged => Unknwon ActiveContent");
+                //}
             }
         }
 

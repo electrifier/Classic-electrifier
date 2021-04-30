@@ -20,6 +20,9 @@
 
 using electrifier.Core.Components.Controls;
 using electrifier.Core.WindowsShell;
+using RibbonLib;
+using RibbonLib.Controls;
+using RibbonLib.Controls.Events;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -37,10 +40,11 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components.DockContents
 {
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ShellFolderDockContent, DockContent>))]
-    public class ShellFolderDockContent
-      : NavigableDockContent
-      , IClipboardConsumer
+//    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ShellFolderDockContent, DockContent>))]
+    public class ShellFolderDockContent :
+        DockContent, // DockPanel, DockPane?
+        IRibbonConsumer,
+        IClipboardConsumer
     {
         #region Fields ========================================================================================================
 
@@ -53,7 +57,7 @@ namespace electrifier.Core.Components.DockContents
 
         //public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
         protected string currentLocation;
-        public override string CurrentLocation      // TODO: CurrentLocation als Object, dann für jede Art von DockContent eine explizite Konvertierung vornehmen!
+        public string CurrentLocation      // TODO: CurrentLocation als Object, dann für jede Art von DockContent eine explizite Konvertierung vornehmen!
         {
             get => this.currentLocation;
             set => this.currentLocation = value;
@@ -61,12 +65,10 @@ namespace electrifier.Core.Components.DockContents
 
         protected Shell32.PIDL CurrentFolderPidl;
 
-        public ExplorerBrowser ExplorerBrowser { get; private set; }
-
         public ClipboardSelection Selection { get; }
 
         protected Color backColor;
-        public override Color BackColor
+        public Color BackColor
         {
             get => this.backColor;
             set
@@ -81,7 +83,7 @@ namespace electrifier.Core.Components.DockContents
 
 
         public ShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
-          : base(navigationHost)
+          : base(/*navigationHost*/)
         {
             this.InitializeComponent();
 
@@ -103,7 +105,7 @@ namespace electrifier.Core.Components.DockContents
 
 
             this.ExplorerBrowser.Navigated += this.ExplorerBrowser_Navigated;
-//            this.ExplorerBrowser.ItemsChanged += ExplorerBrowser_ItemsChanged;
+            //            this.ExplorerBrowser.ItemsChanged += ExplorerBrowser_ItemsChanged;
 
             this.Selection.PropertyChanged += this.Selection_PropertyChanged;
 
@@ -139,7 +141,7 @@ namespace electrifier.Core.Components.DockContents
                 ElShellTools.UrlCreateFromPath(persistParamFolder));
 
             // Append ViewMode
-//            sb.AppendFormat(paramFmt, ShellFolderDockContent.persistParamViewMode, this.ViewMode);
+            //            sb.AppendFormat(paramFmt, ShellFolderDockContent.persistParamViewMode, this.ViewMode);
 
             return sb.ToString();
         }
@@ -235,49 +237,49 @@ namespace electrifier.Core.Components.DockContents
                 this.CurrentFolderPidl = newCurrentFolderPIDL;
             }
 
-            this.OnNavigationOptionsChanged(EventArgs.Empty);
+            //this.OnNavigationOptionsChanged(EventArgs.Empty);
         }
 
 
-        public override bool CanGoBack => this.ExplorerBrowser.History.CanNavigateBackward;
+//        public override bool CanGoBack => this.ExplorerBrowser.History.CanNavigateBackward;
 
-        public override void GoBack()
-        {
-            this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Backward);
-            this.OnNavigationOptionsChanged(EventArgs.Empty);
-        }
+        //public override void GoBack()
+        //{
+        //    this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Backward);
+        //    this.OnNavigationOptionsChanged(EventArgs.Empty);
+        //}
 
-        public override bool CanGoForward => this.ExplorerBrowser.History.CanNavigateForward;
+        //public override bool CanGoForward => this.ExplorerBrowser.History.CanNavigateForward;
 
-        public override void GoForward()
-        {
-            this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Forward);
-            this.OnNavigationOptionsChanged(EventArgs.Empty);
-        }
+        //public override void GoForward()
+        //{
+        //    this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Forward);
+        //    this.OnNavigationOptionsChanged(EventArgs.Empty);
+        //}
 
 
 
-        public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
+        //public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
 
-        public override event EventHandler NavigationOptionsChanged;
+        //public override event EventHandler NavigationOptionsChanged;
 
-        public virtual void OnNavigationOptionsChanged(EventArgs args) => this.NavigationOptionsChanged?.Invoke(this, args);
+        //public virtual void OnNavigationOptionsChanged(EventArgs args) => this.NavigationOptionsChanged?.Invoke(this, args);
 
         public void SelectAll() => this.ExplorerBrowser.SelectAll();
 
         public void UnselectAll() => this.ExplorerBrowser.UnselectAll();
 
-        public override bool HasShellFolderViewMode => true;
+        //public override bool HasShellFolderViewMode => true;
 
-        public override Shell32.FOLDERVIEWMODE ShellFolderViewMode
-        {
-            get => (Shell32.FOLDERVIEWMODE)this.ExplorerBrowser.ViewMode;
-            set => this.ExplorerBrowser.ViewMode = (ExplorerBrowserViewMode)value;
-        }
+        //public override Shell32.FOLDERVIEWMODE ShellFolderViewMode
+        //{
+        //    get => (Shell32.FOLDERVIEWMODE)this.ExplorerBrowser.ViewMode;
+        //    set => this.ExplorerBrowser.ViewMode = (ExplorerBrowserViewMode)value;
+        //}
 
         public bool SetSelectionState(ShellItem shellItem, Shell32.SVSIF selectionState = Shell32.SVSIF.SVSI_SELECT)
-            { System.Windows.Forms.MessageBox.Show("Not implemented yet."); return false; }
-            //=> this.ShellBrowser.SetSelectionState(shellItem, selectionState); 
+        { System.Windows.Forms.MessageBox.Show("Not implemented yet."); return false; }
+        //=> this.ShellBrowser.SetSelectionState(shellItem, selectionState); 
 
         #region IClipboardConsumer ============================================================================================
 
@@ -479,8 +481,55 @@ namespace electrifier.Core.Components.DockContents
                     }
                 }
             }
+        }
+
+        #region IRibbonConsumerDockPanel ======================================================================================
+
+        public RibbonItems RibbonItems { get; private set; }
+
+        RibbonTabBinding TabHome;
+        RibbonButtonBinding BtnClipboardCut;
+        RibbonButtonBinding BtnClipboardCopy;
+
+        BaseRibbonControlBinding<BaseRibbonControl>[] ControlBindings;
+
+
+        public BaseRibbonControlBinding<BaseRibbonControl>[] InitializeRibbonBinding(RibbonItems ribbonItems)
+        {
+            this.RibbonItems = ribbonItems ?? throw new ArgumentNullException(nameof(ribbonItems));
+
+            this.ControlBindings = new BaseRibbonControlBinding<BaseRibbonControl>[]
+            {
+                this.TabHome = new RibbonTabBinding(ribbonItems.TabHome),
+                this.BtnClipboardCut = new RibbonButtonBinding(ribbonItems.BtnClipboardCut, this.testribbonexecuter),
+                this.BtnClipboardCopy = new RibbonButtonBinding(ribbonItems.BtnClipboardCopy, this.testribbonexecuter),
+            };
+
+
+            return this.ControlBindings;
+        }
+
+        public void ActivateRibbonState()
+        {
+
+            //foreach (var item in this.RibbonStateMap.RibbonStates)
+            //{//item.Key.CommandID;}
 
         }
+
+        public void DeactivateRibbonState()
+        {
+
+        }
+
+        public void testribbonexecuter(object sender, ExecuteEventArgs args)
+        {
+
+        }
+
+
+        #endregion ============================================================================================================
+
 
         #region Component Designer generated code =============================================================================
 
@@ -508,6 +557,11 @@ namespace electrifier.Core.Components.DockContents
             this.ResumeLayout(false);
 
         }
+
+        private ExplorerBrowser ExplorerBrowser;
+
+
+
 
         #endregion ============================================================================================================
     }

@@ -35,10 +35,21 @@ namespace electrifier.Core.Components.DockContents
 
     /// <summary>
     /// Abstract class <see cref="NavigableDockContent"/> is the skeleton for navigation clients that
-    /// are controlled by an implementer of the <see cref="INavigationHost"/> interface.
-    /// </summary>
+    /// are controlled by an implementer of the <see cref="INavigationHost"/> interface.<br/>
+    /// <br/>
+    /// TODO: 21/04/24:<br/>
+    /// Remove <see cref="NavigableDockContent"/> and add <see href="IRibbonController"/>-Interface to each DockPanel, which can use the Ribbon.
     /// 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<NavigableDockContent, DockContent>))]
+    /// Then, use Reflection like done in DataContext, aka <code>[AttributeUsage(AttributeTargets.Class)]</code>
+    /// to bind Class Properties against Ribbon-Items.<br/>
+    /// <br/>
+    /// Then, use IPropertyChanged-Interface with IDs from Ribbon, to make Changes on Properties appear on the Ribbon!
+    /// <br/>
+    /// Then, use <code>delegate</code> and/or <code>Action</code> to execute commands from the Ribbon back on the DockPanel.
+    /// </summary>
+//    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<NavigableDockContent, DockContent>))]
+
+    [Obsolete("NavigableDockContent will be removed!")]
     public abstract class NavigableDockContent
       : WeifenLuo.WinFormsUI.Docking.DockContent
 //      , IDockContentEntity

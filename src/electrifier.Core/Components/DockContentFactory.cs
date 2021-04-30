@@ -90,6 +90,7 @@ namespace electrifier.Core.Components
             // ElNavigableDockContent constructor will check for navigationHost null values.
             ShellFolderDockContent shellBrowser = new ShellFolderDockContent(navigationHost, persistString);
 
+            //navigationHost.AddDockContent(shellBrowser);
             navigationHost.AddDockContent(shellBrowser);
 
             return shellBrowser;
