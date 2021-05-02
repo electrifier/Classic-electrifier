@@ -23,6 +23,7 @@ using electrifier.Core.WindowsShell;
 using RibbonLib;
 using RibbonLib.Controls;
 using RibbonLib.Controls.Events;
+using RibbonLib.Controls.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -83,7 +84,7 @@ namespace electrifier.Core.Components.DockContents
 
 
         public ShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
-          : base(/*navigationHost*/)
+          : base()
         {
             this.InitializeComponent();
 
@@ -217,7 +218,13 @@ namespace electrifier.Core.Components.DockContents
                     break;
                 case nameof(Selection.CurrentClipboardAbilities):
                     this.currentClipboardAbilities = this.Selection.CurrentClipboardAbilities;
-                    this.ClipboardAbilitiesChanged?.Invoke(this, new ClipboardAbilitiesChangedEventArgs(this.currentClipboardAbilities));
+
+                    this.BtnClipboardCut.Enabled = this.currentClipboardAbilities.HasFlag(ClipboardAbilities.CanCut);
+                    this.BtnClipboardCopy.Enabled = this.currentClipboardAbilities.HasFlag(ClipboardAbilities.CanCopy);
+                    // TODO: Enable / Disable Sub-Types
+
+                    AppContext.TraceDebug($"SelectionPropertyChanged: CanCut: { this.BtnClipboardCut.Enabled } CanCopy: { this.BtnClipboardCopy.Enabled }");
+
                     break;
                 default:
                     throw new ArgumentException(nameof(e));
@@ -487,39 +494,109 @@ namespace electrifier.Core.Components.DockContents
 
         public RibbonItems RibbonItems { get; private set; }
 
-        RibbonTabBinding TabHome;
-        RibbonButtonBinding BtnClipboardCut;
-        RibbonButtonBinding BtnClipboardCopy;
+        IBaseRibbonControlBinding[] RibbonControlBindings;
 
-        BaseRibbonControlBinding<BaseRibbonControl>[] ControlBindings;
+        public RibbonTabBinding TabHome { get; private set; }
+        public RibbonGroupBinding GrpHomeClipboard { get; private set; }
+        public RibbonButtonBinding BtnClipboardCut { get; private set; }
+        public RibbonSplitButtonBinding SplClipboardCopy { get; private set; }
+        public RibbonButtonBinding BtnClipboardCopy { get; private set; }
+        public RibbonButtonBinding BtnClipboardCopyFullFilePaths { get; private set; }
+        public RibbonButtonBinding BtnClipboardCopyFileNames { get; private set; }
+        public RibbonButtonBinding BtnClipboardCopyDirectoryPaths { get; private set; }
+        public RibbonSplitButtonBinding SplClipboardPaste { get; private set; }
+        public RibbonButtonBinding BtnClipboardPaste { get; private set; }
+        public RibbonButtonBinding BtnClipboardPasteAsNewFile { get; private set; }
+        public RibbonMenuGroupBinding BtnClipboardPasteAsNewText { get; private set; }
+        public RibbonButtonBinding BtnClipboardPasteAsNewTextFile { get; private set; }
+        public RibbonMenuGroupBinding BtnClipboardPasteAsNewImage { get; private set; }
+        public RibbonButtonBinding BtnClipboardPasteAsNewBMPFile { get; private set; }
+        public RibbonButtonBinding BtnClipboardPasteAsNewJPGFile { get; private set; }
+        public RibbonButtonBinding BtnClipboardPasteAsNewPNGFile { get; private set; }
+        public RibbonButtonBinding BtnClipboardPasteAsNewGIFFile { get; private set; }
+        public RibbonToggleButtonBinding BtnClipboardHistory { get; private set; }
+        public RibbonGroupBinding GrpHomeOrganise { get; private set; }
+        public RibbonButtonBinding BtnOrganiseMoveTo { get; private set; }
+        public RibbonButtonBinding BtnOrganiseCopyTo { get; private set; }
+        public RibbonButtonBinding BtnOrganiseDelete { get; private set; }
+        public RibbonButtonBinding BtnOrganiseRename { get; private set; }
+        public RibbonGroupBinding GrpHomeSelect { get; private set; }
+        public RibbonButtonBinding BtnSelectConditional { get; private set; }
+        public RibbonButtonBinding BtnSelectSelectAll { get; private set; }
+        public RibbonButtonBinding BtnSelectSelectNone { get; private set; }
+        public RibbonButtonBinding BtnSelectInvertSelection { get; private set; }
+        public RibbonGroupBinding GrpHomeView { get; private set; }
+        public RibbonDropDownButtonBinding DdbHomeViewLayout { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewExtraLargeIcons { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewLargeIcons { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewMediumIcons { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewSmallIcons { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewList { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewDetails { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewTiles { get; private set; }
+        public RibbonToggleButtonBinding BtnHomeViewContent { get; private set; }
 
-
-        public BaseRibbonControlBinding<BaseRibbonControl>[] InitializeRibbonBinding(RibbonItems ribbonItems)
+        public IBaseRibbonControlBinding[] InitializeRibbonBinding(RibbonItems ribbonItems)
         {
             this.RibbonItems = ribbonItems ?? throw new ArgumentNullException(nameof(ribbonItems));
 
-            this.ControlBindings = new BaseRibbonControlBinding<BaseRibbonControl>[]
+            this.RibbonControlBindings = new IBaseRibbonControlBinding[]
             {
                 this.TabHome = new RibbonTabBinding(ribbonItems.TabHome),
+                this.GrpHomeClipboard = new RibbonGroupBinding(ribbonItems.GrpHomeClipboard),
                 this.BtnClipboardCut = new RibbonButtonBinding(ribbonItems.BtnClipboardCut, this.testribbonexecuter),
+                this.SplClipboardCopy = new RibbonSplitButtonBinding(ribbonItems.SplClipboardCopy),
                 this.BtnClipboardCopy = new RibbonButtonBinding(ribbonItems.BtnClipboardCopy, this.testribbonexecuter),
+                this.BtnClipboardCopyFullFilePaths = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyFullFilePaths, this.testribbonexecuter),
+                this.BtnClipboardCopyFileNames = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyFileNames, this.testribbonexecuter),
+                this.BtnClipboardCopyDirectoryPaths = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyDirectoryPaths, this.testribbonexecuter),
+                this.SplClipboardPaste = new RibbonSplitButtonBinding(ribbonItems.SplClipboardPaste),
+                this.BtnClipboardPaste = new RibbonButtonBinding(ribbonItems.BtnClipboardPaste, this.testribbonexecuter),
+                this.BtnClipboardPasteAsNewFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewFile, this.testribbonexecuter),
+                this.BtnClipboardPasteAsNewText = new RibbonMenuGroupBinding(ribbonItems.BtnClipboardPasteAsNewText),
+                this.BtnClipboardPasteAsNewTextFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewTextFile, this.testribbonexecuter),
+                this.BtnClipboardPasteAsNewImage = new RibbonMenuGroupBinding(ribbonItems.BtnClipboardPasteAsNewImage),
+                this.BtnClipboardPasteAsNewBMPFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewBMPFile, this.testribbonexecuter),
+                this.BtnClipboardPasteAsNewJPGFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewJPGFile, this.testribbonexecuter),
+                this.BtnClipboardPasteAsNewPNGFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewPNGFile, this.testribbonexecuter),
+                this.BtnClipboardPasteAsNewGIFFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewGIFFile, this.testribbonexecuter),
+                this.BtnClipboardHistory = new RibbonToggleButtonBinding(ribbonItems.BtnClipboardHistory),
+                this.GrpHomeOrganise = new RibbonGroupBinding(ribbonItems.GrpHomeOrganise),
+                this.BtnOrganiseMoveTo = new RibbonButtonBinding(ribbonItems.BtnOrganiseMoveTo, this.testribbonexecuter),
+                this.BtnOrganiseCopyTo = new RibbonButtonBinding(ribbonItems.BtnOrganiseCopyTo, this.testribbonexecuter),
+                this.BtnOrganiseDelete = new RibbonButtonBinding(ribbonItems.BtnOrganiseDelete, this.testribbonexecuter),
+                this.BtnOrganiseRename = new RibbonButtonBinding(ribbonItems.BtnOrganiseRename, this.testribbonexecuter),
+                this.GrpHomeSelect = new RibbonGroupBinding(ribbonItems.GrpHomeSelect),
+                this.BtnSelectConditional = new RibbonButtonBinding(ribbonItems.BtnSelectConditional, this.testribbonexecuter),
+                this.BtnSelectSelectAll = new RibbonButtonBinding(ribbonItems.BtnSelectSelectAll, this.testribbonexecuter, enabled: true),
+                this.BtnSelectSelectNone = new RibbonButtonBinding(ribbonItems.BtnSelectSelectNone, this.testribbonexecuter),
+                this.BtnSelectInvertSelection = new RibbonButtonBinding(ribbonItems.BtnSelectInvertSelection, this.testribbonexecuter),
+                this.GrpHomeView = new RibbonGroupBinding(ribbonItems.GrpHomeView),
+                this.DdbHomeViewLayout = new RibbonDropDownButtonBinding(ribbonItems.DdbHomeViewLayout),
+                this.BtnHomeViewExtraLargeIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewExtraLargeIcons),
+                this.BtnHomeViewLargeIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewLargeIcons),
+                this.BtnHomeViewMediumIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewMediumIcons),
+                this.BtnHomeViewSmallIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewSmallIcons),
+                this.BtnHomeViewList = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewList),
+                this.BtnHomeViewDetails = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewDetails),
+                this.BtnHomeViewTiles = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewTiles),
+                this.BtnHomeViewContent = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewContent),
             };
 
-
-            return this.ControlBindings;
+            return this.RibbonControlBindings;
         }
 
         public void ActivateRibbonState()
         {
-
-            //foreach (var item in this.RibbonStateMap.RibbonStates)
-            //{//item.Key.CommandID;}
-
+            foreach (IBaseRibbonControlBinding ribbonControlBinding in this.RibbonControlBindings)
+            {
+                ribbonControlBinding.UpdateBaseControlState();
+            }
         }
 
         public void DeactivateRibbonState()
         {
-
+            // TODO: We have to remove our Event-Handlers here!
         }
 
         public void testribbonexecuter(object sender, ExecuteEventArgs args)
@@ -604,7 +681,6 @@ namespace electrifier.Core.Components.DockContents
                 handler?.Invoke(sender, new PropertyChangedEventArgs(body.Member.Name));
             }
 
-            //field = value;
             return true;
         }
     }

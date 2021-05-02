@@ -19,6 +19,7 @@
 */
 
 using electrifier.Core.Components.DockContents;
+using electrifier.Core.Forms;
 using System;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -52,7 +53,7 @@ namespace electrifier.Core.Components
         ///     e.g "ElShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
         /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Unknown DockContent type.</exception>
-        public static IDockContent Deserialize(INavigationHost navigationHost, string persistString, DockPanel dockPanel)
+        public static IDockContent Deserialize(ElApplicationWindow applicationWindow, string persistString, DockPanel dockPanel)
         {
             IDockContent dockContent = default;
             var typeNameSeperatorPos = persistString.IndexOf(" ");
@@ -73,7 +74,7 @@ namespace electrifier.Core.Components
             switch (dockContentTypeName)
             {
                 case nameof(ShellFolderDockContent):
-                    dockContent = CreateShellBrowser(navigationHost, dockContentArguments);
+                    dockContent = CreateShellBrowser(applicationWindow, dockContentArguments);
                     break;
                 case nameof(SelectConditionalBox):
                     dockContent = CreateSelectConditionalBox(dockPanel);
@@ -85,13 +86,15 @@ namespace electrifier.Core.Components
             return dockContent;
         }
 
-        public static ShellFolderDockContent CreateShellBrowser(INavigationHost navigationHost, string persistString = null)
+        public static ShellFolderDockContent CreateShellBrowser(ElApplicationWindow applicationWindow, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            ShellFolderDockContent shellBrowser = new ShellFolderDockContent(navigationHost, persistString);
+            ShellFolderDockContent shellBrowser = new ShellFolderDockContent(applicationWindow, persistString);
 
-            //navigationHost.AddDockContent(shellBrowser);
-            navigationHost.AddDockContent(shellBrowser);
+            shellBrowser.InitializeRibbonBinding(applicationWindow.RibbonItems);
+
+
+            applicationWindow.AddDockContent(shellBrowser);
 
             return shellBrowser;
         }

@@ -141,7 +141,7 @@ namespace electrifier.Core.Forms
             IDockContent activeContent = this.dpnDockPanel.ActiveContent;
 
             // Process Ribbon-part of DockContent-Activation
-            this.RibbonItems.ActiveDockContent = activeContent;
+//            this.RibbonItems.ActiveDockContent = activeContent;
 
             // Process Interface INavigationHost-part of DockContent-Activation
             if (null == activeContent)
@@ -155,6 +155,11 @@ namespace electrifier.Core.Forms
                 AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
                     + ", ActivatedContent=" + activeContent
                     + ", ActivatedContentType=" + activatedContentType);
+
+                if (activeContent is IRibbonConsumer ribbonConsumer)
+                {
+                    ribbonConsumer.ActivateRibbonState();
+                }
 
                 //if (typeof(ShellFolderDockContent).Equals(activatedContentType))
                 //{

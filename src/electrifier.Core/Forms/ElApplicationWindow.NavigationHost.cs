@@ -83,8 +83,8 @@ namespace electrifier.Core.Forms
             //    dockContent.ShellFolderViewModeChanged += this.DockContent_ShellFolderViewModeChanged;
 
             // Connect clipboard consumer events
-            if (dockContent is IClipboardConsumer clipboardConsumer)
-                clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardAbilitiesChanged;
+            //if (dockContent is IClipboardConsumer clipboardConsumer)
+            //    clipboardConsumer.ClipboardAbilitiesChanged += this.RibbonItems.ClipboardAbilitiesChanged;
 
 
             // TODO: Connect events!
@@ -166,24 +166,24 @@ namespace electrifier.Core.Forms
             this.RemoveDockContent(sender as DockContent);
         }
 
-        private void DockContent_NavigationOptionsChanged(object sender, EventArgs e)
-        {
-            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
+        //private void DockContent_NavigationOptionsChanged(object sender, EventArgs e)
+        //{
+        //    Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
-            if (sender.Equals(this.ActiveDockContent))
-                this.NavigationToolStrip.UpdateButtonState(sender as NavigableDockContent);
-        }
+        //    if (sender.Equals(this.ActiveDockContent))
+        //        this.NavigationToolStrip.UpdateButtonState(sender as NavigableDockContent);
+        //}
 
         // TODO: 18/11/19: ShellFolderViewMode should be placed into its own Interface => Class are fast, interfaces are slow!
-        private void DockContent_ShellFolderViewModeChanged(object sender, ShellFolderViewModeChangedEventArgs e)
-        {
-            Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
+        //private void DockContent_ShellFolderViewModeChanged(object sender, ShellFolderViewModeChangedEventArgs e)
+        //{
+        //    Debug.Assert(sender is NavigableDockContent, "sender is not of type NavigableDockContent");
 
-            AppContext.TraceDebug("CHANGED by DockContent_ShellFolderViewModeChanged - NavigationHost - ViewMode: " + e.NewFolderViewMode);
+        //    AppContext.TraceDebug("CHANGED by DockContent_ShellFolderViewModeChanged - NavigationHost - ViewMode: " + e.NewFolderViewMode);
 
-            if (sender.Equals(this.ActiveDockContent))
-                this.RibbonItems.ShellFolderViewMode = e.NewFolderViewMode;
-        }
+        //    if (sender.Equals(this.ActiveDockContent))
+        //        this.RibbonItems.ShellFolderViewMode = e.NewFolderViewMode;
+        //}
 
         #endregion =============================================================================================================
     }

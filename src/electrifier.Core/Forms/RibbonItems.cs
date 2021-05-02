@@ -41,7 +41,6 @@ namespace RibbonLib.Controls
     {
         #region Fields ====================================================================================================
 
-        private ClipboardAbilities clipboardAbilities = ClipboardAbilities.CanCut | ClipboardAbilities.CanCopy;
 
         private Shell32.FOLDERVIEWMODE shellFolderViewMode = Shell32.FOLDERVIEWMODE.FVM_AUTO;
 
@@ -51,18 +50,6 @@ namespace RibbonLib.Controls
 
         public ElApplicationWindow ApplicationWindow { get; }
 
-        private IDockContent activeDockContent;
-        public IDockContent ActiveDockContent
-        {
-            get => this.activeDockContent;
-            set
-            {
-                // Update the clipboard buttons accordingly if activated DockContent is an IClipboardConsumer
-                this.ClipboardAbilities = (value is IClipboardConsumer clipboardConsumer) ?
-                    clipboardConsumer.GetClipboardAbilities() : ClipboardAbilities.None;
-                this.activeDockContent = value;
-            }
-        }
 
         #endregion =============================================================================================================
 
@@ -71,21 +58,7 @@ namespace RibbonLib.Controls
 
 
 
-        public ClipboardAbilities ClipboardAbilities
-        {
-            get => this.clipboardAbilities;
-            set
-            {
-                if (this.clipboardAbilities != value)
-                {
-                    this.clipboardAbilities = value;
 
-                    // Update ribbon command button states
-                    this.BtnClipboardCut.Enabled = value.HasFlag(ClipboardAbilities.CanCut);
-                    this.BtnClipboardCopy.Enabled = value.HasFlag(ClipboardAbilities.CanCopy);
-                }
-            }
-        }
 
         public Shell32.FOLDERVIEWMODE ShellFolderViewMode
         {
@@ -260,22 +233,6 @@ namespace RibbonLib.Controls
             }));
         }
 
-        /// <summary>
-        /// Process <see cref="IClipboardConsumer.ClipboardAbilitiesChanged"/> event.
-        /// 
-        /// In case sender is the active DockContent, update the clipboard buttons accordingly.
-        /// </summary>
-        /// <param name="sender">The <see cref="IClipboardConsumer"/> that has changed its <see cref="clipboardAbilities"/>.</param>
-        /// <param name="e">The <see cref="ClipboardAbilitiesChangedEventArgs"/>.</param>
-        public void ClipboardAbilitiesChanged(object sender, ClipboardAbilitiesChangedEventArgs args)
-        {
-            Debug.Assert(sender is IClipboardConsumer, "sender is not of type IClipboardConsumer");
 
-            if (sender is null) throw new ArgumentNullException(nameof(sender));
-            if (args is null) throw new ArgumentNullException(nameof(args));
-
-//            if (sender.Equals(this.ApplicationWindow.ActiveDockContent))
-//                this.ClipboardAbilities = args.NewClipboardAbilities;
-        }
     }
 }
