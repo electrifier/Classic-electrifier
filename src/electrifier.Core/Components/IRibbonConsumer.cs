@@ -36,7 +36,7 @@ namespace electrifier.Core.Components
         //        RibbonConsumerStateMap RibbonStateMap { get; }
 
 
-        BaseRibbonControlBinding<BaseRibbonControl>[] InitializeRibbonBinding(RibbonItems ribbonItems);
+        IBaseRibbonControlBinding[] InitializeRibbonBinding(RibbonItems ribbonItems);
 
         void ActivateRibbonState();
 
@@ -51,39 +51,13 @@ namespace electrifier.Core.Components
 
     }
 
-    public class BaseRibbonControlBinding<T>
-        where T : BaseRibbonControl
+    public interface IBaseRibbonControlBinding
     {
-        public T BaseRibbonControl { get; }
+        //        BaseRibbonControl BaseRibbonControl { get; }
 
-        public BaseRibbonControlBinding(T baseRibbonControl)
-        {
-            this.BaseRibbonControl = baseRibbonControl;
-        }
+        void UpdateBaseControlState();
     }
 
-
-    /// <summary>
-    /// The underlying <see cref="RibbonTab"/> derives from:
-    /// <list type="bullet">
-    /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
-    /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
-    /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
-    /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
-    /// </list>
-    /// </summary>
-    public class RibbonTabBinding :
-        BaseRibbonControlBinding<RibbonTab>
-    {
-        public RibbonTabBinding(RibbonTab ribbonTab) : base(ribbonTab) { }
-        // TODO: => Where is Visible property!?!
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="binding">The instance of this <see cref="RibbonTabBinding"/>.</param>
-        public static implicit operator BaseRibbonControlBinding<BaseRibbonControl>(RibbonTabBinding binding) => binding;
-    }
 
     /// <summary>
     /// The underlying <see cref="RibbonButton"/> derives from:
@@ -99,10 +73,60 @@ namespace electrifier.Core.Components
     /// </list>
     /// </summary>
     public class RibbonButtonBinding :
-        BaseRibbonControlBinding<RibbonButton>,
+        IBaseRibbonControlBinding,
         IEnabledPropertiesProvider,
         IExecuteEventsProvider
     {
+        public RibbonButton BaseRibbonControl { get; }
+
+        private bool enabled;
+        public bool Enabled
+        {
+            get => this.enabled;
+            set
+            {
+                this.enabled = value;
+                // TODO: Enable base button! But only if this RibbonConsumer is the active DockPanelDocument
+                // => Wir brauchen eine Referenz zum IRibbonConsumer,
+                //    der Eigenschaft IsActiveRibbonConsumer hat...
+                // => ABER: Wir führen eigene Liste mit allen RibbonConsumern, und wenn einer aktiviert wird der alte deaktiviert, mit Debug-Code ob wirklich nur einer aktiv!
+                this.BaseRibbonControl.Enabled = value;
+            }
+        }
+
+        public event EventHandler<ExecuteEventArgs> ExecuteEvent;
+
+        public RibbonButtonBinding(RibbonButton ribbonButton, EventHandler<ExecuteEventArgs> executeEvent, bool enabled = false)
+        {
+            this.BaseRibbonControl = ribbonButton;
+
+            this.Enabled = enabled;
+            this.ExecuteEvent = executeEvent;
+        }
+
+        public void UpdateBaseControlState()
+        {
+            this.BaseRibbonControl.Enabled = this.Enabled;
+        }
+    }
+
+    /// <summary>
+    /// The underlying <see cref="RibbonDropDownButton"/> derives from:
+    /// <list type="bullet">
+    /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
+    /// <item><term>IEnabledPropertiesProvider</term><description>IEnabledPropertiesProvider</description></item>
+    /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
+    /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
+    /// <item><term>ILabelDescriptionPropertiesProvider</term><description>ILabelDescriptionPropertiesProvider</description></item>
+    /// <item><term>IImagePropertiesProvider</term><description>IImagePropertiesProvider</description></item>
+    /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
+    /// </list>
+    /// </summary>
+    public class RibbonDropDownButtonBinding :
+        IBaseRibbonControlBinding
+    {
+        public RibbonDropDownButton BaseRibbonControl { get; }
+
         private bool enabled;
         public bool Enabled
         {
@@ -114,22 +138,83 @@ namespace electrifier.Core.Components
             }
         }
 
-        public event EventHandler<ExecuteEventArgs> ExecuteEvent;
-
-        public RibbonButtonBinding(RibbonButton ribbonButton, EventHandler<ExecuteEventArgs> executeEvent, bool enabled = true)
-            : base(ribbonButton)
+        public RibbonDropDownButtonBinding(RibbonDropDownButton ribbonDropDownButton)
         {
-            this.ExecuteEvent = executeEvent;
-            this.Enabled = enabled;
+            this.BaseRibbonControl = ribbonDropDownButton;
+
         }
 
-        public static implicit operator BaseRibbonControlBinding<BaseRibbonControl>(RibbonButtonBinding binding) => binding;
+        public void UpdateBaseControlState()
+        {
+            this.BaseRibbonControl.Enabled = this.Enabled;
+        }
+    }
+
+    /// <summary>
+    /// The underlying <see cref="RibbonGroup"/> derives from:
+    /// <list type="bullet">
+    /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
+    /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
+    /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
+    /// <item><term>IImagePropertiesProvider</term><description>IImagePropertiesProvider</description></item>
+    /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
+    /// </list>
+    /// </summary>
+    public class RibbonGroupBinding :
+        IBaseRibbonControlBinding
+    {
+        public RibbonGroup BaseRibbonControl { get; }
+
+        public RibbonGroupBinding(RibbonGroup ribbonGroup)
+        {
+            this.BaseRibbonControl = ribbonGroup;
+        }
+        public void UpdateBaseControlState()
+        {
+        }
+    }
+
+    /// <summary>
+    /// The underlying <see cref="RibbonMenuGroup"/> derives from:
+    /// <list type="bullet">
+    /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
+    /// <item><term>IEnabledPropertiesProvider</term><description>IEnabledPropertiesProvider</description></item>
+    /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
+    /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
+    /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
+    /// </list>
+    /// </summary>
+    public class RibbonMenuGroupBinding :
+        IBaseRibbonControlBinding
+    {
+        public RibbonMenuGroup BaseRibbonControl { get; }
+
+        private bool enabled;
+        public bool Enabled
+        {
+            get => this.enabled;
+            set
+            {
+                this.enabled = value;
+                // TODO: Enable base button! But only if this RibbonConsumer is the active DockPanelDocument
+            }
+        }
+
+        public RibbonMenuGroupBinding(RibbonMenuGroup ribbonMenuGroup)
+        {
+            this.BaseRibbonControl = ribbonMenuGroup;
+
+        }
+
+        public void UpdateBaseControlState()
+        {
+            this.BaseRibbonControl.Enabled = this.Enabled;
+        }
     }
 
     /// <summary>
     /// The underlying <see cref="RibbonSplitButton"/> derives from:
     /// <list type="bullet">
-    /// <item><term>RibbonSplitButton</term><description>RibbonSplitButton</description></item>
     /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
     /// <item><term>IEnabledPropertiesProvider</term><description>IEnabledPropertiesProvider</description></item>
     /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
@@ -137,9 +222,10 @@ namespace electrifier.Core.Components
     /// </list>
     /// </summary>
     public class RibbonSplitButtonBinding :
-        BaseRibbonControlBinding<RibbonSplitButton>,
-        IEnabledPropertiesProvider
+        IBaseRibbonControlBinding
     {
+        public RibbonSplitButton BaseRibbonControl { get; }
+
         private bool enabled;
         public bool Enabled
         {
@@ -152,11 +238,63 @@ namespace electrifier.Core.Components
         }
 
         public RibbonSplitButtonBinding(RibbonSplitButton ribbonSplitButton, bool enabled = true)
-            : base(ribbonSplitButton)
         {
+            this.BaseRibbonControl = ribbonSplitButton;
             this.Enabled = enabled;
         }
 
-        public static implicit operator BaseRibbonControlBinding<BaseRibbonControl>(RibbonSplitButtonBinding binding) => binding;
+
+        public void UpdateBaseControlState()
+        {
+            this.BaseRibbonControl.Enabled = this.Enabled;
+        }
+    }
+
+    /// <summary>
+    /// The underlying <see cref="RibbonToggleButton"/> derives from:
+    /// <list type="bullet">
+    /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
+    /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
+    /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
+    /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
+    /// </list>
+    /// </summary>
+    public class RibbonToggleButtonBinding :
+        IBaseRibbonControlBinding
+    {
+        public RibbonToggleButton BaseRibbonControl { get; }
+        public RibbonToggleButtonBinding(RibbonToggleButton ribbonToggleButton)
+        {
+            this.BaseRibbonControl = ribbonToggleButton;
+        }
+        public void UpdateBaseControlState()
+        {
+        }
+    }
+
+
+
+    /// <summary>
+    /// The underlying <see cref="RibbonTab"/> derives from:
+    /// <list type="bullet">
+    /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
+    /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
+    /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
+    /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
+    /// </list>
+    /// </summary>
+    public class RibbonTabBinding :
+        IBaseRibbonControlBinding
+    {
+        public BaseRibbonControl BaseRibbonControl { get; }
+        public RibbonTabBinding(RibbonTab ribbonTab)
+        {
+            this.BaseRibbonControl = ribbonTab;
+        }
+
+        // TODO: => Where is Visible property!?!
+        public void UpdateBaseControlState()
+        {
+        }
     }
 }

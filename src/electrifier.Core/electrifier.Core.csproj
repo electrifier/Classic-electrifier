@@ -124,7 +124,6 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Controls\AbstractControlDescriptionProvider.cs" />
     <Compile Include="Components\Controls\NavigationToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
