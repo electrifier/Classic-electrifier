@@ -117,7 +117,7 @@ namespace electrifier.Core.Forms
                 dockContent.Activate();
 
 
-            //if (dockContent is ShellFolderDockContent shellBolderDockContent)
+            //if (dockContent is ExplorerBrowserDocument shellBolderDockContent)
             //    this.RibbonItems.ShellFolderViewMode = shellBolderDockContent.ShellFolderViewMode;
             //else
             //    this.RibbonItems.ShellFolderViewMode = /* TODO: None */ Vanara.PInvoke.Shell32.FOLDERVIEWMODE.FVM_AUTO;

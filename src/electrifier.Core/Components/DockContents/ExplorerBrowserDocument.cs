@@ -18,12 +18,9 @@
 **
 */
 
-using electrifier.Core.Components.Controls;
 using electrifier.Core.WindowsShell;
-using RibbonLib;
 using RibbonLib.Controls;
 using RibbonLib.Controls.Events;
-using RibbonLib.Controls.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -41,10 +38,8 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components.DockContents
 {
-    // TODO: Rename to ExplorerBrowserDocument
-
-    public class ShellFolderDockContent :
-        DockContent, // DockPanel, DockPane?
+    public class ExplorerBrowserDocument :
+        DockContent,
         IRibbonConsumer,
         IClipboardConsumer
     {
@@ -84,7 +79,7 @@ namespace electrifier.Core.Components.DockContents
         #endregion ============================================================================================================
 
 
-        public ShellFolderDockContent(INavigationHost navigationHost, string persistString = null)
+        public ExplorerBrowserDocument(INavigationHost navigationHost, string persistString = null)
           : base()
         {
             this.InitializeComponent();
@@ -128,7 +123,7 @@ namespace electrifier.Core.Components.DockContents
             string paramFmt = " {0}{1}";
 
             // Append class name as identifier
-            sb.Append(nameof(ShellFolderDockContent));
+            sb.Append(nameof(ExplorerBrowserDocument));
 
             // If folder is a virtual folder, add suffix.
             string persistParamFolder = this.CurrentFolderPidl.ToString(Shell32.SIGDN.SIGDN_DESKTOPABSOLUTEPARSING);
@@ -141,7 +136,7 @@ namespace electrifier.Core.Components.DockContents
                 ElShellTools.UrlCreateFromPath(persistParamFolder));
 
             // Append ViewMode
-            //            sb.AppendFormat(paramFmt, ShellFolderDockContent.persistParamViewMode, this.ViewMode);
+            //            sb.AppendFormat(paramFmt, ExplorerBrowserDocument.persistParamViewMode, this.ViewMode);
 
             return sb.ToString();
         }
@@ -154,7 +149,7 @@ namespace electrifier.Core.Components.DockContents
         {
             try
             {
-                if ((null != persistString) && (persistString.Trim().Length > ShellFolderDockContent.persistParamURI.Length))
+                if ((null != persistString) && (persistString.Trim().Length > ExplorerBrowserDocument.persistParamURI.Length))
                 {
                     IEnumerable<string> args = ElShellTools.SplitArgumentString(persistString);
                     string strInitialNavigationTarget = default;
@@ -162,18 +157,18 @@ namespace electrifier.Core.Components.DockContents
 
                     foreach (string arg in args)
                     {
-                        if (arg.StartsWith(ShellFolderDockContent.persistParamURI))
+                        if (arg.StartsWith(ExplorerBrowserDocument.persistParamURI))
                         {
 
-                            strInitialNavigationTarget = arg.Substring(ShellFolderDockContent.persistParamURI.Length);
+                            strInitialNavigationTarget = arg.Substring(ExplorerBrowserDocument.persistParamURI.Length);
 
                             if (!strInitialNavigationTarget.StartsWith(@"shell:"))
                                 ElShellTools.PathCreateFromUrl(strInitialNavigationTarget);
                         }
 
-                        if (arg.StartsWith(ShellFolderDockContent.persistParamViewMode))
+                        if (arg.StartsWith(ExplorerBrowserDocument.persistParamViewMode))
                         {
-                            strInitialViewMode = arg.Substring(ShellFolderDockContent.persistParamViewMode.Length);
+                            strInitialViewMode = arg.Substring(ExplorerBrowserDocument.persistParamViewMode.Length);
                         }
                     }
 
@@ -365,7 +360,7 @@ namespace electrifier.Core.Components.DockContents
         public class ClipboardSelection
           : INotifyPropertyChanged
         {
-            public ShellFolderDockContent Owner { get; }
+            public ExplorerBrowserDocument Owner { get; }
             public ExplorerBrowser ExplorerBrowser { get; }
 
             private int count;
@@ -384,7 +379,7 @@ namespace electrifier.Core.Components.DockContents
                 set { PropertyChanged.ChangeAndNotify(ref this.currentClipboardAbilities, value, () => CurrentClipboardAbilities); }
             }
 
-            public ClipboardSelection(ShellFolderDockContent owner)
+            public ClipboardSelection(ExplorerBrowserDocument owner)
             {
                 this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
                 this.ExplorerBrowser = owner.ExplorerBrowser;
@@ -627,12 +622,12 @@ namespace electrifier.Core.Components.DockContents
             this.ExplorerBrowser.Size = new System.Drawing.Size(1161, 876);
             this.ExplorerBrowser.TabIndex = 5;
             // 
-            // ShellFolderDockContent
+            // ExplorerBrowserDocument
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
             this.Controls.Add(this.ExplorerBrowser);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
-            this.Name = "ShellFolderDockContent";
+            this.Name = "ExplorerBrowserDocument";
             this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
             this.ResumeLayout(false);
 

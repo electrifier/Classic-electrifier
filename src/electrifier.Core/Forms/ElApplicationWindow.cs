@@ -161,9 +161,9 @@ namespace electrifier.Core.Forms
                     //+ ", ActivatedContentType=" + activatedContentType);
 
 
-                //if (typeof(ShellFolderDockContent).Equals(activatedContentType))
+                //if (typeof(ExplorerBrowserDocument).Equals(activatedContentType))
                 //{
-                //    this.ActivateDockContent(activeContent as ShellFolderDockContent);
+                //    this.ActivateDockContent(activeContent as ExplorerBrowserDocument);
                 //}
                 //else
                 //{
