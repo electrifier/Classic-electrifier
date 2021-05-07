@@ -33,7 +33,7 @@ namespace electrifier.Core.Components
         DockContent ActiveDockContent { get; }
 
 //        void AddDockContent(NavigableDockContent DockContent);
-        void AddDockContent(DockContent DockContent);
+        void AddDockContent(DockContent DockContent, DockState dockState);
 
 //        void ActivateDockContent(NavigableDockContent DockContent);
 //        void RemoveDockContent(NavigableDockContent DockContent);

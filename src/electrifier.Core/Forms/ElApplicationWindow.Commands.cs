@@ -38,8 +38,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            this.CreateShellFolderDockContent();
-            //DockContentFactory.CreateShellBrowser(this, null);
+            DockContentFactory.CreateShellBrowser(this);
         }
 
         //private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
@@ -197,32 +196,8 @@ namespace electrifier.Core.Forms
         {
             this.BeginInvoke(new MethodInvoker(delegate ()
                {
-                   this.ToggleSelectConditionalBox();
+                   DockContentFactory.ToggleSelectConditionalBox(this.dpnDockPanel);
                }));
-        }
-
-        internal void CmdSelectAll_ExecuteEvent(object sender, ExecuteEventArgs e)
-        {
-            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
-            if (this.dpnDockPanel.ActiveContent is ShellFolderDockContent folderDockContent)
-            {
-                this.BeginInvoke(new MethodInvoker(delegate ()
-                {
-                    folderDockContent.SelectAll();
-                }));
-            }
-        }
-
-        internal void CmdSelectNone_ExecuteEvent(object sender, ExecuteEventArgs e)
-        {
-            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
-            if (this.dpnDockPanel.ActiveContent is ShellFolderDockContent folderDockContent)
-            {
-                this.BeginInvoke(new MethodInvoker(delegate ()
-                {
-                    folderDockContent.UnselectAll();
-                }));
-            }
         }
 
         internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)

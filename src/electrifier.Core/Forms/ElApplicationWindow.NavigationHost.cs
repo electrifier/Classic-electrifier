@@ -65,7 +65,7 @@ namespace electrifier.Core.Forms
 //            dockContent.Show(this.dpnDockPanel);    // DockState.Document); // TODO: Previous pane?!?
 //        }
 
-        public void AddDockContent(DockContent dockContent)
+        public void AddDockContent(DockContent dockContent, DockState dockState)
         {
             AppContext.TraceScope();
 
@@ -91,7 +91,7 @@ namespace electrifier.Core.Forms
             //newDockContent.ItemsChanged += this.NewDockContent_ItemsChanged;
             //newDockContent.SelectionChanged += this.NewDockContent_SelectionChanged;
 
-            dockContent.Show(this.dpnDockPanel);    // DockState.Document); // TODO: Previous pane?!?
+            dockContent.Show(this.dpnDockPanel, dockState);    // TODO: Previous pane?!?
         }
 
 

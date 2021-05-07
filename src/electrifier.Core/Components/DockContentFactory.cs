@@ -77,7 +77,7 @@ namespace electrifier.Core.Components
                     dockContent = CreateShellBrowser(applicationWindow, dockContentArguments);
                     break;
                 case nameof(SelectConditionalBox):
-                    dockContent = CreateSelectConditionalBox(dockPanel);
+                    dockContent = CreateSelectConditionalBox(dockPanel);       // TODO: Serialize DockState
                     break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown DockContent of type { dockContentTypeName }");
@@ -93,13 +93,24 @@ namespace electrifier.Core.Components
 
             shellBrowser.InitializeRibbonBinding(applicationWindow.RibbonItems);
 
-
-            applicationWindow.AddDockContent(shellBrowser);
+            applicationWindow.AddDockContent(shellBrowser, DockState.Document);         // TODO: The underlying DockPanel itself should decide which DockState it'd like to have!
 
             return shellBrowser;
         }
 
-        public static SelectConditionalBox CreateSelectConditionalBox(DockPanel dockPanel)
+        public static void ToggleSelectConditionalBox(DockPanel defaultDockPanel)
+        {
+            if (SelectConditionalBox != null)
+            {
+                DockContentFactory.CloseSelectConditionalBox();
+            }
+            else
+            {
+                DockContentFactory.CreateSelectConditionalBox(defaultDockPanel);
+            }
+        }
+
+        private static SelectConditionalBox CreateSelectConditionalBox(DockPanel defaultDockPanel, DockState defaultDockState = DockState.DockRightAutoHide)
         {
             if (SelectConditionalBox != null)
                 throw new InvalidOperationException("An instance of SelectConditionalBox has already been created");
@@ -110,13 +121,13 @@ namespace electrifier.Core.Components
                 SelectConditionalBox.Show(SelectConditionalDockPanel, SelectConditionalDockState);
             else
             {
-                SelectConditionalBox.Show(dockPanel, dockState: DockState.DockRight);
+                SelectConditionalBox.Show(defaultDockPanel, defaultDockState);
             }
 
             return SelectConditionalBox;
         }
 
-        public static void CloseSelectConditionalBox()
+        private static void CloseSelectConditionalBox()
         {
             var dockPanel = SelectConditionalBox;
 
@@ -125,6 +136,7 @@ namespace electrifier.Core.Components
                 throw new InvalidOperationException("No instance of SelectConditionalBox has already been created");
 
             SelectConditionalDockPanel = SelectConditionalBox.DockPanel;
+            SelectConditionalDockState = SelectConditionalBox.DockState;
 
             SelectConditionalBox = null;
             dockPanel.Close();

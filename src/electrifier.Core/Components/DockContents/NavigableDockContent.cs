@@ -31,8 +31,6 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components.DockContents
 {
-    // TODO 21/04/10: QuerySupportedToolBarCommands()
-
     /// <summary>
     /// Abstract class <see cref="NavigableDockContent"/> is the skeleton for navigation clients that
     /// are controlled by an implementer of the <see cref="INavigationHost"/> interface.<br/>

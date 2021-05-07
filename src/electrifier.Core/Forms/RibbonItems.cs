@@ -53,13 +53,6 @@ namespace RibbonLib.Controls
 
         #endregion =============================================================================================================
 
-
-
-
-
-
-
-
         public Shell32.FOLDERVIEWMODE ShellFolderViewMode
         {
             get => this.shellFolderViewMode;
@@ -150,8 +143,6 @@ namespace RibbonLib.Controls
             // Command Group: Home -> Select ==================================================================================
             //
             this.BtnSelectConditional.ExecuteEvent += this.ApplicationWindow.CmdSelectConditional_ExecuteEvent;
-            this.BtnSelectSelectAll.ExecuteEvent += this.ApplicationWindow.CmdSelectAll_ExecuteEvent;
-            this.BtnSelectSelectNone.ExecuteEvent += this.ApplicationWindow.CmdSelectNone_ExecuteEvent;
             this.BtnSelectInvertSelection.ExecuteEvent += this.ApplicationWindow.CmdInvertSelection_ExecuteEvent;
 
             //
