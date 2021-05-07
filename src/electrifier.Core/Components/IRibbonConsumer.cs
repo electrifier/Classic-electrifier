@@ -55,7 +55,8 @@ namespace electrifier.Core.Components
     {
         //        BaseRibbonControl BaseRibbonControl { get; }
 
-        void UpdateBaseControlState();
+        void ActivateRibbonState();
+        void DeactivateRibbonState();
     }
 
 
@@ -104,9 +105,15 @@ namespace electrifier.Core.Components
             this.ExecuteEvent = executeEvent;
         }
 
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
         {
             this.BaseRibbonControl.Enabled = this.Enabled;
+            this.BaseRibbonControl.ExecuteEvent += this.ExecuteEvent;
+        }
+
+        public void DeactivateRibbonState()
+        {
+            this.BaseRibbonControl.ExecuteEvent -= this.ExecuteEvent;
         }
     }
 
@@ -144,9 +151,12 @@ namespace electrifier.Core.Components
 
         }
 
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
         {
             this.BaseRibbonControl.Enabled = this.Enabled;
+        }
+        public void DeactivateRibbonState()
+        {
         }
     }
 
@@ -169,7 +179,10 @@ namespace electrifier.Core.Components
         {
             this.BaseRibbonControl = ribbonGroup;
         }
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
+        {
+        }
+        public void DeactivateRibbonState()
         {
         }
     }
@@ -206,9 +219,12 @@ namespace electrifier.Core.Components
 
         }
 
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
         {
             this.BaseRibbonControl.Enabled = this.Enabled;
+        }
+        public void DeactivateRibbonState()
+        {
         }
     }
 
@@ -244,9 +260,12 @@ namespace electrifier.Core.Components
         }
 
 
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
         {
             this.BaseRibbonControl.Enabled = this.Enabled;
+        }
+        public void DeactivateRibbonState()
+        {
         }
     }
 
@@ -267,7 +286,10 @@ namespace electrifier.Core.Components
         {
             this.BaseRibbonControl = ribbonToggleButton;
         }
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
+        {
+        }
+        public void DeactivateRibbonState()
         {
         }
     }
@@ -293,7 +315,10 @@ namespace electrifier.Core.Components
         }
 
         // TODO: => Where is Visible property!?!
-        public void UpdateBaseControlState()
+        public void ActivateRibbonState()
+        {
+        }
+        public void DeactivateRibbonState()
         {
         }
     }

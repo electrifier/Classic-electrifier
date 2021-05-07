@@ -41,7 +41,8 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components.DockContents
 {
-//    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ShellFolderDockContent, DockContent>))]
+    // TODO: Rename to ExplorerBrowserDocument
+
     public class ShellFolderDockContent :
         DockContent, // DockPanel, DockPane?
         IRibbonConsumer,
@@ -94,8 +95,6 @@ namespace electrifier.Core.Components.DockContents
 
             //this.splitter.Cursor = Cursors.PanWest;                                               // TODO: For "Hide TreeView-Button"
             //this.shellNamespaceTree.BackColor = System.Drawing.Color.FromArgb(0xFA, 0xFA, 0xFA);  // TODO: This doesn't work, however, set to window background!
-
-
 
             this.EvaluatePersistString(persistString);      // TODO: Error-Handling!
         }
@@ -272,9 +271,9 @@ namespace electrifier.Core.Components.DockContents
 
         //public virtual void OnNavigationOptionsChanged(EventArgs args) => this.NavigationOptionsChanged?.Invoke(this, args);
 
-        public void SelectAll() => this.ExplorerBrowser.SelectAll();
+        public void SelectAll(object sender, ExecuteEventArgs args) => this.ExplorerBrowser.SelectAll();
 
-        public void UnselectAll() => this.ExplorerBrowser.UnselectAll();
+        public void UnselectAll(object sender, ExecuteEventArgs args) => this.ExplorerBrowser.UnselectAll();
 
         //public override bool HasShellFolderViewMode => true;
 
@@ -568,8 +567,8 @@ namespace electrifier.Core.Components.DockContents
                 this.BtnOrganiseRename = new RibbonButtonBinding(ribbonItems.BtnOrganiseRename, this.testribbonexecuter),
                 this.GrpHomeSelect = new RibbonGroupBinding(ribbonItems.GrpHomeSelect),
                 this.BtnSelectConditional = new RibbonButtonBinding(ribbonItems.BtnSelectConditional, this.testribbonexecuter),
-                this.BtnSelectSelectAll = new RibbonButtonBinding(ribbonItems.BtnSelectSelectAll, this.testribbonexecuter, enabled: true),
-                this.BtnSelectSelectNone = new RibbonButtonBinding(ribbonItems.BtnSelectSelectNone, this.testribbonexecuter),
+                this.BtnSelectSelectAll = new RibbonButtonBinding(ribbonItems.BtnSelectSelectAll, this.SelectAll, enabled: true),
+                this.BtnSelectSelectNone = new RibbonButtonBinding(ribbonItems.BtnSelectSelectNone, this.UnselectAll, enabled: true),
                 this.BtnSelectInvertSelection = new RibbonButtonBinding(ribbonItems.BtnSelectInvertSelection, this.testribbonexecuter),
                 this.GrpHomeView = new RibbonGroupBinding(ribbonItems.GrpHomeView),
                 this.DdbHomeViewLayout = new RibbonDropDownButtonBinding(ribbonItems.DdbHomeViewLayout),
@@ -590,18 +589,21 @@ namespace electrifier.Core.Components.DockContents
         {
             foreach (IBaseRibbonControlBinding ribbonControlBinding in this.RibbonControlBindings)
             {
-                ribbonControlBinding.UpdateBaseControlState();
+                ribbonControlBinding.ActivateRibbonState();
             }
         }
 
         public void DeactivateRibbonState()
         {
-            // TODO: We have to remove our Event-Handlers here!
+            foreach (IBaseRibbonControlBinding ribbonControlBinding in this.RibbonControlBindings)
+            {
+                ribbonControlBinding.DeactivateRibbonState();
+            }
         }
 
         public void testribbonexecuter(object sender, ExecuteEventArgs args)
         {
-
+            AppContext.TraceDebug("Reached test executer!!!");
         }
 
 
@@ -620,7 +622,7 @@ namespace electrifier.Core.Components.DockContents
             this.ExplorerBrowser.ContentFlags = ((Vanara.Windows.Forms.ExplorerBrowserContentSectionOptions)((Vanara.Windows.Forms.ExplorerBrowserContentSectionOptions.NoWebView | Vanara.Windows.Forms.ExplorerBrowserContentSectionOptions.UseSearchFolder)));
             this.ExplorerBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ExplorerBrowser.Location = new System.Drawing.Point(0, 0);
-            this.ExplorerBrowser.Name = "explorerBrowser";
+            this.ExplorerBrowser.Name = "ExplorerBrowser";
             this.ExplorerBrowser.NavigationFlags = Vanara.Windows.Forms.ExplorerBrowserNavigateOptions.ShowFrames;
             this.ExplorerBrowser.Size = new System.Drawing.Size(1161, 876);
             this.ExplorerBrowser.TabIndex = 5;
@@ -629,6 +631,7 @@ namespace electrifier.Core.Components.DockContents
             // 
             this.ClientSize = new System.Drawing.Size(1161, 876);
             this.Controls.Add(this.ExplorerBrowser);
+            this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
             this.Name = "ShellFolderDockContent";
             this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
             this.ResumeLayout(false);

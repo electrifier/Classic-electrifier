@@ -87,6 +87,7 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.Theme = new WeifenLuo.WinFormsUI.Docking.VS2015LightTheme();
             this.dpnDockPanel.ShowDocumentIcon = true;
             this.dpnDockPanel.ActiveContentChanged += this.DpnDockPanel_ActiveContentChanged;
+            this.dpnDockPanel.ActiveDocumentChanged += this.DpnDockPanel_ActiveDocumentChanged;
 
             // Add this window to clipboard format listener list, i.e. register for clipboard changes
             AppContext.TraceDebug("AddClipboardFormatListener");
@@ -146,20 +147,19 @@ namespace electrifier.Core.Forms
             // Process Interface INavigationHost-part of DockContent-Activation
             if (null == activeContent)
             {
-                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged, activeContent is null");
+                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged: activeContent is NULL");
             }
             else
             {
-                var activatedContentType = activeContent?.GetType();
+                var activatedContentType = activeContent?.GetType().Name;
 
-                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
-                    + ", ActivatedContent=" + activeContent
-                    + ", ActivatedContentType=" + activatedContentType);
+                //DpnDockPanel_ActiveContentChanged: Sender = WeifenLuo.WinFormsUI.Docking.DockPanel, BorderStyle: System.Windows.Forms.BorderStyle.None, ActivatedContent = electrifier.Core.Components.DockContents.SelectConditionalBox, Text: Select Conditional..., ActivatedContentType = electrifier.Core.Components.DockContents.SelectConditionalBox @ 'W:\[Git.Workspace]\[electrifier.Workspace]\electrifier\src\electrifier.Core\Forms\ElApplicationWindow.cs' in DpnDockPanel_ActiveContentChanged
 
-                if (activeContent is IRibbonConsumer ribbonConsumer)
-                {
-                    ribbonConsumer.ActivateRibbonState();
-                }
+                AppContext.TraceDebug($"DpnDockPanel_ActiveContentChanged({ activeContent?.GetType().Name }): { activeContent }");
+                    //"DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
+                    //+ ", ActivatedContent=" + activeContent
+                    //+ ", ActivatedContentType=" + activatedContentType);
+
 
                 //if (typeof(ShellFolderDockContent).Equals(activatedContentType))
                 //{
@@ -172,30 +172,36 @@ namespace electrifier.Core.Forms
             }
         }
 
-        private ShellFolderDockContent CreateShellFolderDockContent(DockAlignment? dockAlignment = null)
+        public IDockContent CurrentDocument { get; private set; }
+
+        private void DpnDockPanel_ActiveDocumentChanged(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
+            Debug.Assert(sender.Equals(this.dpnDockPanel));
 
-            ShellFolderDockContent shellFolderDockContent = DockContentFactory.CreateShellBrowser(this);
+            var oldDocument = this.CurrentDocument;
+            var newDocument = this.dpnDockPanel.ActiveDocument;
 
-            this.AddDockContent(shellFolderDockContent);       // TODO => dockAlignment
+            Debug.Assert(!(newDocument is null));
 
-            return shellFolderDockContent;
-        }
+            this.CurrentDocument = newDocument;
 
-        internal void ToggleSelectConditionalBox()
-        {
-            var dockPanel = DockContentFactory.SelectConditionalBox;
-
-            if (dockPanel != null)
+            if (null != oldDocument)
             {
-                   
-                DockContentFactory.CloseSelectConditionalBox();
+                Debug.Assert(!oldDocument.Equals(newDocument));
+
+                if (oldDocument is IRibbonConsumer oldRibbonConsumer)
+                {
+                    oldRibbonConsumer.DeactivateRibbonState();
+                }
             }
-            else
+
+            if (newDocument is IRibbonConsumer newRibbonConsumer)
             {
-                DockContentFactory.CreateSelectConditionalBox(this.dpnDockPanel);
+                newRibbonConsumer.ActivateRibbonState();
             }
+
+            var ctnt = this.dpnDockPanel.ActiveContent;
+            AppContext.TraceScope($"Achtung Baby! *ActiveDocumentChanged*: { newDocument.GetType() }, this is *not* Active Content Changed: { ctnt?.GetType() }");
         }
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)
