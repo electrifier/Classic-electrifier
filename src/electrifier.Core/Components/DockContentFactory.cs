@@ -67,13 +67,13 @@ namespace electrifier.Core.Components
                 dockContentArguments = persistString.Substring(typeNameSeperatorPos);
             }
 
-            /* TODO: Remove namespace, but why has SelectConditionalBox one, whereas ShellFolderDockContent has not? */
+            /* TODO: Remove namespace, but why has SelectConditionalBox one, whereas ExplorerBrowserDocument has not? */
             if ((typeNameSeperatorPos = dockContentTypeName.LastIndexOf(".")) > 0)
                 dockContentTypeName = persistString.Substring(typeNameSeperatorPos + 1);
 
             switch (dockContentTypeName)
             {
-                case nameof(ShellFolderDockContent):
+                case nameof(ExplorerBrowserDocument):
                     dockContent = CreateShellBrowser(applicationWindow, dockContentArguments);
                     break;
                 case nameof(SelectConditionalBox):
@@ -86,10 +86,10 @@ namespace electrifier.Core.Components
             return dockContent;
         }
 
-        public static ShellFolderDockContent CreateShellBrowser(ElApplicationWindow applicationWindow, string persistString = null)
+        public static ExplorerBrowserDocument CreateShellBrowser(ElApplicationWindow applicationWindow, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            ShellFolderDockContent shellBrowser = new ShellFolderDockContent(applicationWindow, persistString);
+            ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
 
             shellBrowser.InitializeRibbonBinding(applicationWindow.RibbonItems);
 

@@ -60,9 +60,9 @@ namespace electrifier.Core.Components.DockContents
 
 //                IDockContent dockContent = this.DockPanel.ActiveDocument;
 
-//                if (dockContent is ShellFolderDockContent)
+//                if (dockContent is ExplorerBrowserDocument)
 //                {
-//                    var shellfolderdock = dockContent as ShellFolderDockContent;
+//                    var shellfolderdock = dockContent as ExplorerBrowserDocument;
 //                    shellfolderdock.UnselectAll();
 
 //                    var shellItems = shellfolderdock.ShellItems;
@@ -116,7 +116,7 @@ namespace electrifier.Core.Components.DockContents
 //                    //    }
 //                    //}
 //                }
-//                else throw new ArgumentOutOfRangeException(nameof(ShellFolderDockContent));
+//                else throw new ArgumentOutOfRangeException(nameof(ExplorerBrowserDocument));
 //            }
 //            catch (Exception ex)
 //            {
@@ -138,9 +138,9 @@ namespace electrifier.Core.Components.DockContents
 //                //this.DockPanel.Focus();
 
 //                IDockContent dockContent = this.DockPanel.ActiveDocument;
-//                if (dockContent is ShellFolderDockContent)
+//                if (dockContent is ExplorerBrowserDocument)
 //                {
-//                    var shellfolderdock = dockContent as ShellFolderDockContent;
+//                    var shellfolderdock = dockContent as ExplorerBrowserDocument;
 //                    shellfolderdock.Focus();
 //                }
 
