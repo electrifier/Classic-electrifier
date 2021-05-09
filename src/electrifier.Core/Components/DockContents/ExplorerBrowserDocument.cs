@@ -305,9 +305,9 @@ namespace electrifier.Core.Components.DockContents
 
         public ClipboardAbilities GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
 
-        public void CopyToClipboard() => this.Selection.SetClipboardDataObject(DragDropEffects.Copy);
+        public void CopyToClipboard(object sender, ExecuteEventArgs args) => this.Selection.SetClipboardDataObject(DragDropEffects.Copy);
 
-        public void CutToClipboard() => this.Selection.SetClipboardDataObject(DragDropEffects.Move);
+        public void CutToClipboard(object sender, ExecuteEventArgs args) => this.Selection.SetClipboardDataObject(DragDropEffects.Move);
 
         public void GetSupportedClipboardPasteTypes()
         {
@@ -320,7 +320,7 @@ namespace electrifier.Core.Components.DockContents
         // TODO: On virtual folders like 'This PC', we can't paste files... => Ask Shell if target folder can accept files
         public bool CanPasteFromClipboard() => Clipboard.ContainsFileDropList();
 
-        public void PasteFromClipboard()
+        public void PasteFromClipboard(object sender, ExecuteEventArgs args)
         {
             AppContext.TraceScope();
 
@@ -634,9 +634,6 @@ namespace electrifier.Core.Components.DockContents
         }
 
         private ExplorerBrowser ExplorerBrowser;
-
-
-
 
         #endregion ============================================================================================================
     }

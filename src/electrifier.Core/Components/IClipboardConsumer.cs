@@ -18,6 +18,7 @@
 **
 */
 
+using RibbonLib.Controls.Events;
 using System;
 
 
@@ -42,8 +43,8 @@ namespace electrifier.Core.Components
         /// </summary>
         event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
 
-        void CopyToClipboard();
-        void CutToClipboard();
+        void CopyToClipboard(object sender, ExecuteEventArgs args);
+        void CutToClipboard(object sender, ExecuteEventArgs args);
 
         // Paste
 
@@ -63,7 +64,7 @@ namespace electrifier.Core.Components
         //event EventHandler CanPasteFromClipboardChanged;
 
         // TODO: Type of clipboard content => GetClipboardPasteTypes();
-        void PasteFromClipboard();  // TODO: The clipboard content
+        void PasteFromClipboard(object sender, ExecuteEventArgs args);  // TODO: The clipboard content
     }
 
     #region EventArgs =========================================================================================================
