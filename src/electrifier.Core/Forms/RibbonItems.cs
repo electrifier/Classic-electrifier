@@ -117,12 +117,9 @@ namespace RibbonLib.Controls
             //
             // Command Group: Home -> Clipboard ===============================================================================
             //
-            this.BtnClipboardCut.ExecuteEvent += this.ApplicationWindow.CmdClipboardCut_ExecuteEvent;
-            this.BtnClipboardCopy.ExecuteEvent += this.ApplicationWindow.CmdClipboardCopy_ExecuteEvent;
             this.BtnClipboardCopyFullFilePaths.Enabled = false;
             this.BtnClipboardCopyFileNames.Enabled = false;
             this.BtnClipboardCopyDirectoryPaths.Enabled = false;
-            this.BtnClipboardPaste.ExecuteEvent += this.ApplicationWindow.CmdClipboardPaste_ExecuteEvent;
             this.BtnClipboardPasteAsNewFile.Enabled = false;
             this.BtnClipboardPasteAsNewTextFile.Enabled = false;
             this.BtnClipboardPasteAsNewBMPFile.Enabled = false;
@@ -142,8 +139,6 @@ namespace RibbonLib.Controls
             //
             // Command Group: Home -> Select ==================================================================================
             //
-            this.BtnSelectConditional.ExecuteEvent += this.ApplicationWindow.CmdSelectConditional_ExecuteEvent;
-            this.BtnSelectInvertSelection.ExecuteEvent += this.ApplicationWindow.CmdInvertSelection_ExecuteEvent;
 
             //
             // Command Group: Home -> Layout ==================================================================================
@@ -160,8 +155,6 @@ namespace RibbonLib.Controls
             //
             // Command Group: Desktop -> Icon Layout ==========================================================================
             //
-            this.BtnDesktopIconSettingsSaveLayout.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutSave_ExecuteEvent;
-            this.BtnDesktopIconSettingsRestoreLayout.ExecuteEvent += this.ApplicationWindow.CmdBtnDesktopIconLayoutRestore_ExecuteEvent;
             this.BtnDesktopIconSettingsLaunchControlPanel.Enabled = false;
             this.CbxDesktopIconSettingsSpacingVertical.Enabled = false;
             this.CbxDesktopIconSettingsSpacingHorizontal.Enabled = false;
