@@ -150,13 +150,13 @@
     <Compile Include="Components\IClipboardConsumer.cs" />
     <Compile Include="Components\INavigationHost.cs" />
     <Compile Include="Components\IRibbonConsumer.cs" />
-    <Compile Include="GlobalConfig.cs" />
-    <Compile Include="Forms\ElAboutDialog.cs">
+    <Compile Include="Forms\AboutElectrifierDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ElAboutDialog.Designer.cs">
-      <DependentUpon>ElAboutDialog.cs</DependentUpon>
+    <Compile Include="Forms\AboutElectrifierDialog.Designer.cs">
+      <DependentUpon>AboutElectrifierDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalConfig.cs" />
     <Compile Include="Forms\ElApplicationWindow.Commands.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -208,8 +208,8 @@
     <EmbeddedResource Include="Components\DockContents\ExplorerBrowserDocument.resx">
       <DependentUpon>ExplorerBrowserDocument.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\ElAboutDialog.resx">
-      <DependentUpon>ElAboutDialog.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\AboutElectrifierDialog.resx">
+      <DependentUpon>AboutElectrifierDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SessionSelector.resx">
       <DependentUpon>SessionSelector.cs</DependentUpon>
