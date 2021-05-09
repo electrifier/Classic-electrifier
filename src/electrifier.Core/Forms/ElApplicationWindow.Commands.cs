@@ -97,7 +97,7 @@ namespace electrifier.Core.Forms
         {
             AppContext.TraceScope();
 
-            using (ElAboutDialog aboutDialog = new ElAboutDialog())
+            using (AboutElectrifierDialog aboutDialog = new AboutElectrifierDialog())
             {
                 aboutDialog.ShowDialog();
             }
