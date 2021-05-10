@@ -33,9 +33,9 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace electrifier.Core.Forms
 {
     /// <summary>
-    /// <see cref="ElApplicationWindow"/> is the Main Window of electrifier application.
+    /// <see cref="ApplicationWindow"/> is the Main Window of electrifier application.
     /// </summary>
-    public partial class ElApplicationWindow
+    public partial class ApplicationWindow
       : System.Windows.Forms.Form
       , System.Windows.Forms.IWin32Window       // Used for ShellFileOperations
     {
@@ -69,7 +69,7 @@ namespace electrifier.Core.Forms
         #endregion ============================================================================================================
 
 
-        public ElApplicationWindow(SessionContext sessionContext)
+        public ApplicationWindow(SessionContext sessionContext)
           : base()
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
@@ -153,7 +153,7 @@ namespace electrifier.Core.Forms
             {
                 var activatedContentType = activeContent?.GetType().Name;
 
-                //DpnDockPanel_ActiveContentChanged: Sender = WeifenLuo.WinFormsUI.Docking.DockPanel, BorderStyle: System.Windows.Forms.BorderStyle.None, ActivatedContent = electrifier.Core.Components.DockContents.SelectConditionalBox, Text: Select Conditional..., ActivatedContentType = electrifier.Core.Components.DockContents.SelectConditionalBox @ 'W:\[Git.Workspace]\[electrifier.Workspace]\electrifier\src\electrifier.Core\Forms\ElApplicationWindow.cs' in DpnDockPanel_ActiveContentChanged
+                //DpnDockPanel_ActiveContentChanged: Sender = WeifenLuo.WinFormsUI.Docking.DockPanel, BorderStyle: System.Windows.Forms.BorderStyle.None, ActivatedContent = electrifier.Core.Components.DockContents.SelectConditionalBox, Text: Select Conditional..., ActivatedContentType = electrifier.Core.Components.DockContents.SelectConditionalBox @ 'W:\[Git.Workspace]\[electrifier.Workspace]\electrifier\src\electrifier.Core\Forms\ApplicationWindow.cs' in DpnDockPanel_ActiveContentChanged
 
                 AppContext.TraceDebug($"DpnDockPanel_ActiveContentChanged({ activeContent?.GetType().Name }): { activeContent }");
                     //"DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
@@ -213,11 +213,11 @@ namespace electrifier.Core.Forms
             // NULL-Check!
 
             // TODO: Put Converters into EntityLighter!
-            args.Location = (Point)pointConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Location", "0,0"));
-            args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.Size", "800, 600"));
-            args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ElApplicationWindow.WindowState", "Normal"));
+            args.Location = (Point)pointConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ApplicationWindow.Location", "0,0"));
+            args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ApplicationWindow.Size", "800, 600"));
+            args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ApplicationWindow.WindowState", "Normal"));
 
-            string dockPanelConfig = this.SessionContext.Properties.SyncProperty("ElApplicationWindow.DockPanelState", String.Empty);
+            string dockPanelConfig = this.SessionContext.Properties.SyncProperty("ApplicationWindow.DockPanelState", String.Empty);
 
             if (dockPanelConfig.Length > 0)
             {
@@ -248,9 +248,9 @@ namespace electrifier.Core.Forms
             TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
             string dockPanelConfig;
 
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.Size", sizeConvert.ConvertTo(args.Size, typeof(string)) as string);
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.WindowState", stateConvert.ConvertTo(args.WindowState, typeof(string)) as string);
+            this.SessionContext.Properties.SafeSetProperty("ApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);
+            this.SessionContext.Properties.SafeSetProperty("ApplicationWindow.Size", sizeConvert.ConvertTo(args.Size, typeof(string)) as string);
+            this.SessionContext.Properties.SafeSetProperty("ApplicationWindow.WindowState", stateConvert.ConvertTo(args.WindowState, typeof(string)) as string);
 
             using (var dockPanelStateStream = new MemoryStream())
             {
@@ -263,7 +263,7 @@ namespace electrifier.Core.Forms
                 }
             }
                 
-            this.SessionContext.Properties.SafeSetProperty("ElApplicationWindow.DockPanelState", dockPanelConfig);
+            this.SessionContext.Properties.SafeSetProperty("ApplicationWindow.DockPanelState", dockPanelConfig);
         }
     }
 }

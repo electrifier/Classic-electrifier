@@ -113,10 +113,10 @@
   <Fragment>
     <ComponentGroup Id="ResourceFiles">
       <Component Directory="INSTALLFOLDERx64">
-        <File Id="Electrifier.Ribbon.ribbon_x64" Source="$(var.electrifier.Core.TargetDir)\x64\ElApplicationWindow.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
+        <File Id="Electrifier.Ribbon.ribbon_x64" Source="$(var.electrifier.Core.TargetDir)\x64\ApplicationWindow.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
       </Component>
       <Component Directory="INSTALLFOLDERx86">
-        <File Id="Electrifier.Ribbon.ribbon_x86" Source="$(var.electrifier.Core.TargetDir)\x86\ElApplicationWindow.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
+        <File Id="Electrifier.Ribbon.ribbon_x86" Source="$(var.electrifier.Core.TargetDir)\x86\ApplicationWindow.Ribbon.ribbon" KeyPath="yes" Checksum="yes"/>
       </Component>
     </ComponentGroup>
   </Fragment>

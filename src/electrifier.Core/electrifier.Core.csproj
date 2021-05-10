@@ -157,16 +157,16 @@
       <DependentUpon>AboutElectrifierDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="GlobalConfig.cs" />
-    <Compile Include="Forms\ElApplicationWindow.Commands.cs">
+    <Compile Include="Forms\ApplicationWindow.Commands.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ElApplicationWindow.cs">
+    <Compile Include="Forms\ApplicationWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\ElApplicationWindow.Designer.cs">
-      <DependentUpon>ElApplicationWindow.cs</DependentUpon>
+    <Compile Include="Forms\ApplicationWindow.Designer.cs">
+      <DependentUpon>ApplicationWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\ElApplicationWindow.NavigationHost.cs">
+    <Compile Include="Forms\ApplicationWindow.NavigationHost.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\RibbonItems.cs" />
@@ -217,8 +217,8 @@
     <EmbeddedResource Include="Properties\License.rtf" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\ElApplicationWindow.resx">
-      <DependentUpon>ElApplicationWindow.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\ApplicationWindow.resx">
+      <DependentUpon>ApplicationWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
@@ -227,12 +227,12 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ElApplicationWindow.Ribbon.ribbon" />
+    <EmbeddedResource Include="Resources\ApplicationWindow.Ribbon.ribbon" />
     <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
     <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\ShellBrowserDockContent.ico" />
     <None Include="Resources\DropDown Arrow 16px.png" />
-    <Content Include="Resources\ElApplicationWindow.Ribbon.xml">
+    <Content Include="Resources\ApplicationWindow.Ribbon.xml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>

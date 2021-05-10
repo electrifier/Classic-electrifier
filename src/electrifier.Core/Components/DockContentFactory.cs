@@ -53,7 +53,7 @@ namespace electrifier.Core.Components
         ///     e.g "ElShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
         /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Unknown DockContent type.</exception>
-        public static IDockContent Deserialize(ElApplicationWindow applicationWindow, string persistString, DockPanel dockPanel)
+        public static IDockContent Deserialize(ApplicationWindow applicationWindow, string persistString, DockPanel dockPanel)
         {
             IDockContent dockContent = default;
             var typeNameSeperatorPos = persistString.IndexOf(" ");
@@ -86,7 +86,7 @@ namespace electrifier.Core.Components
             return dockContent;
         }
 
-        public static ExplorerBrowserDocument CreateShellBrowser(ElApplicationWindow applicationWindow, string persistString = null)
+        public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
             ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);

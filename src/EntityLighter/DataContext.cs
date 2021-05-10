@@ -593,7 +593,7 @@ namespace EntityLighter
 
         public static DateTime ConvertToDateTime(string datetimeString)
         {
-            // TODO: Put this into an default type converting place SQLite <-> C#-Entities, see also ElApplicationWindow.fspFormStatePersistor_LoadingFormState
+            // TODO: Put this into an default type converting place SQLite <-> C#-Entities, see also ApplicationWindow.fspFormStatePersistor_LoadingFormState
             if (DateTime.TryParse(datetimeString, out DateTime result))
                 return result;
 
