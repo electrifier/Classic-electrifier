@@ -20,7 +20,7 @@
 
 namespace electrifier.Core.Forms
 {
-    partial class ElApplicationWindow
+    partial class ApplicationWindow
     {
         /// <summary>
         /// Required designer variable.
@@ -136,7 +136,7 @@ namespace electrifier.Core.Forms
             this.rbnRibbon.Location = new System.Drawing.Point(0, 0);
             this.rbnRibbon.Minimized = false;
             this.rbnRibbon.Name = "rbnRibbon";
-            this.rbnRibbon.ResourceName = "electrifier.Core.Resources.ElApplicationWindow.Ribbon.ribbon";
+            this.rbnRibbon.ResourceName = "electrifier.Core.Resources.ApplicationWindow.Ribbon.ribbon";
             this.rbnRibbon.ShortcutTableResourceName = null;
             this.rbnRibbon.Size = new System.Drawing.Size(782, 122);
             this.rbnRibbon.TabIndex = 6;
@@ -149,7 +149,7 @@ namespace electrifier.Core.Forms
             this.FormStatePersistor.LoadFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_LoadFormState);
             this.FormStatePersistor.SaveFormState += new System.EventHandler<electrifier.Core.Components.FormStatePersistorEventArgs>(this.FormStatePersistor_SaveFormState);
             // 
-            // ElApplicationWindow
+            // ApplicationWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -157,7 +157,7 @@ namespace electrifier.Core.Forms
             this.Controls.Add(this.tscToolStripContainer);
             this.Controls.Add(this.rbnRibbon);
             this.Controls.Add(this.StatusStrip);
-            this.Name = "ElApplicationWindow";
+            this.Name = "ApplicationWindow";
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
             this.tscToolStripContainer.ContentPanel.ResumeLayout(false);

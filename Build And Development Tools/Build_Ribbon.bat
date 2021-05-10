@@ -24,7 +24,7 @@ CLS
 
 CD "S:\[Git.Workspace]\[electrifier.Workspace]\electrifier\src\electrifier.Core\Resources"
 
-IF EXIST "ElApplicationWindow.Ribbon.xml" CALL :BuildRibbonResource "ElApplicationWindow.Ribbon.xml"
+IF EXIST "ApplicationWindow.Ribbon.xml" CALL :BuildRibbonResource "ApplicationWindow.Ribbon.xml"
 
 PAUSE
 

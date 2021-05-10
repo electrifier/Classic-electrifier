@@ -150,7 +150,7 @@ namespace electrifier.Core
         public DataContext DataContext { get; }
         public GlobalConfig GlobalConfig { get; }
         public Icon ApplicationIcon { get; private set; }
-        public ElApplicationWindow ApplicationWindow { get; private set; }
+        public ApplicationWindow ApplicationWindow { get; private set; }
 
         public long Id => this.Session.Id;
         public string Name => this.Session.Name;
@@ -282,7 +282,7 @@ namespace electrifier.Core
             // Set default properties for this session
             this.Properties = new PropertyCollection(this);
 
-            this.ApplicationWindow = new ElApplicationWindow(this);       // Invoke()?!?  // TODO: Dispose?
+            this.ApplicationWindow = new ApplicationWindow(this);       // Invoke()?!?  // TODO: Dispose?
             this.OnMainFormChange(this.ApplicationWindow);
             //this.ApplicationWindow.Show();
 
@@ -333,12 +333,12 @@ namespace electrifier.Core
 
 
 
-        //public ElApplicationWindow Run(SessionEntity session)
+        //public ApplicationWindow Run(SessionEntity session)
         //{
         //    this.session = session;
 
         //    // Create main Application Window
-        //    this.ApplicationWindow = new ElApplicationWindow(this);
+        //    this.ApplicationWindow = new ApplicationWindow(this);
 
         //    // Set default properties for this session
         //    this.Properties = new PropertyCollection(this);
@@ -508,7 +508,7 @@ namespace electrifier.Core
         //        public Form InitializeMainForm(Icon appIcon)        // => RunSession
         //        {
         //            this.ApplicationIcon = appIcon;
-        //            this.ApplicationWindow = new Forms.ElApplicationWindow(this, appIcon);
+        //            this.ApplicationWindow = new Forms.ApplicationWindow(this, appIcon);
         //
         //            //this.ApplicationWindow.Size = new Size();
         //            //this.ApplicationWindow.Location = new Point();
@@ -566,7 +566,7 @@ namespace electrifier.Core
         //        }
         //
         /// <summary>
-        /// Save ElApplicationWindow Form state configuration into XML-file.
+        /// Save ApplicationWindow Form state configuration into XML-file.
         /// 
         /// Called by AppContext.AppContext_ThreadExit()
         /// </summary>

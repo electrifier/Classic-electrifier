@@ -29,7 +29,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
 {
-    public partial class ElApplicationWindow
+    public partial class ApplicationWindow
       : INavigationHost
     {
         private ArrayList dockContentList = new ArrayList();

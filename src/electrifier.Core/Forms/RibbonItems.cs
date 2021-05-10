@@ -48,7 +48,7 @@ namespace RibbonLib.Controls
 
         #region Properties =====================================================================================================
 
-        public ElApplicationWindow ApplicationWindow { get; }
+        public ApplicationWindow ApplicationWindow { get; }
 
 
         #endregion =============================================================================================================
@@ -83,12 +83,12 @@ namespace RibbonLib.Controls
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="elApplicationWindow"></param>
+        /// <param name="applicationWindow"></param>
         /// <param name="ribbon"></param>
-        public RibbonItems(ElApplicationWindow elApplicationWindow, Ribbon ribbon)
+        public RibbonItems(ApplicationWindow applicationWindow, Ribbon ribbon)
             : this(ribbon)
         {
-            this.ApplicationWindow = elApplicationWindow ?? throw new ArgumentNullException(nameof(elApplicationWindow));
+            this.ApplicationWindow = applicationWindow ?? throw new ArgumentNullException(nameof(applicationWindow));
 
             //ribbon.LoadSettingsFromStream(str);
             //ribbon.SetColors(Color.Wheat, Color.IndianRed, Color.BlueViolet);

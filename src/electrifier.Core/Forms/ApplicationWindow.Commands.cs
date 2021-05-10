@@ -28,11 +28,11 @@ using Vanara.PInvoke;
 namespace electrifier.Core.Forms
 {
     /// <summary>
-    /// <see cref="ElApplicationWindow"/> is the Main Window of electrifier application.
+    /// <see cref="ApplicationWindow"/> is the Main Window of electrifier application.
     /// 
     /// This partial class file contains the implementation of the Ribbon Commands, i.e. the Ribbon Command event listeners.
     /// </summary>
-    public partial class ElApplicationWindow
+    public partial class ApplicationWindow
     {
         internal void CmdAppOpenNewShellBrowserPane_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
@@ -124,7 +124,7 @@ namespace electrifier.Core.Forms
 
 
         /// <summary>
-        /// TODO: [Moved from ELApplicationWindow.Ribbon.cs#Ribbon_ProcessDockContentChange]
+        /// TODO: [Moved from ApplicationWindow.Ribbon.cs#Ribbon_ProcessDockContentChange]
         /// https://docs.microsoft.com/de-de/dotnet/api/system.windows.dataobject?view=netframework-4.7.2
         /// </summary>
 
