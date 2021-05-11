@@ -42,7 +42,7 @@ namespace electrifier.Core.Components.Controls
         private System.Windows.Forms.ToolStripButton btnGoForward;
         private System.Windows.Forms.ToolStripDropDownButton ddnHistoryItems;
         private System.Windows.Forms.ToolStripButton btnGoToParentLocation;
-        private ElToolStripSpringComboBox cbbCurrentFolder;
+        private ToolStripSpringComboBox cbbCurrentFolder;
         private System.Windows.Forms.ToolStripButton btnRefresh;
         private System.Windows.Forms.ToolStripDropDownButton ddnQuickAccessItems;
         private System.Windows.Forms.ToolStripSeparator ssoSeparator;
@@ -208,7 +208,7 @@ namespace electrifier.Core.Components.Controls
             this.btnGoForward = new System.Windows.Forms.ToolStripButton();
             this.ddnHistoryItems = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnGoToParentLocation = new System.Windows.Forms.ToolStripButton();
-            this.cbbCurrentFolder = new electrifier.Core.Components.Controls.ElToolStripSpringComboBox();
+            this.cbbCurrentFolder = new electrifier.Core.Components.Controls.ToolStripSpringComboBox();
             this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             this.ddnQuickAccessItems = new System.Windows.Forms.ToolStripDropDownButton();
             this.ssoSeparator = new System.Windows.Forms.ToolStripSeparator();
