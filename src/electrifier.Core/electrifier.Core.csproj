@@ -132,10 +132,6 @@
     </Compile>
     <Compile Include="Components\Controls\Extensions\ThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\IThemedControl.cs" />
-    <Compile Include="Components\DockContents\NavigableDockContent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Components\DockContents\Extensions\NavigableDockContentExtensions.cs" />
     <Compile Include="Components\DockContentFactory.cs" />
     <Compile Include="Components\DockContents\SelectConditionalBox.cs">
       <SubType>Form</SubType>
@@ -266,6 +262,9 @@
       <Project>{10c6ea02-55c0-48b9-bc6f-6e7c9c6cf2de}</Project>
       <Name>EntityLighter</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\DockContents\Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

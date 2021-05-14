@@ -79,7 +79,7 @@ namespace electrifier.Core.Components.DockContents
         #endregion ============================================================================================================
 
 
-        public ExplorerBrowserDocument(INavigationHost navigationHost, string persistString = null)
+        public ExplorerBrowserDocument(string persistString = null)
           : base()
         {
             this.InitializeComponent();

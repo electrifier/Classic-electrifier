@@ -118,7 +118,7 @@ namespace electrifier.Core.Forms
             // 
             // NavigationToolStrip
             // 
-            this.NavigationToolStrip.ActiveDockContent = null;
+//            this.NavigationToolStrip.ActiveDockContent = null;
             this.NavigationToolStrip.CurrentTheme = "iTweek by Miles Ponson (32px)";
             this.NavigationToolStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.NavigationToolStrip.GripStyle = System.Windows.Forms.ToolStripGripStyle.Hidden;

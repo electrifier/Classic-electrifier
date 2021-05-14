@@ -48,7 +48,7 @@ namespace electrifier.Core.Components
         /// <summary>
         /// Deserialize given persistString as used in XML-files to create the corresponding DockContent instance.
         /// </summary>
-        /// <param name="navigationHost"><see cref="INavigationHost"/> instance the new DockContent will be added to.</param>
+        /// <param name="applicationWindow"><see cref="ApplicationWindow"/> instance the new DockContent will be added to.</param>
         /// <param name="persistString">The string stored in XML-Files with DockContent type and parameters,
         ///     e.g "ElShellBrowserDockContent URI=file:///S:/%5BGit.Workspace%5D/electrifier"</param>
         /// <returns>The valid IDockContent instance, or NULL if <see cref="persistString"/> is invalid.</returns>
@@ -89,7 +89,7 @@ namespace electrifier.Core.Components
         public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
+            ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(persistString);
 
             shellBrowser.InitializeRibbonBinding(applicationWindow.RibbonItems);
 
