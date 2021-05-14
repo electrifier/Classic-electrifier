@@ -8,3 +8,4 @@ x 2021-04-18 2021-04-10 Check why ShellFolderDockContent.SelectAll() fails
 (A) 2021-04-18 Check IFolderViewHost: What is this for? https://docs.microsoft.com/en-us/windows/win32/api/shobjidl/nn-shobjidl-ifolderviewhost
 2021-04-18 Internal: ShellBrowser.cs -> GetItemIndex(), SetSelectionState() to ShellBrowserViewHandler
 (A) 2021-04-18 IShellView->SelectItem (PIDL, State)
+2021-05-12 When renaming an item in ExplorerBrowser, and the user enters a extension, then remove the old extension automatically

@@ -24,7 +24,7 @@ using WeifenLuo.WinFormsUI.Docking;
 namespace electrifier.Core.Components
 {
     /// <summary>
-    /// The interface hosts of <see cref="NavigableDockContent"/>'s have to provide to communicate.
+    /// The interface hosts of deprecated <see cref="NavigableDockContent"/>'s had to provide to communicate.
     /// 
     /// Currently only <see cref="Forms.ApplicationWindow"/> implements this interface
     /// </summary>
