@@ -156,10 +156,25 @@ namespace electrifier.Core.Forms
                 //DpnDockPanel_ActiveContentChanged: Sender = WeifenLuo.WinFormsUI.Docking.DockPanel, BorderStyle: System.Windows.Forms.BorderStyle.None, ActivatedContent = electrifier.Core.Components.DockContents.SelectConditionalBox, Text: Select Conditional..., ActivatedContentType = electrifier.Core.Components.DockContents.SelectConditionalBox @ 'W:\[Git.Workspace]\[electrifier.Workspace]\electrifier\src\electrifier.Core\Forms\ApplicationWindow.cs' in DpnDockPanel_ActiveContentChanged
 
                 AppContext.TraceDebug($"DpnDockPanel_ActiveContentChanged({ activeContent?.GetType().Name }): { activeContent }");
-                    //"DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
-                    //+ ", ActivatedContent=" + activeContent
-                    //+ ", ActivatedContentType=" + activatedContentType);
+                //"DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
+                //+ ", ActivatedContent=" + activeContent
+                //+ ", ActivatedContentType=" + activatedContentType);
 
+				// TODO: This is for test purposes only!
+                if (activeContent is ExplorerBrowserDocument explorerBrowser)
+                {
+                    try
+                    {
+                        this.tspTopToolStripPanel.SuspendLayout();
+                        this.tspTopToolStripPanel.Controls.Clear();
+                        this.tspTopToolStripPanel.Join(explorerBrowser.ToolStrip);
+                    }
+                    finally
+                    {
+                        this.tspTopToolStripPanel.ResumeLayout();
+                        this.tspTopToolStripPanel.PerformLayout();
+                    }
+                }
 
                 //if (typeof(ExplorerBrowserDocument).Equals(activatedContentType))
                 //{
@@ -181,7 +196,7 @@ namespace electrifier.Core.Forms
             var oldDocument = this.CurrentDocument;
             var newDocument = this.dpnDockPanel.ActiveDocument;
 
-            Debug.Assert(!(newDocument is null));
+//            Debug.Assert(!(newDocument is null));  => If all Panels all closed, this will be null!
 
             this.CurrentDocument = newDocument;
 
@@ -201,7 +216,7 @@ namespace electrifier.Core.Forms
             }
 
             var ctnt = this.dpnDockPanel.ActiveContent;
-            AppContext.TraceScope($"Achtung Baby! *ActiveDocumentChanged*: { newDocument.GetType() }, this is *not* Active Content Changed: { ctnt?.GetType() }");
+            AppContext.TraceScope($"Achtung Baby! *ActiveDocumentChanged*: { newDocument?.GetType() }, this is *not* Active Content Changed: { ctnt?.GetType() }");
         }
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)

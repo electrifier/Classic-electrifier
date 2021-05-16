@@ -18,6 +18,7 @@
 **
 */
 
+using electrifier.Core.Components.Controls;
 using electrifier.Core.WindowsShell;
 using RibbonLib.Controls;
 using RibbonLib.Controls.Events;
@@ -76,6 +77,8 @@ namespace electrifier.Core.Components.DockContents
             }
         }
 
+        public ExplorerBrowserToolStrip ToolStrip { get; }
+
         #endregion ============================================================================================================
 
 
@@ -83,6 +86,7 @@ namespace electrifier.Core.Components.DockContents
           : base()
         {
             this.InitializeComponent();
+            this.ToolStrip = new ExplorerBrowserToolStrip(this);
 
             this.Selection = new ClipboardSelection(this);
 
