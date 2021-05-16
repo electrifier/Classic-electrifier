@@ -19,13 +19,14 @@
 */
 
 using electrifier.Core.Components.Controls.Extensions;
+using electrifier.Core.Components.DockContents;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace electrifier.Core.Components.Controls
 {
-    public class NavigationToolStrip
+    public class ExplorerBrowserToolStrip
         : System.Windows.Forms.ToolStrip
         , IThemedControl
     {
@@ -62,7 +63,7 @@ namespace electrifier.Core.Components.Controls
 
         #region Properties =====================================================================================================
 
-
+        public ExplorerBrowserDocument Owner { get; }
 
         #endregion =============================================================================================================
 
@@ -90,8 +91,10 @@ namespace electrifier.Core.Components.Controls
 
         #endregion =============================================================================================================
 
-        public NavigationToolStrip()
+        public ExplorerBrowserToolStrip(ExplorerBrowserDocument Owner)
         {
+            this.Owner = Owner ?? throw new ArgumentNullException(nameof(Owner));
+
             this.InitializeComponent();
 //            this.UpdateButtonState(null);
 
@@ -150,7 +153,7 @@ namespace electrifier.Core.Components.Controls
         //            {
         //                // TODO: The following exception is thrown for test purposes only!
         //                if (this.ActiveDockContent != navigableDockContent)
-        //                    throw new ArgumentException("NavigationToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
+        //                    throw new ArgumentException("ExplorerBrowserToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
 
         //                if (null != navigableDockContent)
         //                {

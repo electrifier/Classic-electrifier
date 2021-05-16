@@ -124,7 +124,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Components\Controls\NavigationToolStrip.cs">
+    <Compile Include="Components\Controls\ExplorerBrowserToolStrip.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\Controls\ToolStripSpringComboBox.cs">
@@ -224,8 +224,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ApplicationWindow.Ribbon.ribbon" />
-    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.iTweek by Miles Ponson %2832px%29.png" />
-    <EmbeddedResource Include="Resources\Themes\NavigationToolStrip.Microsoft Windows %2824px%29.png" />
+    <EmbeddedResource Include="Resources\Themes\ExplorerBrowserToolStrip.iTweek by Miles Ponson %2832px%29.png" />
+    <EmbeddedResource Include="Resources\Themes\ExplorerBrowserToolStrip.Microsoft Windows %2824px%29.png" />
     <None Include="Resources\ShellBrowserDockContent.ico" />
     <None Include="Resources\DropDown Arrow 16px.png" />
     <Content Include="Resources\ApplicationWindow.Ribbon.xml">
@@ -262,9 +262,6 @@
       <Project>{10c6ea02-55c0-48b9-bc6f-6e7c9c6cf2de}</Project>
       <Name>EntityLighter</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\DockContents\Extensions\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
