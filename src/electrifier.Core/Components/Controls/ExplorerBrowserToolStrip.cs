@@ -22,6 +22,7 @@ using electrifier.Core.Components.Controls.Extensions;
 using electrifier.Core.Components.DockContents;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace electrifier.Core.Components.Controls
@@ -50,8 +51,8 @@ namespace electrifier.Core.Components.Controls
 
         private enum ImageListIndex
         {
-            GoBack = 0,
-            GoForward,
+            NavigateBackward = 0,
+            NavigateForward,
             GoToParentLocation,
             RefreshView,
             QuickAccessItems,
@@ -64,6 +65,67 @@ namespace electrifier.Core.Components.Controls
         #region Properties =====================================================================================================
 
         public ExplorerBrowserDocument Owner { get; }
+
+        public bool CanNavigateBackward
+        {
+            get => this.btnGoBack.Enabled;
+            set => this.btnGoBack.Enabled = value;
+        }
+
+        public bool CanNavigateForward
+        {
+            get => this.btnGoForward.Enabled;
+            set => this.btnGoForward.Enabled = value;
+        }
+
+        public bool CanGoToParentLocation
+        {
+            get => this.btnGoToParentLocation.Enabled;
+            set => this.btnGoToParentLocation.Enabled = value;
+        }
+
+        public string CurrentFolder
+        {
+            get => this.cbbCurrentFolder.Text;
+            set => this.cbbCurrentFolder.Text = value;
+        }
+
+        #endregion =============================================================================================================
+
+        #region Published Events ===============================================================================================
+
+        /// <summary>
+        /// Navigate backward button has been clicked
+        /// </summary>
+        [Category("Action")]
+        [Description("Navigate backward button has been clicked")]
+        public event EventHandler NavigateBackwardClick
+        {
+            add => this.btnGoBack.Click += value;
+            remove => this.btnGoBack.Click -= value;
+        }
+
+        /// <summary>
+        /// Navigate forward button has been clicked
+        /// </summary>
+        [Category("Action")]
+        [Description("Navigate forward button has been clicked")]
+        public event EventHandler NavigateForwardClick
+        {
+            add => this.btnGoForward.Click += value;
+            remove => this.btnGoForward.Click -= value;
+        }
+
+        /// <summary>
+        /// Navigate forward button has been clicked
+        /// </summary>
+        [Category("Action")]
+        [Description("Go to parent location button has been clicked")]
+        public event EventHandler GoToParentLocationClick
+        {
+            add => this.btnGoToParentLocation.Click += value;
+            remove => this.btnGoToParentLocation.Click -= value;
+        }
 
         #endregion =============================================================================================================
 
@@ -84,22 +146,19 @@ namespace electrifier.Core.Components.Controls
             set
             {
                 // TODO: See WinFormsRibbon-Code for extended ImageList.FromBitmap code
-                this.ImageList = this.LoadThemeImageListFromResource(this.currentTheme = value);        // TODO: Gets called twice!
+                // TODO: Make this static, cause all ToolStrips will use the same theme I guess
+                this.ImageList = this.LoadThemeImageListFromResource(this.currentTheme = value);
                 this.ImageScalingSize = this.ImageList.ImageSize;
             }
         }
 
         #endregion =============================================================================================================
 
-        public ExplorerBrowserToolStrip(ExplorerBrowserDocument Owner)
+        public ExplorerBrowserToolStrip(ExplorerBrowserDocument owner)
         {
-            this.Owner = Owner ?? throw new ArgumentNullException(nameof(Owner));
+            this.Owner = owner ?? throw new ArgumentNullException(nameof(owner));
 
             this.InitializeComponent();
-//            this.UpdateButtonState(null);
-
-            this.btnGoBack.Click += this.BtnGoBack_Click;
-            this.btnGoForward.Click += this.BtnGoForward_Click;
 
             // Set current theme to default theme to get the ImageList populated
             this.CurrentTheme = this.DefaultTheme;
@@ -117,82 +176,6 @@ namespace electrifier.Core.Components.Controls
             }
             base.Dispose(disposing);
         }
-
-        /// <summary>
-        /// Call GoBack() on ActiveDockContent.
-        /// </summary>
-        /// <param name="sender">Not used.</param>
-        /// <param name="e">Not used.</param>
-        private void BtnGoBack_Click(object sender, EventArgs e)
-        {
-            //if (this.ActiveDockContent is null)
-            //    AppContext.TraceWarning("ActiveDockContent is null in BtnGoBack_Click()");
-
-            //this.ActiveDockContent?.GoBack();
-        }
-
-        /// <summary>
-        /// Call GoForward() on ActiveDockContent.
-        /// </summary>
-        /// <param name="sender">Not used.</param>
-        /// <param name="e">Not used.</param>
-        private void BtnGoForward_Click(object sender, EventArgs e)
-        {
-            //if (this.ActiveDockContent is null)
-            //    AppContext.TraceWarning("ActiveDockContent is null in BtnGoForward_Click()");
-
-            //this.ActiveDockContent?.GoForward();
-        }
-
-        //        // TODO: Replace this whole procedure through appropriate event handlers!!!!! 28.04.19
-        //        public void UpdateButtonState(NavigableDockContent navigableDockContent)
-        //        {
-        //            this.SuspendLayout();
-
-        //            try
-        //            {
-        //                // TODO: The following exception is thrown for test purposes only!
-        //                if (this.ActiveDockContent != navigableDockContent)
-        //                    throw new ArgumentException("ExplorerBrowserToolStrip.UpdateButtonState: navigableDockContent does not match ActiveDockContent");
-
-        //                if (null != navigableDockContent)
-        //                {
-        //                    this.GoBack.Enabled = navigableDockContent.CanGoBack;
-        //                    this.GoForward.Enabled = navigableDockContent.CanGoForward;
-        //                    this.HistoryItems.Enabled = navigableDockContent.CanHaveHistoryItems;
-        //// CR13                   this.HistoryItems.DropDownItems.Rebuild(navigableDockContent.HistoryItems, navigableDockContent.OnHistoryItemClick);      // TODO: Only do this when the item collection has changed!
-        //                    this.GoToParentLocation.Enabled = navigableDockContent.HasParentLocation;
-        //                    this.CurrentLocation.Enabled = true;
-        //                    this.CurrentLocation.Text = navigableDockContent.CurrentLocation;
-        //                    this.RefreshView.Enabled = navigableDockContent.CanRefresh;
-        //                    this.QuickAccessItems.Enabled = navigableDockContent.CanHaveQuickAccesItems;
-        //                    this.SearchPattern.Enabled = navigableDockContent.CanSearchItems;
-        //                    this.FilterPattern.Enabled = navigableDockContent.CanFilterItems;
-        //                }
-        //                else
-        //                {
-        //                    this.GoBack.Enabled = false;
-        //                    this.GoForward.Enabled = false;
-        //                    this.HistoryItems.Enabled = false;
-        //                    this.HistoryItems.DropDownItems.Clear();
-        //                    this.GoToParentLocation.Enabled = false;
-        //                    this.CurrentLocation.Enabled = false;
-        //                    this.CurrentLocation.Text = "";
-        //                    this.RefreshView.Enabled = false;
-        //                    this.QuickAccessItems.Enabled = false;
-        //                    this.SearchPattern.Enabled = false;
-        //                    this.FilterPattern.Enabled = false;
-        //                }
-        //            }
-        //            finally
-        //            {
-        //                this.ResumeLayout();
-        //            }
-        //        }
-
-
-
-
 
         #region Component Designer generated code ==============================================================================
 
@@ -238,14 +221,14 @@ namespace electrifier.Core.Components.Controls
             // 
             this.btnGoBack.Name = "btnGoBack";
             this.btnGoBack.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoBack.ImageIndex = (int)ImageListIndex.GoBack;
+            this.btnGoBack.ImageIndex = (int)ImageListIndex.NavigateBackward;
             this.btnGoBack.ToolTipText = "Back to [recent folder here...]  (Alt + Left Arrow)";
             // 
             // btnGoForward
             // 
             this.btnGoForward.Name = "btnGoForward";
             this.btnGoForward.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnGoForward.ImageIndex = (int)ImageListIndex.GoForward;
+            this.btnGoForward.ImageIndex = (int)ImageListIndex.NavigateForward;
             this.btnGoForward.ToolTipText = "Forward to [insert folder here] (Alt + Right Arrow)";
             // 
             // ddnHistoryItems

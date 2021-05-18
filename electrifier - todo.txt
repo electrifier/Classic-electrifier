@@ -10,3 +10,4 @@ x 2021-04-18 2021-04-10 Check why ShellFolderDockContent.SelectAll() fails
 (A) 2021-04-18 IShellView->SelectItem (PIDL, State)
 2021-05-12 When renaming an item in ExplorerBrowser, and the user enters a extension, then remove the old extension automatically
 2021-05-15 Don't use SessionSelector as standalone Dialog, use it as back Panel in emtpy electrifier window, ie.e. dpDockPanel -Child / Overlay
+2021-05-18 BUG: The width of one single ExplorerBrowser's folder pane is used for all ExplorerBrowsers when restarting the app; Guess we have to provide a different name for the property bag
