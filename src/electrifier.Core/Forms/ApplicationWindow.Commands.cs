@@ -123,50 +123,50 @@ namespace electrifier.Core.Forms
 
 
 
-        /// <summary>
-        /// TODO: [Moved from ApplicationWindow.Ribbon.cs#Ribbon_ProcessDockContentChange]
-        /// https://docs.microsoft.com/de-de/dotnet/api/system.windows.dataobject?view=netframework-4.7.2
-        /// </summary>
-
-        // => https://github.com/dahall/Vanara/blob/master/PInvoke/Shell32/Clipboard.cs ShellClipboardFormat
-        //public const string CFStr_Filename = "FileNameW";
-        //public const string CFStr_PreferredDropEffect = "Preferred DropEffect";
-        //public const string CFStr_ShellIdList = "Shell IDList Array";
-        //public const string CFStr_ShellIdListOffset = "Shell Object Offsets";
-
-        internal void CmdSelectConditional_ExecuteEvent(object sender, ExecuteEventArgs e)
-        {
-            this.BeginInvoke(new MethodInvoker(delegate ()
-               {
-                   DockContentFactory.ToggleSelectConditionalBox(this.dpnDockPanel);
-               }));
-        }
-
-        internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)
-        {
-            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
-            //if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
-            //{
-            //    elShellBrowserDockContent.InvertSelection();
-            //}
-        }
-
-        internal void CmdBtnDesktopIconLayoutSave_ExecuteEvent(object sender, ExecuteEventArgs e)
-        {
-            // TODO: Error-Handling! cause of call from Ribbon, then remove invoke
-            this.BeginInvoke(new MethodInvoker(delegate ()
-            {
-                ElDesktopIconManager.SaveLayout();
-            }));
-        }
-
-        internal void CmdBtnDesktopIconLayoutRestore_ExecuteEvent(object sender, ExecuteEventArgs e)
-        {
-            // TODO: Error-Handling! cause of call from Ribbon, then remove invoke
-            this.BeginInvoke(new MethodInvoker(delegate ()
-            {
-                ElDesktopIconManager.RestoreLayout();
-            }));
-        }
+//        /// <summary>
+//        /// TODO: [Moved from ApplicationWindow.Ribbon.cs#Ribbon_ProcessDockContentChange]
+//        /// https://docs.microsoft.com/de-de/dotnet/api/system.windows.dataobject?view=netframework-4.7.2
+//        /// </summary>
+//
+//        // => https://github.com/dahall/Vanara/blob/master/PInvoke/Shell32/Clipboard.cs ShellClipboardFormat
+//        //public const string CFStr_Filename = "FileNameW";
+//        //public const string CFStr_PreferredDropEffect = "Preferred DropEffect";
+//        //public const string CFStr_ShellIdList = "Shell IDList Array";
+//        //public const string CFStr_ShellIdListOffset = "Shell Object Offsets";
+//
+//        internal void CmdSelectConditional_ExecuteEvent(object sender, ExecuteEventArgs e)
+//        {
+//            this.BeginInvoke(new MethodInvoker(delegate ()
+//               {
+//                   DockContentFactory.ToggleSelectConditionalBox(this.dpnDockPanel);
+//               }));
+//        }
+//
+//        internal void CmdInvertSelection_ExecuteEvent(object sender, ExecuteEventArgs e)
+//        {
+//            // TODO: Idea: 03/01/20: Put SelectAll/None/InvertSelection into IClipboardConsumer to avoid accessing ActiveContent
+//            //if (this.dpnDockPanel.ActiveContent is ElShellBrowserDockContent elShellBrowserDockContent)
+//            //{
+//            //    elShellBrowserDockContent.InvertSelection();
+//            //}
+//        }
+//
+//        internal void CmdBtnDesktopIconLayoutSave_ExecuteEvent(object sender, ExecuteEventArgs e)
+//        {
+//            // TODO: Error-Handling! cause of call from Ribbon, then remove invoke
+//            this.BeginInvoke(new MethodInvoker(delegate ()
+//            {
+//                ElDesktopIconManager.SaveLayout();
+//            }));
+//        }
+//
+//        internal void CmdBtnDesktopIconLayoutRestore_ExecuteEvent(object sender, ExecuteEventArgs e)
+//        {
+//            // TODO: Error-Handling! cause of call from Ribbon, then remove invoke
+//            this.BeginInvoke(new MethodInvoker(delegate ()
+//            {
+//                ElDesktopIconManager.RestoreLayout();
+//            }));
+//        }
     }
 }

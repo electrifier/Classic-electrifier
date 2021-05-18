@@ -53,29 +53,23 @@ namespace electrifier.Core.Components.DockContents
 
         #region Properties ====================================================================================================
 
-        //public override string CurrentLocation { get => "TEST"; set => this.shellNamespaceTree.Text = value; }
-        protected string currentLocation;
-        public string CurrentLocation      // TODO: CurrentLocation als Object, dann für jede Art von DockContent eine explizite Konvertierung vornehmen!
-        {
-            get => this.currentLocation;
-            set => this.currentLocation = value;
-        }
+        public ShellItem CurrentLocation => this.ExplorerBrowser.History.CurrentLocation;
 
         protected Shell32.PIDL CurrentFolderPidl;
 
         public ClipboardSelection Selection { get; }
 
-        protected Color backColor;
-        public Color BackColor
-        {
-            get => this.backColor;
-            set
-            {
-                this.backColor = value;
-                //this.splitter.BackColor = value;
-                // TODO: Set ShellBrowser.BackColor; as soon as Vanara got an Update and has IListView-Interface
-            }
-        }
+        //protected Color backColor;
+        //public Color BackColor
+        //{
+        //    get => this.backColor;
+        //    set
+        //    {
+        //        this.backColor = value;
+        //        //this.splitter.BackColor = value;
+        //        // TODO: Set ShellBrowser.BackColor; as soon as Vanara got an Update and has IListView-Interface
+        //    }
+        //}
 
         public ExplorerBrowserToolStrip ToolStrip { get; }
 
@@ -87,32 +81,50 @@ namespace electrifier.Core.Components.DockContents
         {
             this.InitializeComponent();
             this.ToolStrip = new ExplorerBrowserToolStrip(this);
-
             this.Selection = new ClipboardSelection(this);
 
-            this.BackColor = Color.FromArgb(250, 250, 250);
+
+            //this.ExplorerBrowser.AlwaysNavigate = true;
+            this.ToolStrip.NavigateBackwardClick += this.ToolStrip_NavigateBackward;
+            this.ToolStrip.NavigateForwardClick += this.ToolStrip_NavigateForward;
+            this.ToolStrip.GoToParentLocationClick += this.ToolStrip_GoToParentLocationClick;
+
+            //this.BackColor = Color.FromArgb(250, 250, 250);
 
             //this.splitter.Cursor = Cursors.PanWest;                                               // TODO: For "Hide TreeView-Button"
             //this.shellNamespaceTree.BackColor = System.Drawing.Color.FromArgb(0xFA, 0xFA, 0xFA);  // TODO: This doesn't work, however, set to window background!
 
+
             this.EvaluatePersistString(persistString);      // TODO: Error-Handling!
         }
-
-        private void ShellFolderDockContent_Load(object sender, EventArgs e)
+        private void ExplorerBrowserDocument_Load(object sender, EventArgs e)
         {
             this.Icon = Properties.Resources.ShellBrowserDockContent;
 
 
             this.ExplorerBrowser.Navigated += this.ExplorerBrowser_Navigated;
-            //            this.ExplorerBrowser.ItemsChanged += ExplorerBrowser_ItemsChanged;
 
             this.Selection.PropertyChanged += this.Selection_PropertyChanged;
+
 
             if (this.CurrentFolderPidl != null)
                 this.ExplorerBrowser.Navigate(new ShellItem(this.CurrentFolderPidl));
             else
                 this.ExplorerBrowser.Navigate(ShellFolder.Desktop);
 
+        }
+
+        private void ToolStrip_NavigateBackward(object sender, EventArgs e) => this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Backward);
+        private void ToolStrip_NavigateForward(object sender, EventArgs e) => this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Forward);
+
+        private void ToolStrip_GoToParentLocationClick(object sender, EventArgs e)
+        {
+            ShellItem currentLocation = this.ExplorerBrowser.History.CurrentLocation;
+
+            if (currentLocation.Equals(ShellFolder.Desktop))
+                return;
+
+            this.ExplorerBrowser.Navigate(currentLocation.Parent);
         }
 
         #region DockContent Persistence Overrides =============================================================================
@@ -236,51 +248,24 @@ namespace electrifier.Core.Components.DockContents
             if (null != newLocation)
             {
                 Shell32.PIDL newCurrentFolderPIDL = newLocation.PIDL;
-                this.CurrentLocation = this.Text =
-                    newLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
+                //this.CurrentLocation = this.Text =
+                //    newLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
 
                 this.CurrentFolderPidl = newCurrentFolderPIDL;
             }
 
-            //this.OnNavigationOptionsChanged(EventArgs.Empty);
+            this.Text = this.ExplorerBrowser.History.CurrentLocation.GetDisplayName(ShellItemDisplayString.ParentRelative);
+            this.ToolStrip.CanNavigateForward = this.ExplorerBrowser.History.CanNavigateForward;
+            this.ToolStrip.CanNavigateBackward = this.ExplorerBrowser.History.CanNavigateBackward;
+            this.ToolStrip.CanGoToParentLocation = !this.ExplorerBrowser.History.CurrentLocation.Equals(ShellFolder.Desktop);
+            this.ToolStrip.CurrentFolder = this.ExplorerBrowser.History.CurrentLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
         }
-
-
-//        public override bool CanGoBack => this.ExplorerBrowser.History.CanNavigateBackward;
-
-        //public override void GoBack()
-        //{
-        //    this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Backward);
-        //    this.OnNavigationOptionsChanged(EventArgs.Empty);
-        //}
-
-        //public override bool CanGoForward => this.ExplorerBrowser.History.CanNavigateForward;
-
-        //public override void GoForward()
-        //{
-        //    this.ExplorerBrowser.NavigateFromHistory(NavigationLogDirection.Forward);
-        //    this.OnNavigationOptionsChanged(EventArgs.Empty);
-        //}
-
-
-
-        //public override ElNavigableTargetItemCollection<ElNavigableTargetNavigationLogIndex> HistoryItems { get; }
-
-        //public override event EventHandler NavigationOptionsChanged;
-
-        //public virtual void OnNavigationOptionsChanged(EventArgs args) => this.NavigationOptionsChanged?.Invoke(this, args);
 
         public void SelectAll(object sender, ExecuteEventArgs args) => this.ExplorerBrowser.SelectAll();
 
         public void UnselectAll(object sender, ExecuteEventArgs args) => this.ExplorerBrowser.UnselectAll();
 
-        //public override bool HasShellFolderViewMode => true;
 
-        //public override Shell32.FOLDERVIEWMODE ShellFolderViewMode
-        //{
-        //    get => (Shell32.FOLDERVIEWMODE)this.ExplorerBrowser.ViewMode;
-        //    set => this.ExplorerBrowser.ViewMode = (ExplorerBrowserViewMode)value;
-        //}
 
         public bool SetSelectionState(ShellItem shellItem, Shell32.SVSIF selectionState = Shell32.SVSIF.SVSI_SELECT)
         { System.Windows.Forms.MessageBox.Show("Not implemented yet."); return false; }
@@ -542,9 +527,9 @@ namespace electrifier.Core.Components.DockContents
             {
                 this.TabHome = new RibbonTabBinding(ribbonItems.TabHome),
                 this.GrpHomeClipboard = new RibbonGroupBinding(ribbonItems.GrpHomeClipboard),
-                this.BtnClipboardCut = new RibbonButtonBinding(ribbonItems.BtnClipboardCut, this.testribbonexecuter),
+                this.BtnClipboardCut = new RibbonButtonBinding(ribbonItems.BtnClipboardCut, this.CutToClipboard),
                 this.SplClipboardCopy = new RibbonSplitButtonBinding(ribbonItems.SplClipboardCopy),
-                this.BtnClipboardCopy = new RibbonButtonBinding(ribbonItems.BtnClipboardCopy, this.testribbonexecuter),
+                this.BtnClipboardCopy = new RibbonButtonBinding(ribbonItems.BtnClipboardCopy, this.CopyToClipboard),
                 this.BtnClipboardCopyFullFilePaths = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyFullFilePaths, this.testribbonexecuter),
                 this.BtnClipboardCopyFileNames = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyFileNames, this.testribbonexecuter),
                 this.BtnClipboardCopyDirectoryPaths = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyDirectoryPaths, this.testribbonexecuter),
@@ -632,7 +617,7 @@ namespace electrifier.Core.Components.DockContents
             this.Controls.Add(this.ExplorerBrowser);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.Document)));
             this.Name = "ExplorerBrowserDocument";
-            this.Load += new System.EventHandler(this.ShellFolderDockContent_Load);
+            this.Load += new System.EventHandler(this.ExplorerBrowserDocument_Load);
             this.ResumeLayout(false);
 
         }
