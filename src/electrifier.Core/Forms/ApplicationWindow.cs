@@ -27,7 +27,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Vanara.PInvoke;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms
@@ -64,7 +63,6 @@ namespace electrifier.Core.Forms
 
         #region Published Events ==============================================================================================
 
-        public event EventHandler ClipboardUpdate;
 
         #endregion ============================================================================================================
 
@@ -88,46 +86,6 @@ namespace electrifier.Core.Forms
             this.dpnDockPanel.ShowDocumentIcon = true;
             this.dpnDockPanel.ActiveContentChanged += this.DpnDockPanel_ActiveContentChanged;
             this.dpnDockPanel.ActiveDocumentChanged += this.DpnDockPanel_ActiveDocumentChanged;
-
-            // Add this window to clipboard format listener list, i.e. register for clipboard changes
-            AppContext.TraceDebug("AddClipboardFormatListener");
-            User32.AddClipboardFormatListener(this.Handle);
-
-            this.FormClosed += this.Electrifier_FormClosed;
-        }
-
-        private void Electrifier_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            // Remove this window from clipboard format listener list, i.e. cancel registration of clipboard changes
-            AppContext.TraceDebug("RemoveClipboardFormatListener");
-            User32.RemoveClipboardFormatListener(this.Handle);
-        }
-
-        /// <summary>
-        /// Overridden WndProc processes Windows Messages not handled by .net framework.
-        /// 
-        /// The following messages are handled:
-        ///   WM_CLIPBOARDUPDATE
-        /// </summary>
-        /// <param name="m">The message that has to be processed.</param>
-        [System.Security.Permissions.PermissionSet(System.Security.Permissions.SecurityAction.Demand, Name = "FullTrust")]
-        protected override void WndProc(ref Message m)
-        {
-            if ((int)User32.ClipboardNotificationMessage.WM_CLIPBOARDUPDATE == m.Msg)
-            {
-                this.OnClipboardUpdate();
-            }
-
-            base.WndProc(ref m);
-        }
-
-        /// <summary>
-        /// Clipboard content has been updated, which may have happened inside, but also outside electrifier.
-        /// </summary>
-        protected virtual void OnClipboardUpdate()
-        {
-            // TODO: Build event args: Type of Clipboard content
-            this.ClipboardUpdate?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
@@ -175,15 +133,6 @@ namespace electrifier.Core.Forms
                         this.tspTopToolStripPanel.PerformLayout();
                     }
                 }
-
-                //if (typeof(ExplorerBrowserDocument).Equals(activatedContentType))
-                //{
-                //    this.ActivateDockContent(activeContent as ExplorerBrowserDocument);
-                //}
-                //else
-                //{
-                //    AppContext.TraceWarning("DpnDockPanel_ActiveContentChanged => Unknwon ActiveContent");
-                //}
             }
         }
 

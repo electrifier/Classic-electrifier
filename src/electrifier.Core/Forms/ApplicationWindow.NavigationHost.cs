@@ -18,13 +18,10 @@
 **
 */
 
+using electrifier.Core.Components;
 using System;
 using System.Collections;
 using System.Diagnostics;
-
-using electrifier.Core.Components;
-using electrifier.Core.Components.Controls;
-using electrifier.Core.Components.DockContents;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Forms

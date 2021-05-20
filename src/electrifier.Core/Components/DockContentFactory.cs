@@ -89,9 +89,7 @@ namespace electrifier.Core.Components
         public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
             // ElNavigableDockContent constructor will check for navigationHost null values.
-            ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(persistString);
-
-            shellBrowser.InitializeRibbonBinding(applicationWindow.RibbonItems);
+            ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
 
             applicationWindow.AddDockContent(shellBrowser, DockState.Document);         // TODO: The underlying DockPanel itself should decide which DockState it'd like to have!
 

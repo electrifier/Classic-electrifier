@@ -27,6 +27,10 @@ using Vanara.Windows.Shell;
 
 namespace electrifier.Core.WindowsShell
 {
+    /// <summary>
+    /// TODO: Remove <see cref="ShellFileOperations"/>, cause the multi-threaded.
+    /// Use <see cref="Vanara.Windows.Forms.ShellProgressDialog"/> instead.
+    /// </summary>
     internal class ElShellFileOperations : IDisposable
     {
         public ShellFileOperations ShellFileOperations { get; }
