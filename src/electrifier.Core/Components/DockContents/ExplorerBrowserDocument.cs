@@ -19,6 +19,7 @@
 */
 
 using electrifier.Core.Components.Controls;
+using electrifier.Core.Forms;
 using electrifier.Core.WindowsShell;
 using RibbonLib.Controls;
 using RibbonLib.Controls.Events;
@@ -27,8 +28,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Windows.Forms;
@@ -39,10 +40,9 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace electrifier.Core.Components.DockContents
 {
-    public class ExplorerBrowserDocument :
-        DockContent,
-        IRibbonConsumer,
-        IClipboardConsumer
+    public class ExplorerBrowserDocument
+        : DockContent
+        , IRibbonConsumer
     {
         #region Fields ========================================================================================================
 
@@ -76,18 +76,25 @@ namespace electrifier.Core.Components.DockContents
         #endregion ============================================================================================================
 
 
-        public ExplorerBrowserDocument(string persistString = null)
+        public ExplorerBrowserDocument(ApplicationWindow applicationWindow, string persistString = null)
           : base()
         {
             this.InitializeComponent();
             this.ToolStrip = new ExplorerBrowserToolStrip(this);
             this.Selection = new ClipboardSelection(this);
-
+            this.InitializeRibbonBinding(applicationWindow.RibbonItems);
 
             //this.ExplorerBrowser.AlwaysNavigate = true;
             this.ToolStrip.NavigateBackwardClick += this.ToolStrip_NavigateBackward;
             this.ToolStrip.NavigateForwardClick += this.ToolStrip_NavigateForward;
             this.ToolStrip.GoToParentLocationClick += this.ToolStrip_GoToParentLocationClick;
+
+            this.NativeClipboard_ClipboardUpdate(this, EventArgs.Empty);
+            NativeClipboard.ClipboardUpdate += this.NativeClipboard_ClipboardUpdate;
+
+            this.FormClosed += this.ExplorerBrowserDocument_FormClosed;
+
+
 
             //this.BackColor = Color.FromArgb(250, 250, 250);
 
@@ -97,9 +104,28 @@ namespace electrifier.Core.Components.DockContents
 
             this.EvaluatePersistString(persistString);      // TODO: Error-Handling!
         }
+
+        private void ExplorerBrowserDocument_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            NativeClipboard.ClipboardUpdate -= this.NativeClipboard_ClipboardUpdate;
+        }
+
+        private void NativeClipboard_ClipboardUpdate(object sender, EventArgs e)
+        {
+            AppContext.TraceScope();
+
+            IEnumerable<string> currentDataFormats()
+            {
+                foreach (var fmt in NativeClipboard.CurrentlySupportedFormats)
+                    yield return fmt.Name;
+            }
+
+            this.BtnClipboardPaste.Enabled = currentDataFormats().Contains(DataFormats.FileDrop);       // TODO: Remove creation of temporary list, select formats explicitly
+        }
+
         private void ExplorerBrowserDocument_Load(object sender, EventArgs e)
         {
-            this.Icon = Properties.Resources.ShellBrowserDockContent;
+            this.Icon = Properties.Resources.ShellBrowserDockContent;       // TODO: static!
 
 
             this.ExplorerBrowser.Navigated += this.ExplorerBrowser_Navigated;
@@ -273,23 +299,6 @@ namespace electrifier.Core.Components.DockContents
 
         #region IClipboardConsumer ============================================================================================
 
-        #region Published Events ==============================================================================================
-
-        /// <summary>
-        /// Fires when the clipboard abilities have changed.
-        /// </summary>
-        public event EventHandler<ClipboardAbilitiesChangedEventArgs> ClipboardAbilitiesChanged;
-
-        /// <summary>
-        /// Raises the <see cref="IClipboardConsumer.ClipboardAbilitiesChanged"/> event.
-        /// </summary>
-        //protected internal virtual void OnClipboardAbilitiesChanged(ClipboardAbilities clipboardAbilities)
-        //{
-        //    this.ClipboardAbilitiesChanged?.Invoke(this, new ClipboardAbilitiesChangedEventArgs(clipboardAbilities));
-        //}
-
-        #endregion ============================================================================================================
-
         private ClipboardAbilities currentClipboardAbilities = ClipboardAbilities.None;
 
         public ClipboardAbilities GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
@@ -309,7 +318,7 @@ namespace electrifier.Core.Components.DockContents
         // TODO: On virtual folders like 'This PC', we can't paste files... => Ask Shell if target folder can accept files
         public bool CanPasteFromClipboard() => Clipboard.ContainsFileDropList();
 
-        public void PasteFromClipboard(object sender, ExecuteEventArgs args)
+        public void ClipboardPaste(object sender, ExecuteEventArgs args)
         {
             AppContext.TraceScope();
 
@@ -534,7 +543,7 @@ namespace electrifier.Core.Components.DockContents
                 this.BtnClipboardCopyFileNames = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyFileNames, this.testribbonexecuter),
                 this.BtnClipboardCopyDirectoryPaths = new RibbonButtonBinding(ribbonItems.BtnClipboardCopyDirectoryPaths, this.testribbonexecuter),
                 this.SplClipboardPaste = new RibbonSplitButtonBinding(ribbonItems.SplClipboardPaste),
-                this.BtnClipboardPaste = new RibbonButtonBinding(ribbonItems.BtnClipboardPaste, this.testribbonexecuter),
+                this.BtnClipboardPaste = new RibbonButtonBinding(ribbonItems.BtnClipboardPaste, this.ClipboardPaste),
                 this.BtnClipboardPasteAsNewFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewFile, this.testribbonexecuter),
                 this.BtnClipboardPasteAsNewText = new RibbonMenuGroupBinding(ribbonItems.BtnClipboardPasteAsNewText),
                 this.BtnClipboardPasteAsNewTextFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewTextFile, this.testribbonexecuter),
