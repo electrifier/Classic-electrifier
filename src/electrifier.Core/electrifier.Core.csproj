@@ -143,7 +143,6 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Components\FormStatePersistor.cs" />
-    <Compile Include="Components\INavigationHost.cs" />
     <Compile Include="Components\IRibbonConsumer.cs" />
     <Compile Include="Forms\AboutElectrifierDialog.cs">
       <SubType>Form</SubType>
@@ -160,9 +159,6 @@
     </Compile>
     <Compile Include="Forms\ApplicationWindow.Designer.cs">
       <DependentUpon>ApplicationWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\ApplicationWindow.NavigationHost.cs">
-      <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\RibbonItems.cs" />
     <Compile Include="Forms\RibbonItems.Designer.cs" />

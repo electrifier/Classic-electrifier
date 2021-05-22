@@ -53,6 +53,8 @@ namespace electrifier.Core.Components.DockContents
 
         #region Properties ====================================================================================================
 
+        public ApplicationWindow ApplicationWindow { get; }
+
         public ShellItem CurrentLocation => this.ExplorerBrowser.History.CurrentLocation;
 
         protected Shell32.PIDL CurrentFolderPidl;
@@ -79,8 +81,10 @@ namespace electrifier.Core.Components.DockContents
         public ExplorerBrowserDocument(ApplicationWindow applicationWindow, string persistString = null)
           : base()
         {
+            this.ApplicationWindow = applicationWindow ?? throw new ArgumentNullException(nameof(applicationWindow));
+
             this.InitializeComponent();
-            this.InitializeRibbonBinding(applicationWindow.RibbonItems);
+            this.InitializeRibbonBinding(this.ApplicationWindow.RibbonItems);
             this.Selection = new ClipboardSelection(this);
             this.ToolStrip = new ExplorerBrowserToolStrip(this);
 
@@ -105,6 +109,8 @@ namespace electrifier.Core.Components.DockContents
 
             this.EvaluatePersistString(persistString);      // TODO: Error-Handling!
         }
+
+        public new void Show() => Show(this.ApplicationWindow.DockPanel, DockState.Document);
 
         private void ExplorerBrowserDocument_FormClosed(object sender, FormClosedEventArgs e)
         {

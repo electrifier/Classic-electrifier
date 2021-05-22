@@ -86,12 +86,18 @@ namespace electrifier.Core.Components
             return dockContent;
         }
 
+        // TODO: Use recursive pattern in C#8
+        [Obsolete("Not implemented yet", true)]
+        public static T Create<T>(ApplicationWindow applicationWindow, bool showAfterCreation = true) where T : DockPanel
+        {
+            throw new NotImplementedException(nameof(Create));
+        }
+
         public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
-            // ElNavigableDockContent constructor will check for navigationHost null values.
             ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
 
-            applicationWindow.AddDockContent(shellBrowser, DockState.Document);         // TODO: The underlying DockPanel itself should decide which DockState it'd like to have!
+            shellBrowser.Show();
 
             return shellBrowser;
         }

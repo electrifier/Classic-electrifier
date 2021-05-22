@@ -48,6 +48,8 @@ namespace electrifier.Core.Forms
 
         #region Properties ====================================================================================================
 
+        public DockPanel DockPanel { get => this.dpnDockPanel; }
+
         public SessionContext SessionContext { get; }
         public SessionEntity Session => this.SessionContext.Session;
 
