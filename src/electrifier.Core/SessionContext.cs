@@ -570,15 +570,6 @@ namespace electrifier.Core
         /// 
         /// Called by AppContext.AppContext_ThreadExit()
         /// </summary>
-        public void SaveConfiguration()
-        {
-            //                var fullFileName = Path.Combine(this.BaseDirectory, this.ConfigurationFileName);
-            //
-            //                // Create directory for configuration file, just in case it doesn't already exist
-            //                Directory.CreateDirectory(this.BaseDirectory);
-            //
-            //                this.ElectrifierForm.SaveConfiguration(fullFileName);
-        }
     }
 
     #region EventArgs =========================================================================================================
@@ -628,12 +619,14 @@ namespace electrifier.Core
             {
                 if (this.value != value)
                 {
-                    // TODO: this.DataContext.UpdateEntity(this, "Value = '{ value }'" WHERE ..."); INCLUDING ERROR-Handling
                     // TODO: We have to use Transactions in general for Updates
-                    if (1 == this.DataContext.ExecuteNonQuery($"UPDATE SessionProperty SET Value = '{ value }' WHERE Id = '{ this.Id }' AND SessionId = '{ this.SessionID}'"))
-                        this.value = value;
-                    else
-                        throw new Exception("Updating SessionProperty failed!");
+
+                    this.value = (1 == this.DataContext.UpdateEntity(typeof(SessionProperty), (sqlCmd) =>
+                    {
+                        sqlCmd.CommandText = $"UPDATE SessionProperty SET Value = $Value WHERE Id = $Id";
+                        sqlCmd.Parameters.AddWithValue("$Id", this.Id);
+                        sqlCmd.Parameters.AddWithValue("$Value", value);
+                    })) ? value : throw new Exception("Updating SessionProperty failed!");
                 }
             }
         }
@@ -664,7 +657,7 @@ namespace electrifier.Core
             this.Id = (long)sqliteData[0];
             this.SessionID = (long)sqliteData[1];
             this.Key = (string)sqliteData[2];
-            this.Value = (string)sqliteData[3];
+            this.value = (string)sqliteData[3];
         }
 
         /// <summary>
@@ -740,14 +733,19 @@ namespace electrifier.Core
 
             if (index >= 0)
             {
-                return this.entities[index].Value;
-            }
-            else
-            {
-                this.Add(new SessionProperty(this.SessionContext, propertyKey, defaultValue));
+                if (string.IsNullOrWhiteSpace(this.entities[index].Value))
+                {
+                    this.entities[index].Value = defaultValue;
 
-                return defaultValue;
+                    return defaultValue;
+                }
+                else
+                    return this.entities[index].Value;
             }
+
+            this.Add(new SessionProperty(this.SessionContext, propertyKey, defaultValue));
+
+            return defaultValue;
         }
 
         public void SafeSetProperty(string propertyKey, string value)
