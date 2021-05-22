@@ -365,6 +365,7 @@ namespace EntityLighter
 
         // TODO: 10/05/20 Perhaps use an event for this?
         public delegate void SetEntityCreationParamsCallback(SqliteCommand sqliteCommand);
+        public delegate void SetEntityUpdateParamsCallback(SqliteCommand sqliteCommand);
 
 
 
@@ -590,6 +591,25 @@ namespace EntityLighter
                 }
             }
         }
+
+
+        public int UpdateEntity(Type entityType, SetEntityUpdateParamsCallback callback)
+        {
+            if (null == callback)
+                throw new ArgumentNullException(nameof(callback));
+
+            using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
+            {
+                // TODO: 24/05/20: Create the WHOLE statement dynamically!; Use Tables attributes for dynamic binding
+                callback(sqlCmd);
+
+                if (1 != sqlCmd.ExecuteNonQuery())
+                    throw new Exception($"Failed to update record in database for { entityType }!"); // TODO: Overhault exception handlers!
+            }
+
+            return 1;
+        }
+
 
         public static DateTime ConvertToDateTime(string datetimeString)
         {

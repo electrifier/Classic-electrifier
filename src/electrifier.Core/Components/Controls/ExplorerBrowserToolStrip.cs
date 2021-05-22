@@ -43,7 +43,7 @@ namespace electrifier.Core.Components.Controls
         private ToolStripDropDownButton ddnHistoryItems;
         private ToolStripButton btnGoToParentLocation;
         private ToolStripSpringComboBox cbbCurrentFolder;
-        private ToolStripButton btnRefresh;
+        private ToolStripButton btnRefreshView;
         private ToolStripDropDownButton ddnQuickAccessItems;
         private ToolStripSeparator ssoSeparator;
         private ToolStripComboBox cbbSearchPattern;
@@ -90,6 +90,12 @@ namespace electrifier.Core.Components.Controls
             set => this.cbbCurrentFolder.Text = value;
         }
 
+        public bool CanRefreshView
+        {
+            get => this.btnRefreshView.Enabled;
+            set => this.btnRefreshView.Enabled = value;
+        }
+
         #endregion =============================================================================================================
 
         #region Published Events ===============================================================================================
@@ -125,6 +131,12 @@ namespace electrifier.Core.Components.Controls
         {
             add => this.btnGoToParentLocation.Click += value;
             remove => this.btnGoToParentLocation.Click -= value;
+        }
+
+        public event EventHandler RefreshViewClick
+        {
+            add => this.btnRefreshView.Click += value;
+            remove => this.btnRefreshView.Click -= value;
         }
 
         #endregion =============================================================================================================
@@ -192,7 +204,7 @@ namespace electrifier.Core.Components.Controls
             this.ddnHistoryItems = new System.Windows.Forms.ToolStripDropDownButton();
             this.btnGoToParentLocation = new System.Windows.Forms.ToolStripButton();
             this.cbbCurrentFolder = new electrifier.Core.Components.Controls.ToolStripSpringComboBox();
-            this.btnRefresh = new System.Windows.Forms.ToolStripButton();
+            this.btnRefreshView = new System.Windows.Forms.ToolStripButton();
             this.ddnQuickAccessItems = new System.Windows.Forms.ToolStripDropDownButton();
             this.ssoSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.cbbSearchPattern = new System.Windows.Forms.ToolStripComboBox();
@@ -208,7 +220,7 @@ namespace electrifier.Core.Components.Controls
                 this.ddnHistoryItems,
                 this.btnGoToParentLocation,
                 this.cbbCurrentFolder,
-                this.btnRefresh,
+                this.btnRefreshView,
                 this.ddnQuickAccessItems,
                 this.ssoSeparator,
                 this.cbbSearchPattern,
@@ -251,12 +263,12 @@ namespace electrifier.Core.Components.Controls
             // 
             this.cbbCurrentFolder.Name = "cbbCurrentFolder";
             // 
-            // btnRefresh
+            // btnRefreshView
             // 
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRefresh.ImageIndex = (int)ImageListIndex.RefreshView;
-            this.btnRefresh.ToolTipText = "Refresh current folder view";
+            this.btnRefreshView.Name = "btnRefreshView";
+            this.btnRefreshView.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnRefreshView.ImageIndex = (int)ImageListIndex.RefreshView;
+            this.btnRefreshView.ToolTipText = "Refresh current folder view";
             // 
             // ddnQuickAccessItems
             // 

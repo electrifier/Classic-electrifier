@@ -164,8 +164,7 @@ namespace electrifier.Core.Forms
                 newRibbonConsumer.ActivateRibbonState();
             }
 
-            var ctnt = this.dpnDockPanel.ActiveContent;
-            AppContext.TraceScope($"Achtung Baby! *ActiveDocumentChanged*: { newDocument?.GetType() }, this is *not* Active Content Changed: { ctnt?.GetType() }");
+            AppContext.TraceScope($"Achtung Baby! *ActiveDocumentChanged*: { newDocument?.GetType() }, this is *not* Active Content Changed: { this.dpnDockPanel.ActiveContent?.GetType() }");
         }
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)

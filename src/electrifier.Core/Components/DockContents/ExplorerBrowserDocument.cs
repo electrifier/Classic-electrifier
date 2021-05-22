@@ -58,6 +58,7 @@ namespace electrifier.Core.Components.DockContents
         protected Shell32.PIDL CurrentFolderPidl;
 
         public ClipboardSelection Selection { get; }
+        public ExplorerBrowserToolStrip ToolStrip { get; }
 
         //protected Color backColor;
         //public Color BackColor
@@ -71,7 +72,6 @@ namespace electrifier.Core.Components.DockContents
         //    }
         //}
 
-        public ExplorerBrowserToolStrip ToolStrip { get; }
 
         #endregion ============================================================================================================
 
@@ -80,14 +80,15 @@ namespace electrifier.Core.Components.DockContents
           : base()
         {
             this.InitializeComponent();
-            this.ToolStrip = new ExplorerBrowserToolStrip(this);
-            this.Selection = new ClipboardSelection(this);
             this.InitializeRibbonBinding(applicationWindow.RibbonItems);
+            this.Selection = new ClipboardSelection(this);
+            this.ToolStrip = new ExplorerBrowserToolStrip(this);
 
             //this.ExplorerBrowser.AlwaysNavigate = true;
             this.ToolStrip.NavigateBackwardClick += this.ToolStrip_NavigateBackward;
             this.ToolStrip.NavigateForwardClick += this.ToolStrip_NavigateForward;
             this.ToolStrip.GoToParentLocationClick += this.ToolStrip_GoToParentLocationClick;
+            this.ToolStrip.CanRefreshView = false;
 
             this.NativeClipboard_ClipboardUpdate(this, EventArgs.Empty);
             NativeClipboard.ClipboardUpdate += this.NativeClipboard_ClipboardUpdate;
@@ -159,6 +160,9 @@ namespace electrifier.Core.Components.DockContents
         /// Override of WeifenLuo.WinFormsUI.Docking.DockContent.GetPersistString()
         /// </summary>
         /// <returns>The string describing persistence information. E.g. persistString = "ElShellBrowserDockContent URI=file:///C:/Users/tajbender/Desktop";</returns>
+        /// 
+
+        /// TODO: Remove this stuff, move to database instead
         protected override string GetPersistString()
         {
             var sb = new StringBuilder();
@@ -255,11 +259,11 @@ namespace electrifier.Core.Components.DockContents
                 case nameof(Selection.CurrentClipboardAbilities):
                     this.currentClipboardAbilities = this.Selection.CurrentClipboardAbilities;
 
-                    this.BtnClipboardCut.Enabled = this.currentClipboardAbilities.HasFlag(ClipboardAbilities.CanCut);
-                    this.BtnClipboardCopy.Enabled = this.currentClipboardAbilities.HasFlag(ClipboardAbilities.CanCopy);
+                    this.BtnClipboardCut.Enabled = this.currentClipboardAbilities.HasFlag(DragDropEffects.Move);
+                    this.BtnClipboardCopy.Enabled = this.currentClipboardAbilities.HasFlag(DragDropEffects.Copy);
                     // TODO: Enable / Disable Sub-Types
 
-                    AppContext.TraceDebug($"SelectionPropertyChanged: CanCut: { this.BtnClipboardCut.Enabled } CanCopy: { this.BtnClipboardCopy.Enabled }");
+                    AppContext.TraceDebug($"SelectionPropertyChanged: Cut/Move: { this.BtnClipboardCut.Enabled } Copy: { this.BtnClipboardCopy.Enabled }");
 
                     break;
                 default:
@@ -299,9 +303,9 @@ namespace electrifier.Core.Components.DockContents
 
         #region IClipboardConsumer ============================================================================================
 
-        private ClipboardAbilities currentClipboardAbilities = ClipboardAbilities.None;
+        private DragDropEffects currentClipboardAbilities = DragDropEffects.None;
 
-        public ClipboardAbilities GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
+        public DragDropEffects GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
 
         public void CopyToClipboard(object sender, ExecuteEventArgs args) => this.Selection.SetClipboardDataObject(DragDropEffects.Copy);
 
@@ -369,9 +373,9 @@ namespace electrifier.Core.Components.DockContents
                 set { PropertyChanged.ChangeAndNotify(ref this.count, value, () => Count); }
             }
 
-            private ClipboardAbilities currentClipboardAbilities = ClipboardAbilities.None;
+            private DragDropEffects currentClipboardAbilities = DragDropEffects.None;
 
-            public ClipboardAbilities CurrentClipboardAbilities
+            public DragDropEffects CurrentClipboardAbilities
             {
                 get { return this.currentClipboardAbilities; }
                 set { PropertyChanged.ChangeAndNotify(ref this.currentClipboardAbilities, value, () => CurrentClipboardAbilities); }
@@ -393,7 +397,7 @@ namespace electrifier.Core.Components.DockContents
 
                 this.Count = this.ExplorerBrowser.SelectedItems.Count;
                 this.CurrentClipboardAbilities = this.Count > 0 ?
-                    (ClipboardAbilities.CanCopy | ClipboardAbilities.CanCut) : ClipboardAbilities.None;
+                    (DragDropEffects.Copy | DragDropEffects.Move) : DragDropEffects.None;
             }
 
             public void SetClipboardDataObject(DragDropEffects dropEffect)
