@@ -132,6 +132,7 @@
     </Compile>
     <Compile Include="Components\Controls\Extensions\ThemedControlExtensions.cs" />
     <Compile Include="Components\Controls\IThemedControl.cs" />
+    <Compile Include="Components\DockContentEntity.cs" />
     <Compile Include="Components\DockContentFactory.cs" />
     <Compile Include="Components\DockContents\SelectConditionalBox.cs">
       <SubType>Form</SubType>

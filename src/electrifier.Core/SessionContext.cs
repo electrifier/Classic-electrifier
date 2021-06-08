@@ -21,6 +21,8 @@
 using electrifier.Core.Components;
 using electrifier.Core.Forms;
 using EntityLighter;
+using EntityLighter.Collections;
+using EntityLighter.Queries;
 using Microsoft.Data.Sqlite;
 using System;
 using System.Drawing;
@@ -39,10 +41,10 @@ namespace electrifier.Core
     #region = SessionEntity ====================================================================================================
 
     [Table(Name = "Session")]
-    public class SessionEntity
+    public class SessionEntity : EntityBase
     {
-        [PrimaryKey(DataType.Integer)]
-        public long Id { get; protected set; }
+        //[PrimaryKey(DataType.Integer)]
+        //public long Id { get; protected set; }
 
         [Column(DataType.Text, Constraints = Constraint.NotNull)]
         public string Name { get; protected set; }
@@ -56,9 +58,8 @@ namespace electrifier.Core
         [Column(DataType.Integer, Constraints = Constraint.NotNull, DefaultValue = "CURRENT_TIMESTAMP")]
         public DateTime DateModified { get; protected set; }
 
-        private SessionEntity(SqliteDataReader dataReader)
+        public SessionEntity(SqliteDataReader dataReader) : base(dataReader)
         {
-            this.Id = (long)dataReader[nameof(this.Id)];
             this.Name = (string)dataReader[nameof(this.Name)];
             this.Description = (dataReader[nameof(this.Description)] is DBNull ? string.Empty : (string)dataReader[nameof(this.Description)]); // TODO: Put Null-Handling into EntityLighter
             this.DateCreated = DataContext.ConvertToDateTime((string)dataReader[nameof(this.DateCreated)]);
@@ -69,29 +70,26 @@ namespace electrifier.Core
 
         public static SessionEntity LoadStoredSession(DataContext dataContext, long id)
         {
-            EntitySet<SessionEntity> entities = LoadStoredSessions(dataContext, Where: $"Id = { id }");
+            EntityBaseSet<SessionEntity> sessions =
+                Select<SessionEntity>
+                .LoadEntities()
+                .Where("Id").IsEqual(id)
+                .RunNow(dataContext, (sqlReader) => { return new SessionEntity(sqlReader); });
 
-            if (1 == entities.Count)
-                return entities.First();
+            if (1 == sessions.Count)
+                return sessions.First();
 
             return null;        // TODO: Remove, throw exception
         }
 
-        public static EntitySet<SessionEntity> LoadStoredSessions(DataContext dataContext, string Where = null, string OrderBy = null)
+        public static EntityBaseSet<SessionEntity> LoadStoredSessions(DataContext dataContext, string Where = null, string OrderBy = null)
         {
-            string statement = $"SELECT Id, Name, Description, DateCreated, DateModified FROM Session";
+            EntityBaseSet<SessionEntity> sessions =
+                Select<SessionEntity>
+                .LoadEntities()
+                .AllRows(dataContext, (sqlReader) => { return new SessionEntity(sqlReader); });
 
-            if (!string.IsNullOrWhiteSpace(Where))
-                statement += " WHERE " + Where;
-
-            if (!string.IsNullOrWhiteSpace(OrderBy))
-                statement += " ORDER BY " + OrderBy;
-
-            return new EntitySet<SessionEntity>(dataContext).Load(statement,
-                (sqliteDataReader) =>
-                {
-                    return new SessionEntity(sqliteDataReader);
-                });
+            return sessions;
         }
     }
 
@@ -174,7 +172,7 @@ namespace electrifier.Core
         public bool HasSession => this.session != null;
 
 
-        public EntitySet<SessionEntity> PreviousSessions => SessionEntity.LoadStoredSessions(this.DataContext, OrderBy: "DateModified DESC");
+        public EntityBaseSet<SessionEntity> PreviousSessions => SessionEntity.LoadStoredSessions(this.DataContext, OrderBy: "DateModified DESC");
 
         public PropertyCollection Properties
         {
@@ -231,13 +229,13 @@ namespace electrifier.Core
                 // TODO: Incognito => read only db
                 // TODO: db may be locked by DB Browser! electrifier itself doesn't lock the DB.
                 // TODO: Param: "/Incognito" - Dont' save session configuration on application exit... Thus, use In-Memeory-DB which will be loaded, but NOT saved
-                this.DataContext = new EntityLighter.DataContext(this.DataContextStorage);
+                this.DataContext = new EntityLighter.DataContext(this.DataContextStorage, createIfNotExists: true);
+
                 this.GlobalConfig = new GlobalConfig(this.DataContext);
-
-
                 this.DataContext.CreateEntityModel(typeof(ConfigurationEntity));
                 this.DataContext.CreateEntityModel(typeof(SessionEntity));
                 this.DataContext.CreateEntityModel(typeof(SessionProperty));
+                this.DataContext.CreateEntityModel(typeof(DockContentEntity));
 
             }
             catch (Exception)
@@ -596,14 +594,15 @@ namespace electrifier.Core
     #region SessionProperty ===================================================================================================
 
     [Table(Name = "SessionProperty")]
-    public class SessionProperty
-      : IEquatable<SessionProperty>
+    public class SessionProperty :
+        EntityBase,
+        IEquatable<SessionProperty>
     {
         public DataContext DataContext { get => this.SessionContext?.DataContext; }
         public SessionContext SessionContext { get; }
 
-        [PrimaryKey(DataType.Integer)]
-        public long Id { get; }
+        //[PrimaryKey(DataType.Integer)]
+        //public long Id { get; }
 
         [Column(DataType.Integer)] // TODO: This is the ForeignKey
         public long SessionID { get; }
@@ -631,7 +630,10 @@ namespace electrifier.Core
             }
         }
 
+
+
         public SessionProperty(SessionContext sessionContext, string name, string value)
+            : base()
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
             this.SessionID = sessionContext.Id;
@@ -647,21 +649,23 @@ namespace electrifier.Core
             });
         }
 
-        public SessionProperty(SessionContext sessionContext, SqliteDataReader sqliteData)
+        public SessionProperty(SessionContext sessionContext, SqliteDataReader dataReader)
+            : base()
         {
             this.SessionContext = sessionContext ??
                 throw new ArgumentNullException(nameof(sessionContext));
-            if (null == sqliteData)
-                throw new ArgumentNullException(nameof(sqliteData));
+            if (null == dataReader)
+                throw new ArgumentNullException(nameof(dataReader));
 
-            this.Id = (long)sqliteData[0];
-            this.SessionID = (long)sqliteData[1];
-            this.Key = (string)sqliteData[2];
-            this.value = (string)sqliteData[3];
+            this.Id = (long)dataReader[nameof(this.Id)];
+            this.SessionID = (long)dataReader[nameof(this.SessionID)];
+            this.Key = (string)dataReader[nameof(this.Key)];
+            this.value = (string)dataReader[nameof(this.Value)];
         }
 
         /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
+        /// Indicates whether this <see cref="SessionProperty"/>'s <see cref="Key"/> is equal to the <see cref="Key"/>
+        /// of the given <paramref name="otherProperty"/>.
         /// </summary>
         /// <remarks>
         /// For objects of type <see cref="SessionProperty"/> this means that only their names are compared, not their values.
@@ -695,24 +699,43 @@ namespace electrifier.Core
     /// PropertyCollection
     /// </summary>
     public class PropertyCollection
-      : EntitySet<SessionProperty>
+      : EntityBaseSet<SessionProperty>
     {
         public SessionContext SessionContext { get; }
         public StringComparison StringComparison { get; set; } = StringComparison.InvariantCultureIgnoreCase;
 
         public PropertyCollection(SessionContext sessionContext)
-          : base(sessionContext?.DataContext ?? throw new ArgumentNullException(nameof(sessionContext)))
+          : base((sessionContext ?? throw new ArgumentNullException(nameof(sessionContext)))
+                .DataContext ?? throw new ArgumentNullException(nameof(DataContext)))
         {
             this.SessionContext = sessionContext;
 
-            this.Load(
-                $"SELECT Id, SessionId, Key, Value FROM SessionProperty WHERE SessionID = { this.SessionContext.Id }",
-                (sqliteDataReader) =>
-                {
-                    return new SessionProperty(this.SessionContext, sqliteDataReader);
-                });
+            this.ReloadFromStorage();
+
+            //EntityBaseSet<SessionProperty> properties = Select<SessionProperty>
+            //    .LoadEntities()
+            //    .Where("SessionId").IsEqual(this.SessionContext.Id)
+            //    .RunNow(this.DataContext, (sqlReader) => { return new SessionProperty(this.SessionContext, sqlReader); });
+
+            //foreach (var property in properties)
+            //    this.Add(property);     // TODO: Instead of adding each value, just replace the whole list...
         }
 
+        protected void ReloadFromStorage()
+        {
+            // TODO: this.Clear();
+
+            EntityBaseSet<SessionProperty> properties = Select<SessionProperty>
+                .LoadEntities()
+                .Where("SessionId").IsEqual(this.SessionContext.Id)
+                .RunNow(this.DataContext, (sqlReader) => {
+                    var newProperty = new SessionProperty(this.SessionContext, sqlReader);
+
+                    this.Add(newProperty);
+
+                    return newProperty;
+                });
+        }
 
         public bool Contains(string propertyKey) => this.IndexOf(propertyKey) >= 0;
 
@@ -720,7 +743,7 @@ namespace electrifier.Core
         {
             for (int i = 0; i < this.Count; i++)
             {
-                if (entities[i].Key.Equals(propertyKey, this.StringComparison))
+                if (this.entities[i].Key.Equals(propertyKey, this.StringComparison))
                     return i;
             }
 

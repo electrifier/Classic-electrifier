@@ -311,7 +311,7 @@ namespace electrifier.Core.Components.DockContents
 
         private DragDropEffects currentClipboardAbilities = DragDropEffects.None;
 
-        public DragDropEffects GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
+        //public DragDropEffects GetClipboardAbilities() => this.Selection.CurrentClipboardAbilities;
 
         public void CopyToClipboard(object sender, ExecuteEventArgs args) => this.Selection.SetClipboardDataObject(DragDropEffects.Copy);
 

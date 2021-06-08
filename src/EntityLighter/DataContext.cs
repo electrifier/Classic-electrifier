@@ -22,9 +22,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using EntityLighter.Collections;
+using EntityLighter.Storage;
 using Microsoft.Data.Sqlite;
 
 
@@ -49,6 +52,10 @@ using Microsoft.Data.Sqlite;
 // https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/sql/linq/the-linq-to-sql-object-model
 // TODO: See https://docs.microsoft.com/en-us/visualstudio/test/unit-test-your-code?view=vs-2019 for Unit-Tests
 
+// This is how you could 'embed' C#-functions into SQLite!
+// https://stackoverflow.com/questions/24229785/sqlite-net-sqlitefunction-not-working-in-linq-to-sql/26155359#26155359
+// https://docs.microsoft.com/de-de/dotnet/standard/data/sqlite/user-defined-functions
+//this.SqliteConnection.CreateFunction<>
 
 
 // SQLite: Datetime: SELECT datetime('now','localtime');
@@ -66,6 +73,64 @@ namespace EntityLighter
         Real,
         Text,
         Blob,
+    }
+
+    /// <summary>
+    /// List of common SQLite ErrorCodes
+    /// 
+    /// See <seealso href="https://sqlite.org/rescode.html"/> for further information.
+    /// 
+    /// </summary>
+    public enum SqliteResult
+    {
+        /// <summary>
+        /// The SQLITE_OK result code means that the operation was successful and that there were no errors. Most other result codes indicate an error. 
+        /// </summary>
+        SQLITE_OK = 0,
+        /// <summary>
+        /// The SQLITE_ERROR result code is a generic error code that is used when no other more specific error code is available.
+        /// </summary>
+        SQLITE_ERROR = 1,
+        /// <summary>
+        /// The SQLITE_INTERNAL result code indicates an internal malfunction. In a working version of SQLite, an application should never see this result code. If application does encounter this result code, it shows that there is a bug in the database engine.
+        /// SQLite does not currently generate this result code. However, application-defined SQL functions or virtual tables, or VFSes, or other extensions might cause this result code to be returned.
+        /// </summary>
+        SQLITE_INTERNAL = 2,
+        /// <summary>
+        /// The SQLITE_PERM result code indicates that the requested access mode for a newly created database could not be provided. 
+        /// </summary>
+        SQLITE_PERM = 3,
+        /// <summary>
+        /// The SQLITE_ABORT result code indicates that an operation was aborted prior to completion, usually be application request. See also: SQLITE_INTERRUPT.
+        /// 
+        /// If the callback function to sqlite3_exec() returns non-zero, then sqlite3_exec() will return SQLITE_ABORT.
+        /// 
+        /// If a ROLLBACK operation occurs on the same database connection as a pending read or write, then the pending read or write may fail with an SQLITE_ABORT or SQLITE_ABORT_ROLLBACK error.
+        /// 
+        /// In addition to being a result code, the SQLITE_ABORT value is also used as a conflict resolution mode returned from the sqlite3_vtab_on_conflict() interface.
+        /// </summary>
+        SQLITE_ABORT = 4,
+        /// <summary>
+        /// The SQLITE_BUSY result code indicates that the database file could not be written (or in some cases read) because of concurrent activity by some other database connection, usually a database connection in a separate process.
+        /// 
+        /// For example, if process A is in the middle of a large write transaction and at the same time process B attempts to start a new write transaction, process B will get back an SQLITE_BUSY result because SQLite only supports one writer at a time.Process B will need to wait for process A to finish its transaction before starting a new transaction.The sqlite3_busy_timeout() and sqlite3_busy_handler() interfaces and the busy_timeout pragma are available to process B to help it deal with SQLITE_BUSY errors.
+        /// 
+        /// An SQLITE_BUSY error can occur at any point in a transaction: when the transaction is first started, during any write or update operations, or when the transaction commits.To avoid encountering SQLITE_BUSY errors in the middle of a transaction, the application can use BEGIN IMMEDIATE instead of just BEGIN to start a transaction.The BEGIN IMMEDIATE command might itself return SQLITE_BUSY, but if it succeeds, then SQLite guarantees that no subsequent operations on the same database through the next COMMIT will return SQLITE_BUSY.
+        /// 
+        /// See also: SQLITE_BUSY_RECOVERY and SQLITE_BUSY_SNAPSHOT.
+        /// 
+        /// The SQLITE_BUSY result code differs from SQLITE_LOCKED in that SQLITE_BUSY indicates a conflict with a separate database connection, probably in a separate process, whereas SQLITE_LOCKED indicates a conflict within the same database connection (or sometimes a database connection with a shared cache).
+        /// </summary>
+        SQLITE_BUSY = 5,
+        /// <summary>
+        /// The SQLITE_LOCKED result code indicates that a write operation could not continue because of a conflict within the same database connection or a conflict with a different database connection that uses a shared cache.
+        /// 
+        /// For example, a DROP TABLE statement cannot be run while another thread is reading from that table on the same database connection because dropping the table would delete the table out from under the concurrent reader.
+        /// 
+        /// The SQLITE_LOCKED result code differs from SQLITE_BUSY in that SQLITE_LOCKED indicates a conflict on the same database connection (or on a connection with a shared cache) whereas SQLITE_BUSY indicates a conflict with a different database connection, probably in a different process.
+        /// </summary>
+        SQLITE_LOCKED = 6,
+
     }
 
     /// <summary>
@@ -363,15 +428,149 @@ namespace EntityLighter
 
 
 
-        // TODO: 10/05/20 Perhaps use an event for this?
         public delegate void SetEntityCreationParamsCallback(SqliteCommand sqliteCommand);
         public delegate void SetEntityUpdateParamsCallback(SqliteCommand sqliteCommand);
 
 
-
-        public DataContext(string storage) // CreateIfNotExists-param // TODO: Move types to AddEntityTable-Method!
+        // TODO: Move types to AddEntityTable-Method!
+        public DataContext(string storage, bool createIfNotExists = false)
         {
             this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
+
+            SqliteResult returnCode = this.OpenDatabase(createIfNotExists); /* ThrowIfFailed */
+
+            StorageModel storageModel = new StorageModel(this);
+
+            //EntityBaseSet<EntityBase> test =
+            //    Select<EntityBase>
+            //    .LoadEntities()
+            //    .AllRows(this, (sqlReader) => { return new EntityBase(sqlReader); });
+
+            //            var test = storageModel.GetTableNames();
+
+
+            //    /*
+            //     * TEST PRAGMAS => Unit-Test
+            //     */
+            //    string userver = this.PragmaUserVersion;
+            //    this.PragmaUserVersion.Value = "666";
+            //    string userver2 = this.PragmaUserVersion;
+            //    long vertest = (long)this.PragmaUserVersion;
+            //    this.PragmaUserVersion.Value = userver;
+
+            //    var fksupport = this.PragmaForeignKeys.Value;
+
+            //    /*
+            //                if (pragma.Value is long longResult)
+            //    return longResult;
+            //throw new InvalidCastException();
+
+            //    */
+
+
+            //    //this.SetPragmaValue("user_version", sqlUserVersionID.ToString(CultureInfo.InvariantCulture));
+
+
+            //    //this.SetPragmaValue("foreign_keys", "ON");
+
+            //    //                //foreach (var type in types)
+            //    //                //    this.CreateEntityModel(type);
+            //    //
+            //    //this.ExecuteNonQuery(EntityLighter.SqlStmtCreateDatabase);
+
+
+
+            //    //          // TODO: 17.04.2020!!! Fehlerhandling!
+            //    //
+            //    //
+            //    //
+            //    //                ElSessionEntity session = new ElSessionEntity(this);        // TODO: Exception: "Obsolete!" => Keine vernünftige Fehlermeldung!
+            //    //
+            //    //
+            //    //              // throw new Exception("Ätsch!"); => Der Startcode fällt beim LADEN schon auf die Füsse, nicht beim Ausführen...
+            //    //
+
+
+
+            //    //                SessionEntity sessionEntity = new SessionEntity(this);
+
+            //}
+            //catch (SqliteException)
+            //{
+            //    //var ext = "SQL - Exception: " + ex.Message;
+
+            //    //if (null != ex.InnerException)
+            //    //    ext += "\n\nInner: " + ex.InnerException.Message;
+
+            //    //System.Windows.Forms.MessageBox.Show(ext);
+            //    throw;
+            //}
+        }
+
+        /*
+            public class EntitySet<TEntity>
+              : IList<TEntity> where TEntity : class 
+        */
+
+        /* 
+         * 
+         * * * 
+         */
+
+        //public static EntitySet<TEntity> SelectEntities(string sqlStatement) where TEntity : class
+        //{
+
+        //}
+
+        /*         public EntitySet<TEntity> Load(string commandText, LoadEntityCallback loadEntityCallback)
+        {
+            ItemList<TEntity> loadedItems = new ItemList<TEntity>();
+
+            using (SqliteCommand cmd = this.DataContext.SqliteConnection.CreateCommand())
+            {
+                cmd.CommandText = commandText;
+
+                using (SqliteDataReader dataReader = cmd.ExecuteReader())
+                {
+                    // NOTE: Removed "if (dataReader.HasRows)"
+                    while (dataReader.Read())
+                        loadedItems.Add(loadEntityCallback(dataReader));
+                }
+            }
+
+            // Finally, replace our Entity List with the loaded one
+            // TODO: Consider disposing the old list
+            this.entities = loadedItems;
+
+            return this;        // TODO: Return the instance for for LINQ-statement concatenation, right?
+        }*/
+
+
+
+        //public SelectFromTable(DataContext context, string sqlCommand)
+        //{
+        //    this.DataContext = context ?? throw new ArgumentNullException(nameof(context));
+        //    this.CommandText = sqlCommand ?? throw new ArgumentNullException(nameof(sqlCommand));
+
+        //    // TODO: Verify command here
+
+        //    this.Command = this.DataContext.SqliteConnection.CreateCommand();
+        //    Command.CommandText = sqlCommand;
+
+        //    this.DataReader = this.Command.ExecuteReader();
+
+        //}
+
+
+        /// <summary>
+        /// TODO: Move to StorageModel
+        /// </summary>
+        /// <param name="CreateIfNotExists"></param>
+        protected SqliteResult OpenDatabase(bool CreateIfNotExists = false)
+        {
+            SqliteOpenMode openMode = SqliteOpenMode.ReadWrite;
+            int errorCode = 0;
 
             try
             {
@@ -379,94 +578,25 @@ namespace EntityLighter
                     new SqliteConnectionStringBuilder()
                     {
                         DataSource = this.Storage,
-                        Mode = SqliteOpenMode.ReadWrite, //ReadWriteCreate,      //Mode = SqliteOpenMode.Memory,
+                        Mode = openMode, //SqliteOpenMode.ReadWrite, //ReadWriteCreate,      //Mode = SqliteOpenMode.Memory,
                     }.ToString()
                 );
 
-                // This is how you could 'embed' C#-functions into SQLite!
-                // https://stackoverflow.com/questions/24229785/sqlite-net-sqlitefunction-not-working-in-linq-to-sql/26155359#26155359
-                // https://docs.microsoft.com/de-de/dotnet/standard/data/sqlite/user-defined-functions
-                //this.SqliteConnection.CreateFunction<>
-
                 this.SqliteConnection.Open();
 
-                // Define PRAGMA helper objects
-
+                //// Define PRAGMA helper objects // TODO: Use structs for this
                 this.PragmaUserVersion = new SqlitePragma(this, "USER_VERSION");
                 this.PragmaForeignKeys = new SqlitePragma(this, "FOREIGN_KEYS", isWriteable: false);
                 this.PragmaApplicationID = new SqlitePragma(this, "APPLICATION_ID");
-
-                // Check if Database model already exists
-                using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
-                {
-                    // TODO: TEST-Code!
-                    // TODO: Put into OnVerifyTableModel
-
-
-                    sqlCmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='Session';"; // TODO: name in ('Session', 'Workbench', ... put all tables into it); AND verify UserVersionID!
-                    var res = sqlCmd.ExecuteReader();
-
-                    //if (res.HasRows)
-                    //    System.Windows.Forms.MessageBox.Show("Database already defined!");
-                }
-
-                /*
-                 * TEST PRAGMAS => Unit-Test
-                 */
-                string userver = this.PragmaUserVersion;
-                this.PragmaUserVersion.Value = "666";
-                string userver2 = this.PragmaUserVersion;
-                long vertest = (long)this.PragmaUserVersion;
-                this.PragmaUserVersion.Value = userver;
-
-                var fksupport = this.PragmaForeignKeys.Value;
-
-                /*
-                            if (pragma.Value is long longResult)
-                return longResult;
-            throw new InvalidCastException();
-
-                */
-
-
-                //this.SetPragmaValue("user_version", sqlUserVersionID.ToString(CultureInfo.InvariantCulture));
-
-
-                //this.SetPragmaValue("foreign_keys", "ON");
-
-                //                //foreach (var type in types)
-                //                //    this.CreateEntityModel(type);
-                //
-                //this.ExecuteNonQuery(EntityLighter.SqlStmtCreateDatabase);
-
-
-
-                //          // TODO: 17.04.2020!!! Fehlerhandling!
-                //
-                //
-                //
-                //                ElSessionEntity session = new ElSessionEntity(this);        // TODO: Exception: "Obsolete!" => Keine vernünftige Fehlermeldung!
-                //
-                //
-                //              // throw new Exception("Ätsch!"); => Der Startcode fällt beim LADEN schon auf die Füsse, nicht beim Ausführen...
-                //
-
-
-
-                //                SessionEntity sessionEntity = new SessionEntity(this);
-
             }
-            catch (SqliteException)
+            catch (SqliteException ex)
             {
-                //var ext = "SQL - Exception: " + ex.Message;
-
-                //if (null != ex.InnerException)
-                //    ext += "\n\nInner: " + ex.InnerException.Message;
-
-                //System.Windows.Forms.MessageBox.Show(ext);
-                throw;
+                errorCode = ex.ErrorCode;
             }
+
+            return (SqliteResult)errorCode;
         }
+
 
         /// <summary>
         /// 
@@ -547,7 +677,7 @@ namespace EntityLighter
                 throw new MissingMemberException("No Column Attribute defined on any Property", nameof(entityType));
         }
 
-        public string GetTableName(Type entityType)         // Extension-Method?!?
+        public static string GetTableName(Type entityType)         // Extension-Method?!?
         {
             if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
                 throw new ArgumentException("No Table Attribute defined", nameof(entityType));
@@ -579,7 +709,7 @@ namespace EntityLighter
                     if (1 == sqlCmd.ExecuteNonQuery())
                     {
                         // Finally fetch the Primary key of the new record
-                        sqlCmd.CommandText = $"SELECT Id FROM { this.GetTableName(entityType) } WHERE RowId = Last_Insert_RowId()";
+                        sqlCmd.CommandText = $"SELECT Id FROM { DataContext.GetTableName(entityType) } WHERE RowId = Last_Insert_RowId()";
 
                         var entityId = sqlCmd.ExecuteScalar();
 
@@ -639,7 +769,7 @@ namespace EntityLighter
         //    //this.ElectrifierForm.SaveConfiguration(fullFileName);
         //}
 
-        #region IDisposable Support
+        #region IDisposable Interface
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -684,304 +814,15 @@ namespace EntityLighter
         #endregion
     }
 
-    // ========================================================================================================================
-    //
-    #region CLASS: EntitySet<TEntity> =========================================================================================
-    //
-    // ========================================================================================================================
 
 
-    /// <summary>
-    /// 
-    /// For IListSource, see:
-    /// <seealso href="https://books.google.de/books?id=VGnQPbG7vKwC&pg=PT127&lpg=PT127&dq=ilistsource&source=bl&ots=myckzCQmSW&sig=ACfU3U2RDvbZBJKgUC-SJWd-N0PUO0DTJw&hl=de&sa=X&ved=2ahUKEwiQisLlstzpAhWnUhUIHQ2WA2IQ6AEwCHoECAcQAQ#v=onepage&q=ilistsource&f=false"/>
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public class EntitySet<TEntity>
-      : IList<TEntity> where TEntity : class
+    public class EntityLighterException
     {
-        public DataContext DataContext { get; }
-        protected ItemList<TEntity> entities;
-        //int version;      // TODO: Implement version counter
-
-        public EntitySet(DataContext dataContext)
+        public SqliteException InnrerException { get; }
+        public EntityLighterException(SqliteException sqliteException)
         {
-            this.DataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+            this.InnrerException = sqliteException;
         }
 
-        TEntity IList<TEntity>.this[int index]
-        {
-            get
-            {
-                if ((index < 0) || (index >= this.entities.Count))
-                    throw new ArgumentOutOfRangeException(nameof(index));
-
-                return this.entities[index];
-            }
-
-            set => throw new NotImplementedException();
-        }
-
-        #region ICollection-Interface
-
-        public int Count => this.entities.Count;
-
-        public bool IsReadOnly => throw new NotImplementedException();
-
-        public void Add(TEntity item)
-        {
-            if (item is null)
-                throw new ArgumentNullException(nameof(item));
-
-            this.entities.Add(item);
-        }
-
-        public bool Remove(TEntity item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool Contains(TEntity item) => this.IndexOf(item) >= 0;
-
-        public void CopyTo(TEntity[] array, int arrayIndex)
-        {
-            if (this.entities.Count > 0)
-                Array.Copy(this.entities.Items, 0, array, arrayIndex, this.entities.Count);
-        }
-
-        #endregion
-
-        #region IEnumerable-Interface
-
-        IEnumerator<TEntity> IEnumerable<TEntity>.GetEnumerator()
-        {
-            return new Enumerator(this);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        #region IList<TEntity>-Interface
-
-        public int IndexOf(TEntity item) => this.entities.IndexOf(item);
-
-        public void Insert(int index, TEntity item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-        public delegate TEntity LoadEntityCallback(SqliteDataReader sqliteDataReader);
-
-        public EntitySet<TEntity> Load(string commandText, LoadEntityCallback loadEntityCallback)
-        {
-            ItemList<TEntity> loadedItems = new ItemList<TEntity>();
-
-            using (SqliteCommand cmd = this.DataContext.SqliteConnection.CreateCommand())
-            {
-                cmd.CommandText = commandText;
-
-                using (SqliteDataReader dataReader = cmd.ExecuteReader())
-                {
-                    // NOTE: Removed "if (dataReader.HasRows)"
-                    while (dataReader.Read())
-                        loadedItems.Add(loadEntityCallback(dataReader));
-                }
-            }
-
-            // Finally, replace our Entity List with the loaded one
-            // TODO: Consider disposing the old list
-            this.entities = loadedItems;
-
-            return this;        // TODO: Return the instance for for LINQ-statement concatenation, right?
-        }
-
-        /// <summary>
-        /// Subclass EntitySet<TEntity>.Enumerator
-        /// </summary>
-        class Enumerator : IEnumerator<TEntity>
-        {
-            public EntitySet<TEntity> EntitySet { get; }
-            public TEntity[] Items { get; }
-
-            public int Index { get; set; }
-            private int EndIndex { get; }
-            private int Version { get; }
-
-            public Enumerator(EntitySet<TEntity> entitySet)
-            {
-                this.EntitySet = entitySet;
-                this.Items = entitySet.entities.Items;
-                this.Index = -1;
-                this.EndIndex = entitySet.entities.Count - 1;
-                //this.version = entitySet.version;
-            }
-
-            public void Dispose() => GC.SuppressFinalize(this);
-
-            public bool MoveNext()
-            {
-                //if (version != entitySet.version)
-                //    throw new Exception("Entity Set modified while enumerating");
-
-                if (this.Index == this.EndIndex)
-                    return false;
-
-                this.Index++;
-                return true;
-            }
-
-            public TEntity Current => this.Items[Index];
-
-            object IEnumerator.Current => this.Items[Index];
-
-            void IEnumerator.Reset()
-            {
-                //if (version != entitySet.version)
-                //    throw new Exception("Entity Set modified while enumerating");
-
-                this.Index = -1;
-            }
-        }
-    }
-
-    #endregion CLASS: EntitySet<TEntity> ======================================================================================
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public struct ItemList<T> where T : class
-    {
-        T[] items;
-
-        public int Count { get; private set; }
-
-        public T[] Items => this.items;
-
-        public T this[int index]
-        {
-            get { return this.items[index]; }
-            //set { this.items[index] = value; }
-        }
-
-        public void Add(T item)
-        {
-            if (this.items == null || this.items.Length == Count)
-                this.GrowItems();
-
-            this.items[this.Count] = item;
-            this.Count++;
-        }
-
-        public bool Contains(T item) => this.IndexOf(item) >= 0;
-
-        public Enumerator GetEnumerator() => new Enumerator(this.items, endIndex: this.Count - 1);
-
-        public bool Include(T item)
-        {
-            if (this.LastIndexOf(item) >= 0)
-                return false;
-
-            this.Add(item);
-            return true;
-        }
-
-        public int IndexOf(T item)
-        {
-            for (int i = 0; i < this.Count; i++)
-            {
-                if (this.items[i] == item)
-                    return i;
-            }
-
-            return -1;
-        }
-
-        public void Insert(int index, T item)
-        {
-            if (this.items == null || this.items.Length == this.Count)
-                this.GrowItems();
-
-            if (index < this.Count)
-                Array.Copy(this.items, index, items, index + 1, Count - index);
-
-            this.items[index] = item;
-            this.Count++;
-        }
-
-        public int LastIndexOf(T item)
-        {
-            int i = this.Count;
-
-            while (i > 0)
-            {
-                --i;
-                if (this.items[i] == item)
-                    return i;
-            }
-
-            return -1;
-        }
-
-        public bool Remove(T item)
-        {
-            int i = this.IndexOf(item);
-            if (i < 0)
-                return false;
-
-            this.RemoveAt(i);
-            return true;
-        }
-
-        public void RemoveAt(int index)
-        {
-            this.Count--;
-            if (index < this.Count)
-                Array.Copy(this.items, index + 1, this.items, index, this.Count - index);
-            this.items[this.Count] = default;
-        }
-
-        void GrowItems() => Array.Resize(ref this.items, this.Count == 0 ? 4 : this.Count * 2);
-
-        public struct Enumerator
-        {
-            private readonly T[] items;
-            private readonly int endIndex;
-            private int index;
-
-            public Enumerator(T[] items, int endIndex, int startIndex = -1)
-            {
-                this.items = items;
-                this.index = startIndex;
-                this.endIndex = endIndex;
-            }
-
-            public bool MoveNext()
-            {
-                if (this.index == this.endIndex)
-                    return false;
-
-                this.index++;
-                return true;
-            }
-
-            public T Current => this.items[index];
-        }
     }
 }
