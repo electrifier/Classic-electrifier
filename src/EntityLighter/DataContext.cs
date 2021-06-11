@@ -677,15 +677,8 @@ namespace EntityLighter
                 throw new MissingMemberException("No Column Attribute defined on any Property", nameof(entityType));
         }
 
-        public static string GetTableName(Type entityType)         // Extension-Method?!?
-        {
-            if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
-                throw new ArgumentException("No Table Attribute defined", nameof(entityType));
 
-            TableAttribute table = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
 
-            return table.Name ?? entityType.Name;
-        }
 
 
 
@@ -699,26 +692,33 @@ namespace EntityLighter
             if (null == setEntityCreationParams)
                 throw new ArgumentNullException(nameof(setEntityCreationParams));
 
-            using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
+            try
             {
-                // TODO: 24/05/20: Create the WHOLE statement dynamically!; Use Tables attributes for dynamic binding
-                setEntityCreationParams(sqlCmd);
-
-                lock (this.databaseLock)
+                using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
                 {
-                    if (1 == sqlCmd.ExecuteNonQuery())
+                    // TODO: 24/05/20: Create the WHOLE statement dynamically!; Use Tables attributes for dynamic binding
+                    setEntityCreationParams(sqlCmd);
+
+                    lock (this.databaseLock)
                     {
-                        // Finally fetch the Primary key of the new record
-                        sqlCmd.CommandText = $"SELECT Id FROM { DataContext.GetTableName(entityType) } WHERE RowId = Last_Insert_RowId()";
+                        if (1 == sqlCmd.ExecuteNonQuery())
+                        {
+                            // Finally fetch the Primary key for the new record
+                            sqlCmd.CommandText = $"SELECT Id FROM { EntityBase.GetStorageTable(entityType) } WHERE RowId = Last_Insert_RowId()";
 
-                        var entityId = sqlCmd.ExecuteScalar();
+                            object entityId = sqlCmd.ExecuteScalar();
 
-                        if (null != entityId)
-                            return (long)entityId;
+                            if (null != entityId)
+                                return (long)entityId;
+                        }
                     }
-
-                    throw new Exception($"Failed to create new record in database for { entityType }!"); // TODO: Overhault exception handlers!
                 }
+
+                throw new Exception($"Command creation failed."); // TODO: Overhault exception handlers!
+            }
+            catch (Exception innerException)
+            {
+                throw new Exception($"Failed to create new record of type { entityType.Name }!", innerException);
             }
         }
 
@@ -749,25 +749,6 @@ namespace EntityLighter
 
             return default;
         }
-
-
-
-
-
-        //public void BackupDatabaseToFile()
-        //{
-        //    // See https://docs.microsoft.com/de-de/dotnet/standard/data/sqlite/backup
-        //    // Create a full backup of the database
-        //    var backup = new SqliteConnection("Data Source=BackupSample.db");
-        //    this.sqlConnection.BackupDatabase(backup);
-
-        //    //var fullFileName = Path.Combine(this.ApplicationDataPath, this.ConfigurationFileName);
-
-        //    //// Create directory for configuration file, just in case it doesn't already exist
-        //    //Directory.CreateDirectory(this.ApplicationDataPath);
-
-        //    //this.ElectrifierForm.SaveConfiguration(fullFileName);
-        //}
 
         #region IDisposable Interface
 
@@ -816,13 +797,51 @@ namespace EntityLighter
 
 
 
-    public class EntityLighterException
+    public class EntityLighterException : Exception
     {
-        public SqliteException InnrerException { get; }
-        public EntityLighterException(SqliteException sqliteException)
+        public SqliteCommand SqliteCommand { get; }
+        public OriginOfException Origin { get; }
+
+        public EntityLighterException(string message, SqliteException sqliteException,
+            [System.Runtime.CompilerServices.CallerFilePath] string filePath = null,
+            [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
+            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = -1)
+            : base(new OriginOfException(message, filePath, memberName, lineNumber).ToString(), sqliteException)
         {
-            this.InnrerException = sqliteException;
+            this.Origin = new OriginOfException(message, filePath, memberName, lineNumber);
         }
 
+        public EntityLighterException(string message, SqliteException sqliteException, SqliteCommand sqliteCommand)
+            :base(message, sqliteException)
+        {
+            this.SqliteCommand = sqliteCommand;
+        }
+
+        public struct OriginOfException
+        {
+            public string Message { get; }
+            public string CallerFilePath { get; }
+            public string CallerMemberName { get; }
+            public int CallerLineNumber { get; }
+            public OriginOfException(
+                String message,
+                [System.Runtime.CompilerServices.CallerFilePath] string filePath = null,
+                [System.Runtime.CompilerServices.CallerMemberName] string memberName = null,
+                [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = -1)
+            {
+                this.Message = message;
+                this.CallerFilePath = filePath;
+                this.CallerMemberName = memberName;
+                this.CallerLineNumber = lineNumber;
+            }
+
+            public override string ToString()
+            {
+                return ($"'{this.Message}'" +
+                    (string.IsNullOrEmpty(this.CallerMemberName) ? null : $"\n  at {this.CallerMemberName}()") +
+                    (string.IsNullOrEmpty(this.CallerFilePath) ? null : $"  in file '{this.CallerFilePath}'") +
+                    ((this.CallerLineNumber > 0) ? $" at line #{this.CallerLineNumber}" : null));
+            }
+        }
     }
 }

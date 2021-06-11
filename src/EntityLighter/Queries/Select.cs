@@ -54,7 +54,7 @@ namespace EntityLighter.Queries
         , ICanAddWhereOrRun<TEntity>
         where TEntity : EntityBase
     {
-        private readonly string tableName;
+        private readonly string storageTableName;
         private readonly List<WhereCondition> whereConditions = new List<WhereCondition>();
 
         private string currentWhereConditionColumn;
@@ -63,17 +63,22 @@ namespace EntityLighter.Queries
 
         /// <summary>
         /// Private constructor to force object creation through fluent interface.
+        /// 
         /// </summary>
-        /// <param name="entityType"> </param>
-
-        // The entity type to select from whose storage table
+        /// <param name="entityType">The entity type to select.</param>
+        /// <exception cref="ArgumentException">Thrown when no table attribute could be found.</exception>
         private Select(Type entityType)
         {
-            this.tableName = DataContext.GetTableName(entityType);
+            this.storageTableName = (Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute).Name ?? typeof(TEntity).Name;
         }
 
         #region Initiating Method(s)
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Thrown when no table attribute could be found.</exception>
         public static ICanAddCondition<TEntity> LoadEntities()
         {
             return new Select<TEntity>(typeof(TEntity));
@@ -140,7 +145,14 @@ namespace EntityLighter.Queries
         /// </summary>
         public EntityBaseSet<TEntity> AllRows(DataContext dataContext, CreateEntityFromDataReader dataReader)
         {
-            return this.Execute(dataContext, dataReader);
+            try
+            {
+                return this.Execute(dataContext, dataReader);
+            }
+            catch (SqliteException ex)
+            {
+                throw new EntityLighterException($"Failed to fetch data from {this.storageTableName}", ex);
+            }
         }
 
         /// <summary>
@@ -151,7 +163,14 @@ namespace EntityLighter.Queries
         /// </summary>
         public EntityBaseSet<TEntity> RunNow(DataContext dataContext, CreateEntityFromDataReader dataReader)
         {
-            return this.Execute(dataContext, dataReader);
+            try
+            {
+                return this.Execute(dataContext, dataReader);
+            }
+            catch (SqliteException ex)
+            {
+                throw new EntityLighterException($"Failed to fetch data from {this.storageTableName}", ex);
+            }
         }
         #endregion
 
@@ -159,19 +178,26 @@ namespace EntityLighter.Queries
         private EntityBaseSet<TEntity> Execute(DataContext dataContext, CreateEntityFromDataReader dataReader)
         {
             EntityBaseSet<TEntity> loadedItems = new EntityBaseSet<TEntity>(dataContext);
-            //string statement = this.PrepareSQLStatement();
+            SqliteCommand sqliteCommand;
 
-            using (SqliteCommand cmd = dataContext.SqliteConnection.CreateCommand())
+            try
             {
-                cmd.CommandText = this.PrepareSQLStatement();
-
-                using (SqliteDataReader reader = cmd.ExecuteReader())
+                using (sqliteCommand = dataContext.SqliteConnection.CreateCommand())
                 {
-                    //loadedItems.Grow(reader => count); // TODO: Specify size here!
+                    sqliteCommand.CommandText = this.PrepareSQLStatement();
 
-                    while (reader.Read())
-                        loadedItems.Add(dataReader(reader));
+                    using (SqliteDataReader reader = sqliteCommand.ExecuteReader())
+                    {
+                        //loadedItems.Grow(reader => count); // TODO: Specify size here!
+
+                        while (reader.Read())
+                            loadedItems.Add(dataReader(reader));
+                    }
                 }
+            }
+            catch(SqliteException ex)
+            {
+                throw new EntityLighterException("Error while executing SQL-Query", ex);
             }
 
             return loadedItems;
@@ -179,7 +205,7 @@ namespace EntityLighter.Queries
 
         private string PrepareSQLStatement()
         {
-            StringBuilder queryBuilder = new StringBuilder($"SELECT * FROM { this.tableName }");
+            StringBuilder queryBuilder = new StringBuilder($"SELECT * FROM { this.storageTableName }");
 
             // Append where conditions to selection
             if (this.whereConditions.Count > 0)
@@ -227,7 +253,7 @@ namespace EntityLighter.Queries
         {
             this.Column = column;
             this.ComparisonMethod = comparisonMethod;
-            this.ComparisonValue = comparisonValue.ToString();        // TODO: Put converters here!
+            this.ComparisonValue = comparisonValue.ToString();        // TODO: Put converters here
         }
 
         public string ToSQLSnippet()

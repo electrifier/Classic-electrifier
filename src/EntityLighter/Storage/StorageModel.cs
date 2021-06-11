@@ -119,4 +119,19 @@ namespace EntityLighter.Storage
 
 
     }
+
+    //public void BackupDatabaseToFile()
+    //{
+    //    // See https://docs.microsoft.com/de-de/dotnet/standard/data/sqlite/backup
+    //    // Create a full backup of the database
+    //    var backup = new SqliteConnection("Data Source=BackupSample.db");
+    //    this.sqlConnection.BackupDatabase(backup);
+
+    //    //var fullFileName = Path.Combine(this.ApplicationDataPath, this.ConfigurationFileName);
+
+    //    //// Create directory for configuration file, just in case it doesn't already exist
+    //    //Directory.CreateDirectory(this.ApplicationDataPath);
+
+    //    //this.ElectrifierForm.SaveConfiguration(fullFileName);
+    //}
 }

@@ -62,8 +62,8 @@ namespace electrifier.Core
         {
             this.Name = (string)dataReader[nameof(this.Name)];
             this.Description = (dataReader[nameof(this.Description)] is DBNull ? string.Empty : (string)dataReader[nameof(this.Description)]); // TODO: Put Null-Handling into EntityLighter
-            this.DateCreated = DataContext.ConvertToDateTime((string)dataReader[nameof(this.DateCreated)]);
-            this.DateModified = DataContext.ConvertToDateTime((string)dataReader[nameof(this.DateModified)]);
+            this.DateCreated = dataReader.GetDateTime(dataReader.GetOrdinal(nameof(this.DateCreated)));
+            this.DateModified = dataReader.GetDateTime(dataReader.GetOrdinal(nameof(this.DateModified)));
 
             //this.Properties = new PropertyCollection(dataContext);
         }
@@ -84,12 +84,9 @@ namespace electrifier.Core
 
         public static EntityBaseSet<SessionEntity> LoadStoredSessions(DataContext dataContext, string Where = null, string OrderBy = null)
         {
-            EntityBaseSet<SessionEntity> sessions =
-                Select<SessionEntity>
+            return Select<SessionEntity>
                 .LoadEntities()
                 .AllRows(dataContext, (sqlReader) => { return new SessionEntity(sqlReader); });
-
-            return sessions;
         }
     }
 
@@ -593,7 +590,7 @@ namespace electrifier.Core
 
     #region SessionProperty ===================================================================================================
 
-    [Table(Name = "SessionProperty")]
+    [Table]
     public class SessionProperty :
         EntityBase,
         IEquatable<SessionProperty>
@@ -656,6 +653,13 @@ namespace electrifier.Core
                 throw new ArgumentNullException(nameof(sessionContext));
             if (null == dataReader)
                 throw new ArgumentNullException(nameof(dataReader));
+
+            var fieldCount = dataReader.FieldCount;
+            // TODO: In einer idealen Welt müssten wir hier eigentlich Typ-Sicherheit herstellen,
+            // d.h. die Anzahl der Spalten abgleichen, sowie deren Typen...
+            // ABER: Wenn wir das jedesmal tun, d.h. für jeder Zeile, dann ist die Performance im Arsch...
+            // Evtl. Eine Art Prepared Statement-Objekt irgendwie kapseln...
+
 
             this.Id = (long)dataReader[nameof(this.Id)];
             this.SessionID = (long)dataReader[nameof(this.SessionID)];
@@ -724,11 +728,12 @@ namespace electrifier.Core
         protected void ReloadFromStorage()
         {
             // TODO: this.Clear();
-
+            // TODO: Instead of adding each value, just replace the whole list... In case of exception, keep the old list
             EntityBaseSet<SessionProperty> properties = Select<SessionProperty>
                 .LoadEntities()
                 .Where("SessionId").IsEqual(this.SessionContext.Id)
-                .RunNow(this.DataContext, (sqlReader) => {
+                .RunNow(this.DataContext, (sqlReader) =>
+                {
                     var newProperty = new SessionProperty(this.SessionContext, sqlReader);
 
                     this.Add(newProperty);

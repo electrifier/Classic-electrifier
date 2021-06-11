@@ -34,8 +34,6 @@ namespace EntityLighter.Collections
 
         protected int version; // // TODO: Implement version counter
 
-        protected delegate TEntity LoadEntityCallback(SqliteDataReader sqliteDataReader);
-
         public EntityBaseSet(DataContext dataContext)
         {
             this.DataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
