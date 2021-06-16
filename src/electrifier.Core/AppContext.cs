@@ -151,9 +151,9 @@ namespace electrifier.Core
                     isIncognito = true;
             }
 
-            // Initialize trace listener
-            this.InitializeTraceListener();
-            AppContext.TraceScope();
+            // Initialize logging context
+            LogContext.Initialize();
+            LogContext.Trace();
 
             // Add ThreadExit-handler to save configuration when closing
             this.ThreadExit += new EventHandler(this.AppContext_ThreadExit);
@@ -245,7 +245,7 @@ namespace electrifier.Core
             }
             catch (Exception ex)
             {
-                AppContext.TraceError(ex.Message);
+                LogContext.Error(ex.Message);
                 throw;
             }
 
@@ -327,7 +327,7 @@ namespace electrifier.Core
 
         private void Application_ApplicationExit(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             //            // Save configuration file
             //            if (false == this.IsIncognito)
@@ -336,7 +336,7 @@ namespace electrifier.Core
 
         private void AppContext_ThreadExit(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
         }
 
         private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
@@ -349,7 +349,7 @@ namespace electrifier.Core
             if (null != e.Exception.InnerException)
                 exMessage += $"\nInner Exception: { e.Exception.InnerException.Message }\n";
 
-            AppContext.TraceError(exMessage);
+            LogContext.Error(exMessage);
             MessageBox.Show(exMessage, "D'oh! That shouldn't have happened...");
         }
 
@@ -359,7 +359,7 @@ namespace electrifier.Core
             string exMessage = $"Domain exception occured: { e.ExceptionObject.GetType().FullName }" +
                 $"\n\n{ e.ExceptionObject }\n";
 
-            AppContext.TraceError(exMessage);
+            LogContext.Error(exMessage);
             MessageBox.Show(exMessage, "D'oh! That shouldn't have happened...");
         }
 
@@ -377,98 +377,6 @@ namespace electrifier.Core
 
             return baseDirectory;
         }
-
-
-        #region TraceListener helper members for logging and debugging purposes ===============================================
-
-        /// <summary>
-        /// InitializeTraceListener
-        /// 
-        /// Initializes the trace listener.
-        /// By default, output will be written into '[System.Windows.Forms.Application.StartupPath]\electrifier\electrifier.debug.log'
-        /// </summary>
-        [Conditional("DEBUG")]
-        private void InitializeTraceListener()
-        {
-            string filePath = System.IO.Path.Combine(System.Windows.Forms.Application.StartupPath, @"electrifier.debug.log");
-
-            // Ensure directory exists before attempting to create the file
-            System.IO.FileInfo fileInfo = new System.IO.FileInfo(filePath);
-            fileInfo.Directory.Create();
-
-            DefaultTraceListener defaultTraceListener = new DefaultTraceListener
-            {
-                LogFileName = filePath
-            };
-
-            string fullMessage = "\n\nNew Session started on ";
-            fullMessage += DateTime.Now.ToString("F");
-            fullMessage += "\n\n";
-
-            defaultTraceListener.WriteLine(fullMessage);
-
-            Trace.Listeners.Clear();
-            Trace.Listeners.Add(defaultTraceListener);
-            Trace.AutoFlush = true;
-        }
-
-        [Conditional("DEBUG")]
-        internal static void TraceScope(
-            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
-        {
-            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
-            fullMessage += " Enter Scope of Member " + memberName;
-            fullMessage += " @ '" + filePath + "'";
-
-            Trace.WriteLine(fullMessage, "Scope");
-        }
-
-        [Conditional("DEBUG")]
-        internal static void TraceDebug(string message,
-            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
-        {
-            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
-            fullMessage += " " + message;
-            fullMessage += " @ '" + filePath;
-            fullMessage += "' in " + memberName;
-
-            Trace.WriteLine(fullMessage, "Debug");
-        }
-
-        [Conditional("DEBUG")]
-        internal static void TraceWarning(string message,
-            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
-        {
-            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
-            fullMessage += " [-!-]: " + message;
-            fullMessage += " @ '" + filePath;
-            fullMessage += "' in " + memberName;
-
-            Trace.WriteLine(fullMessage, "Warning");
-        }
-
-        [Conditional("DEBUG")]
-        internal static void TraceError(string message,
-            [System.Runtime.CompilerServices.CallerMemberName] string memberName = "",
-            [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
-            [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
-        {
-            string fullMessage = DateTime.Now.ToString("HH:mm:ss");
-            fullMessage += " ERROR: " + message;
-            fullMessage += " @ '" + filePath;
-            fullMessage += "', in " + memberName;
-            fullMessage += "#" + lineNumber;
-
-            Trace.WriteLine(fullMessage, "Error");
-        }
-
-        #endregion ============================================================================================================
 
         #region Environment helper methods ====================================================================================
 

@@ -202,7 +202,7 @@ namespace electrifier.Core
         {
             if (this.currentMainForm != newMainForm)
             {
-                AppContext.TraceScope();
+                LogContext.Trace();
 
                 this.MainFormChange?.Invoke(this, new MainFormChangeEventArgs(this.currentMainForm, newMainForm));
 
@@ -294,7 +294,7 @@ namespace electrifier.Core
             if (args is null)
                 throw new ArgumentNullException(nameof(args));
 
-            AppContext.TraceDebug($"Creating new session {args.Name}: '{args.Description}'");
+            LogContext.Debug($"Creating new session {args.Name}: '{args.Description}'");
 
             // TODO: Check those SQL-Values!
 

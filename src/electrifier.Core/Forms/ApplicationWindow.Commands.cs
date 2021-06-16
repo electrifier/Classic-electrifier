@@ -36,42 +36,42 @@ namespace electrifier.Core.Forms
     {
         internal void CmdAppOpenNewShellBrowserPane_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             DockContentFactory.CreateShellBrowser(this);
         }
 
         //private void TsbNewFileBrowser_ButtonClick(object sender, EventArgs e)
         //{
-        //    AppContext.TraceScope();
+        //    LogContext.Trace();
 
         //    this.CreateNewShellBrowser();
         //}
 
         //private void TsbNewFileBrowserLeft_Click(object sender, EventArgs e)
         //{
-        //    AppContext.TraceScope();
+        //    LogContext.Trace();
 
         //    this.CreateNewShellBrowser(WeifenLuo.WinFormsUI.Docking.DockAlignment.Left);
         //}
 
         //private void TsbNewFileBrowserRight_Click(object sender, EventArgs e)
         //{
-        //    AppContext.TraceScope();
+        //    LogContext.Trace();
 
         //    this.CreateNewShellBrowser(DockAlignment.Right);
         //}
 
         //private void TsbNewFileBrowserTop_Click(object sender, EventArgs e)
         //{
-        //    AppContext.TraceScope();
+        //    LogContext.Trace();
 
         //    this.CreateNewShellBrowser(DockAlignment.Top);
         //}
 
         //private void TsbNewFileBrowserBottom_Click(object sender, EventArgs e)
         //{
-        //    AppContext.TraceScope();
+        //    LogContext.Trace();
 
         //    this.CreateNewShellBrowser(DockAlignment.Bottom);
         //}
@@ -79,7 +79,7 @@ namespace electrifier.Core.Forms
         // TODO 03/02/19: TsbNewFileBrowserFloating_Click has not been used yet
         //private void TsbNewFileBrowserFloating_Click(object sender, EventArgs e)
         //{
-        //    AppContext.TraceScope();
+        //    LogContext.Trace();
 
         //    var newDockContent = new Components.DockContents.ElShellBrowserDockContent();
         //    var floatWindowBounds = new Rectangle(this.Location, this.Size);
@@ -95,7 +95,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdAppHelpAboutElectrifier_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             using (AboutElectrifierDialog aboutDialog = new AboutElectrifierDialog())
             {
@@ -105,7 +105,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdAppHelpAboutWindows_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             Shell32.ShellAbout(this.Handle, @"electrifier - Windows Info", AppContext.GetDotNetFrameworkVersion(), this.Icon.Handle);
         }
@@ -113,7 +113,7 @@ namespace electrifier.Core.Forms
 
         internal void CmdAppClose_ExecuteEvent(object sender, ExecuteEventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             // Close form asynchronously since we are in a ribbon event handler, so the ribbon is still in use, and calling Close 
             // will eventually call _ribbon.DestroyFramework(), which is a big no-no, if you still use the ribbon.

@@ -151,7 +151,7 @@ namespace electrifier.Core.Forms
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
 
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             this.InitializeComponent();
             this.Icon = sessionContext.ApplicationIcon;
@@ -174,7 +174,7 @@ namespace electrifier.Core.Forms
 
         private void DialogOkButton_Click(object sender, EventArgs args)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
             Debug.Assert(this.CreateSessionRadioButton.Checked != this.ContinueSessionRadioButton.Checked);
 
             this.Cursor = Cursors.WaitCursor;

@@ -26,12 +26,13 @@ using System.Windows.Forms;
 
 namespace electrifier.Core.Forms
 {
+    // TODO: Make this a DockPanel, add Log-Viewer when log-files are enabled...
     partial class AboutElectrifierDialog
       : Form
     {
         public AboutElectrifierDialog()
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             this.InitializeComponent();
 
@@ -49,14 +50,14 @@ namespace electrifier.Core.Forms
 
         private void VisitElectrifierOrgLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             Process.Start("http://www.electrifier.org");
         }
 
         private void LicenseRichTextBox_LinkClicked(object sender, LinkClickedEventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             Process.Start(e.LinkText);
         }

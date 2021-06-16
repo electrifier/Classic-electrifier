@@ -144,16 +144,7 @@ namespace EntityLighter.Queries
         /// </list>
         /// </summary>
         public EntityBaseSet<TEntity> AllRows(DataContext dataContext, CreateEntityFromDataReader dataReader)
-        {
-            try
-            {
-                return this.Execute(dataContext, dataReader);
-            }
-            catch (SqliteException ex)
-            {
-                throw new EntityLighterException($"Failed to fetch data from {this.storageTableName}", ex);
-            }
-        }
+            => this.Execute(dataContext, dataReader);
 
         /// <summary>
         /// 
@@ -162,16 +153,7 @@ namespace EntityLighter.Queries
         /// </list>
         /// </summary>
         public EntityBaseSet<TEntity> RunNow(DataContext dataContext, CreateEntityFromDataReader dataReader)
-        {
-            try
-            {
-                return this.Execute(dataContext, dataReader);
-            }
-            catch (SqliteException ex)
-            {
-                throw new EntityLighterException($"Failed to fetch data from {this.storageTableName}", ex);
-            }
-        }
+            => this.Execute(dataContext, dataReader);
         #endregion
 
 
@@ -180,9 +162,9 @@ namespace EntityLighter.Queries
             EntityBaseSet<TEntity> loadedItems = new EntityBaseSet<TEntity>(dataContext);
             SqliteCommand sqliteCommand;
 
-            try
+            using (sqliteCommand = dataContext.SqliteConnection.CreateCommand())
             {
-                using (sqliteCommand = dataContext.SqliteConnection.CreateCommand())
+                try
                 {
                     sqliteCommand.CommandText = this.PrepareSQLStatement();
 
@@ -194,10 +176,10 @@ namespace EntityLighter.Queries
                             loadedItems.Add(dataReader(reader));
                     }
                 }
-            }
-            catch(SqliteException ex)
-            {
-                throw new EntityLighterException("Error while executing SQL-Query", ex);
+                catch (SqliteException ex)
+                {
+                    throw new EntityLighterException("Error while executing SQL-Query", ex, sqliteCommand);
+                }
             }
 
             return loadedItems;

@@ -74,7 +74,7 @@ namespace electrifier.Core.Forms
         {
             this.SessionContext = sessionContext ?? throw new ArgumentNullException(nameof(sessionContext));
 
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             this.InitializeComponent();
             this.RibbonItems = new RibbonItems(this, this.rbnRibbon);
@@ -107,7 +107,7 @@ namespace electrifier.Core.Forms
             // Process Interface INavigationHost-part of DockContent-Activation
             if (null == activeContent)
             {
-                AppContext.TraceDebug("DpnDockPanel_ActiveContentChanged: activeContent is NULL");
+                LogContext.Debug("DpnDockPanel_ActiveContentChanged: activeContent is NULL");
             }
             else
             {
@@ -115,7 +115,7 @@ namespace electrifier.Core.Forms
 
                 //DpnDockPanel_ActiveContentChanged: Sender = WeifenLuo.WinFormsUI.Docking.DockPanel, BorderStyle: System.Windows.Forms.BorderStyle.None, ActivatedContent = electrifier.Core.Components.DockContents.SelectConditionalBox, Text: Select Conditional..., ActivatedContentType = electrifier.Core.Components.DockContents.SelectConditionalBox @ 'W:\[Git.Workspace]\[electrifier.Workspace]\electrifier\src\electrifier.Core\Forms\ApplicationWindow.cs' in DpnDockPanel_ActiveContentChanged
 
-                AppContext.TraceDebug($"DpnDockPanel_ActiveContentChanged({ activeContent?.GetType().Name }): { activeContent }");
+                LogContext.Debug($"DpnDockPanel_ActiveContentChanged({ activeContent?.GetType().Name }): { activeContent }");
                 //"DpnDockPanel_ActiveContentChanged: Sender=" + sender.ToString()
                 //+ ", ActivatedContent=" + activeContent
                 //+ ", ActivatedContentType=" + activatedContentType);
@@ -166,7 +166,7 @@ namespace electrifier.Core.Forms
                 newRibbonConsumer.ActivateRibbonState();
             }
 
-            AppContext.TraceScope($"Achtung Baby! *ActiveDocumentChanged*: { newDocument?.GetType() }, this is *not* Active Content Changed: { this.dpnDockPanel.ActiveContent?.GetType() }");
+            LogContext.Trace($"Achtung Baby! *ActiveDocumentChanged*: { newDocument?.GetType() }, this is *not* Active Content Changed: { this.dpnDockPanel.ActiveContent?.GetType() }");
         }
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)

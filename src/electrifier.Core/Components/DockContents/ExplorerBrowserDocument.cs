@@ -119,7 +119,7 @@ namespace electrifier.Core.Components.DockContents
 
         private void NativeClipboard_ClipboardUpdate(object sender, EventArgs e)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             IEnumerable<string> currentDataFormats()
             {
@@ -269,7 +269,7 @@ namespace electrifier.Core.Components.DockContents
                     this.BtnClipboardCopy.Enabled = this.currentClipboardAbilities.HasFlag(DragDropEffects.Copy);
                     // TODO: Enable / Disable Sub-Types
 
-                    AppContext.TraceDebug($"SelectionPropertyChanged: Cut/Move: { this.BtnClipboardCut.Enabled } Copy: { this.BtnClipboardCopy.Enabled }");
+                    LogContext.Debug($"SelectionPropertyChanged: Cut/Move: { this.BtnClipboardCut.Enabled } Copy: { this.BtnClipboardCopy.Enabled }");
 
                     break;
                 default:
@@ -330,12 +330,12 @@ namespace electrifier.Core.Components.DockContents
 
         public void ClipboardPaste(object sender, ExecuteEventArgs args)
         {
-            AppContext.TraceScope();
+            LogContext.Trace();
 
             // Check whether clipboard contains any data object
             if (!ClipboardState.ContainsData)
             {
-                AppContext.TraceWarning("No clipboard data present.");
+                LogContext.Warn("No clipboard data present.");
 
                 return;
             }
@@ -343,7 +343,7 @@ namespace electrifier.Core.Components.DockContents
             // Check whether the clipboard contains a data format we can handle
             if (!CanPasteFromClipboard())
             {
-                AppContext.TraceWarning("Incompatible clipboard data format present.");
+                LogContext.Warn("Incompatible clipboard data format present.");
 
                 return;
             }
@@ -453,7 +453,7 @@ namespace electrifier.Core.Components.DockContents
                 DragDropEffects dropEffect,
                 ShellFileOperations.OperationFlags operationFlags = (ShellFileOperations.OperationFlags.AllowUndo | ShellFileOperations.OperationFlags.NoConfirmMkDir))
             {
-                AppContext.TraceScope();
+                LogContext.Trace();
 
                 if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
                     throw new ArgumentException("Invalid DragDropEffect: Neither Copy nor Move flag is set.");
@@ -606,7 +606,7 @@ namespace electrifier.Core.Components.DockContents
 
         public void testribbonexecuter(object sender, ExecuteEventArgs args)
         {
-            AppContext.TraceDebug("Reached test executer!!!");
+            LogContext.Debug("Reached test executer!!!");
         }
 
 

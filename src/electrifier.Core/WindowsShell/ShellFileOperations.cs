@@ -74,7 +74,7 @@ namespace electrifier.Core.WindowsShell
             {
                 HRESULT HResult = ex.HResult;
 
-                AppContext.TraceError("ElShellFileOperations failed: " + HResult.ToString());
+                LogContext.Error("ShellFileOperations failed: " + HResult.ToString());
 
                 if ((HResult.Equals(HRESULT.COPYENGINE_E_USER_CANCELLED) == false) ||
                     (HResult.Equals(HRESULT.COPYENGINE_E_USER_CANCELLED) && this.ThrowUserCancellation))
@@ -89,7 +89,7 @@ namespace electrifier.Core.WindowsShell
             if (this.ShellFileOperations.QueuedOperations > 0)
             {
                 // INFO: When User has cancelled the operations, this will happen naturally
-                AppContext.TraceWarning("ElShellFileOperations is about to get disposed while there are still Operations in Queue!");
+                LogContext.Warn("ShellFileOperations is about to get disposed while there are still Operations in Queue!");
 //                throw new Exception("ElShellFileOperations is about to get disposed while there are still Operations in Queue!");
             }
 
