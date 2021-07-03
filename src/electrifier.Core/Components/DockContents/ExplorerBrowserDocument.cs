@@ -95,7 +95,7 @@ namespace electrifier.Core.Components.DockContents
             this.ToolStrip.CanRefreshView = false;
 
             this.NativeClipboard_ClipboardUpdate(this, EventArgs.Empty);
-            NativeClipboard.ClipboardUpdate += this.NativeClipboard_ClipboardUpdate;
+//            NativeClipboard.ClipboardUpdate += this.NativeClipboard_ClipboardUpdate;
 
             this.FormClosed += this.ExplorerBrowserDocument_FormClosed;
 
@@ -132,7 +132,7 @@ namespace electrifier.Core.Components.DockContents
 
         private void ExplorerBrowserDocument_Load(object sender, EventArgs e)
         {
-            this.Icon = Properties.Resources.ShellBrowserDockContent;       // TODO: static!
+            this.Icon = Properties.Resources.ExplorerBrowserDocument;       // TODO: static!
 
 
             this.ExplorerBrowser.Navigated += this.ExplorerBrowser_Navigated;
@@ -408,6 +408,8 @@ namespace electrifier.Core.Components.DockContents
 
             public void SetClipboardDataObject(DragDropEffects dropEffect)
             {
+                LogContext.Trace();
+
                 // TODO: Try / Catch
                 // TODO: Extended DragDropEffects-struct with methods for checking flags
                 if (!(dropEffect.HasFlag(DragDropEffects.Copy) || dropEffect.HasFlag(DragDropEffects.Move)))
@@ -440,8 +442,14 @@ namespace electrifier.Core.Components.DockContents
                 dataObject.SetFileDropList(scFileDropList);
                 dataObject.SetData("Preferred DropEffect", msDropEffect);       // TODO: Use Vanaras constant
 
+                //using (var natClip = new NativeClipboard(false, hWndNewOwner: this.Owner.ApplicationWindow.Handle))
+                //{
+                //    natClip.SetData<DataObject>(DataFormats.GetFormat(DataFormats.FileDrop).Id, dataObject);
+                //}
+
                 //Clipboard.Clear();        // TODO: Do we have to call Clear before placing data on the clipboard?
-                Clipboard.SetDataObject(dataObject, true);
+                //Clipboard.SetDataObject(dataObject, true);
+                Clipboard.SetDataObject(dataObject, false);
             }
 
             /// <summary>
@@ -496,7 +504,7 @@ namespace electrifier.Core.Components.DockContents
 
         public RibbonItems RibbonItems { get; private set; }
 
-        IBaseRibbonControlBinding[] RibbonControlBindings;
+        private IBaseRibbonControlBinding[] RibbonControlBindings;
 
         public RibbonTabBinding TabHome { get; private set; }
         public RibbonGroupBinding GrpHomeClipboard { get; private set; }
@@ -562,7 +570,7 @@ namespace electrifier.Core.Components.DockContents
                 this.BtnClipboardPasteAsNewJPGFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewJPGFile, this.testribbonexecuter),
                 this.BtnClipboardPasteAsNewPNGFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewPNGFile, this.testribbonexecuter),
                 this.BtnClipboardPasteAsNewGIFFile = new RibbonButtonBinding(ribbonItems.BtnClipboardPasteAsNewGIFFile, this.testribbonexecuter),
-                this.BtnClipboardHistory = new RibbonToggleButtonBinding(ribbonItems.BtnClipboardHistory),
+                //this.BtnClipboardHistory = new RibbonToggleButtonBinding(ribbonItems.BtnClipboardHistory),
                 this.GrpHomeOrganise = new RibbonGroupBinding(ribbonItems.GrpHomeOrganise),
                 this.BtnOrganiseMoveTo = new RibbonButtonBinding(ribbonItems.BtnOrganiseMoveTo, this.testribbonexecuter),
                 this.BtnOrganiseCopyTo = new RibbonButtonBinding(ribbonItems.BtnOrganiseCopyTo, this.testribbonexecuter),
@@ -575,14 +583,14 @@ namespace electrifier.Core.Components.DockContents
                 this.BtnSelectInvertSelection = new RibbonButtonBinding(ribbonItems.BtnSelectInvertSelection, this.testribbonexecuter),
                 this.GrpHomeView = new RibbonGroupBinding(ribbonItems.GrpHomeView),
                 this.DdbHomeViewLayout = new RibbonDropDownButtonBinding(ribbonItems.DdbHomeViewLayout),
-                this.BtnHomeViewExtraLargeIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewExtraLargeIcons),
-                this.BtnHomeViewLargeIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewLargeIcons),
-                this.BtnHomeViewMediumIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewMediumIcons),
-                this.BtnHomeViewSmallIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewSmallIcons),
-                this.BtnHomeViewList = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewList),
-                this.BtnHomeViewDetails = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewDetails),
-                this.BtnHomeViewTiles = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewTiles),
-                this.BtnHomeViewContent = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewContent),
+                //this.BtnHomeViewExtraLargeIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewExtraLargeIcons),
+                //this.BtnHomeViewLargeIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewLargeIcons),
+                //this.BtnHomeViewMediumIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewMediumIcons),
+                //this.BtnHomeViewSmallIcons = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewSmallIcons),
+                //this.BtnHomeViewList = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewList),
+                //this.BtnHomeViewDetails = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewDetails),
+                //this.BtnHomeViewTiles = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewTiles),
+                //this.BtnHomeViewContent = new RibbonToggleButtonBinding(ribbonItems.BtnHomeViewContent),
             };
 
             return this.RibbonControlBindings;
