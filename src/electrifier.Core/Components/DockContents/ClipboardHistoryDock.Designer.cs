@@ -29,100 +29,102 @@ namespace electrifier.Core.Components.DockContents
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ClipboardHistoryDock));
             System.Windows.Forms.ListViewGroup listViewGroup1 = new System.Windows.Forms.ListViewGroup("Today, 7/1/21", System.Windows.Forms.HorizontalAlignment.Left);
             System.Windows.Forms.ListViewGroup listViewGroup2 = new System.Windows.Forms.ListViewGroup("Yesterday, 06/30", System.Windows.Forms.HorizontalAlignment.Left);
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.lvwClipboardHistory = new System.Windows.Forms.ListView();
-            this.chdPreview = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chdTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.chdMove = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.chTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chPreview = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.chReCopy = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ssClipboardHistory = new System.Windows.Forms.StatusStrip();
+            this.ilHistoryItemImageList = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
-            // button1
+            // btnDelete
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.BackColor = System.Drawing.Color.Transparent;
-            this.button1.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.Location = new System.Drawing.Point(244, 633);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 44);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Re&Copy";
-            this.button1.UseVisualStyleBackColor = false;
-            // 
-            // button2
-            // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Image = global::electrifier.Core.Properties.Resources.Organise_Delete_32px;
-            this.button2.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button2.Location = new System.Drawing.Point(370, 633);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(120, 44);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "&Delete";
-            this.button2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button2.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.button2.UseVisualStyleBackColor = false;
+            this.btnDelete.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDelete.Image = ((System.Drawing.Image)(resources.GetObject("btnDelete.Image")));
+            this.btnDelete.ImageAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnDelete.Location = new System.Drawing.Point(313, 633);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(177, 44);
+            this.btnDelete.TabIndex = 2;
+            this.btnDelete.Text = "&Delete";
+            this.btnDelete.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnDelete.UseVisualStyleBackColor = false;
             // 
             // lvwClipboardHistory
             // 
+            this.lvwClipboardHistory.Activation = System.Windows.Forms.ItemActivation.OneClick;
             this.lvwClipboardHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lvwClipboardHistory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.chdTime,
-            this.chdPreview,
-            this.chdMove});
+            this.chTime,
+            this.chPreview,
+            this.chReCopy});
+            this.lvwClipboardHistory.FullRowSelect = true;
+            this.lvwClipboardHistory.GridLines = true;
             listViewGroup1.Header = "Today, 7/1/21";
-            listViewGroup1.Name = "listViewGroup1";
+            listViewGroup1.Name = "lvGroupToday";
             listViewGroup2.Header = "Yesterday, 06/30";
-            listViewGroup2.Name = "listViewGroup2";
+            listViewGroup2.Name = "lvGroupYesterday";
             this.lvwClipboardHistory.Groups.AddRange(new System.Windows.Forms.ListViewGroup[] {
             listViewGroup1,
             listViewGroup2});
             this.lvwClipboardHistory.HideSelection = false;
+            this.lvwClipboardHistory.HotTracking = true;
+            this.lvwClipboardHistory.HoverSelection = true;
+            this.lvwClipboardHistory.LabelEdit = true;
             this.lvwClipboardHistory.Location = new System.Drawing.Point(12, 12);
             this.lvwClipboardHistory.Name = "lvwClipboardHistory";
             this.lvwClipboardHistory.Size = new System.Drawing.Size(478, 615);
+            this.lvwClipboardHistory.SmallImageList = this.ilHistoryItemImageList;
             this.lvwClipboardHistory.TabIndex = 3;
             this.lvwClipboardHistory.UseCompatibleStateImageBehavior = false;
             this.lvwClipboardHistory.View = System.Windows.Forms.View.Details;
             // 
-            // chdPreview
+            // chTime
             // 
-            this.chdPreview.Text = "Preview";
-            this.chdPreview.Width = 160;
+            this.chTime.Text = "Time";
+            this.chTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.chTime.Width = 80;
             // 
-            // chdTime
+            // chPreview
             // 
-            this.chdTime.Text = "Time";
-            this.chdTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.chdTime.Width = 80;
+            this.chPreview.Text = "Preview";
+            this.chPreview.Width = 160;
             // 
-            // chdMove
+            // chReCopy
             // 
-            this.chdMove.Text = "Re-Copy";
-            this.chdMove.Width = 80;
+            this.chReCopy.Text = "Re-Copy";
+            this.chReCopy.Width = 80;
             // 
-            // statusStrip1
+            // ssClipboardHistory
             // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Location = new System.Drawing.Point(0, 680);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(502, 22);
-            this.statusStrip1.SizingGrip = false;
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
+            this.ssClipboardHistory.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.ssClipboardHistory.Location = new System.Drawing.Point(0, 680);
+            this.ssClipboardHistory.Name = "ssClipboardHistory";
+            this.ssClipboardHistory.Size = new System.Drawing.Size(502, 22);
+            this.ssClipboardHistory.SizingGrip = false;
+            this.ssClipboardHistory.TabIndex = 4;
+            this.ssClipboardHistory.Text = "statusStrip1";
+            // 
+            // ilHistoryItemImageList
+            // 
+            this.ilHistoryItemImageList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("ilHistoryItemImageList.ImageStream")));
+            this.ilHistoryItemImageList.TransparentColor = System.Drawing.Color.Transparent;
+            this.ilHistoryItemImageList.Images.SetKeyName(0, "sh71_TextFile.ico");
+            this.ilHistoryItemImageList.Images.SetKeyName(1, "sh4_Folder.ico");
             // 
             // ClipboardHistoryDock
             // 
             this.ClientSize = new System.Drawing.Size(502, 702);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.ssClipboardHistory);
             this.Controls.Add(this.lvwClipboardHistory);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnDelete);
             this.DockAreas = ((WeifenLuo.WinFormsUI.Docking.DockAreas)(((WeifenLuo.WinFormsUI.Docking.DockAreas.Float | WeifenLuo.WinFormsUI.Docking.DockAreas.DockLeft) 
             | WeifenLuo.WinFormsUI.Docking.DockAreas.DockRight)));
             this.HideOnClose = true;
@@ -134,12 +136,12 @@ namespace electrifier.Core.Components.DockContents
         }
 
         #endregion
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.ListView lvwClipboardHistory;
-        private System.Windows.Forms.ColumnHeader chdTime;
-        private System.Windows.Forms.ColumnHeader chdPreview;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ColumnHeader chdMove;
+        private System.Windows.Forms.ColumnHeader chTime;
+        private System.Windows.Forms.ColumnHeader chPreview;
+        private System.Windows.Forms.StatusStrip ssClipboardHistory;
+        private System.Windows.Forms.ColumnHeader chReCopy;
+        private System.Windows.Forms.ImageList ilHistoryItemImageList;
     }
 }

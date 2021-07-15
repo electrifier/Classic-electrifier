@@ -154,8 +154,6 @@ namespace electrifier.Core.Components.DockContents
 
                 if (textFormat > 0)
                 {
-                    //string fmtName = TextFormatIDs.Single(fmt => fmt.Id == textFormat).Name;
-
                     var dataobject = new TextClipboardDataObject();
                     var clipboardobject = new ClipboardItem(DateTime.Now, dataobject);
 
@@ -192,6 +190,8 @@ namespace electrifier.Core.Components.DockContents
             foreach (ClipboardItem clipboardItem in this.HistoryItems)
             {
                 ListViewItem lvItem = new ListViewItem();   // => ClipboardHistoryItem
+
+                lvItem.ImageIndex = clipboardItem.ImageIndex;
 
                 lvItem.Text = clipboardItem.DisplayString;
                 lvItem.SubItems.Add(clipboardItem.Timestamp.ToString("HH:mm:ss"));
