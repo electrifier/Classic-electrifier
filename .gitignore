@@ -1,5 +1,7 @@
 *.csproj.user
 *.suo
+/.vs
+/src/.vs/
 /src/*/bin/
 /src/*/obj/
 /src/packages/*/lib
