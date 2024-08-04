@@ -61,12 +61,42 @@ namespace electrifier.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon Clipboard_Copy_32px {
+            get {
+                object obj = ResourceManager.GetObject("Clipboard_Copy_32px", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ClipboardHistory_ReCopy_32px {
+            get {
+                object obj = ResourceManager.GetObject("ClipboardHistory_ReCopy_32px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         public static System.Drawing.Bitmap DropDown_Arrow_16px {
             get {
                 object obj = ResourceManager.GetObject("DropDown_Arrow_16px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        public static System.Drawing.Icon ExplorerBrowserDocument {
+            get {
+                object obj = ResourceManager.GetObject("ExplorerBrowserDocument", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -90,12 +120,12 @@ namespace electrifier.Core.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Icon ShellBrowserDockContent {
+        public static System.Drawing.Bitmap Organise_Delete_32px {
             get {
-                object obj = ResourceManager.GetObject("ShellBrowserDockContent", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
+                object obj = ResourceManager.GetObject("Organise_Delete_32px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }
