@@ -11,7 +11,7 @@ namespace electrifier.Core.Components
         private static DockPanel SelectConditionalDockPanel;
         private static DockState SelectConditionalDockState;
 
-        private static ClipboardHistoryDock clipboardHistoryDock;
+        //private static ClipboardHistoryDock clipboardHistoryDock;
 
         //private static ApplicationWindow applicationWindow;
         //public static ApplicationWindow ApplicationWindow
@@ -37,11 +37,11 @@ namespace electrifier.Core.Components
             private set => selectConditionalBox = value;
         }
 
-        public static ClipboardHistoryDock ClipboardHistoryDock
-        {
-            get => clipboardHistoryDock;
-            private set => clipboardHistoryDock = value;
-        }
+        //public static ClipboardHistoryDock ClipboardHistoryDock
+        //{
+        //    get => clipboardHistoryDock;
+        //    private set => clipboardHistoryDock = value;
+        //}
 
         //public static SelectConditionalBox CreateSelectConditionalBox() => SelectConditionalBox ?? (SelectConditionalBox = new SelectConditionalBox());
 
@@ -80,9 +80,9 @@ namespace electrifier.Core.Components
                 case nameof(SelectConditionalBox):
                     dockContent = CreateSelectConditionalBox(dockPanel);       // TODO: Serialize DockState
                     break;
-                case nameof(ClipboardHistoryDock):
-                    dockContent = Create<ClipboardHistoryDock>(applicationWindow);
-                    break;
+                //case nameof(ClipboardHistoryDock):
+                //    dockContent = Create<ClipboardHistoryDock>(applicationWindow);
+                    //break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown DockContent of type { dockContentTypeName }");
             }
@@ -95,14 +95,14 @@ namespace electrifier.Core.Components
         {
             switch (typeof(T).Name)
             {
-                case nameof(ClipboardHistoryDock):
-                    if (clipboardHistoryDock == null)
-                        clipboardHistoryDock = new ClipboardHistoryDock(applicationWindow);
+                //case nameof(ClipboardHistoryDock):
+                //    if (clipboardHistoryDock == null)
+                //        clipboardHistoryDock = new ClipboardHistoryDock(applicationWindow);
 
-                    if (showAfterCreation)
-                        clipboardHistoryDock.Show();
+                //    if (showAfterCreation)
+                //        clipboardHistoryDock.Show();
 
-                    return clipboardHistoryDock;
+                //    return clipboardHistoryDock;
 
                 default:
                     return null;
@@ -112,9 +112,7 @@ namespace electrifier.Core.Components
 
         public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
-            var testClipboardDock = DockContentFactory.Create<ClipboardHistoryDock>(applicationWindow);
-
-
+//            var testClipboardDock = DockContentFactory.Create<ClipboardHistoryDock>(applicationWindow);
             ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
 
             shellBrowser.Show();

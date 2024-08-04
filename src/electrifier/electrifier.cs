@@ -138,6 +138,7 @@ namespace electrifier
             }
             catch (Exception ex)
             {
+                // cannot find the file specified.
                 MessageBox.Show(
                     $"Unable to launch '{ ElectrifierMainEntryPoint.elCoreDLLFileName }'.\n\n" +
                     $"Please try to reinstall electrifier application.\n\n" +
