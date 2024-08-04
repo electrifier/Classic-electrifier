@@ -9,7 +9,7 @@ using Vanara.Windows.Shell;
 namespace electrifier.Core.WindowsShell
 {
     /// <summary>
-    /// TODO: Remove <see cref="ShellFileOperations"/>, cause multi-threaded Issues.
+    /// TODO: Remove <see cref="ShellFileOperations"/>, cause of possible multi-threaded Issues.
     /// Use <see cref="Vanara.Windows.Forms.ShellProgressDialog"/> instead.
     /// </summary>
     internal class ElShellFileOperations : IDisposable

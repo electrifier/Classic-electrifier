@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="electrifier.ElectrifierMainEntryPoint" Collapsed="true">
+    <Position X="4.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAEAABAAAAAA=</HashCode>
+      <FileName>electrifier.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="electrifier.SplashScreenForm" Collapsed="true">
+    <Position X="9.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAEACAAAAAAAAAAAGCAAAAEABAAAAAgQAAAABA=</HashCode>
+      <FileName>SplashScreenForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="electrifier.Gdi32" Collapsed="true">
+    <Position X="3.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACIAAACAAAAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>SplashScreenForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="electrifier.User32" Collapsed="true">
+    <Position X="5.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAABAAAIAAAAAAAAAAAAAAAAAAAAAAIAQA=</HashCode>
+      <FileName>SplashScreenForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="electrifier.WinDef" Collapsed="true">
+    <Position X="7" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SplashScreenForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
