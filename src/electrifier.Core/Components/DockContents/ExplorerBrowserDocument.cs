@@ -104,7 +104,7 @@ namespace electrifier.Core.Components.DockContents
             IEnumerable<string> currentDataFormats()
             {
                 foreach (var fmt in NativeClipboard.CurrentlySupportedFormats)
-                    yield return fmt.Name;
+                    yield return fmt.ToString();
             }
 
             this.BtnClipboardPaste.Enabled = currentDataFormats().Contains(DataFormats.FileDrop);       // TODO: Remove creation of temporary list, select formats explicitly

@@ -43,7 +43,7 @@ namespace electrifier.Core.WindowsShell
 
         public ElShellFileOperations(IWin32Window owner, ShellFileOperations.OperationFlags operationFlags)
         {
-            this.ShellFileOperations = new ShellFileOperations(owner)
+            this.ShellFileOperations = new ShellFileOperations(owner.Handle)
             {
                 Options = operationFlags
             };
