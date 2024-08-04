@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35125.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier.Core", "electrifier.Core\electrifier.Core.csproj", "{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -12,9 +12,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier", "electrifier\
 		{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3} = {E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}
 	EndProjectSection
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Setup", "WiX-Setup\Setup.wixproj", "{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EntityLighter", "EntityLighter\EntityLighter.csproj", "{10C6EA02-55C0-48B9-BC6F-6E7C9C6CF2DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4AA42B98-D7AA-49B8-B64C-3ACBD9642AD0}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -40,12 +43,6 @@ Global
 		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Release|x86.ActiveCfg = Release|Any CPU
 		{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}.Release|x86.Build.0 = Release|Any CPU
-		{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}.Debug|x86.ActiveCfg = Debug|x86
-		{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}.Debug|x86.Build.0 = Debug|x86
-		{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}.Release|Any CPU.ActiveCfg = Release|x86
-		{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}.Release|x86.ActiveCfg = Release|x86
-		{E312CFB0-5122-480F-91C9-9A1AFA3AB59F}.Release|x86.Build.0 = Release|x86
 		{10C6EA02-55C0-48B9-BC6F-6E7C9C6CF2DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{10C6EA02-55C0-48B9-BC6F-6E7C9C6CF2DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10C6EA02-55C0-48B9-BC6F-6E7C9C6CF2DE}.Debug|x86.ActiveCfg = Debug|Any CPU

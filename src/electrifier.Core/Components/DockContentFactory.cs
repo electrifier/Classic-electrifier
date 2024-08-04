@@ -1,24 +1,4 @@
-﻿/*
-** 
-**  electrifier
-** 
-**  Copyright 2017-19 Thorsten Jung, www.electrifier.org
-**  
-**  Licensed under the Apache License, Version 2.0 (the "License");
-**  you may not use this file except in compliance with the License.
-**  You may obtain a copy of the License at
-**  
-**      http://www.apache.org/licenses/LICENSE-2.0
-**  
-**  Unless required by applicable law or agreed to in writing, software
-**  distributed under the License is distributed on an "AS IS" BASIS,
-**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-**  See the License for the specific language governing permissions and
-**  limitations under the License.
-**
-*/
-
-using electrifier.Core.Components.DockContents;
+﻿using electrifier.Core.Components.DockContents;
 using electrifier.Core.Forms;
 using System;
 using WeifenLuo.WinFormsUI.Docking;
@@ -31,6 +11,22 @@ namespace electrifier.Core.Components
         private static DockPanel SelectConditionalDockPanel;
         private static DockState SelectConditionalDockState;
 
+        private static ClipboardHistoryDock clipboardHistoryDock;
+
+        //private static ApplicationWindow applicationWindow;
+        //public static ApplicationWindow ApplicationWindow
+        //{
+        //    get => applicationWindow ?? throw new ApplicationException($"{nameof(ApplicationWindow)} not initialized!");
+        //    private set
+        //    {
+        //        if (applicationWindow == null)
+        //            applicationWindow = value;
+        //        else
+        //            throw new ApplicationException($"{nameof(ApplicationWindow)} already initialized!");
+        //    }
+        //}
+
+
 
         /// <summary>
         /// Get the instance of the currently opened <see cref="DockContents.SelectConditionalBox"/>, if there is one.
@@ -41,6 +37,11 @@ namespace electrifier.Core.Components
             private set => selectConditionalBox = value;
         }
 
+        public static ClipboardHistoryDock ClipboardHistoryDock
+        {
+            get => clipboardHistoryDock;
+            private set => clipboardHistoryDock = value;
+        }
 
         //public static SelectConditionalBox CreateSelectConditionalBox() => SelectConditionalBox ?? (SelectConditionalBox = new SelectConditionalBox());
 
@@ -79,6 +80,9 @@ namespace electrifier.Core.Components
                 case nameof(SelectConditionalBox):
                     dockContent = CreateSelectConditionalBox(dockPanel);       // TODO: Serialize DockState
                     break;
+                case nameof(ClipboardHistoryDock):
+                    dockContent = Create<ClipboardHistoryDock>(applicationWindow);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException($"Unknown DockContent of type { dockContentTypeName }");
             }
@@ -87,14 +91,30 @@ namespace electrifier.Core.Components
         }
 
         // TODO: Use recursive pattern in C#8
-        [Obsolete("Not implemented yet", true)]
-        public static T Create<T>(ApplicationWindow applicationWindow, bool showAfterCreation = true) where T : DockPanel
+        public static DockContent Create<T>(ApplicationWindow applicationWindow, bool showAfterCreation = true) where T : DockContent
         {
-            throw new NotImplementedException(nameof(Create));
+            switch (typeof(T).Name)
+            {
+                case nameof(ClipboardHistoryDock):
+                    if (clipboardHistoryDock == null)
+                        clipboardHistoryDock = new ClipboardHistoryDock(applicationWindow);
+
+                    if (showAfterCreation)
+                        clipboardHistoryDock.Show();
+
+                    return clipboardHistoryDock;
+
+                default:
+                    return null;
+            }
         }
+
 
         public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
+            var testClipboardDock = DockContentFactory.Create<ClipboardHistoryDock>(applicationWindow);
+
+
             ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
 
             shellBrowser.Show();
@@ -106,11 +126,11 @@ namespace electrifier.Core.Components
         {
             if (SelectConditionalBox != null)
             {
-                DockContentFactory.CloseSelectConditionalBox();
+                CloseSelectConditionalBox();
             }
             else
             {
-                DockContentFactory.CreateSelectConditionalBox(defaultDockPanel);
+                CreateSelectConditionalBox(defaultDockPanel);
             }
         }
 
@@ -144,6 +164,21 @@ namespace electrifier.Core.Components
 
             SelectConditionalBox = null;
             dockPanel.Close();
+        }
+
+        public static void ToggleClipboardHistoryDock(DockPanel defaultDockPanel)
+        {
+            //var test = 
+            //    ClipboardHistoryDock.GetInstance(DockContentFactory.ApplicationWindow);
+
+            //if (SelectConditionalBox != null)
+            //{
+            //    CloseSelectConditionalBox();
+            //}
+            //else
+            //{
+            //    CreateSelectConditionalBox(defaultDockPanel);
+            //}
         }
     }
 }

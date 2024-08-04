@@ -38,8 +38,8 @@
             this.ContinueSessionListView = new System.Windows.Forms.ListView();
             this.SessionNameColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.SessionDescriptionColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.SessionCreatedColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.SessionModifiedColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.SessionLastUsageColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.SessionFirstUseColumnHeader = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ContinueSessionRadioButton = new System.Windows.Forms.RadioButton();
             this.CreateSessionRadioButton = new System.Windows.Forms.RadioButton();
             this.WorkbenchGroupBox = new System.Windows.Forms.GroupBox();
@@ -151,8 +151,8 @@
             this.ContinueSessionListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.SessionNameColumnHeader,
             this.SessionDescriptionColumnHeader,
-            this.SessionCreatedColumnHeader,
-            this.SessionModifiedColumnHeader});
+            this.SessionLastUsageColumnHeader,
+            this.SessionFirstUseColumnHeader});
             this.ContinueSessionListView.FullRowSelect = true;
             this.ContinueSessionListView.HideSelection = false;
             this.ContinueSessionListView.Location = new System.Drawing.Point(8, 144);
@@ -170,24 +170,24 @@
             // SessionNameColumnHeader
             // 
             this.SessionNameColumnHeader.Text = "Name";
-            this.SessionNameColumnHeader.Width = 80;
+            this.SessionNameColumnHeader.Width = 132;
             // 
             // SessionDescriptionColumnHeader
             // 
             this.SessionDescriptionColumnHeader.Text = "Description";
-            this.SessionDescriptionColumnHeader.Width = 120;
+            this.SessionDescriptionColumnHeader.Width = 132;
             // 
-            // SessionCreatedColumnHeader
+            // SessionLastUsageColumnHeader
             // 
-            this.SessionCreatedColumnHeader.Text = "Created";
-            this.SessionCreatedColumnHeader.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.SessionCreatedColumnHeader.Width = 80;
+            this.SessionLastUsageColumnHeader.Text = "Last Usage";
+            this.SessionLastUsageColumnHeader.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.SessionLastUsageColumnHeader.Width = 100;
             // 
-            // SessionModifiedColumnHeader
+            // SessionFirstUseColumnHeader
             // 
-            this.SessionModifiedColumnHeader.Text = "Modified";
-            this.SessionModifiedColumnHeader.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.SessionModifiedColumnHeader.Width = 80;
+            this.SessionFirstUseColumnHeader.Text = "First Use";
+            this.SessionFirstUseColumnHeader.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.SessionFirstUseColumnHeader.Width = 100;
             // 
             // ContinueSessionRadioButton
             // 
@@ -309,7 +309,7 @@
             // 
             // BetaWarningPictureBox
             // 
-            this.BetaWarningPictureBox.BackColor = System.Drawing.SystemColors.Info;
+            this.BetaWarningPictureBox.BackColor = System.Drawing.SystemColors.Control;
             this.BetaWarningPictureBox.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("BetaWarningPictureBox.BackgroundImage")));
             this.BetaWarningPictureBox.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.BetaWarningPictureBox.Dock = System.Windows.Forms.DockStyle.Left;
@@ -364,8 +364,8 @@
         private System.Windows.Forms.ListView ContinueSessionListView;
         private System.Windows.Forms.ColumnHeader SessionNameColumnHeader;
         private System.Windows.Forms.ColumnHeader SessionDescriptionColumnHeader;
-        private System.Windows.Forms.ColumnHeader SessionCreatedColumnHeader;
-        private System.Windows.Forms.ColumnHeader SessionModifiedColumnHeader;
+        private System.Windows.Forms.ColumnHeader SessionLastUsageColumnHeader;
+        private System.Windows.Forms.ColumnHeader SessionFirstUseColumnHeader;
         private System.Windows.Forms.Label CreateSessionDescriptionLabel;
         private System.Windows.Forms.Label CreateSessionNameLabel;
         private System.Windows.Forms.TextBox CreateSessionDescriptionTextBox;

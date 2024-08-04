@@ -3,3 +3,4 @@
 /src/*/bin/
 /src/*/obj/
 /src/packages/*/lib
+/src/.vs/electrifier

@@ -24,30 +24,46 @@ using NLog.Targets;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace electrifier.Core
 {
+    /// <summary>
+    /// For a NLog@SQLite example, see here:
+    /// <see href="http://andreaazzola.com/logging-nlog-sqlite#:~:text=%20Logging%20with%20NLog%20and%20SQLite%20%201,have%20a%20separate%20file%20for%20NLog...%20More%20"/>
+    /// </summary>
     public static class LogContext
     {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public static void Initialize()
+        public static void Initialize(string baseDirectory = null)
         {
             LoggingConfiguration logConfig = new LoggingConfiguration();
+            baseDirectory = !String.IsNullOrEmpty(baseDirectory) ? baseDirectory :
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppContext.AssemblyCompany);
+
+
+
+            //            string baseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppContext.AssemblyCompany);
 
             FileTarget fileTarget = new FileTarget("logfile")
             {
-                FileName = "logfile.txt"
+                FileName = Path.Combine(baseDirectory, "logfile.txt"),
+                //FileName = "logfile.txt",
+                CreateDirs = true,
+                AutoFlush = true,
             };
 
             logConfig.AddRuleForAllLevels(fileTarget);
 
             NLog.LogManager.Configuration = logConfig;
 
-            Logger.Info("Logging enabled");
+            Logger.Info("");
+            Logger.Info($"Logging into file 'logfile.txt' in folder '{baseDirectory}'");
+            Logger.Info("");
         }
 
         //[Conditional("DEBUG")]
