@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier.Core", "electri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "electrifier", "electrifier\electrifier.csproj", "{ACB8C7F4-C020-4540-8C0E-CF35E725D0FC}"
 	ProjectSection(ProjectDependencies) = postProject
+		{10C6EA02-55C0-48B9-BC6F-6E7C9C6CF2DE} = {10C6EA02-55C0-48B9-BC6F-6E7C9C6CF2DE}
 		{E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3} = {E566845E-E6FB-4DB7-8CA7-5E26ACDC50F3}
 	EndProjectSection
 EndProject

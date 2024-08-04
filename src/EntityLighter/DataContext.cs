@@ -1,24 +1,4 @@
-﻿/*
-** 
-**  electrifier - EntityLighter
-** 
-**  Copyright 2017-19 Thorsten Jung, www.electrifier.org
-**  
-**  Licensed under the Apache License, Version 2.0 (the "License");
-**  you may not use this file except in compliance with the License.
-**  You may obtain a copy of the License at
-**  
-**      http://www.apache.org/licenses/LICENSE-2.0
-**  
-**  Unless required by applicable law or agreed to in writing, software
-**  distributed under the License is distributed on an "AS IS" BASIS,
-**  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-**  See the License for the specific language governing permissions and
-**  limitations under the License.
-**
-*/
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,7 +17,6 @@ using Microsoft.Data.Sqlite;
 /// <seealso href="https://en.wikipedia.org/wiki/Entity–relationship_model"/>
 /// <seealso href="https://en.wikipedia.org/wiki/Data_modeling"/>
 /// <seealso href="https://docs.microsoft.com/en-us/dotnet/api/system.data.linq.mapping.tableattribute?view=netframework-4.8"/>
-/// 
 /// The EntitySet-Class source:
 /// <seealso href="https://referencesource.microsoft.com/#System.Data.Linq/Types.cs,dbc446811fd0241d"/>
 /// </summary>
@@ -55,10 +34,7 @@ using Microsoft.Data.Sqlite;
 // This is how you could 'embed' C#-functions into SQLite!
 // https://stackoverflow.com/questions/24229785/sqlite-net-sqlitefunction-not-working-in-linq-to-sql/26155359#26155359
 // https://docs.microsoft.com/de-de/dotnet/standard/data/sqlite/user-defined-functions
-//this.SqliteConnection.CreateFunction<>
-
-
-// SQLite: Datetime: SELECT datetime('now','localtime');
+// this.SqliteConnection.CreateFunction<>
 
 namespace EntityLighter
 {
