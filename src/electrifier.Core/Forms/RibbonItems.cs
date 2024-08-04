@@ -179,7 +179,9 @@ namespace RibbonLib.Controls
             this.ApplicationWindow.BeginInvoke(new MethodInvoker(delegate ()
             {
                 uint cmdID = (sender as BaseRibbonControl).CommandID;
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
                 Shell32.FOLDERVIEWMODE newShellFolderViewMode;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
 
                 switch (cmdID)
                 {
@@ -211,7 +213,7 @@ namespace RibbonLib.Controls
                         throw new IndexOutOfRangeException(nameof(cmdID));
                 }
 
-//                // Finally, apply new ViewMode if ActiveDockContent is of type ElNavigableDockContent
+// TODO:       // Finally, apply new ViewMode if ActiveDockContent is of type ElNavigableDockContent
 //                if (this.ApplicationWindow.ActiveDockContent is NavigableDockContent navigableDockContent)
 //                    navigableDockContent.ShellFolderViewMode = newShellFolderViewMode;
             }));
