@@ -5,10 +5,8 @@ using RibbonLib.Controls.Events;
 using RibbonLib.Interop;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Windows.Forms;
 using Vanara.PInvoke;
-using WeifenLuo.WinFormsUI.Docking;
 
 namespace RibbonLib.Controls
 {

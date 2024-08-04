@@ -253,28 +253,72 @@ namespace electrifier.Core.Components
     /// The underlying <see cref="RibbonToggleButton"/> derives from:
     /// <list type="bullet">
     /// <item><term>BaseRibbonControl</term><description>BaseRibbonControl</description></item>
+    /// <item><term>IBooleanValuePropertyProvider</term><description>IBooleanValuePropertyProvider</description></item>
+    /// <item><term>IEnabledPropertiesProvider</term><description>IEnabledPropertiesProvider</description></item>
     /// <item><term>IKeytipPropertiesProvider</term><description>IKeytipPropertiesProvider</description></item>
     /// <item><term>ILabelPropertiesProvider</term><description>ILabelPropertiesProvider</description></item>
+    /// <item><term>ILabelDescriptionPropertiesProvider</term><description>ILabelDescriptionPropertiesProvider</description></item>
+    /// <item><term>IImagePropertiesProvider</term><description>IImagePropertiesProvider</description></item>
     /// <item><term>ITooltipPropertiesProvider</term><description>ITooltipPropertiesProvider</description></item>
-    /// </list>
-    /// </summary>
+    /// <item><term>IExecuteEventsProvider</term><description>IExecuteEventsProvider</description></item>
+    ///</list>
+    ///</summary>
     public class RibbonToggleButtonBinding :
-        IBaseRibbonControlBinding
+        IBaseRibbonControlBinding,
+        IBooleanValuePropertyProvider,
+        IEnabledPropertiesProvider,
+        IExecuteEventsProvider
     {
         public RibbonToggleButton BaseRibbonControl { get; }
-        public RibbonToggleButtonBinding(RibbonToggleButton ribbonToggleButton)
+
+        private bool booleanValue;
+        public bool BooleanValue
+        {
+            get => this.booleanValue;
+            set
+            {
+                this.booleanValue = value;
+                BaseRibbonControl.BooleanValue = value;
+            }
+        }
+
+        private bool enabled;
+        public bool Enabled
+        {
+            get => this.enabled;
+            set
+            {
+                this.enabled = value;
+                BaseRibbonControl.Enabled = value;
+            }
+        }
+
+        public event EventHandler<ExecuteEventArgs> ExecuteEvent;
+
+        public RibbonToggleButtonBinding(
+            RibbonToggleButton ribbonToggleButton,
+            EventHandler<ExecuteEventArgs> executeEvent,
+            bool enabled = false,
+            bool booleanValue = false)
         {
             this.BaseRibbonControl = ribbonToggleButton;
+
+            this.BooleanValue = booleanValue;
+            this.Enabled = enabled;
+            this.ExecuteEvent = executeEvent;
         }
+
         public void ActivateRibbonState()
         {
+            this.BaseRibbonControl.BooleanValue = this.BooleanValue;
+            this.BaseRibbonControl.Enabled = this.Enabled;
+            this.BaseRibbonControl.ExecuteEvent += this.ExecuteEvent;
         }
         public void DeactivateRibbonState()
         {
+            this.BaseRibbonControl.ExecuteEvent -= this.ExecuteEvent;
         }
     }
-
-
 
     /// <summary>
     /// The underlying <see cref="RibbonTab"/> derives from:

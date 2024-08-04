@@ -1,0 +1,6 @@
+<Project>
+  <!-- See https://www.thecodebuzz.com/enable-c-sharp-language-version-guidelines/#:~:text=How%20to%20Enable%20C%23%20language%20Versioning%20%E2%80%93%20Guidelines,Settings%20on%20Build%20Server.%20...%209%20Summary.%20 -->
+  <PropertyGroup>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+</Project>

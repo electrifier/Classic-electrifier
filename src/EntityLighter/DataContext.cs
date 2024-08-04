@@ -545,7 +545,7 @@ namespace EntityLighter
         /// <param name="CreateIfNotExists"></param>
         protected SqliteResult OpenDatabase(bool CreateIfNotExists = false)
         {
-            SqliteOpenMode openMode = SqliteOpenMode.ReadWrite;
+            SqliteOpenMode openMode = SqliteOpenMode.ReadWriteCreate;
             int errorCode = 0;
 
             try
