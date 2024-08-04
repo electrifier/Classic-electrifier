@@ -238,6 +238,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Web.WebView2">
+      <Version>1.0.2592.51</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Web.WebView2.DevToolsProtocolExtension">
+      <Version>1.0.2271</Version>
+    </PackageReference>
     <PackageReference Include="NLog">
       <Version>5.3.2</Version>
     </PackageReference>
