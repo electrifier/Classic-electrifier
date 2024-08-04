@@ -1,0 +1,150 @@
+{
+  "settings": {
+    "components": {
+      "code": true,
+      "binaries": true
+    },
+    "targetId": "",
+    "targetDisplayName": ".NET 8.0"
+  },
+  "analysisStartTime": "2024-08-04T14:02:17.4968019Z",
+  "analysisEndTime": "2024-08-04T14:02:34.6481632Z",
+  "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2270980",
+  "stats": {
+    "summary": {
+      "projects": 3,
+      "issues": 3,
+      "incidents": 3,
+      "effort": 3
+    },
+    "charts": {
+      "severity": {
+        "Mandatory": 2,
+        "Optional": 0,
+        "Potential": 1,
+        "Information": 0
+      },
+      "category": {
+        "Project": 1,
+        "NuGet": 2
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "electrifier.Core\\electrifier.Core.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "ruleInstances": [
+        {
+          "incidentId": "ff398a83-c853-4c3d-a90f-34019fefba13",
+          "ruleId": "NuGet.0001",
+          "projectPath": "electrifier.Core\\electrifier.Core.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "DockPanelSuite.ThemeVS2015, 3.0.6\n\nRecommendation:\n\nDockPanelSuite.ThemeVS2015, 3.1.0",
+              "protected": "DockPanelSuite.ThemeVS2015, 3.0.6\n\nRecommendation:\n\nDockPanelSuite.ThemeVS2015, 3.1.0"
+            },
+            "kind": "File",
+            "path": "electrifier.Core\\electrifier.Core.csproj",
+            "snippet": "DockPanelSuite.ThemeVS2015, 3.0.6\n\nRecommendation:\n\nDockPanelSuite.ThemeVS2015, 3.1.0",
+            "protectedSnippet": "DockPanelSuite.ThemeVS2015, 3.0.6\n\nRecommendation:\n\nDockPanelSuite.ThemeVS2015, 3.1.0",
+            "label": "DockPanelSuite.ThemeVS2015 3.0.6"
+          }
+        }
+      ]
+    },
+    {
+      "path": "electrifier\\electrifier.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "ruleInstances": [
+        {
+          "incidentId": "aae1b779-251a-4424-bd12-c4453cf2e326",
+          "ruleId": "Project.0001",
+          "projectPath": "electrifier\\electrifier.csproj",
+          "state": "Active",
+          "location": {
+            "kind": "File",
+            "path": "electrifier\\electrifier.csproj"
+          }
+        }
+      ]
+    },
+    {
+      "path": "EntityLighter\\EntityLighter.csproj",
+      "startingProject": true,
+      "issues": 1,
+      "storyPoints": 1,
+      "ruleInstances": [
+        {
+          "incidentId": "8d274e78-a435-49ec-a8cd-d136fbc2a389",
+          "ruleId": "NuGet.0002",
+          "projectPath": "EntityLighter\\EntityLighter.csproj",
+          "state": "Active",
+          "location": {
+            "snippetModel": {
+              "unrestricted": "Microsoft.Data.Sqlite, 6.0.0-preview.3.21201.2\n\nRecommendation:\n\nMicrosoft.Data.Sqlite 8.0.7",
+              "protected": "Microsoft.Data.Sqlite, 6.0.0-preview.3.21201.2\n\nRecommendation:\n\nMicrosoft.Data.Sqlite 8.0.7"
+            },
+            "kind": "File",
+            "path": "EntityLighter\\EntityLighter.csproj",
+            "snippet": "Microsoft.Data.Sqlite, 6.0.0-preview.3.21201.2\n\nRecommendation:\n\nMicrosoft.Data.Sqlite 8.0.7",
+            "protectedSnippet": "Microsoft.Data.Sqlite, 6.0.0-preview.3.21201.2\n\nRecommendation:\n\nMicrosoft.Data.Sqlite 8.0.7",
+            "label": "Microsoft.Data.Sqlite 6.0.0-preview.3.21201.2"
+          }
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "Project.0001": {
+      "id": "Project.0001",
+      "description": "Project file needs to be converted to SDK style. Modern .NET framework projects require a change in the project file format and use SDK corresponding to project flavor and functionality.",
+      "label": "Project file needs to be converted to SDK style",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "title": "Overview of porting from .NET Framework to .NET",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265227",
+          "isCustom": false
+        },
+        {
+          "title": ".NET project SDKs",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2265226",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0002": {
+      "id": "NuGet.0002",
+      "description": "NuGet package upgrade is recommended for selected target framework.\n\nStandard .NET packages are recommended to have versions matching version of .NET that project targets.\n\nSome other packages also are known to work better for selected target frameworks.",
+      "label": "NuGet package upgrade is recommended",
+      "severity": "Potential",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262530",
+          "isCustom": false
+        }
+      ]
+    },
+    "NuGet.0001": {
+      "id": "NuGet.0001",
+      "description": "NuGet package is incompatible with selected target framework.\n\nPackage needs to be upgraded to a version supporting selected project target framework. If there no new package versions supporting new target framework, different package needs to be used and all code needs to be upgraded to new API.",
+      "label": "NuGet package is incompatible",
+      "severity": "Mandatory",
+      "effort": 1,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?linkid=2262529",
+          "isCustom": false
+        }
+      ]
+    }
+  }
+}
