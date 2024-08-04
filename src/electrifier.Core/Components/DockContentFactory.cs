@@ -113,7 +113,7 @@ namespace electrifier.Core.Components
         public static ExplorerBrowserDocument CreateShellBrowser(ApplicationWindow applicationWindow, string persistString = null)
         {
 //            var testClipboardDock = DockContentFactory.Create<ClipboardHistoryDock>(applicationWindow);
-            ExplorerBrowserDocument shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
+            var shellBrowser = new ExplorerBrowserDocument(applicationWindow, persistString);
 
             shellBrowser.Show();
 

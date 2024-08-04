@@ -33,11 +33,11 @@ namespace electrifier.Core
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyTitleAttribute), false);
 
                 if (attributes.Length > 0)
                 {
-                    AssemblyTitleAttribute titleAttribute = (AssemblyTitleAttribute)attributes[0];
+                    var titleAttribute = (AssemblyTitleAttribute)attributes[0];
 
                     if (!string.IsNullOrWhiteSpace(titleAttribute.Title))
                         return titleAttribute.Title;
@@ -51,7 +51,7 @@ namespace electrifier.Core
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
 
                 return (attributes.Length == 0) ? string.Empty : ((AssemblyDescriptionAttribute)attributes[0]).Description;
             }
@@ -61,7 +61,7 @@ namespace electrifier.Core
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
 
                 return (attributes.Length == 0) ? string.Empty : ((AssemblyProductAttribute)attributes[0]).Product;
             }
@@ -71,7 +71,7 @@ namespace electrifier.Core
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
 
                 return (attributes.Length == 0) ? string.Empty : ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
             }
@@ -81,7 +81,7 @@ namespace electrifier.Core
         {
             get
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
+                var attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
 
                 return (attributes.Length == 0) ? string.Empty : ((AssemblyCompanyAttribute)attributes[0]).Company;
             }
@@ -120,7 +120,7 @@ namespace electrifier.Core
             AppDomain.CurrentDomain.UnhandledException += this.CurrentDomain_UnhandledException;
 
             // Parse command line paramaters
-            foreach (string arg in args)
+            foreach (var arg in args)
             {
                 // Portable: Issue #5: Add "-portable" command switch, storing configuration in application directory instead of "LocalApplicationData"
                 if (arg.Equals("/portable", StringComparison.OrdinalIgnoreCase))
@@ -143,7 +143,7 @@ namespace electrifier.Core
             try
             {
                 // TODO: Store sessioncontext?!?
-                SessionContext sessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
+                var sessionContext = new SessionContext(this.Icon, DetermineBaseDirectory(isPortable), isIncognito);
                 sessionContext.MainFormChange += this.SessionContext_MainFormChange;
                 sessionContext.CreateInitialForm(this);
 
@@ -294,7 +294,7 @@ namespace electrifier.Core
 
         public static string BuildDefaultFormText(string baseFormText = null)
         {
-            string text = string.IsNullOrWhiteSpace(baseFormText) ?
+            var text = string.IsNullOrWhiteSpace(baseFormText) ?
                 FormTitleAffix :
                 $"{baseFormText} - {FormTitleAffix}";
 
@@ -322,9 +322,9 @@ namespace electrifier.Core
         private void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
         {
             // TODO: Use Vanara.Windows.Forms.TaskDialog;
-            string exMessage = $"Thread exception occured: { e.Exception.GetType().FullName }\n" +
-                $"\n{ e.Exception.Message }\n" +
-                $"\n{ e.Exception.StackTrace }\n";
+            var exMessage = $"Thread exception occured: { e.Exception.GetType().FullName }\n" +
+                            $"\n{ e.Exception.Message }\n" +
+                            $"\n{ e.Exception.StackTrace }\n";
 
             if (null != e.Exception.InnerException)
                 exMessage += $"\nInner Exception: { e.Exception.InnerException.Message }\n";
@@ -336,8 +336,8 @@ namespace electrifier.Core
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             // TODO: Use Vanara.Windows.Forms.TaskDialog;
-            string exMessage = $"Domain exception occured: { e.ExceptionObject.GetType().FullName }" +
-                $"\n\n{ e.ExceptionObject }\n";
+            var exMessage = $"Domain exception occured: { e.ExceptionObject.GetType().FullName }" +
+                            $"\n\n{ e.ExceptionObject }\n";
 
             LogContext.Error(exMessage);
             MessageBox.Show(exMessage, "D'oh! That shouldn't have happened...");
@@ -348,7 +348,7 @@ namespace electrifier.Core
             if (isPortable)
                 return Application.StartupPath;
 
-            string baseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            var baseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 AppContext.AssemblyCompany);
 
             // Ensure the directory exists
@@ -374,9 +374,9 @@ namespace electrifier.Core
             const string regSubKey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
             const string regValue = @"Release";
 
-            using (RegistryKey regKeyLocalMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            using (var regKeyLocalMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
             {
-                using (RegistryKey regKeyNetDeveloperPlatform = regKeyLocalMachine?.OpenSubKey(regSubKey))
+                using (var regKeyNetDeveloperPlatform = regKeyLocalMachine?.OpenSubKey(regSubKey))
                 {
                     if (null != regKeyNetDeveloperPlatform?.GetValue(regValue))
                     {

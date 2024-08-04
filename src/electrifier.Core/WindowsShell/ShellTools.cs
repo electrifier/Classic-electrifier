@@ -87,8 +87,8 @@ namespace electrifier.Core.WindowsShell
         /// <returns>The given FilePath encoded into Windows file URI scheme</returns>
         public static string UrlCreateFromPath(string FilePath)
         {
-            uint maxLength = Internet_Max_URL_Length;
-            StringBuilder Url = new StringBuilder((int)maxLength);
+            var maxLength = Internet_Max_URL_Length;
+            var Url = new StringBuilder((int)maxLength);
 
             ElShellTools.UrlCreateFromPath(FilePath, Url, ref maxLength, 0);
 
@@ -104,8 +104,8 @@ namespace electrifier.Core.WindowsShell
         /// <returns>The given FilePath decoded from Windows file URI scheme</returns>
         public static string PathCreateFromUrl(string Url)
         {
-            uint maxLength = Internet_Max_URL_Length;
-            StringBuilder filePath = new StringBuilder((int)maxLength);
+            var maxLength = Internet_Max_URL_Length;
+            var filePath = new StringBuilder((int)maxLength);
 
             ElShellTools.PathCreateFromUrl(Url, filePath, ref maxLength, 0);
 
@@ -125,9 +125,9 @@ namespace electrifier.Core.WindowsShell
                 yield break;
 
             var sb = new StringBuilder();
-            bool inQuote = false;
+            var inQuote = false;
 
-            foreach (char c in argumentString)
+            foreach (var c in argumentString)
             {
                 if (c == '"' && !inQuote)
                 {

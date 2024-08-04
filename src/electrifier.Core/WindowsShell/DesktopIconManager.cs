@@ -111,7 +111,7 @@ namespace electrifier.Core.WindowsShell
 
         public static int SaveLayout(string fullFileName = null)
         {
-            int cntSavedIcons = 0;
+            var cntSavedIcons = 0;
 
             try
             {
@@ -119,13 +119,13 @@ namespace electrifier.Core.WindowsShell
                     fullFileName = Path.Combine(DefaultDirectoryName, DefaultFileName);
 
                 // Ensure directory exists before attempting to create the file
-                System.IO.FileInfo fileInfo = new System.IO.FileInfo(fullFileName);
+                var fileInfo = new System.IO.FileInfo(fullFileName);
                 fileInfo.Directory.Create();
 
-                using (StreamWriter writer = new StreamWriter(fullFileName))
+                using (var writer = new StreamWriter(fullFileName))
                 {
-                    DesktopIconLayout iconLayout = ElDesktopIconManager.GetCurrentDesktopIconLayout();
-                    XmlSerializer serializer = new XmlSerializer(typeof(ElDesktopIconManager.DesktopIconLayout));
+                    var iconLayout = ElDesktopIconManager.GetCurrentDesktopIconLayout();
+                    var serializer = new XmlSerializer(typeof(ElDesktopIconManager.DesktopIconLayout));
 
                     serializer.Serialize(writer, iconLayout);
                     writer.Close();
@@ -143,7 +143,7 @@ namespace electrifier.Core.WindowsShell
 
         public static int RestoreLayout(string fullFileName = null)
         {
-            int cntRestoredIcons = 0;
+            var cntRestoredIcons = 0;
 
             try
             {
@@ -151,12 +151,12 @@ namespace electrifier.Core.WindowsShell
                     fullFileName = Path.Combine(DefaultDirectoryName, DefaultFileName);
 
                 // TODO: Using this approach is unsafe. We should provide some XML-Schema here!
-                XmlSerializer serializer = new XmlSerializer(typeof(ElDesktopIconManager.DesktopIconLayout));
+                var serializer = new XmlSerializer(typeof(ElDesktopIconManager.DesktopIconLayout));
 
-                using (FileStream fileStream = new FileStream(fullFileName, FileMode.Open))
+                using (var fileStream = new FileStream(fullFileName, FileMode.Open))
                 {
                     // TODO: Use XmlReader!
-                    DesktopIconLayout iconLayout = (DesktopIconLayout)serializer.Deserialize(fileStream);
+                    var iconLayout = (DesktopIconLayout)serializer.Deserialize(fileStream);
 
                     cntRestoredIcons = ApplyDesktopIconLayout(iconLayout);
 

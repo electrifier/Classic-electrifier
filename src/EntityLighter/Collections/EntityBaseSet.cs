@@ -253,7 +253,7 @@ namespace EntityLighter.Collections
 
         public int IndexOf(T item)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (var i = 0; i < this.Count; i++)
             {
                 if (this.items[i] == item)
                     return i;
@@ -276,7 +276,7 @@ namespace EntityLighter.Collections
 
         public int LastIndexOf(T item)
         {
-            int i = this.Count;
+            var i = this.Count;
 
             while (i > 0)
             {
@@ -290,7 +290,7 @@ namespace EntityLighter.Collections
 
         public bool Remove(T item)
         {
-            int i = this.IndexOf(item);
+            var i = this.IndexOf(item);
             if (i < 0)
                 return false;
 

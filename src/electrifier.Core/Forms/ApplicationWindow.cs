@@ -79,7 +79,7 @@ namespace electrifier.Core.Forms
         {
             Debug.Assert(sender.Equals(this.dpnDockPanel));
 
-            IDockContent activeContent = this.dpnDockPanel.ActiveContent;
+            var activeContent = this.dpnDockPanel.ActiveContent;
 
             // Process Ribbon-part of DockContent-Activation
 //            this.RibbonItems.ActiveDockContent = activeContent;
@@ -151,9 +151,9 @@ namespace electrifier.Core.Forms
 
         private void FormStatePersistor_LoadFormState(object sender, FormStatePersistorEventArgs args)
         {
-            TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
-            TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
-            TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
+            var pointConvert = TypeDescriptor.GetConverter(typeof(Point));
+            var sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
+            var stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
 
             // NULL-Check!
 
@@ -162,7 +162,7 @@ namespace electrifier.Core.Forms
             args.Size = (Size)sizeConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ApplicationWindow.Size", "800, 600"));
             args.WindowState = (FormWindowState)stateConvert.ConvertFromString(this.SessionContext.Properties.SyncProperty("ApplicationWindow.WindowState", "Normal"));
 
-            string dockPanelConfig = this.SessionContext.Properties.SyncProperty("ApplicationWindow.DockPanelState", String.Empty);
+            var dockPanelConfig = this.SessionContext.Properties.SyncProperty("ApplicationWindow.DockPanelState", String.Empty);
 
             if (dockPanelConfig.Length > 0)
             {
@@ -188,9 +188,9 @@ namespace electrifier.Core.Forms
 
         private void FormStatePersistor_SaveFormState(object sender, FormStatePersistorEventArgs args)
         {
-            TypeConverter pointConvert = TypeDescriptor.GetConverter(typeof(Point));
-            TypeConverter sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
-            TypeConverter stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
+            var pointConvert = TypeDescriptor.GetConverter(typeof(Point));
+            var sizeConvert = TypeDescriptor.GetConverter(typeof(Size));
+            var stateConvert = TypeDescriptor.GetConverter(typeof(FormWindowState));
             string dockPanelConfig;
 
             this.SessionContext.Properties.SafeSetProperty("ApplicationWindow.Location", pointConvert.ConvertTo(args.Location, typeof(string)) as string);

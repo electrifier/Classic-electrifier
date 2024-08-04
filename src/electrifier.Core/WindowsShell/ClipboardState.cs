@@ -40,8 +40,8 @@ namespace electrifier.Core.WindowsShell
         {
             get
             {
-                DragDropEffects dropEffect = DragDropEffects.None;
-                object dropEffectObject = Clipboard.GetData(Shell32.ShellClipboardFormat.CFSTR_PREFERREDDROPEFFECT);
+                var dropEffect = DragDropEffects.None;
+                var dropEffectObject = Clipboard.GetData(Shell32.ShellClipboardFormat.CFSTR_PREFERREDDROPEFFECT);
 
                 if ((dropEffectObject is MemoryStream dropEffectMemoryStream) &&
                     dropEffectMemoryStream.CanRead && (dropEffectMemoryStream.Length > 0))

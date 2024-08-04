@@ -139,7 +139,7 @@ namespace EntityLighter.Queries
 
         private EntityBaseSet<TEntity> Execute(DataContext dataContext, CreateEntityFromDataReader dataReader)
         {
-            EntityBaseSet<TEntity> loadedItems = new EntityBaseSet<TEntity>(dataContext);
+            var loadedItems = new EntityBaseSet<TEntity>(dataContext);
             SqliteCommand sqliteCommand;
 
             using (sqliteCommand = dataContext.SqliteConnection.CreateCommand())
@@ -148,7 +148,7 @@ namespace EntityLighter.Queries
                 {
                     sqliteCommand.CommandText = this.PrepareSQLStatement();
 
-                    using (SqliteDataReader reader = sqliteCommand.ExecuteReader())
+                    using (var reader = sqliteCommand.ExecuteReader())
                     {
                         //loadedItems.Grow(reader => count); // TODO: Specify size here!
 
@@ -167,7 +167,7 @@ namespace EntityLighter.Queries
 
         private string PrepareSQLStatement()
         {
-            StringBuilder queryBuilder = new StringBuilder($"SELECT * FROM { this.storageTableName }");
+            var queryBuilder = new StringBuilder($"SELECT * FROM { this.storageTableName }");
 
             // Append where conditions to selection
             if (this.whereConditions.Count > 0)

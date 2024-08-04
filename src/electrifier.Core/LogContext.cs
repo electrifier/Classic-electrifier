@@ -41,7 +41,7 @@ namespace electrifier.Core
 
         public static void Initialize(string baseDirectory = null)
         {
-            LoggingConfiguration logConfig = new LoggingConfiguration();
+            var logConfig = new LoggingConfiguration();
             baseDirectory = !String.IsNullOrEmpty(baseDirectory) ? baseDirectory :
                 Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppContext.AssemblyCompany);
 
@@ -49,7 +49,7 @@ namespace electrifier.Core
 
             //            string baseDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), AppContext.AssemblyCompany);
 
-            FileTarget fileTarget = new FileTarget("logfile")
+            var fileTarget = new FileTarget("logfile")
             {
                 FileName = Path.Combine(baseDirectory, "logfile.txt"),
                 //FileName = "logfile.txt",

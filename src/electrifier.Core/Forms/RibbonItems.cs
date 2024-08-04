@@ -155,7 +155,7 @@ namespace RibbonLib.Controls
 
             this.ApplicationWindow.BeginInvoke(new MethodInvoker(delegate ()
             {
-                uint cmdID = (sender as BaseRibbonControl).CommandID;
+                var cmdID = (sender as BaseRibbonControl).CommandID;
 #pragma warning disable CS0219 // Variable is assigned but its value is never used
                 Shell32.FOLDERVIEWMODE newShellFolderViewMode;
 #pragma warning restore CS0219 // Variable is assigned but its value is never used

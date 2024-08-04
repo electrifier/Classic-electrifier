@@ -119,17 +119,17 @@ namespace electrifier
             if (!this.splashIsShown)
                 return;
 
-            IntPtr screenDC = IntPtr.Zero;
-            IntPtr memoryDC = IntPtr.Zero;
-            IntPtr bitmapHandle = IntPtr.Zero;
-            IntPtr oldBitmapHandle = IntPtr.Zero;
-            WinDef.SIZE splashScreenSize = new WinDef.SIZE(this.SplashScreenBitmap.Size);
+            var screenDC = IntPtr.Zero;
+            var memoryDC = IntPtr.Zero;
+            var bitmapHandle = IntPtr.Zero;
+            var oldBitmapHandle = IntPtr.Zero;
+            var splashScreenSize = new WinDef.SIZE(this.SplashScreenBitmap.Size);
 
             try
             {
-                WinDef.POINT destinationPosition = new WinDef.POINT(this.Left, this.Top);
-                WinDef.POINT sourcePosition = new WinDef.POINT(0, 0);
-                User32.BLENDFUNCTION blendFunction =
+                var destinationPosition = new WinDef.POINT(this.Left, this.Top);
+                var sourcePosition = new WinDef.POINT(0, 0);
+                var blendFunction =
                     new User32.BLENDFUNCTION(User32.AC.SRC_OVER, 0, this.opacity, User32.AC.SRC_ALPHA);
 
                 screenDC = User32.GetDC(IntPtr.Zero);

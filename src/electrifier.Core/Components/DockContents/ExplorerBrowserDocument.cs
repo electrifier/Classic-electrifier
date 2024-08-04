@@ -132,7 +132,7 @@ namespace electrifier.Core.Components.DockContents
 
         private void ToolStrip_GoToParentLocationClick(object sender, EventArgs e)
         {
-            ShellItem currentLocation = this.ExplorerBrowser.History.CurrentLocation;
+            var currentLocation = this.ExplorerBrowser.History.CurrentLocation;
 
             if (currentLocation.Equals(ShellFolder.Desktop))
                 return;
@@ -152,13 +152,13 @@ namespace electrifier.Core.Components.DockContents
         protected override string GetPersistString()
         {
             var sb = new StringBuilder();
-            string paramFmt = " {0}{1}";
+            var paramFmt = " {0}{1}";
 
             // Append class name as identifier
             sb.Append(nameof(ExplorerBrowserDocument));
 
             // If folder is a virtual folder, add suffix.
-            string persistParamFolder = this.CurrentFolderPidl.ToString(Shell32.SIGDN.SIGDN_DESKTOPABSOLUTEPARSING);
+            var persistParamFolder = this.CurrentFolderPidl.ToString(Shell32.SIGDN.SIGDN_DESKTOPABSOLUTEPARSING);
             if (persistParamFolder.StartsWith(@"::"))
                 persistParamFolder = @"shell:" + persistParamFolder;
 
@@ -183,11 +183,11 @@ namespace electrifier.Core.Components.DockContents
             {
                 if ((null != persistString) && (persistString.Trim().Length > ExplorerBrowserDocument.persistParamURI.Length))
                 {
-                    IEnumerable<string> args = ElShellTools.SplitArgumentString(persistString);
+                    var args = ElShellTools.SplitArgumentString(persistString);
                     string strInitialNavigationTarget = default;
                     string strInitialViewMode = default;
 
-                    foreach (string arg in args)
+                    foreach (var arg in args)
                     {
                         if (arg.StartsWith(ExplorerBrowserDocument.persistParamURI))
                         {
@@ -259,11 +259,11 @@ namespace electrifier.Core.Components.DockContents
 
         private void ExplorerBrowser_Navigated(object sender, ExplorerBrowser.NavigatedEventArgs e)
         {
-            ShellItem newLocation = e.NewLocation;
+            var newLocation = e.NewLocation;
 
             if (null != newLocation)
             {
-                Shell32.PIDL newCurrentFolderPIDL = newLocation.PIDL;
+                var newCurrentFolderPIDL = newLocation.PIDL;
                 //this.CurrentLocation = this.Text =
                 //    newLocation.GetDisplayName(ShellItemDisplayString.DesktopAbsoluteEditing);
 
@@ -407,16 +407,16 @@ namespace electrifier.Core.Components.DockContents
                     return;
 
                 // Build file drop list
-                StringCollection scFileDropList = new StringCollection();
+                var scFileDropList = new StringCollection();
                 foreach (var selectedItem in selItems)
                 {
                     scFileDropList.Add(selectedItem.ParsingName);
                 }
 
                 // Build the data object, including the DropEffect, and place it on the clipboard
-                DataObject dataObject = new DataObject();
-                byte[] baDropEffect = new byte[] { (byte)dropEffect, 0, 0, 0 };
-                MemoryStream msDropEffect = new MemoryStream();
+                var dataObject = new DataObject();
+                var baDropEffect = new byte[] { (byte)dropEffect, 0, 0, 0 };
+                var msDropEffect = new MemoryStream();
                 msDropEffect.Write(baDropEffect, 0, baDropEffect.Length);
 
                 dataObject.SetFileDropList(scFileDropList);
@@ -450,7 +450,7 @@ namespace electrifier.Core.Components.DockContents
                     throw new ArgumentException("Invalid DragDropEffect: Both Copy and Move flag are set.");
 
                 // Get file drop list, return if empty cause nothing to do then
-                StringCollection fileDropList = Clipboard.GetFileDropList();
+                var fileDropList = Clipboard.GetFileDropList();
                 if (fileDropList.Count < 1)
                     return;
 
@@ -578,7 +578,7 @@ namespace electrifier.Core.Components.DockContents
 
         public void ActivateRibbonState()
         {
-            foreach (IBaseRibbonControlBinding ribbonControlBinding in this.RibbonControlBindings)
+            foreach (var ribbonControlBinding in this.RibbonControlBindings)
             {
                 ribbonControlBinding.ActivateRibbonState();
             }
@@ -586,7 +586,7 @@ namespace electrifier.Core.Components.DockContents
 
         public void DeactivateRibbonState()
         {
-            foreach (IBaseRibbonControlBinding ribbonControlBinding in this.RibbonControlBindings)
+            foreach (var ribbonControlBinding in this.RibbonControlBindings)
             {
                 ribbonControlBinding.DeactivateRibbonState();
             }
@@ -665,9 +665,9 @@ namespace electrifier.Core.Components.DockContents
 
             if (body.Expression is ConstantExpression vmExpression)
             {
-                LambdaExpression lambda = Expression.Lambda(vmExpression);
-                Delegate vmFunc = lambda.Compile();
-                object sender = vmFunc.DynamicInvoke();
+                var lambda = Expression.Lambda(vmExpression);
+                var vmFunc = lambda.Compile();
+                var sender = vmFunc.DynamicInvoke();
 
                 handler?.Invoke(sender, new PropertyChangedEventArgs(body.Member.Name));
             }

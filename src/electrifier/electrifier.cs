@@ -66,8 +66,8 @@ namespace electrifier
         [STAThread]
         static void Main(string[] args)
         {
-            bool splashIsShown = true;
-            bool splashIsFadedOut = true;
+            var splashIsShown = true;
+            var splashIsFadedOut = true;
             Icon applicationIcon = null;
             SplashScreenForm splashScreen = null;
 
@@ -84,7 +84,7 @@ namespace electrifier
             Application.DoEvents();
 
             // Search argument list for splash-screen-related arguments
-            foreach (string arg in args)
+            foreach (var arg in args)
             {
                 if (arg.ToLower().Equals("/nosplash"))
                 {
@@ -103,8 +103,8 @@ namespace electrifier
                 // Create the splash-screen
                 splashScreen = new SplashScreenForm(splashIsShown, splashIsFadedOut);
 
-                Assembly entryAssembly = Assembly.GetEntryAssembly();
-                string electrifierCoreDLLFullPath = Path.Combine(
+                var entryAssembly = Assembly.GetEntryAssembly();
+                var electrifierCoreDLLFullPath = Path.Combine(
                     Path.GetDirectoryName(entryAssembly.Location),
                     ElectrifierMainEntryPoint.elCoreDLLFileName);
 
@@ -112,7 +112,7 @@ namespace electrifier
                 applicationIcon = new Icon(entryAssembly.GetManifestResourceStream(appIconResourceID));
 
                 // Create the instance of the application context
-                ApplicationContext appContext = Activator.CreateInstance(
+                var appContext = Activator.CreateInstance(
                     Assembly.LoadFile(electrifierCoreDLLFullPath).GetType(appContextTypeID),
                     args: new object[] { args, applicationIcon, splashScreen.SplashScreenBitmap, splashScreen }) as ApplicationContext;
 

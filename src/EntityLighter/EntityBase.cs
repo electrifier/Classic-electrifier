@@ -39,7 +39,7 @@ namespace EntityLighter
             if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
                 throw new ArgumentException($"No Table Attribute defined for { entityType }");
 
-            TableAttribute tableAttribute = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
+            var tableAttribute = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
 
             return string.IsNullOrEmpty(tableAttribute.Name) ? entityType.Name : tableAttribute.Name;
         }

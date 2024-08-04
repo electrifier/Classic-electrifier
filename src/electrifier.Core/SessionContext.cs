@@ -70,7 +70,7 @@ namespace electrifier.Core
 
         public static SessionEntity LoadStoredSession(DataContext dataContext, long id)
         {
-            EntityBaseSet<SessionEntity> sessions =
+            var sessions =
                 Select<SessionEntity>
                 .LoadEntities()
                 .Where("Id").IsEqual(id)
@@ -298,7 +298,7 @@ namespace electrifier.Core
 
             // TODO: Check those SQL-Values!
 
-            long sessionId = this.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
+            var sessionId = this.DataContext.CreateNewEntity(typeof(SessionEntity), (sqlCmd) =>
             {
                 sqlCmd.CommandText = $"INSERT INTO Session (Name, Description) VALUES ($Name, $Description)";
                 sqlCmd.Parameters.AddWithValue("$Name", args.Name);
@@ -729,7 +729,7 @@ namespace electrifier.Core
         {
             // TODO: this.Clear();
             // TODO: Instead of adding each value, just replace the whole list... In case of exception, keep the old list
-            EntityBaseSet<SessionProperty> properties = Select<SessionProperty>
+            var properties = Select<SessionProperty>
                 .LoadEntities()
                 .Where("SessionId").IsEqual(this.SessionContext.Id)
                 .RunNow(this.DataContext, (sqlReader) =>
@@ -746,7 +746,7 @@ namespace electrifier.Core
 
         public int IndexOf(string propertyKey)
         {
-            for (int i = 0; i < this.Count; i++)
+            for (var i = 0; i < this.Count; i++)
             {
                 if (this.entities[i].Key.Equals(propertyKey, this.StringComparison))
                     return i;
@@ -757,7 +757,7 @@ namespace electrifier.Core
 
         public string SyncProperty(string propertyKey, string defaultValue)
         {
-            int index = this.IndexOf(propertyKey);
+            var index = this.IndexOf(propertyKey);
 
             if (index >= 0)
             {
@@ -778,7 +778,7 @@ namespace electrifier.Core
 
         public void SafeSetProperty(string propertyKey, string value)
         {
-            int index = this.IndexOf(propertyKey);
+            var index = this.IndexOf(propertyKey);
 
             if (index >= 0)
             {

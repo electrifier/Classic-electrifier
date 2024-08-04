@@ -19,14 +19,14 @@ namespace electrifier.Core
         {
             get
             {
-                object result = this.DataContext.ExecuteScalar($"SELECT Value FROM Configuration WHERE Name = '{ this.Name }'");
+                var result = this.DataContext.ExecuteScalar($"SELECT Value FROM Configuration WHERE Name = '{ this.Name }'");
 
                 return (result == DBNull.Value ? null : result);
             }
             set
             {
                 // TODO: when set to null, delete the entity from database?
-                using (SqliteCommand sqlCmd = this.DataContext.SqliteConnection.CreateCommand())            // TODO: add where rowcount = 1?!?
+                using (var sqlCmd = this.DataContext.SqliteConnection.CreateCommand())            // TODO: add where rowcount = 1?!?
                 {
                     sqlCmd.CommandText = $"UPDATE Configuration SET Value = $Value WHERE Name = $Name";
                     sqlCmd.Parameters.AddWithValue("$Value", value);

@@ -253,7 +253,7 @@ namespace EntityLighter
         /// <returns></returns>
         public string ToSQLSnippet(string columnName)
         {
-            StringBuilder snippet = new StringBuilder($"{ columnName } { this.DataType.ToSQLSnippet() } { this.Constraints.ToSQLSnippet() } ");
+            var snippet = new StringBuilder($"{ columnName } { this.DataType.ToSQLSnippet() } { this.Constraints.ToSQLSnippet() } ");
 
             if (!string.IsNullOrWhiteSpace(this.DefaultValue))
                 snippet.Append($"DEFAULT { this.DefaultValue }");
@@ -363,18 +363,18 @@ namespace EntityLighter
 
             public string ToSQLStatement()
             {
-                int columnCount = this.TableColumns.Count;
+                var columnCount = this.TableColumns.Count;
 
                 if (columnCount < 1)
                     return string.Empty;
 
-                StringBuilder statement = new StringBuilder($"CREATE TABLE IF NOT EXISTS '{ this.EntityName }' ( ");
-                List<string> primaryKey = new List<string>();
+                var statement = new StringBuilder($"CREATE TABLE IF NOT EXISTS '{ this.EntityName }' ( ");
+                var primaryKey = new List<string>();
 
                 // Add Column snippets
-                for (int i = 0; i < columnCount;)
+                for (var i = 0; i < columnCount;)
                 {
-                    this.TableColumns[i].Deconstruct(out string columnName, out BaseColumnAttribute attributes);
+                    this.TableColumns[i].Deconstruct(out var columnName, out var attributes);
 
                     statement.Append(attributes.ToSQLSnippet(columnName));
 
@@ -390,7 +390,7 @@ namespace EntityLighter
                 {
                     statement.Append(", PRIMARY KEY (");
 
-                    for (int i = 0; i < primaryKey.Count;)
+                    for (var i = 0; i < primaryKey.Count;)
                     {
                         statement.Append(primaryKey[i]);
                         statement.Append(++i < primaryKey.Count ? ", " : ")");
@@ -414,9 +414,9 @@ namespace EntityLighter
             this.Storage = storage ?? throw new ArgumentNullException(nameof(storage));
 
 
-            SqliteResult returnCode = this.OpenDatabase(createIfNotExists); /* ThrowIfFailed */
+            var returnCode = this.OpenDatabase(createIfNotExists); /* ThrowIfFailed */
 
-            StorageModel storageModel = new StorageModel(this);
+            var storageModel = new StorageModel(this);
 
             //EntityBaseSet<EntityBase> test =
             //    Select<EntityBase>
@@ -545,8 +545,8 @@ namespace EntityLighter
         /// <param name="CreateIfNotExists"></param>
         protected SqliteResult OpenDatabase(bool CreateIfNotExists = false)
         {
-            SqliteOpenMode openMode = SqliteOpenMode.ReadWriteCreate;
-            int errorCode = 0;
+            var openMode = SqliteOpenMode.ReadWriteCreate;
+            var errorCode = 0;
 
             try
             {
@@ -581,7 +581,7 @@ namespace EntityLighter
         /// <returns>The number of rows inserted, updated or delated. -1 for SELECT statements.</returns>
         public int ExecuteNonQuery(string statement)
         {
-            using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
+            using (var cmd = this.SqliteConnection.CreateCommand())
             {
                 cmd.CommandText = statement;
                 return cmd.ExecuteNonQuery();
@@ -590,7 +590,7 @@ namespace EntityLighter
 
         public object ExecuteScalar(string statement)
         {
-            using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
+            using (var cmd = this.SqliteConnection.CreateCommand())
             {
                 cmd.CommandText = statement;
                 return cmd.ExecuteScalar();
@@ -599,7 +599,7 @@ namespace EntityLighter
 
         public void SetPragmaValue(string pragmaName, string pragmaValue)
         {
-            using (SqliteCommand cmd = this.SqliteConnection.CreateCommand())
+            using (var cmd = this.SqliteConnection.CreateCommand())
             {
                 cmd.CommandText = $"PRAGMA { pragmaName } = '{ pragmaValue }';";
                 cmd.ExecuteNonQuery();
@@ -610,7 +610,7 @@ namespace EntityLighter
 
         public bool TableExists(string tableName)
         {
-            object queryResult = this.ExecuteScalar($"SELECT COUNT(*) FROM SQLite_Master WHERE Type='table' AND UPPER(Name)='{ tableName.ToUpperInvariant() }'");
+            var queryResult = this.ExecuteScalar($"SELECT COUNT(*) FROM SQLite_Master WHERE Type='table' AND UPPER(Name)='{ tableName.ToUpperInvariant() }'");
 
             if (queryResult is long resint)
                 return (1 == resint);
@@ -628,9 +628,9 @@ namespace EntityLighter
             if (!Attribute.IsDefined(entityType, typeof(TableAttribute)))
                 throw new ArgumentException("No Table Attribute defined", nameof(entityType));
 
-            TableAttribute table = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
+            var table = Attribute.GetCustomAttribute(entityType, typeof(TableAttribute)) as TableAttribute;
 
-            string tableName = table.Name ?? entityType.Name;
+            var tableName = table.Name ?? entityType.Name;
 
             if (this.TableExists(tableName))
             {
@@ -638,7 +638,7 @@ namespace EntityLighter
                 return;
             }
 
-            TableStatementBuilder tableStatement = new TableStatementBuilder(tableName);
+            var tableStatement = new TableStatementBuilder(tableName);
 
             // Iterate through all properties and process ColumnAttributes
             foreach (var property in entityType.GetProperties())
@@ -670,7 +670,7 @@ namespace EntityLighter
 
             try
             {
-                using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
+                using (var sqlCmd = this.SqliteConnection.CreateCommand())
                 {
                     // TODO: 24/05/20: Create the WHOLE statement dynamically!; Use Tables attributes for dynamic binding
                     setEntityCreationParams(sqlCmd);
@@ -682,7 +682,7 @@ namespace EntityLighter
                             // Finally fetch the Primary key for the new record
                             sqlCmd.CommandText = $"SELECT Id FROM { EntityBase.GetStorageTable(entityType) } WHERE RowId = Last_Insert_RowId()";
 
-                            object entityId = sqlCmd.ExecuteScalar();
+                            var entityId = sqlCmd.ExecuteScalar();
 
                             if (null != entityId)
                                 return (long)entityId;
@@ -704,7 +704,7 @@ namespace EntityLighter
             if (null == callback)
                 throw new ArgumentNullException(nameof(callback));
 
-            using (SqliteCommand sqlCmd = this.SqliteConnection.CreateCommand())
+            using (var sqlCmd = this.SqliteConnection.CreateCommand())
             {
                 // TODO: 24/05/20: Create the WHOLE statement dynamically!; Use Tables attributes for dynamic binding
                 callback(sqlCmd);
@@ -720,7 +720,7 @@ namespace EntityLighter
         public static DateTime ConvertToDateTime(string datetimeString)
         {
             // TODO: Put this into an default type converting place SQLite <-> C#-Entities, see also ApplicationWindow.fspFormStatePersistor_LoadingFormState
-            if (DateTime.TryParse(datetimeString, out DateTime result))
+            if (DateTime.TryParse(datetimeString, out var result))
                 return result;
 
             return default;

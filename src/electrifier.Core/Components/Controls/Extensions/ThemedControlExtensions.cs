@@ -37,7 +37,7 @@ namespace electrifier.Core.Components.Controls.Extensions
             if (null == control)
                 throw new ArgumentNullException(nameof(control));
 
-            IEnumerable<string> resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(
+            var resourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames().Where(
                 Name =>
                 Name.StartsWith(control.ThemeResourceNamespace, StringComparison.InvariantCultureIgnoreCase) &&
                 Name.EndsWith(ThemeFileExtension, StringComparison.InvariantCultureIgnoreCase));
@@ -62,18 +62,18 @@ namespace electrifier.Core.Components.Controls.Extensions
             if (string.IsNullOrWhiteSpace(themeName))
                 throw new ArgumentOutOfRangeException(nameof(themeName), "No theme name provided");
 
-            string resourceName = control.ThemeResourceNamespace + themeName + ThemeFileExtension;
+            var resourceName = control.ThemeResourceNamespace + themeName + ThemeFileExtension;
 
             try
             {
-                ImageList imageList = new ImageList
+                var imageList = new ImageList
                 {
                     /// Fix bug with alpha channels by enabling transparency before adding any images to the list.
                     /// <seealso href="https://www.codeproject.com/articles/9142/adding-and-using-32-bit-alphablended-images-and-ic"/>
                     ColorDepth = ColorDepth.Depth32Bit
                 };
 
-                using (Stream bmpStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+                using (var bmpStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
                     var bitmap = new Bitmap(bmpStream);
 

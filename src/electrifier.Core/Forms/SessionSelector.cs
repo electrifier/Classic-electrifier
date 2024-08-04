@@ -71,7 +71,7 @@ namespace electrifier.Core.Forms
         {
             get
             {
-                ListView.SelectedListViewItemCollection listViewItems = this.ContinueSessionListView.SelectedItems;
+                var listViewItems = this.ContinueSessionListView.SelectedItems;
 
                 if (1 == listViewItems.Count)
                 {
@@ -168,14 +168,14 @@ namespace electrifier.Core.Forms
             }
             else if (SessionCreationMode.Continue == this.CreationMode)
             {
-                ListView.SelectedListViewItemCollection items = this.ContinueSessionListView.SelectedItems;
+                var items = this.ContinueSessionListView.SelectedItems;
 
                 if (items.Count > 1)
                     throw new InvalidOperationException("SessionSelector: More than one session selected!");
                 else if (items.Count < 1)
                     throw new InvalidOperationException("SessionSelector: No session selected!");
 
-                SessionSelectorListViewItem listViewItem = items[0] as SessionSelectorListViewItem;
+                var listViewItem = items[0] as SessionSelectorListViewItem;
 
                 this.ContinueSession.Invoke(this, new ContinueSessionEventArgs(
                     listViewItem.Session.Id,
@@ -206,7 +206,7 @@ namespace electrifier.Core.Forms
 
         private void ContinueSessionListView_SelectedIndexChanged(object sender, EventArgs args)
         {
-            int selectedCount = this.ContinueSessionListView.SelectedItems.Count;
+            var selectedCount = this.ContinueSessionListView.SelectedItems.Count;
             Debug.Assert(2 > selectedCount);
 
             this.CreationMode = selectedCount == 1 ?

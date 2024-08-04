@@ -77,7 +77,7 @@ namespace electrifier.Core.Forms
         {
             LogContext.Trace();
 
-            using (AboutElectrifierDialog aboutDialog = new AboutElectrifierDialog())
+            using (var aboutDialog = new AboutElectrifierDialog())
             {
                 aboutDialog.ShowDialog();
             }

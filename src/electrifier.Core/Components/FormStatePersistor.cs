@@ -126,7 +126,7 @@ namespace electrifier.Core.Components
 
                 if (value.GetService(typeof(IDesignerHost)) is IDesignerHost designerHost)
                 {
-                    IComponent componentHost = designerHost.RootComponent;
+                    var componentHost = designerHost.RootComponent;
 
                     if (componentHost is Form designerForm)
                         this.clientForm = designerForm;
@@ -183,15 +183,15 @@ namespace electrifier.Core.Components
         {
             if (this.LoadFormState != null)
             {
-                FormStatePersistorEventArgs formStatePersistorEventArgs = new FormStatePersistorEventArgs(this.ClientForm);
+                var formStatePersistorEventArgs = new FormStatePersistorEventArgs(this.ClientForm);
 
                 this.LoadFormState.Invoke(this, formStatePersistorEventArgs);
 
                 if (!formStatePersistorEventArgs.Cancel)
                 {
-                    Point location = formStatePersistorEventArgs.Location;
-                    Size size = formStatePersistorEventArgs.Size;
-                    FormWindowState windowState = formStatePersistorEventArgs.WindowState;
+                    var location = formStatePersistorEventArgs.Location;
+                    var size = formStatePersistorEventArgs.Size;
+                    var windowState = formStatePersistorEventArgs.WindowState;
 
                     if (this.FixWindowState)
                     {
@@ -211,7 +211,7 @@ namespace electrifier.Core.Components
         public virtual void OverhaulWindowBounds(ref Point location, ref Size size)
         {
             // Get Desktop area of primary screen
-            Rectangle workArea = Screen.GetWorkingArea(this.clientForm);
+            var workArea = Screen.GetWorkingArea(this.clientForm);
 
             // Overhaul window size if necessary
             if (size.Width > workArea.Width)
@@ -250,7 +250,7 @@ namespace electrifier.Core.Components
             if (this.SaveFormState != null)
             {
                 // Make sure to store the normalized bounds, i.e. when the form was in normal window state the last time.
-                bool restoreBounds = FormWindowState.Normal != this.ClientForm.WindowState;
+                var restoreBounds = FormWindowState.Normal != this.ClientForm.WindowState;
 
                 this.SaveFormState.Invoke(this, new FormStatePersistorEventArgs(this.ClientForm, restoreBounds));
             }
