@@ -11,7 +11,7 @@ electrifier is an open-source project which extends Windows :registered: Explore
 - [ ] Session management and history functionality
 - [ ] PowerShell integration, automation and extensibility
 
-However, since electrifier is still in early development stages, most mentioned features are currently work in progress or just plans for the future.
+However, since Classic electrifier is still in early development stages, most mentioned features are currently work in progress or just plans for the future.
 
 If you want to get involved in its development feel free to contribute!
 
