@@ -1,33 +1,30 @@
 # electrifier
-integrated Desktop Enhancement suite ![electrifier Logo](./assets/Electrifier%20Logo%20-%20Unflashed.png)
+## integrated Desktop Enhancement suite ![electrifier Logo](./assets/Electrifier%20Logo%20-%20Unflashed.png)
 
-Classic electrifier was an open-source project which extended Windows File Explorer :registered: with an Full-featured multi-tab experience
+Classic electrifier was an open-source project which extended Windows File Explorer :registered: by
+- [x] Full-featured multi-tab experience
 
-Classic electrifier was in early development stages - most featureswerw work in progress or just plans for the future.
-
+Classic electrifier was in early development stages - most featureswerw work in progress or just plans for the future
 - [ ] Built-in file viewers and plain editors
 - [ ] Session management and history functionality
 - [ ] PowerShell integration, automation and extensibility
 
-If you want to get involved in its development feel free to contribute!
+👫 If you want to get involved in its development feel free to contribute
 
-# History
+# Requirements 
+Originally, the project was started back in 2004, using .NET-framework 1.0 and Windows XP. However, due to a system crash, I lost all my data, including the source-code, which was stored on a software RAID-5.
 
-## Releases
+Meanwhile I managed to restore those lost artefacts, converted them to Visual Studio 2019 and .NET 4.6 and relaunched the development cycle.
 
+## Release History
 Released | Version | Details
 :------: | :-----: | :------
 04/05/19 | 0.1.1 | An internal alpha test is currently in progress
 
 
-Originally, the project was started back in 2004, using .NET-framework 1.0 and Windows XP. However, due to a system crash, I lost all my data, including the source-code, which was stored on a software RAID-5.
-
-Meanwhile I managed to restore those lost artefacts, converted them to Visual Studio 2019 and .NET 4.6 and relaunched the development cycle.
-
 ## Docs and Scrrens
 
 ![electrifier Main Form](./docs/Pictures/MainForm.png)
-
 
 # Contribute
 ## Development
