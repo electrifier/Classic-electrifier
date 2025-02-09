@@ -2,6 +2,7 @@
 ## integrated Desktop Enhancement suite ![electrifier Logo](./assets/Electrifier%20Logo%20-%20Unflashed.png)
 
 Classic electrifier was an open-source project which extended Windows File Explorer :registered: by
+- [ ] Apache License, Version 2.0 (the "License")
 - [x] Full-featured multi-tab experience
 
 Classic electrifier was in early development stages - most featureswerw work in progress or just plans for the future
