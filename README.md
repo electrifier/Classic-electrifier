@@ -1,37 +1,39 @@
 # electrifier
+integrated Desktop Enhancement suite ![electrifier Logo](./assets/Electrifier%20Logo%20-%20Unflashed.png)
 
-Desktop enhancement suite
+Classic electrifier was an open-source project which extended Windows File Explorer :registered: with an Full-featured multi-tab experience
 
-![electrifier Logo](./assets/Electrifier%20Logo%20-%20Unflashed.png)
+Classic electrifier was in early development stages - most featureswerw work in progress or just plans for the future.
 
-electrifier is an open-source project which extends Windows :registered: Explorer with
-
-- [x] Full-featured multi-tab experience
 - [ ] Built-in file viewers and plain editors
 - [ ] Session management and history functionality
 - [ ] PowerShell integration, automation and extensibility
 
-However, since Classic electrifier is still in early development stages, most mentioned features are currently work in progress or just plans for the future.
-
 If you want to get involved in its development feel free to contribute!
 
-![electrifier Main Form](./docs/Pictures/MainForm.png)
-
 # History
+
+## Releases
 
 Released | Version | Details
 :------: | :-----: | :------
 04/05/19 | 0.1.1 | An internal alpha test is currently in progress
 
+
 Originally, the project was started back in 2004, using .NET-framework 1.0 and Windows XP. However, due to a system crash, I lost all my data, including the source-code, which was stored on a software RAID-5.
 
 Meanwhile I managed to restore those lost artefacts, converted them to Visual Studio 2019 and .NET 4.6 and relaunched the development cycle.
 
-# Development
+## Docs and Scrrens
 
-electrifier is developed using Visual Studio Community 2019 and uses .NET-framework 4.6.
+![electrifier Main Form](./docs/Pictures/MainForm.png)
 
-## Contributions
+
+# Contribute
+## Development
+
+electrifier was developed using Visual Studio Community 2019.
+It used .NET-framework 4.6 and WinForms.
 
 electrifier makes use of the following third party components:
 
@@ -39,12 +41,19 @@ Name | Author(s) | License
 ---- | --------- | -------
 [Vanara](https://github.com/dahall/Vanara) | [David Hall](https://github.com/dahall) | MIT License
 [DockPanel Suite](https://github.com/dockpanelsuite/dockpanelsuite) | [Lex Li](https://github.com/lextm), [Ryan Rastedt](https://github.com/roken) & others | MIT License
-[Sunburst.WindowsForms.Ribbon](https://github.com/SunburstApps/Sunburst.WindowsForms.Ribbon) | [William Kent](https://github.com/wjk) | Microsoft Public License (Ms-PL)
+
+electrifier makes use of the following third party components:
+
+Name | Author(s) | License
+---- | --------- | -------
 [Knob Buttons Toolbar icons](https://www.deviantart.com/itweek/art/Knob-Buttons-Toolbar-icons-73463960) | [iTweek](https://www.deviantart.com/itweek) aka Miles Ponson| [Custom]
 
-## Contributing
+## License and Contributing
 
-Currently, the project is in an early alpha-stage. However, if you feel interested in helping me out, you are welcome to contact me.
+- Apache License 2.0
+- Project is Oprhaned
+- Feel free to play around with that code
+- Contributions are still wellcome
 
 # Pre-Requisites
 
