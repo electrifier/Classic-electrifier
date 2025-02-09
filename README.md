@@ -50,8 +50,8 @@ Name | Author(s) | License
 
 ## License and Contributing
 
+⚠️ Classic electrifier is orphaned!
 - Apache License 2.0
-- Project is Oprhaned
 - Feel free to play around with that code
 - Contributions are still wellcome
 
